@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 7.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CVSConsole", "CVSConsole.csproj", "{DF4EF737-E983-40D5-B8F1-499766FE3FCE}"
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		ConfigName.0 = Debug
+		ConfigName.1 = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{DF4EF737-E983-40D5-B8F1-499766FE3FCE}.Debug.ActiveCfg = Debug|.NET
+		{DF4EF737-E983-40D5-B8F1-499766FE3FCE}.Debug.Build.0 = Debug|.NET
+		{DF4EF737-E983-40D5-B8F1-499766FE3FCE}.Release.ActiveCfg = Release|.NET
+		{DF4EF737-E983-40D5-B8F1-499766FE3FCE}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
