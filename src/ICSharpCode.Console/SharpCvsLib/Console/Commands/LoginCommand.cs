@@ -202,48 +202,53 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         }
 
         private string ReadPassword (string fullPath) {
-            FileInfo passFile = new FileInfo(fullPath);
             string pwd = String.Empty;
-            if (!passFile.Exists) {
-                LOGGER.Debug(String.Format("Passfile {0} does not exist.", passFile.FullName));
-                passFile = new FileInfo(Path.Combine(fullPath, CVS_PASSFILE));
-            }
-
-            if (!passFile.Exists) {
-                LOGGER.Debug(String.Format("Passfile {0} does not exist.", passFile.FullName));
-                pwd = null;
+            if (null == fullPath || String.Empty == fullPath) {
+                pwd = null;    
             } else {
-                LOGGER.Debug(String.Format("Found passfile: {0}", passFile.FullName));
+                FileInfo passFile = new FileInfo(fullPath);
 
-                string passLine = null;
-                using (StreamReader passStream = new StreamReader(passFile.FullName)) {
-                    passLine = passStream.ReadToEnd();
-                    passStream.Close();
+                if (!passFile.Exists) {
+                    LOGGER.Debug(String.Format("Passfile {0} does not exist.", passFile.FullName));
+                    passFile = new FileInfo(Path.Combine(fullPath, CVS_PASSFILE));
                 }
 
-                LOGGER.Debug(String.Format("PassLine: {0}.", passLine));
+                if (!passFile.Exists) {
+                    LOGGER.Debug(String.Format("Passfile {0} does not exist.", passFile.FullName));
+                    pwd = null;
+                } else {
+                    LOGGER.Debug(String.Format("Found passfile: {0}", passFile.FullName));
 
-                Regex regex = new Regex(REGEX_CVS_PASSFILE, 
-                    RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
-                MatchCollection matches = regex.Matches(passLine);
+                    string passLine = null;
+                    using (StreamReader passStream = new StreamReader(passFile.FullName)) {
+                        passLine = passStream.ReadToEnd();
+                        passStream.Close();
+                    }
 
-                LOGGER.Debug(String.Format("Number of matches for {0}: {1}",
-                    REGEX_CVS_PASSFILE, matches.Count));
+                    LOGGER.Debug(String.Format("PassLine: {0}.", passLine));
 
-                foreach (Match match in matches) {
-                    try {
-                        CvsRoot cvsRootTemp = new CvsRoot(match.Value);
-                        LOGGER.Debug(String.Format("cvsRootTemp: {0}.", cvsRootTemp));
-                        if (this.CvsRoot.Equals(cvsRootTemp)) {
-                            pwd = match.Groups[match.Groups.Count - 1].Value;
-                            LOGGER.Debug(String.Format("Found password: {0}.", pwd));
-                            break;
-                        } else {
-                            LOGGER.Debug(String.Format("Cvsroot: [{0}] is not equal to cvsRootTemp: [{1}].",
-                                this.CvsRoot.ToString(), cvsRootTemp));
+                    Regex regex = new Regex(REGEX_CVS_PASSFILE, 
+                        RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
+                    MatchCollection matches = regex.Matches(passLine);
+
+                    LOGGER.Debug(String.Format("Number of matches for {0}: {1}",
+                        REGEX_CVS_PASSFILE, matches.Count));
+
+                    foreach (Match match in matches) {
+                        try {
+                            CvsRoot cvsRootTemp = new CvsRoot(match.Value);
+                            LOGGER.Debug(String.Format("cvsRootTemp: {0}.", cvsRootTemp));
+                            if (this.CvsRoot.Equals(cvsRootTemp)) {
+                                pwd = match.Groups[match.Groups.Count - 1].Value;
+                                LOGGER.Debug(String.Format("Found password: {0}.", pwd));
+                                break;
+                            } else {
+                                LOGGER.Debug(String.Format("Cvsroot: [{0}] is not equal to cvsRootTemp: [{1}].",
+                                    this.CvsRoot.ToString(), cvsRootTemp));
+                            }
+                        } catch (ICSharpCode.SharpCvsLib.Misc.CvsRootParseException) {
+                            LOGGER.Debug(String.Format("Invalid cvsroot: {0}.", match.Value));
                         }
-                    } catch (ICSharpCode.SharpCvsLib.Misc.CvsRootParseException) {
-                        LOGGER.Debug(String.Format("Invalid cvsroot: {0}.", match.Value));
                     }
                 }
             }
