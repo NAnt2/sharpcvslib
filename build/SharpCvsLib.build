@@ -92,30 +92,30 @@
     </target>
 
     <target name="build.lib" depends="setup">
-        <nant buildfile="${dir.src}/${name.top-level}/${name.project}/${name.project}.build" target="build"/>
+        <nant buildfile="${dir.build}/${name.project}.build.xml" target="build"/>
     </target>
 
     <target name="build.console" depends="setup, build.lib">
-        <nant buildfile="${dir.src}/${name.top-level}.${name.console}/${name.project}/${name.console}.build" target="build"/>
+        <nant buildfile="${dir.build}/${name.console}.build.xml" target="build"/>
     </target>
     
     <target name="build.test" depends="setup, build.lib, build.console">
-        <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="build"/>
+        <nant buildfile="${dir.build}/${name.tests}.build.xml" target="build"/>
     </target>
     
     <target name="build.test-sample" depends="setup, build.test" description="Builds all project sources as well as a test binary containing a faster running subset of unit tests..">
-        <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="build-sample"/>
+        <nant buildfile="${dir.build}/${name.tests}.build.xml" target="build-sample"/>
     </target>
 
     <target name="run-tests" depends="build.all">
-        <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="run-tests"/>
+        <nant buildfile="${dir.build}/${name.tests}.build.xml" target="run-tests"/>
     </target>
     
     <target name="run-tests-sample" depends="build.all">
-        <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="run-tests-sample"/>
+        <nant buildfile="${dir.build}/${name.tests}.build.xml" target="run-tests-sample"/>
     </target>
     <target name="tests-to-html">
-        <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="tests-to-html"/>
+        <nant buildfile="${dir.build}/${name.tests}.build.xml" target="tests-to-html"/>
     </target>
 
     <target name="netdoc" failonerror="false">
@@ -311,7 +311,7 @@
     </target>
     
     <target name="upload-unit-test-results">
-        <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="tests-to-html"/>
+        <nant buildfile="${dir.build}/${name.tests}.build.xml" target="tests-to-html"/>
         <property name="args.copy-docs" value="${dir.bin}/tests/*.html ${sf.username}:${sf.location.nightly}/tests/" />
         <exec program="${util.copy}" commandline="${args.copy-docs}"/>        
     </target>

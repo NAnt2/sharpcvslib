@@ -33,8 +33,8 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.IO;
-using System.Text;
 using System.Threading;
 
 using ICSharpCode.SharpCvsLib.Config;
@@ -227,15 +227,15 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         /// </summary>
         /// <returns></returns>
         private string ReadLineBlock() {
-            StringBuilder builder = new StringBuilder(1024);
+            ArrayList buffer = new ArrayList(1024);
             while (true) {
                 int i = ReadByte();
                 if (i == '\n' || i == -1) {
                     break;
                 }
-                builder.Append((char)i);
+                buffer.Add((byte)i);
             }
-            return builder.ToString();
+            return EncodingUtil.DEFAULT_ENCODING.GetString((byte[])buffer.ToArray(typeof(byte)));
         }
 
         /// <summary>
@@ -274,16 +274,17 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         /// </summary>
         /// <returns></returns>
         public string ReadToFirstWS() {
-            StringBuilder builder = new StringBuilder(1024);
+            ArrayList buffer = new ArrayList(1024);
             while (true) {
                 int i = ReadByte();
 
-                builder.Append((char)i);
+                buffer.Add((byte)i);
                 if (i == '\n' || i ==' ' || i == -1) {
                     break;
                 }
             }
-            return builder.ToString();
+            
+            return EncodingUtil.DEFAULT_ENCODING.GetString((byte[])buffer.ToArray(typeof(byte)));
         }
 
         /// <summary>

@@ -125,7 +125,7 @@ namespace ICSharpCode.SharpCvsLib.Console {
                         }
                     }
                 }
-                log4net.Config.DOMConfigurator.Configure(configFile);
+                log4net.Config.XmlConfigurator.Configure(configFile);
             } catch (Exception) {
                 BasicConfigurator.Configure();
             }

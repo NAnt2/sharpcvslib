@@ -45,7 +45,7 @@ using ICSharpCode.SharpCvsLib.Tests.Config;
 using log4net;
 
 // TODO: Change to internalize helpers (remove)
-[assembly: log4net.Config.DOMConfigurator(
+[assembly: log4net.Config.XmlConfigurator(
 ConfigFileExtension="config", Watch=true)]
 
 namespace ICSharpCode.SharpCvsLib.Tests {
@@ -76,7 +76,7 @@ namespace ICSharpCode.SharpCvsLib.Tests {
         ///     that are needed for the tests.
         /// </summary>
         [SetUp]
-        public void SetUp () {
+        public virtual void SetUp () {
             LOGGER.Debug("Test settings: " + this.Settings);
             LOGGER.Debug("Application settings: " + SharpCvsLibConfig.GetInstance());
             this.GetTempPath();
@@ -87,7 +87,7 @@ namespace ICSharpCode.SharpCvsLib.Tests {
         ///     that are needed for the test.
         /// </summary>
         [TearDown]
-        public void TearDown() {
+        public virtual void TearDown() {
 //            this.CleanTempDirectory();            
         }
 

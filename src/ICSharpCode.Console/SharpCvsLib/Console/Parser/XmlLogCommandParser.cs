@@ -82,6 +82,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         // future enhancement to specify xsl arguments...not today though :-).
         //private const string OPT_OUTPUT_XSL_ARGS = "-xslargs";
         private const string OPT_NAME_MAP = "-nm";
+        private const string OPT_PW = "-pw";
 
         private DateTime startDate;
         private DateTime StartDate {
@@ -124,6 +125,12 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 //                    value));
                 this.xslFilename = value;
             }
+        }
+
+        private string password;
+        private string Password {
+            get {return this.password;}
+            set {this.password = value;}
         }
 
         /// <summary>
@@ -225,6 +232,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         i++;
                         arg = Args[i];
                         this.XslFilename = arg;
+                        break;
+                    case OPT_PW:
+                        i++;
+                        arg = Args[i];
+                        this.Password = arg;
                         break;
                     default:
                         throw new CommandLineParseException(String.Format("Unknown option: {0}.",

@@ -16,7 +16,7 @@
             <arg value="${compile.unsafe}" />
             <arg value="${compile.checked}" />
             
-            <sources>
+            <sources basedir="${dir.src}/${name.top-level}.${name.console}/${name.project}">
                 <includes name="Main.cs" />
                 <includes name="AssemblyHelper.cs"/>
             </sources>
@@ -38,9 +38,10 @@
             <arg value="${compile.unsafe}" />
             <arg value="${compile.checked}" />
             
-            <sources>
+            <sources basedir="${dir.src}/${name.top-level}.${name.console}/${name.project}">
                 <includes name="**/*.cs" />
                 <excludes name="Main.cs"/>
+                <excludes name="AssemblyInfo.cs"/>
             </sources>
 
             <references>

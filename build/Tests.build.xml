@@ -10,7 +10,7 @@
                 define="${compile.define}">                
             <arg value="${compile.unsafe}" />
             <arg value="${compile.checked}" />
-            <sources>
+            <sources basedir="${dir.src}/${name.top-level}.${name.tests}/${name.project}">
                 <includes name="**/*.cs" />
                 <includes name="../../${name.top-level}/${name.project}/**.cs" />
                 <includes name="../../${name.top-level}.${name.console}/${name.project}/**.cs" />
@@ -35,7 +35,7 @@
                 
             <arg value="${compile.unsafe}" />
             <arg value="${compile.checked}" />
-            <sources>
+            <sources basedir="${dir.src}/${name.top-level}.${name.tests}/${name.project}">
                 <includes name="**/*.cs" />
                 <includes name="../../${name.top-level}/${name.project}/**.cs" />
                 <includes name="../../${name.top-level}.${name.console}/${name.project}/**.cs" />

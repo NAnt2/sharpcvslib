@@ -27,4 +27,4 @@ using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: log4net.Config.DOMConfigurator(Watch=true)]
+[assembly: log4net.Config.XmlConfigurator(Watch=true)]
