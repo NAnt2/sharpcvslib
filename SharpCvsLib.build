@@ -220,7 +220,7 @@
     </target>
     
     <target name="build-release.nightly">
-        <tstamp property="assembly.version" pattern="yyyyMMdd-HHmm" verbose="true"/>
+        <tstamp property="assembly.version" pattern="yyyyMMdd-HHmmss" verbose="true"/>
         <property name="dir.output" value="${dir.release}/${assembly.version}" />
         <property name="sf.username" value="drakmar@shell.sourceforge.net" />
         <property name="sf.location" value="/home/groups/s/sh/sharpcvslib/htdocs/nightly-build" />
