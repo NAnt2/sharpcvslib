@@ -27,6 +27,8 @@
 
 using ICSharpCode.SharpZipLib.Zip.Compression.Streams;
 
+using ICSharpCode.SharpCvsLib.Client;
+
 namespace ICSharpCode.SharpCvsLib.Requests { 
 		
 	/// <summary>

@@ -1,5 +1,5 @@
 #region "Copyright"
-// IConnection.cs
+// RemoveCommand.cs 
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -29,36 +29,50 @@
 // exception statement from your version.
 #endregion
 
-using System.IO;
-using ICSharpCode.SharpCvsLib.Requests;
+using System;
 
-namespace ICSharpCode.SharpCvsLib {
+using ICSharpCode.SharpCvsLib.Requests;
+using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Client;
+
+namespace ICSharpCode.SharpCvsLib.Commands { 
 	
     /// <summary>
-    /// Connection interface.
+    /// Command to remove an item from the cvs repository.
     /// </summary>
-	public interface IConnection
+	public class RemoveCommand : ICommand
 	{
-        /// <summary>
-        /// Cvs input stream.
-        /// </summary>
-		CvsStream InputStream {
-			get;
-			set;
-		}
+		private WorkingDirectory workingdirectory;
+		private string directory;
+		private Entry entry;
 		
         /// <summary>
-        /// Cvs output stream.
+        /// Constructor.
         /// </summary>
-		CvsStream OutputStream {
-			get;
-			set;
+        /// <param name="workingdirectory"></param>
+        /// <param name="directory"></param>
+        /// <param name="entry"></param>
+		public RemoveCommand(WorkingDirectory workingdirectory, 
+		                    string directory,
+		                    Entry entry)
+		{
+			this.workingdirectory    = workingdirectory;
+			this.directory = directory;
+			this.entry = entry;
 		}
-		
+
         /// <summary>
-        /// Submit the request to the cvs server.
+        /// Do the dirty work.
         /// </summary>
-        /// <param name="request"></param>
-		void SubmitRequest(IRequest request);
+        /// <param name="connection"></param>
+		public void Execute(CVSServerConnection connection)
+		{
+			connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository + directory));
+			connection.SubmitRequest(new EntryRequest(entry));
+			connection.SubmitRequest(new RemoveRequest());
+			connection.SubmitRequest(new ArgumentRequest("-m"));
+			connection.SubmitRequest(new ArgumentRequest("Remove"));
+			connection.SubmitRequest(new CommitRequest());
+		}
 	}
 }

@@ -23,6 +23,8 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Client;
+
 namespace ICSharpCode.SharpCvsLib.Requests { 
 	
     /// <summary>

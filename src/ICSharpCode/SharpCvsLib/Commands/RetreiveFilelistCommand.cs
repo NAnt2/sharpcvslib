@@ -1,5 +1,5 @@
 #region "Copyright"
-// InitCommand.cs 
+// RetreiveFilelistCommand.cs 
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -33,32 +33,33 @@ using System;
 
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Client;
 
 namespace ICSharpCode.SharpCvsLib.Commands { 
 	
     /// <summary>
-    /// Command to initialize a new cvs repository.
+    /// Retrieve a list of files from the repository.
     /// </summary>
-	public class InitCommand : ICommand
+	public class RetreiveFilelistCommand : ICommand
 	{
-		CvsRoot cvsroot;
-		
         /// <summary>
-        /// Constructor
+        /// Constructor.
         /// </summary>
-        /// <param name="cvsroot"></param>
-		public InitCommand(CvsRoot cvsroot)
+		public RetreiveFilelistCommand()
 		{
-			this.cvsroot    = cvsroot;
 		}
-
+		
         /// <summary>
         /// Do the dirty work.
         /// </summary>
         /// <param name="connection"></param>
 		public void Execute(CVSServerConnection connection)
 		{
-            connection.SubmitRequest(new InitRequest(cvsroot.CvsRepository));
+			connection.SubmitRequest(new ArgumentRequest("-s"));
+			connection.SubmitRequest(new ArgumentRequest("-r"));
+			connection.SubmitRequest(new ArgumentRequest("0"));
+			connection.SubmitRequest(new ArgumentRequest("./"));
+			connection.SubmitRequest(new RDiffRequest());
 		}
 	}
 }

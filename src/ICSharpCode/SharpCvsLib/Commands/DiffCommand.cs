@@ -33,6 +33,7 @@ using System;
 
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Client;
 
 namespace ICSharpCode.SharpCvsLib.Commands { 
 	

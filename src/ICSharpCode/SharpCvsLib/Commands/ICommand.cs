@@ -1,5 +1,5 @@
 #region "Copyright"
-// RemoveCommand.cs 
+// ICommand.cs 
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -29,49 +29,20 @@
 // exception statement from your version.
 #endregion
 
-using System;
-
-using ICSharpCode.SharpCvsLib.Requests;
-using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Client;
 
 namespace ICSharpCode.SharpCvsLib.Commands { 
 	
     /// <summary>
-    /// Command to remove an item from the cvs repository.
+    /// Interface to be implemented by cvs commands.
     /// </summary>
-	public class RemoveCommand : ICommand
+	public interface ICommand
 	{
-		private WorkingDirectory workingdirectory;
-		private string directory;
-		private Entry entry;
-		
         /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="workingdirectory"></param>
-        /// <param name="directory"></param>
-        /// <param name="entry"></param>
-		public RemoveCommand(WorkingDirectory workingdirectory, 
-		                    string directory,
-		                    Entry entry)
-		{
-			this.workingdirectory    = workingdirectory;
-			this.directory = directory;
-			this.entry = entry;
-		}
-
-        /// <summary>
-        /// Do the dirty work.
+        /// Implement the functions of the cvs command.
         /// </summary>
         /// <param name="connection"></param>
-		public void Execute(CVSServerConnection connection)
-		{
-			connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository + directory));
-			connection.SubmitRequest(new EntryRequest(entry));
-			connection.SubmitRequest(new RemoveRequest());
-			connection.SubmitRequest(new ArgumentRequest("-m"));
-			connection.SubmitRequest(new ArgumentRequest("Remove"));
-			connection.SubmitRequest(new CommitRequest());
-		}
+		void Execute(CVSServerConnection connection);
 	}
 }
+

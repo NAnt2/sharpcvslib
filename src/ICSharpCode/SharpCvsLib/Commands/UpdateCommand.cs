@@ -35,6 +35,7 @@ using System.IO;
 
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Client;
 
 using log4net;
 

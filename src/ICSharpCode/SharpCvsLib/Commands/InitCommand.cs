@@ -1,5 +1,5 @@
 #region "Copyright"
-// ICommand.cs 
+// InitCommand.cs 
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -29,18 +29,37 @@
 // exception statement from your version.
 #endregion
 
+using System;
+
+using ICSharpCode.SharpCvsLib.Requests;
+using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Client;
+
 namespace ICSharpCode.SharpCvsLib.Commands { 
 	
     /// <summary>
-    /// Interface to be implemented by cvs commands.
+    /// Command to initialize a new cvs repository.
     /// </summary>
-	public interface ICommand
+	public class InitCommand : ICommand
 	{
+		CvsRoot cvsroot;
+		
         /// <summary>
-        /// Implement the functions of the cvs command.
+        /// Constructor
+        /// </summary>
+        /// <param name="cvsroot"></param>
+		public InitCommand(CvsRoot cvsroot)
+		{
+			this.cvsroot    = cvsroot;
+		}
+
+        /// <summary>
+        /// Do the dirty work.
         /// </summary>
         /// <param name="connection"></param>
-		void Execute(CVSServerConnection connection);
+		public void Execute(CVSServerConnection connection)
+		{
+            connection.SubmitRequest(new InitRequest(cvsroot.CvsRepository));
+		}
 	}
 }
-

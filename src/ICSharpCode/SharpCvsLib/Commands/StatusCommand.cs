@@ -1,6 +1,6 @@
 #region "Copyright"
-// RetreiveFilelistCommand.cs 
-// Copyright (C) 2001 Mike Krueger
+// StatusCommand.cs 
+// Copyright (C) 2002 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -33,19 +33,31 @@ using System;
 
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Client;
 
 namespace ICSharpCode.SharpCvsLib.Commands { 
 	
     /// <summary>
-    /// Retrieve a list of files from the repository.
+    /// Status command.
+    ///     TODO: Figure out what this is used for.
     /// </summary>
-	public class RetreiveFilelistCommand : ICommand
+	public class StatusCommand : ICommand
 	{
+		private WorkingDirectory workingdirectory;
+		private string directory;
+		private Entry entry;
+		
         /// <summary>
         /// Constructor.
         /// </summary>
-		public RetreiveFilelistCommand()
+        /// <param name="workingdirectory"></param>
+        /// <param name="directory"></param>
+        /// <param name="entry"></param>
+		public StatusCommand(WorkingDirectory workingdirectory, string directory, Entry entry)
 		{
+			this.workingdirectory    = workingdirectory;
+			this.directory = directory;
+			this.entry = entry;
 		}
 		
         /// <summary>
@@ -54,11 +66,12 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// <param name="connection"></param>
 		public void Execute(CVSServerConnection connection)
 		{
-			connection.SubmitRequest(new ArgumentRequest("-s"));
-			connection.SubmitRequest(new ArgumentRequest("-r"));
-			connection.SubmitRequest(new ArgumentRequest("0"));
-			connection.SubmitRequest(new ArgumentRequest("./"));
-			connection.SubmitRequest(new RDiffRequest());
+			connection.SubmitRequest(new DirectoryRequest(".", 
+                            workingdirectory.CvsRoot.CvsRepository + 
+                            directory));
+		    
+			connection.SubmitRequest(new ArgumentRequest(entry.Name));
+			connection.SubmitRequest(new StatusRequest());
 		}
 	}
 }
