@@ -38,6 +38,8 @@ using ICSharpCode.SharpCvsLib.Tests.Config;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Messages;
 
+using ICSharpCode.SharpCvsLib.Tests;
+
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Client {
@@ -46,17 +48,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
     ///         recovery after an unsuccessful connection attempt.
     /// </summary>
     [TestFixture]
-    public class CVSServerConnectionTest {
-        private ILog LOGGER = LogManager.GetLogger (typeof (CVSServerConnectionTest));
-        private SharpCvsLibTestsConfig settings = SharpCvsLibTestsConfig.GetInstance();
-
-        private int messageCounter;
-
-        /// <summary>
-        ///     Constructor.
-        /// </summary>
-        public CVSServerConnectionTest () {
-        }
+    public class CVSServerConnectionTest : AbstractTest {
+        private readonly ILog LOGGER = LogManager.GetLogger (typeof (CVSServerConnectionTest));
 
         /// <summary>
         ///     Makes a connection to a cvs server using parameters that
@@ -64,30 +57,18 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// </summary>
         [Test]
         public void MakeConnection_Good () {
-            messageCounter = 0;
-            LOGGER.Debug ("Settings=[" + this.settings.Config + "]");
-            System.Threading.Thread.Sleep (500);
-            CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
+            LOGGER.Debug("Entering MakeConnection_Good");
+            CvsRoot root = new CvsRoot (this.Settings.Config.Cvsroot);
             WorkingDirectory working =
                 new WorkingDirectory (root,
-                                    this.settings.Config.LocalPath,
-                                    this.settings.Config.Module);
+                                    this.Settings.Config.LocalPath,
+                                    this.Settings.Config.Module);
 
             CVSServerConnection connection = new CVSServerConnection ();
             Assertion.AssertNotNull ("Should have a connection object.", connection);
 
-            connection.InputStream.RequestMessage.MessageEvent +=
-                new EncodedMessage.MessageHandler (this.WriteMessage);
-            connection.InputStream.ResponseMessage.MessageEvent +=
-                new EncodedMessage.MessageHandler (this.WriteMessage);
-
-            connection.Connect (working, this.settings.Config.ValidPassword);
-            Assertion.Assert (messageCounter > 0);
-        }
-
-        private void WriteMessage (String message) {
-            messageCounter++;
-            LOGGER.Debug ("Delegated message: " + message);
+            connection.Connect (working, this.Settings.Config.ValidPassword);
+            connection.Close();
         }
 
         /// <summary>
@@ -95,25 +76,23 @@ namespace ICSharpCode.SharpCvsLib.Client {
         ///         These should fail.
         /// </summary>
         [Test]
+        [ExpectedException (typeof(AuthenticationException))]
         public void MakeConnection_Bad () {
-            LOGGER.Debug ("Settings=[" + this.settings.Config + "]");
-            System.Threading.Thread.Sleep (500);
-            CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
+            CvsRoot root = new CvsRoot (this.Settings.Config.Cvsroot);
             root.User = "some_other_user";
             WorkingDirectory working =
                 new WorkingDirectory (root,
-                                    this.settings.Config.LocalPath,
-                                    this.settings.Config.Module);
+                                    this.Settings.Config.LocalPath,
+                                    this.Settings.Config.Module);
 
             CVSServerConnection connection = new CVSServerConnection ();
             Assertion.AssertNotNull ("Should have a connection object.", connection);
 
             try {
-                connection.Connect (working, this.settings.Config.InvalidPassword);
-                Assertion.Assert ("Connection should have failed and this code " +
-                                "should not be reached.", true == false);
-            } catch (Exception) {
-                Assertion.Assert ("Connection failed, this is a good thing.", true == true);
+                connection.Connect (working, this.Settings.Config.InvalidPassword);
+            } catch (AuthenticationException e) {
+                connection.Close();
+                throw e;
             }
         }
     }

@@ -308,7 +308,7 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         /// </summary>
         /// <param name="dataStr"></param>
         public void SendString(string dataStr) {
-            byte[] buff = this.settings.Encoding.GetBytes(dataStr);
+            byte[] buff = EncodingUtil.DEFAULT_ENCODING.GetBytes(dataStr);
             baseStream.Write(buff, 0, buff.Length);
             RequestMessage.SendMessage (dataStr);
             Flush();

@@ -41,6 +41,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
 public class PServerAuthRequest : AbstractRequest
 {
     private const String VAR_HOME = "HOME";
+    private const String CVSPASS = ".cvspass";
     private string cvsroot;
     private string userName;
     private string password;
@@ -68,29 +69,39 @@ public class PServerAuthRequest : AbstractRequest
     public String Password {
         get {
             if (null == this.password || String.Empty == this.password) {
-                String varHomePath = Environment.GetEnvironmentVariable(VAR_HOME);
+                String home = Environment.GetEnvironmentVariable(VAR_HOME);
+                if (null != home) {
+                    String varHomePath = 
+                        Path.Combine(home, CVSPASS);
 
-                try {
-                    StreamReader reader = 
-                        new StreamReader(varHomePath);
-                    ArrayList passwords = new ArrayList ();
-                    String passLine;
-                    while ((passLine = reader.ReadLine()) != null) {
-                        String[] lineParts = passLine.Split(' ');
-                        if (this.cvsroot.Equals (lineParts[0])) {
-                            this.password = lineParts[1];
+                    try {
+                        StreamReader reader = 
+                            new StreamReader(varHomePath);
+                        ArrayList passwords = new ArrayList ();
+                        String passLine = reader.ReadLine();
+                        while (passLine.Length != 0) {
+                            LOGGER.Debug("passLine=[" + passLine + "]");
+                            String passFileCvsRoot = passLine.Substring(0, passLine.IndexOf(" "));
+                            String passFilePassword = passLine.Substring(passLine.IndexOf(" "), passLine.Length);
+
+                            if (null != passFileCvsRoot && 
+                                String.Empty != passFileCvsRoot &&
+                                this.cvsroot.Equals (passFileCvsRoot)) {
+                                this.password = passFilePassword;
+                                break;
+                            }
+                            passLine = reader.ReadLine();
                         }
+                    } catch (IOException e) {
+                        LOGGER.Error(e);
                     }
-                } catch (IOException e) {
-                    LOGGER.Error(e);
-                    this.password = String.Empty;
-                }
 
-                StringBuilder msg = new StringBuilder ();
-                msg.Append("Password was null, looking up password from ");
-                msg.Append(VAR_HOME).Append("=[").Append(varHomePath).Append("]");
-                msg.Append("Password=[").Append(password).Append("]");
-                LOGGER.Debug(msg);
+                    StringBuilder msg = new StringBuilder ();
+                    msg.Append("Password was null, looking up password from ");
+                    msg.Append(VAR_HOME).Append("=[").Append(varHomePath).Append("]");
+                    msg.Append("Password=[").Append(password).Append("]");
+                    LOGGER.Debug(msg);
+                }
             }
             LOGGER.Debug("Returning password=[" + this.password + "]");
             return this.password;
@@ -121,9 +132,7 @@ public class PServerAuthRequest : AbstractRequest
         this.cvsroot  = cvsroot;
         this.userName = userName;
         this.password = password;
-        if (null != this.password) {
-            this.password = PasswordScrambler.Scramble(this.password);
-        }
+        this.password = PasswordScrambler.Scramble(this.password);
     }
 
     /// <summary>
@@ -132,10 +141,9 @@ public class PServerAuthRequest : AbstractRequest
     public override string RequestString {
         get {
             if (LOGGER.IsDebugEnabled) {
-            String msg = "Password Scrambled=[" +
+                String msg = "Password Scrambled=[" +
                          PasswordScrambler.Scramble (password) +
                              "]";
-
                 LOGGER.Debug (msg);
             }
             return "BEGIN AUTH REQUEST\n" +

@@ -37,6 +37,8 @@ using ICSharpCode.SharpCvsLib.Config;
 
 using ICSharpCode.SharpCvsLib.Streams;
 
+using log4net;
+
 namespace ICSharpCode.SharpCvsLib.FileHandler {
 
     /// <summary>
@@ -44,6 +46,9 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
     /// </summary>
     public class UncompressedFileHandler : IFileHandler {
         private SharpCvsLibConfig settings = SharpCvsLibConfig.GetInstance();
+
+        private readonly ILog LOGGER = 
+            LogManager.GetLogger(typeof(UncompressedFileHandler));
 
         /// <summary>
         /// Send a text file to the cvs server.
@@ -57,9 +62,10 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
             FileStream tmpFile = File.Create(tmpFileName);
 
             StreamReader fs = File.OpenText(fileName);
+            LOGGER.Debug(fileName);
             while (true) {
                 string line = fs.ReadLine();
-                if (line == null) {
+                if (line == null || line.Length == 0 || String.Empty == line) {
                     break;
                 }
 
@@ -101,7 +107,7 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
             StreamWriter fs = File.CreateText(fileName);
             while (true) {
                 string line = tmpTxtFile.ReadLine();
-                if (line == null) {
+                if (line == null || line.Length == 0 || String.Empty == line) {
                     break;
                 }
                 fs.WriteLine(line);

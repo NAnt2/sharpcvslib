@@ -68,7 +68,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     during this cvs checkout.  This is used for program control,
         ///     to stop the cvs commands from leaving this sandbox location.</param>
         public Manager (String workingPath) {
-            this.workingPath = workingPath;
+            this.workingPath = PathTranslator.ConvertToOSSpecificPath(workingPath);;
         }
 
         /// <summary>
@@ -205,7 +205,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// Add the contents of the cvs file object to the respective file.
         /// </summary>
         public void Add (ICvsFile newCvsEntry) {
-            String cvsPath = this.GetCvsDir (newCvsEntry.Path);
+            String cvsPath = this.GetCvsDir (newCvsEntry.FullPath);
             LOGGER.Debug("Add ICvsFile cvsPath=[" + cvsPath + "]");
 
             Hashtable newCvsEntries = new Hashtable();
@@ -818,8 +818,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             String repositoryContents = workingDirectory.ModuleName + "/" +
                                         pathTranslator.RelativePath;
 
+            String path = pathTranslator.LocalPathAndFilename;
+            if (!path.EndsWith(Path.DirectorySeparatorChar.ToString())) {
+                path = path + Path.DirectorySeparatorChar.ToString();
+            }
             Repository repository =
-                (Repository)factory.CreateCvsObject (pathTranslator.LocalPath + Path.DirectorySeparatorChar,
+                (Repository)factory.CreateCvsObject (path,
                                                     Factory.FileType.Repository,
                                                     repositoryContents);
             this.Add (repository);
@@ -1047,11 +1051,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         private void ValidateInSandbox (String path) {
-            if (!IsInSandbox(path)) {
+            if (!IsInSandbox(PathTranslator.ConvertToOSSpecificPath(path))) {
                 StringBuilder msg = new StringBuilder();
-                msg.Append("Unable to write outside of sandbox.");
-                msg.Append("path=[").Append(path).Append("]");
-                msg.Append("workingPath=[").Append(this.workingPath).Append("]");
+                msg.Append("Unable to write outside of sandbox.  ");
+                msg.Append("writing to path=[").Append(path).Append("]");
+                msg.Append("sandbox path=[").Append(this.workingPath).Append("]");
                 throw new InvalidPathException(msg.ToString());
             }
         }

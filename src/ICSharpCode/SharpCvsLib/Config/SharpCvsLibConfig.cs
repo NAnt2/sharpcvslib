@@ -181,6 +181,10 @@ namespace ICSharpCode.SharpCvsLib.Config {
                 config =
                     (SharpCvsLibConfig)ConfigurationSettings.GetConfig
                     (SharpCvsLibConfigHandler.APP_CONFIG_SECTION);
+
+                if (null == config) {
+                    config = new SharpCvsLibConfig();
+                }
             } catch (Exception e) {
                 LOGGER.Error(e);
                 config = new SharpCvsLibConfig();

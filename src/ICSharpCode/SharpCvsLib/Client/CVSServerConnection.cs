@@ -94,8 +94,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
         public CVSServerConnection () {
             inputStream  = new CvsStream (new MemoryStream());
             outputStream = new CvsStream (new MemoryStream());
-            this.config = SharpCvsLibConfig.GetInstance();
 
+            this.config = SharpCvsLibConfig.GetInstance();
             try {
                 if (config.Log.DebugLog.Enabled) {
                     requestLog = new RequestLog ();
@@ -320,7 +320,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// <param name="password"></param>
         public void Authentication(string password) {
             switch (repository.CvsRoot.Protocol) {
-                case "ext":
+                case "ext": {
                     StringBuilder processArgs = new StringBuilder ();
                     processArgs.Append ("-l ").Append (repository.CvsRoot.User);
                     processArgs.Append (" -q ");  // quiet
@@ -366,25 +366,29 @@ namespace ICSharpCode.SharpCvsLib.Client {
                     inputStream = new CvsStream (streamReader.BaseStream);
                     outputStream = new CvsStream (streamWriter.BaseStream);
                     break;
-                case "pserver":
+                }
+                case "pserver": {
                     tcpclient = new TcpClient ();
                     tcpclient.SendTimeout = this.Timeout;
 
-                    tcpclient.Connect(repository.CvsRoot.Host, this.Port);
-                    inputStream  = outputStream = new CvsStream(tcpclient.GetStream());
-
                     if (LOGGER.IsDebugEnabled) {
-                        String msg = "Before submitting pserver connect request.  " +
-                                    "repository.CvsRoot.CvsRepository=[" + repository.CvsRoot.CvsRepository + "]" +
-                                    "repository.CvsRoot.User=[" + repository.CvsRoot.User + "]" +
-                                    "password=[" + password + "]";
+                        StringBuilder msg = new StringBuilder();
+                        msg.Append("Before submitting pserver connect request.  ");
+                        msg.Append("repository.CvsRoot.CvsRepository=[").Append(repository.CvsRoot.CvsRepository).Append("]");
+                        msg.Append("repository.CvsRoot.User=[").Append(repository.CvsRoot.User).Append("]");
+                        msg.Append("has password=[").Append(null != password).Append("]");
+                        msg.Append("port=[").Append(repository.CvsRoot.Port).Append("]");
                         LOGGER.Debug (msg);
                     }
+
+                    tcpclient.Connect(repository.CvsRoot.Host, repository.CvsRoot.Port);
+                    inputStream  = outputStream = new CvsStream(tcpclient.GetStream());
+
                     for (int i=0; i < 5; i++) {
                         try {
                             SubmitRequest(new PServerAuthRequest(repository.CvsRoot.CvsRepository,
-                                                                repository.CvsRoot.User,
-                                                                password));
+                                repository.CvsRoot.User,
+                                password));
                             break;
                         } catch (Exception e) {
                             LOGGER.Error (e);
@@ -394,36 +398,46 @@ namespace ICSharpCode.SharpCvsLib.Client {
                     inputStream.Flush();
 
                     string retStr;
-                    // sleep for awhile for slow servers
-                    System.Threading.Thread.Sleep (this.AuthSleep);
-
                     try {
                         retStr = inputStream.ReadLine();
                     }
                     catch (IOException e) {
                         String msg = "Failed to read line from server.  " +
-                                    "It is possible that the remote server was down.";
+                            "It is possible that the remote server was down.";
                         LOGGER.Error (msg, e);
                         throw new AuthenticationException (msg);
                     }
 
                     switch (retStr) {
-                        case PSERVER_AUTH_SUCCESS:
+                        case PSERVER_AUTH_SUCCESS: {
                             SendMessage("Connection established");
                             break;
-                        case PSERVER_AUTH_FAIL:
-                            throw new AuthenticationException();
-                        default:
+                        }
+                        case PSERVER_AUTH_FAIL: {
+                            try {
+                                tcpclient.Close();
+                            } finally {
+                                throw new AuthenticationException();
+                            }
+                        }
+                        default: {
                             StringBuilder msg = new StringBuilder ();
                             msg.Append("Unknown Server response : >").Append(retStr).Append("<");
                             SendMessage(msg.ToString());
-                            throw new UnsupportedResponseException(msg.ToString());
+                            try {
+                                tcpclient.Close();
+                            } finally {
+                                throw new AuthenticationException(msg.ToString());
+                            }
+                        }
                     }
-                break;
-                default:
+                    break;
+                }
+                default: {
                     StringBuilder notSupportedMsg = new StringBuilder ();
                     notSupportedMsg.Append("Unknown protocol=[").Append(repository.CvsRoot.Protocol).Append("]");
-                    throw new NotSupportedException (notSupportedMsg.ToString());
+                    throw new UnsupportedProtocolException (notSupportedMsg.ToString());
+                }
             }
 
             // TODO: Move these into an abstract request class

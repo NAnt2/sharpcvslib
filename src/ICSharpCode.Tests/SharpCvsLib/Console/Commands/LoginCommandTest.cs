@@ -75,6 +75,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             // Create the consoleMain to test the LoginCommand
             ConsoleMain consoleMain = new ConsoleMain();
             Assertion.AssertNotNull ("Should have a command object.", consoleMain);
+
             consoleMain.Execute(commandLineArgs);
         }
     }

@@ -41,53 +41,53 @@ using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Tests.Config {
 
-/// <summary>
-///     Handles loading of the sharpcvslib configuration file.
-/// </summary>
-public class SharpCvsLibTestsConfigHandler : IConfigurationSectionHandler {
-
-    private readonly ILog LOGGER = LogManager.GetLogger (typeof (SharpCvsLibTestsConfigHandler));
     /// <summary>
-    /// Application configuration node name.
+    ///     Handles loading of the sharpcvslib configuration file.
     /// </summary>
-    public const String APP_CONFIG_SECTION = "sharpcvslib-tests";
+    public class SharpCvsLibTestsConfigHandler : IConfigurationSectionHandler {
 
-    /// <summary>
-    /// Create the configuration section.
-    /// </summary>
-    /// <param name="parent"></param>
-    /// <param name="configContext"></param>
-    /// <param name="section"></param>
-    /// <returns></returns>
-    public object Create(object parent,
-                         object configContext,
-                         XmlNode section) {
-        LOGGER.Debug ("Attempting to load configuration handler for tests.");
-        XPathNavigator nav = section.CreateNavigator();
-        String typename = (String) nav.Evaluate("string(@type)");
-        Type type = Type.GetType(typename);
-        object theObject = this.GetConfigObject (type,
-                           section.SelectSingleNode ("//" + SharpCvsLibTestsConfig.SUB_SECTION));
+        private readonly ILog LOGGER = LogManager.GetLogger (typeof (SharpCvsLibTestsConfigHandler));
+        /// <summary>
+        /// Application configuration node name.
+        /// </summary>
+        public const String APP_CONFIG_SECTION = "sharpcvslib-tests";
 
-        LOGGER.Debug("Configuration Loaded");
-        LOGGER.Debug("Config=[" + theObject + "]");
-        return theObject;
+        /// <summary>
+        /// Create the configuration section.
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="configContext"></param>
+        /// <param name="section"></param>
+        /// <returns></returns>
+        public object Create(object parent,
+                            object configContext,
+                            XmlNode section) {
+            LOGGER.Debug ("Attempting to load configuration handler for tests.");
+            XPathNavigator nav = section.CreateNavigator();
+            String typename = (String) nav.Evaluate("string(@type)");
+            Type type = Type.GetType(typename);
+            object theObject = this.GetConfigObject (type,
+                            section.SelectSingleNode ("//" + SharpCvsLibTestsConfig.SUB_SECTION));
+
+            LOGGER.Debug("Configuration Loaded");
+            LOGGER.Debug("Config=[" + theObject + "]");
+            return theObject;
+        }
+
+        /// <summary>
+        /// Get the object using the xml serializer.
+        /// </summary>
+        /// <param name="type">The type of object we are expecting.</param>
+        /// <param name="node">Xml node to look for in the config file.</param>
+        /// <returns>The inflated xml object.</returns>
+        private object GetConfigObject (Type type, XmlNode node) {
+            object theObject;
+            XmlSerializer ser = new XmlSerializer(type);
+            theObject = ser.Deserialize(new XmlNodeReader(node));
+
+            return theObject;
+
+        }
+
     }
-
-    /// <summary>
-    /// Get the object using the xml serializer.
-    /// </summary>
-    /// <param name="type">The type of object we are expecting.</param>
-    /// <param name="node">Xml node to look for in the config file.</param>
-    /// <returns>The inflated xml object.</returns>
-    private object GetConfigObject (Type type, XmlNode node) {
-        object theObject;
-        XmlSerializer ser = new XmlSerializer(type);
-        theObject = ser.Deserialize(new XmlNodeReader(node));
-
-        return theObject;
-
-    }
-
-}
 }
