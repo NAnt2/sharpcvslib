@@ -38,28 +38,27 @@ using System.Globalization;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Exceptions {
-
-/// <summary>
-///     This exception is thrown if there is no entry matching the specifed
-///         criteria.
-/// </summary>
-public class EntryNotFoundException : Exception {
-
     /// <summary>
-    ///     Constructor.
+    ///     This exception is thrown if there is no entry matching the specifed
+    ///         criteria.
     /// </summary>
-    public EntryNotFoundException () {
+    public class EntryNotFoundException : Exception {
+
+        /// <summary>
+        ///     Constructor.
+        /// </summary>
+        public EntryNotFoundException () {
+
+        }
+
+        /// <summary>
+        ///     Constructor.
+        /// </summary>
+        /// <param name="message">Additional information to pass on in the
+        ///     exception.</param>
+        public EntryNotFoundException (String message) : base (message) {
+        }
 
     }
-
-    /// <summary>
-    ///     Constructor.
-    /// </summary>
-    /// <param name="message">Additional information to pass on in the
-    ///     exception.</param>
-public EntryNotFoundException (String message) : base (message) {
-    }
-
-}
 
 }

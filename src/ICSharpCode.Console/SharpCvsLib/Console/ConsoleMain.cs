@@ -37,6 +37,7 @@
 #endregion
 
 using System;
+using System.Text;
 
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Commands;
@@ -99,11 +100,22 @@ namespace ICSharpCode.SharpCvsLib.Console {
                         serverConn.Connect(workingDirectory, password);
                     }
                     catch (AuthenticationException eCvsPass){
-                        LOGGER.Info("Authentication failed using .cvspass file, prompting for password.", eCvsPass);
-                        // prompt user for password by using login command?
-                        //LoginCommand login = new LoginCommand(workingDirectory.CvsRoot);
-                        //serverConn.Connect(workingDirectory, login.Password);
-                        throw eCvsPass;
+                        try {
+                            LOGGER.Info("Authentication failed using .cvspass file, prompting for password.", eCvsPass);
+                            // prompt user for password by using login command?
+                            LoginCommand login = new LoginCommand(workingDirectory.CvsRoot);
+                            serverConn.Connect(workingDirectory, login.Password);
+                            throw eCvsPass;
+                        } catch (AuthenticationException e) {
+                            StringBuilder msg = new StringBuilder();
+                            msg.Append("Fatal error, aborting.");
+                            msg.Append("cvs [login aborted]: ")
+                                .Append(workingDirectory.CvsRoot.User)
+                                .Append(": unknown user or bad password.");
+                            LOGGER.Error(msg, e);
+                            System.Console.WriteLine(msg.ToString());
+                            Environment.Exit(-1);
+                        }
                     }
                 }
                 // run the execute checkout command on cvs repository.

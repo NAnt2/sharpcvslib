@@ -65,13 +65,6 @@ public class CVSServerConnection : IConnection, IResponseServices, ICommandConne
     private readonly ILog LOGGER =
         LogManager.GetLogger (typeof (CVSServerConnection));
 
-    private const int DEFAULT_PORT = 2401;
-    private const int DEFAULT_TIMEOUT = 1000;
-    private const int DEFAULT_AUTH_SLEEP = 1000;
-
-    private int timeout;
-    private int authSleep;
-
     private string nextFileDate;
 
     private TcpClient tcpclient = null;
@@ -90,34 +83,21 @@ public class CVSServerConnection : IConnection, IResponseServices, ICommandConne
     private RequestLog requestLog;
     private ResponseLog responseLog;
 
+    private SharpCvsLibConfig config;
+
     /// <summary>
     ///     Initialize the cvs server connection.
     /// </summary>
     public CVSServerConnection () {
         inputStream  = new CvsStream (new MemoryStream());
         outputStream = new CvsStream (new MemoryStream());
-        SharpCvsLibConfig config = new SharpCvsLibConfig ();
         try {
-            config =
+            this.config =
                 (SharpCvsLibConfig)ConfigurationSettings.GetConfig
                 (SharpCvsLibConfigHandler.APP_CONFIG_SECTION);
-
-            if (null == config || 0 == config.Timeout) {
-                this.timeout = DEFAULT_TIMEOUT;
-            }
-
-            if (null == config || 0 == config.AuthSleep) {
-                this.authSleep = DEFAULT_AUTH_SLEEP;
-            }
-
-            if (config.Verbose) {
-                // TODO: Fix up the verbose property so logging can be shut off.
-            }
-
         } catch (Exception e) {
             LOGGER.Error (e);
-            this.timeout = DEFAULT_TIMEOUT;
-            this.authSleep = DEFAULT_AUTH_SLEEP;
+            this.config = new SharpCvsLibConfig();
         }
 
         try {
@@ -151,8 +131,7 @@ public class CVSServerConnection : IConnection, IResponseServices, ICommandConne
     ///     Set the server timeout value.
     /// </summary>
     public int Timeout {
-        get {return this.timeout;}
-        set {this.timeout = value;}
+        get {return this.config.Timeout;}
     }
 
     /// <summary>
@@ -161,14 +140,22 @@ public class CVSServerConnection : IConnection, IResponseServices, ICommandConne
     ///         slow responses on some servers.
     /// </summary>
     public int AuthSleep {
-        get {return this.authSleep;}
-        set {this.authSleep = value;}
+        get {return this.config.AuthSleep;}
     }
 
     /// <summary>
-    /// Cvs input stream writer
+    /// The port that should be used for cvs connections.
     /// </summary>
-    public CvsStream InputStream {
+    public int Port {
+        get {
+            return this.repository.CvsRoot.Port;
+        }
+    }
+
+        /// <summary>
+        /// Cvs input stream writer
+        /// </summary>
+        public CvsStream InputStream {
         get {return inputStream;}
         set {inputStream = value;}
     }
@@ -323,20 +310,6 @@ public class CVSServerConnection : IConnection, IResponseServices, ICommandConne
         Authentication(password);
     }
 
-    private string shell = "ssh";
-    /// <summary>
-    /// The cvs connection type
-    ///     <ol>
-    ///         <li>ssh</li>
-    ///         <li>pserver</li>
-    ///         <li>ext</li>
-    ///     </ol>
-    /// </summary>
-    public string Shell {
-        get {return shell;}
-        set {shell = value;}
-    }
-
     private Process p = null;
 
     private void ExitShellEvent(object sender, EventArgs e)
@@ -358,110 +331,111 @@ public class CVSServerConnection : IConnection, IResponseServices, ICommandConne
     public void Authentication(string password)
     {
         switch (repository.CvsRoot.Protocol) {
-        case "ext":
-            StringBuilder processArgs = new StringBuilder ();
-            processArgs.Append ("-l ").Append (repository.CvsRoot.User);
-            //processArgs.Append (" -A "); // Allow authentication forward.
-            //processArgs.Append (" -N "); //do not execute a shell
-            //processArgs.Append (" -n "); //redirect input from /dev/null
-            //processArgs.Append (" -v ");  // verbose
-            processArgs.Append (" -q ");  // verbose
-            processArgs.Append (" ").Append (repository.CvsRoot.Host);
-            processArgs.Append (" \"cvs server\"");
+            case "ext":
+                StringBuilder processArgs = new StringBuilder ();
+                processArgs.Append ("-l ").Append (repository.CvsRoot.User);
+                processArgs.Append (" -q ");  // quiet
+                processArgs.Append (" ").Append (repository.CvsRoot.Host);
+                processArgs.Append (" \"cvs server\"");
 
-            try {
-
-                ProcessStartInfo startInfo =
-                    new ProcessStartInfo(shell, processArgs.ToString ());
-                if (LOGGER.IsDebugEnabled)
-                {
-                    StringBuilder msg = new StringBuilder ();
-                    msg.Append("Process=[").Append(shell).Append("]");
-                    msg.Append("Process Arguments=[").Append(processArgs).Append("]");
-                    LOGGER.Debug(msg);
-                }
-                startInfo.RedirectStandardError  = true;
-                startInfo.RedirectStandardInput  = true;
-                startInfo.RedirectStandardOutput = true;
-                startInfo.UseShellExecute        = false;
-
-                p = new Process();
-
-                p.StartInfo = startInfo;
-                p.Exited += new EventHandler(ExitShellEvent);
-                p.Start();
-            } catch (Exception e) {
-                if (LOGGER.IsDebugEnabled) {
-                    LOGGER.Debug(e);
-                }
-                throw new ExecuteShellException(shell + processArgs.ToString ());
-            }
-            BufferedStream errstream = new BufferedStream(p.StandardError.BaseStream);
-            //inputstream  = new CvsStream(new BufferedStream(p.StandardOutput.BaseStream));
-            //outputstream = new CvsStream(new BufferedStream(p.StandardInput.BaseStream));
-            StreamWriter streamWriter  = p.StandardInput;
-            StreamReader streamReader = p.StandardOutput;
-
-            //streamWriter.AutoFlush = true;
-            //streamReader.ReadToEnd ();
-            //streamWriter.WriteLine(password);
-
-            inputStream = new CvsStream (streamReader.BaseStream);
-            outputStream = new CvsStream (streamWriter.BaseStream);
-            break;
-        case "pserver":
-            tcpclient = new TcpClient ();
-            tcpclient.SendTimeout = this.Timeout;
-
-            tcpclient.Connect(repository.CvsRoot.Host, DEFAULT_PORT);
-            inputStream  = outputStream = new CvsStream(tcpclient.GetStream());
-
-            if (LOGGER.IsDebugEnabled) {
-                String msg = "Before submitting pserver connect request.  " +
-                             "repository.CvsRoot.CvsRepository=[" + repository.CvsRoot.CvsRepository + "]" +
-                             "repository.CvsRoot.User=[" + repository.CvsRoot.User + "]" +
-                             "password=[" + password + "]";
-                LOGGER.Debug (msg);
-            }
-            for (int i=0; i < 5; i++) {
                 try {
-                    SubmitRequest(new PServerAuthRequest(repository.CvsRoot.CvsRepository,
-                                                         repository.CvsRoot.User,
-                                                         password));
-                    break;
+
+                    ProcessStartInfo startInfo =
+                        new ProcessStartInfo(this.config.Shell, processArgs.ToString ());
+                    if (LOGGER.IsDebugEnabled)
+                    {
+                        StringBuilder msg = new StringBuilder ();
+                        msg.Append("Process=[").Append(this.config.Shell).Append("]");
+                        msg.Append("Process Arguments=[").Append(processArgs).Append("]");
+                        LOGGER.Debug(msg);
+                    }
+                    startInfo.RedirectStandardError  = true;
+                    startInfo.RedirectStandardInput  = true;
+                    startInfo.RedirectStandardOutput = true;
+                    startInfo.UseShellExecute        = false;
+
+                    p = new Process();
+
+                    p.StartInfo = startInfo;
+                    p.Exited += new EventHandler(ExitShellEvent);
+                    p.Start();
                 } catch (Exception e) {
-                    LOGGER.Error (e);
+                    if (LOGGER.IsDebugEnabled) {
+                        LOGGER.Debug(e);
+                    }
+                    throw new ExecuteShellException(this.config.Shell + processArgs.ToString ());
                 }
-            }
+                BufferedStream errstream = new BufferedStream(p.StandardError.BaseStream);
+                //inputstream  = new CvsStream(new BufferedStream(p.StandardOutput.BaseStream));
+                //outputstream = new CvsStream(new BufferedStream(p.StandardInput.BaseStream));
+                StreamWriter streamWriter  = p.StandardInput;
+                StreamReader streamReader = p.StandardOutput;
 
-            inputStream.Flush();
+                //streamWriter.AutoFlush = true;
+                //streamReader.ReadToEnd ();
+                //streamWriter.WriteLine(password);
 
-            string retStr;
-            // sleep for awhile for slow servers
-            System.Threading.Thread.Sleep (this.AuthSleep);
-
-            try {
-                retStr = inputStream.ReadLine();
-            }
-            catch (IOException e) {
-                String msg = "Failed to read line from server.  " +
-                             "It is possible that the remote server was down.";
-                LOGGER.Error (msg, e);
-                throw new AuthenticationException (msg);
-            }
-
-            switch (retStr) {
-            case PSERVER_AUTH_SUCCESS:
-                SendMessage("Connection established");
+                inputStream = new CvsStream (streamReader.BaseStream);
+                outputStream = new CvsStream (streamWriter.BaseStream);
                 break;
-            case PSERVER_AUTH_FAIL:
-                throw new AuthenticationException();
-            default:
-                SendMessage("Unknown Server response : >" + retStr + "<");
-                // TODO : invent a better exception for this case.
-                throw new ApplicationException("Unknown Server response : >" + retStr + "<");
-            }
+            case "pserver":
+                tcpclient = new TcpClient ();
+                tcpclient.SendTimeout = this.Timeout;
+
+                tcpclient.Connect(repository.CvsRoot.Host, this.Port);
+                inputStream  = outputStream = new CvsStream(tcpclient.GetStream());
+
+                if (LOGGER.IsDebugEnabled) {
+                    String msg = "Before submitting pserver connect request.  " +
+                                "repository.CvsRoot.CvsRepository=[" + repository.CvsRoot.CvsRepository + "]" +
+                                "repository.CvsRoot.User=[" + repository.CvsRoot.User + "]" +
+                                "password=[" + password + "]";
+                    LOGGER.Debug (msg);
+                }
+                for (int i=0; i < 5; i++) {
+                    try {
+                        SubmitRequest(new PServerAuthRequest(repository.CvsRoot.CvsRepository,
+                                                            repository.CvsRoot.User,
+                                                            password));
+                        break;
+                    } catch (Exception e) {
+                        LOGGER.Error (e);
+                    }
+                }
+
+                inputStream.Flush();
+
+                string retStr;
+                // sleep for awhile for slow servers
+                System.Threading.Thread.Sleep (this.AuthSleep);
+
+                try {
+                    retStr = inputStream.ReadLine();
+                }
+                catch (IOException e) {
+                    String msg = "Failed to read line from server.  " +
+                                "It is possible that the remote server was down.";
+                    LOGGER.Error (msg, e);
+                    throw new AuthenticationException (msg);
+                }
+
+                switch (retStr) {
+                    case PSERVER_AUTH_SUCCESS:
+                        SendMessage("Connection established");
+                        break;
+                    case PSERVER_AUTH_FAIL:
+                        throw new AuthenticationException();
+                    default:
+                        StringBuilder msg = new StringBuilder ();
+                        msg.Append("Unknown Server response : >").Append(retStr).Append("<");
+                        SendMessage(msg.ToString());
+                        throw new UnsupportedResponseException(msg.ToString());
+                }
             break;
+            default:
+                StringBuilder notSupportedMsg = new StringBuilder ();
+                notSupportedMsg.Append("Unknown protocol=[").Append(repository.CvsRoot.Protocol).Append("]");
+                throw new NotSupportedException (notSupportedMsg.ToString());
         }
         SubmitRequest(new ValidResponsesRequest());
         SubmitRequest(new ValidRequestsRequest());

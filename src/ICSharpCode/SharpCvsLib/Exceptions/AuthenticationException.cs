@@ -27,33 +27,35 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//  
+//  <author>Mike Krueger</author>
+//  <author>Clayton Harbour</author>
 #endregion
 
 using System;
 
 namespace ICSharpCode.SharpCvsLib.Exceptions{
 
-/// <summary>
-/// Authentication failed exception is thrown when the
-///     credentials specified do not match those required to
-///     gain access to the files on the cvs server.
-/// </summary>
-public class AuthenticationException : Exception
-{
     /// <summary>
-    /// Default Constructor.
+    /// Authentication failed exception is thrown when the
+    ///     credentials specified do not match those required to
+    ///     gain access to the files on the cvs server.
     /// </summary>
-    public AuthenticationException()
+    public class AuthenticationException : Exception
     {
-    }
+        /// <summary>
+        /// Default Constructor.
+        /// </summary>
+        public AuthenticationException()
+        {
+        }
 
-    /// <summary>
-    /// Specify a message to help trace the source of the
-    ///     exception.
-    /// </summary>
-    /// <param name="msg"></param>
-public AuthenticationException(string msg) : base(msg)
-    {
+        /// <summary>
+        /// Specify a message to help trace the source of the
+        ///     exception.
+        /// </summary>
+        /// <param name="msg"></param>
+        public AuthenticationException(string msg) : base(msg) {
+        }
     }
-}
 }

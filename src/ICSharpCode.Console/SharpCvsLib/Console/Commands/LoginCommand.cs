@@ -57,11 +57,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// </summary>
         /// <param name="cvsroot">User information</param>
         public LoginCommand(string cvsroot) : this(new CvsRoot(cvsroot)) {
-//            this(new CvsRoot(cvsroot));
-             // get cvsroot
-//             CvsRoot root = new CvsRoot(cvsroot);
-             // get username from cvsroot
-//             username = root.User;
         }
 
         /// <summary>

@@ -72,8 +72,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         /// <param name="cvsroot">User information</param>
         /// <param name="repositoryName">Repository</param>
         /// <param name="coOptions">Options</param>
-        public CheckoutCommand(string cvsroot, string repositoryName, string coOptions){
-            this.cvsRoot = new CvsRoot(cvsroot);
+        public CheckoutCommand(string cvsroot, string repositoryName, string coOptions) : 
+            this(new CvsRoot(cvsroot), repositoryName, coOptions){
+        }
+
+        /// <summary>
+        /// Create a new checkout command, initialize the variables that are used
+        ///     in a checkout.
+        /// </summary>
+        /// <param name="cvsRoot">The cvs root to use for this checkout.</param>
+        /// <param name="repositoryName">Name of the local repository path.</param>
+        /// <param name="coOptions">All unparsed checkout options.</param>
+        public CheckoutCommand (CvsRoot cvsRoot, string repositoryName, string coOptions) {
+            this.cvsRoot = cvsRoot;
             repository = repositoryName;
             this.unparsedOptions = coOptions;
         }

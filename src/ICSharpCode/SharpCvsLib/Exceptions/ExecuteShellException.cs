@@ -33,33 +33,29 @@ using System;
 
 namespace ICSharpCode.SharpCvsLib.Exceptions {
 
-/// <summary>
-/// Exception thrown when there is a problem communicating with
-///     the cvs server.
-///
-///     TODO: Figure out if this is correct...
-/// </summary>
-public class ExecuteShellException : Exception
-{
-    private string shell;
-
     /// <summary>
-    /// The shell command.
+    /// The shell command is used to execute a binary that will handle secure 
+    ///     connections.  The shell exception occurs when there is a problem
+    ///     using this binary.
     /// </summary>
-    public string Shell {
-        get {
-            return shell;
+    public class ExecuteShellException : Exception
+    {
+        private string shell;
+
+        /// <summary>
+        /// The shell command.
+        /// </summary>
+        public string Shell {
+            get {return shell;}
+        }
+
+        /// <summary>
+        /// Constructor, takes the shell command to help trace the
+        ///     source of the exception.
+        /// </summary>
+        /// <param name="shell"></param>
+        public ExecuteShellException(string shell) : base(shell) {
+            this.shell = shell;
         }
     }
-
-    /// <summary>
-    /// Constructor, takes the shell command to help trace the
-    ///     source of the exception.
-    /// </summary>
-    /// <param name="shell"></param>
-public ExecuteShellException(string shell) : base(shell)
-    {
-        this.shell = shell;
-    }
-}
 }

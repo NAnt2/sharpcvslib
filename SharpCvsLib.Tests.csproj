@@ -335,12 +335,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\ICSharpCode\SharpCvsLib\Misc\CvsRootParseException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src\ICSharpCode\SharpCvsLib\Misc\PasswordScrambler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "src\ICSharpCode\SharpCvsLib\Misc\TraceUtil.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\ICSharpCode\SharpCvsLib\Misc\UnsupportedProtocolException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -615,6 +625,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\ICSharpCode\SharpCvsLib\Responses\UnsupportedResponseException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src\ICSharpCode\SharpCvsLib\Responses\UpdatedResponse.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -675,6 +690,11 @@
                 />
                 <File
                     RelPath = "src\ICSharpCode.Console\SharpCvsLib\Console\Parser\Command.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\ICSharpCode.Console\SharpCvsLib\Console\Parser\CommandLineParseException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

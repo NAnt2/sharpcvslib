@@ -57,11 +57,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
         private String[] arguments;
 
-        private string cvsroot;
+        private CvsRoot cvsRoot;
         private string command;
         private string options;
         private string repository;
         private string singleOptions;
+
+        private const String ENV_CVS_ROOT = "CVS_ROOT";
 
         private WorkingDirectory currentWorkingDirectory;
         /// <summary>
@@ -75,8 +77,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             /// Value of the cvsroot to use as a string.  This will be passed
             ///     into the CvsRoot object which will know how to parse it.
             /// </summary>
-            public String Cvsroot {
-            get {return this.cvsroot;}
+            public CvsRoot CvsRoot {
+            get {return this.cvsRoot;}
         }
 
         /// <summary>
@@ -125,6 +127,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         ///     parsing the command line arguments (i.e. if invalid arguments
         ///     are entered.</exception>
         public ICommand Execute () {
+
+            int startIndex = 0;
+
             if (LOGGER.IsDebugEnabled) {
                 StringBuilder msg = new StringBuilder ();
                 msg.Append("\n Command line arguments:");
@@ -140,18 +145,23 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 System.Console.WriteLine (Usage.General);
             }
 
-            for (int i = 0; i < arguments.Length; i++) {
+            if (arguments[0].IndexOf ("-d", 0, 2) >= 0) {
+                String tempRoot = arguments[0].Substring (2);
+                this.cvsRoot = new CvsRoot (tempRoot);
+                if (arguments.Length == 1) {
+                    throw new CommandLineParseException("Only specified a cvsroot, need to specify a command.");
+                }
+                startIndex = 1;
+            } else {
+                String tempRoot = Environment.GetEnvironmentVariable (ENV_CVS_ROOT);
+                this.cvsRoot = new CvsRoot(tempRoot);
+            }
+
+            for (int i = startIndex; i < arguments.Length; i++) {
                 if (LOGGER.IsDebugEnabled) {
                     StringBuilder msg = new StringBuilder ();
                     msg.Append("arguments[").Append(i).Append("]=[").Append(arguments[i]).Append("]");
                     LOGGER.Debug(msg);
-                }
-                if (arguments[i].IndexOf ("-d", 0, 2) >= 0) {
-                    cvsroot = arguments[i].Substring (2);
-                    i++;
-                    if (arguments.Length < i) {
-                        throw new CommandLineParseException("Only specified a cvsroot, need to specify a command.");
-                    }
                 }
                 switch (arguments[i]) {
                     case "checkout":
@@ -184,7 +194,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         }
                         try {
                             CheckoutCommand checkoutCommand = 
-                                new CheckoutCommand(cvsroot, repository, options);
+                                new CheckoutCommand(this.CvsRoot, repository, options);
                             command = checkoutCommand.CreateCommand ();
                             this.currentWorkingDirectory = 
                                 checkoutCommand.CurrentWorkingDirectory;

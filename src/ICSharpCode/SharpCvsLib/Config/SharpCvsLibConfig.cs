@@ -44,6 +44,32 @@ namespace ICSharpCode.SharpCvsLib.Config {
     /// </summary>
     [XmlRoot ("sharpcvslib-config")]
     public class SharpCvsLibConfig {
+        /// <summary>
+        /// The default port that a cvs server listens on.
+        /// </summary>
+        public const int DEFAULT_PORT = 2401;
+        private const int DEFAULT_TIMEOUT = 1000;
+        private const int DEFAULT_AUTH_SLEEP = 1000;
+        private const string DEFAULT_SHELL = "ssh";
+        private const string VAR_CVS_RSH = "CVS_RSH";
+
+        /// <summary>
+        /// The cvs connection type
+        ///     <ol>
+        ///         <li>ssh</li>
+        ///         <li>pserver</li>
+        ///         <li>ext</li>
+        ///     </ol>
+        /// </summary>
+        public string Shell {
+            get {
+                String tempShell = DEFAULT_SHELL;
+                if (null != Environment.GetEnvironmentVariable(VAR_CVS_RSH)) {
+                    tempShell = Environment.GetEnvironmentVariable(VAR_CVS_RSH);
+                }
+                return tempShell;
+            }
+        }
 
         /// <summary>
         ///     The sub section of this configuration entity in the application

@@ -54,17 +54,17 @@ public class CvsRootTest {
     public void ValidCvsRootTest () {
         CvsRoot cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:/cvsroot/sharpcvslib");
 
-        Assertion.Assert(cvsRoot.Protocol.Equals("ext"));
-        Assertion.Assert(cvsRoot.User.Equals("gne"));
-        Assertion.Assert(cvsRoot.Host.Equals("cvs.sourceforge.net"));
-        Assertion.Assert(cvsRoot.CvsRepository.Equals("/cvsroot/sharpcvslib"));
+        Assertion.AssertEquals("ext", cvsRoot.Protocol);
+        Assertion.AssertEquals("gne", cvsRoot.User);
+        Assertion.AssertEquals("cvs.sourceforge.net", cvsRoot.Host);
+        Assertion.AssertEquals("/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
     }
 
     /// <summary>
     ///     Tests handling of missing protocol.
     /// </summary>
     [Test]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(CvsRootParseException))]
     public void MissingProtocolTest () {
         CvsRoot cvsRoot = new CvsRoot ("::gne@cvs.sourceforge.net:/cvsroot/sharpcvslib");
     }
@@ -73,7 +73,7 @@ public class CvsRootTest {
     ///     Tests handling of missing user.
     /// </summary>
     [Test]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(CvsRootParseException))]
     public void MissingUserTest () {
         CvsRoot cvsRoot = new CvsRoot (":ext:@cvs.sourceforge.net:/cvsroot/sharpcvslib");
     }
@@ -82,7 +82,7 @@ public class CvsRootTest {
     ///     Tests handling of missing host.
     /// </summary>
     [Test]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(CvsRootParseException))]
     public void MissingHostTest () {
         CvsRoot cvsRoot = new CvsRoot (":ext:gne@:/cvsroot/sharpcvslib");
     }
@@ -91,7 +91,7 @@ public class CvsRootTest {
     ///     Tests handling of missing repository.
     /// </summary>
     [Test]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(CvsRootParseException))]
     public void MissingRepositoryTest () {
         CvsRoot cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:");
     }
@@ -100,7 +100,7 @@ public class CvsRootTest {
     ///     Tests handling of not starting with a colon.
     /// </summary>
     [Test]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(CvsRootParseException))]
     public void MissingFirstColonTest () {
         CvsRoot cvsRoot = new CvsRoot ("a:ext:gne@cvs.sourceforge.net:/cvsroot/sharpcvslib");
     }
@@ -111,7 +111,7 @@ public class CvsRootTest {
     ///     in an ArgumentOutOfRangeException being thrown instead
     /// </summary>
     [Test]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(CvsRootParseException))]
     public void MissingSecondColonTest () {
         CvsRoot cvsRoot = new CvsRoot (":ext-gne@cvs.sourceforge.net-/cvsroot/sharpcvslib");
     }
@@ -122,7 +122,7 @@ public class CvsRootTest {
     ///     in an ArgumentOutOfRangeException being thrown instead
     /// </summary>
     [Test]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(CvsRootParseException))]
     public void MissingAmpersandTest () {
         CvsRoot cvsRoot = new CvsRoot (":ext:gne-cvs.sourceforge.net:/cvsroot/sharpcvslib");
     }
@@ -133,7 +133,7 @@ public class CvsRootTest {
     ///     in an ArgumentOutOfRangeException being thrown instead
     /// </summary>
     [Test]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(CvsRootParseException))]
     public void MissingThirdColonTest () {
         CvsRoot cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net-/cvsroot/sharpcvslib");
     }
@@ -142,7 +142,7 @@ public class CvsRootTest {
     ///     Tests handling of no colons.
     /// </summary>
     [Test]
-    [ExpectedException(typeof(ArgumentException))]
+    [ExpectedException(typeof(CvsRootParseException))]
     public void NoColonTest () {
         CvsRoot cvsRoot = new CvsRoot ("-ext-gne@cvs.sourceforge.net-/cvsroot/sharpcvslib");
     }
