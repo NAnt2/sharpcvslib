@@ -46,8 +46,7 @@ using ICSharpCode.SharpCvsLib.Console.Parser;
 using log4net;
 using NUnit.Framework;
 
-namespace ICSharpCode.SharpCvsLib.Console.Commands
-{
+namespace ICSharpCode.SharpCvsLib.Console.Commands {
 
 /// <summary>
 ///     Test the LoginCommand object for valid ones
@@ -59,8 +58,7 @@ public class LoginCommandTest
     /// <summary>
     ///     Constructory for test case.
     /// </summary>
-    public LoginCommandTest ()
-    {
+    public LoginCommandTest () {
     }
 
     /// <summary>
@@ -68,8 +66,7 @@ public class LoginCommandTest
     ///
     /// </summary>
     [Test]
-    public void MakeLoginCommandTest ()
-    {
+    public void MakeLoginCommandTest () {
         String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
         // Test Creating a CommandLineParser object
         LoginCommand command = new LoginCommand(root);
