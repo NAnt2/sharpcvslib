@@ -176,16 +176,16 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             get {
                 CommandNames commands = new CommandNames();
                 StringBuilder msg = new StringBuilder ();
-                msg.Append ("CVS command synonyms are:\n");
+                msg.Append ("CVS command synonyms are:\r\n");
                 // loop through commands for synonyms
                 foreach(Command command in commands.Commands) {
                     if (command.Nick1 != null) {
                         string syn_output = String.Format("        {0,-11}  {1} {2}",
                             command.First, command.Nick1, command.Nick2);
-                        msg.Append (syn_output).Append ("\n");
+                        msg.Append (syn_output).Append ("\r\n");
                     }
                 }
-                msg.Append ("(Specify the --help option for a list of other help options)").Append("\n");
+                msg.Append ("(Specify the --help option for a list of other help options)").Append("\r\n");
                 return msg.ToString ();
             }
         }
