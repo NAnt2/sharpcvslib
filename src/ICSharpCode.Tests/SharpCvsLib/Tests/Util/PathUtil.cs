@@ -32,62 +32,52 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.IO;
 
-using NUnit.Framework;
-
-using ICSharpCode.SharpCvsLib.Tests.Util;
-
-namespace ICSharpCode.SharpCvsLib.FileSystem {
+namespace ICSharpCode.SharpCvsLib.Tests.Util {
     /// <summary>
-    /// Test the file system probe finds and returns the correct number of
-    ///     existing and non-existing files given the list of original files.
+    /// Utility for encapsulating the various path manipulation, temp directory
+    ///     creation for the unit tests.
     /// </summary>
-    public class ProbeTest {
+    public class PathUtil {
+        
+        private static readonly String PROJECT_TEST_PATH = 
+            Path.Combine (Path.GetTempPath (), "sharpcvslib-tests");
+        /// <summary>
+        /// Private constructor, only static methods in this class.
+        /// </summary>
+        private PathUtil () { 
+        }
 
         /// <summary>
-        /// Create the test files.
-        /// </summary>        
-        [SetUp]
-        public void SetUp () {
-        }
-
-        /// <summary>
-        /// Remove the test files.
+        /// Get a handle to a temporary file on the hard drive.  
+        ///     Use a guid value for the sub path.
         /// </summary>
-        [TearDown]        
-        public void TearDown () {
+        public static String GetTempPath () {
+            return GetTempPath (null);
         }
-        
         /// <summary>
-        /// Tests that probe works correctly with only files specified 
-        ///     (i.e. no recursion).
-        /// </summary>
-        public void TestNoCvsFiles () {
-            String searchDir = Path.GetTempPath ();
-            Probe probe = new Probe ();
-            probe.OriginalDirectory = searchDir;
-            
-            probe.Execute ();
-        }
-        
-        /// <summary>
-        /// Creates a number of "regular" test files and returns a Collection of the 
-        ///     paths to the files.
-        /// </summary>
-        /// <param name="numberOfFiles">The number of files to create.</param>
-        /// <returns>A collection of path variables that represent the location
-        ///     on the file system of the new test files.</returns>
-        private ICollection CreateTestFiles (int numberOfFiles) {
-            ArrayList filePaths = new ArrayList ();
-            for (int i = 0; i < numberOfFiles; i++) {
-                String newFileName = Guid.NewGuid ().ToString ();
-                String newFilePath = 
-                    Path.Combine (PathUtil.GetTempPath (this), newFileName);
-                filePaths.Add (newFilePath);
+        /// Get a handle to a temporary file on the hard drive.  Using the name
+        ///     of the calling object to create the path, or if that is null 
+        ///     then use a guid value for the sub path.
+        /// </summary>      
+        /// <param name="callingObject">A reference to the calling object, 
+        ///     if this is <code>null</code> then the string value of a 
+        ///     GUID is used.</param>  
+        public static String GetTempPath (object callingObject) {
+            String subPath;
+            try {
+                subPath = callingObject.GetType ().Name;
+            } catch (NullReferenceException) {
+                subPath = Guid.NewGuid ().ToString ();
             }
-            return filePaths;
+            
+            String fullPath = Path.Combine (PROJECT_TEST_PATH, subPath);
+            if (!Directory.Exists (fullPath)) {
+                Directory.CreateDirectory (fullPath);
+            }
+            return fullPath;
         }
     }
+    
 }

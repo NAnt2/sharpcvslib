@@ -35,72 +35,55 @@ using System;
 using System.Xml;
 using System.Xml.Serialization;
 
-using ICSharpCode.SharpCvsLib.Config.Logging;
-
-namespace ICSharpCode.SharpCvsLib.Config {
-    
+namespace ICSharpCode.SharpCvsLib.Config.Logging {
     /// <summary>
-    ///     Holds the core configuration settings for sharpcvslib.
+    /// Configuration settings for the sharpcvslib debug log.  These are used
+    ///     to configure the message delegates on the CvsStream class.
     /// </summary>
-    [XmlRoot ("sharpcvslib-config")]
-    public class SharpCvsLibConfig {
+    public class Debug {
+        
+        private bool enabled;
+        private String requestFile = "out.log";
+        private String responseFile = "in.log";
         
         /// <summary>
-        ///     The sub section of this configuration entity in the application 
-        ///         configuration file.
+        /// Constructor.
         /// </summary>
-        public const String SUB_SECTION = "sharpcvslib-config";
-        
-        int timeout;
-        int authSleep;
-        
-        bool verbose = false;
-        
-        private LogConfig log;
+        public Debug () {
+            
+        }
         
         /// <summary>
-        ///     The timeout value for the cvs server connection.
+        /// <code>true</code> if the debug log is enabled, 
+        ///     <code>false</code> otherwise.  If this is false nothing
+        ///     will be logged to the request and response files.
         /// </summary>
-        [XmlElement ("timeout", typeof (int))]
-        public int Timeout {
-            get {return this.timeout;}
-            set {this.timeout = value;}
+        [XmlElement ("enabled", typeof (bool))]
+        public bool Enabled {
+            get {return this.enabled;}
+            set {this.enabled = value;}
         }
 
         /// <summary>
-        ///     The time between when an authorization request is sent and the
-        ///         response is read.  This is used to handle problems from a 
-        ///         slow network connection or a slow server.
+        /// Configure the name of the file that requests to the cvs 
+        ///     server are logged to.
         /// </summary>
-        [XmlElement ("auth-sleep", typeof (int))]        
-        public int AuthSleep {
-            get {return this.authSleep;}
-            set {this.authSleep = value;}
+        [XmlElement ("request-file", typeof (String))]
+        public String RequestFile {
+            get {return this.requestFile;}
+            set {this.requestFile = value;}
         }
         
         /// <summary>
-        ///     Set to <code>true</code> if the request/ response commands should
-        ///         be sent to a log file.
+        /// Configure the name of the file that responses from the cvs server
+        ///     are logged to.
         /// </summary>
-        public bool Verbose {
-            get {return this.verbose;}
-            set {this.verbose = value;}
+        [XmlElement ("response-file", typeof (String))]
+        public String ResponseFile {
+            get {return this.responseFile;}
+            set {this.responseFile = value;}
         }
         
-        /// <summary>
-        /// Logging configuration settings.
-        /// </summary>
-        [XmlElement ("log", typeof (LogConfig))]
-        public LogConfig Log {
-            get {return this.log;}
-            set {this.log = value;}
-        }
         
-        /// <summary>
-        /// Create a new instance of the logging configuration.
-        /// </summary>
-        public SharpCvsLibConfig () {
-            this.Log = new LogConfig ();
-        }
     }
 }

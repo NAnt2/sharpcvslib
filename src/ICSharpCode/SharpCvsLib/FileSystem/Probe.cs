@@ -69,6 +69,25 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             get {return this.existingFiles;}
         }
         
+        /// <summary>
+        /// Optionally specify the original directory to being probing.  If the 
+        ///     collection of OriginalFiles is not null then an exception is thrown
+        ///     if there is an attemp to set this property.
+        /// </summary>
+        /// <exception name="ArgumentException">If the OriginalFiles collection
+        ///     is non-null before an attempt is made to use this method.</exception>
+        public String OriginalDirectory {
+            set {
+                if (null != originalFiles) {
+                    String msg = "Unable to specify a directory when already probing a collection of files.";
+                    throw new ArgumentException (msg);
+                }
+                ArrayList originalDirectory = new ArrayList ();
+                originalDirectory.Add (value);
+                this.originalFiles = originalDirectory;
+            }
+                
+        }
         /// <summary>Original list of files that will be sorted.</summary>
         public ICollection OriginalFiles {
             get {return this.originalFiles;}

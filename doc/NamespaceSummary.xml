@@ -23,6 +23,9 @@
     <namespace name="ICSharpCode.SharpCvsLib.FileSystem">
         <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
     </namespace>
+    <namespace name="ICSharpCode.SharpCvsLib.Logs">
+        <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </namespace>
     <namespace name="ICSharpCode.SharpCvsLib.Messages">
         <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
     </namespace>

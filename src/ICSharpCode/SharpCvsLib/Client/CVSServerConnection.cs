@@ -51,6 +51,7 @@ using ICSharpCode.SharpCvsLib.FileHandler;
 using ICSharpCode.SharpCvsLib.Messages;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Streams;
+using ICSharpCode.SharpCvsLib.Logs;
 
 using log4net;
 
@@ -75,8 +76,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
 		
 		private TcpClient tcpclient = null;
 		
-		private CvsStream inputStream  = new CvsStream (new MemoryStream());
-		private CvsStream outputStream = new CvsStream (new MemoryStream());
+		private CvsStream inputStream;
+		private CvsStream outputStream;
 		
 		private WorkingDirectory repository;
 		
@@ -86,10 +87,15 @@ namespace ICSharpCode.SharpCvsLib.Client {
 	    private const String PSERVER_AUTH_SUCCESS = "I LOVE YOU";
 	    private const String PSERVER_AUTH_FAIL = "I HATE YOU";
 
+        private RequestLog requestLog;
+	    private ResponseLog responseLog;
+	    
 	    /// <summary>
 	    ///     Initialize the cvs server connection.
 	    /// </summary>
 	    public CVSServerConnection () {
+            inputStream  = new CvsStream (new MemoryStream());
+		    outputStream = new CvsStream (new MemoryStream());
 	        try {
     	        SharpCvsLibConfig config = 
                     (SharpCvsLibConfig)ConfigurationSettings.GetConfig 
@@ -106,11 +112,28 @@ namespace ICSharpCode.SharpCvsLib.Client {
                 if (config.Verbose) {
                     // TODO: Fix up the verbose property so logging can be shut off.
                 }
+                
+                if (config.Log.DebugLog.Enabled) {
+                    requestLog = new RequestLog ();
+                    responseLog = new ResponseLog ();
+                    
+                    this.InputStream.RequestMessage.MessageEvent += 
+                        new EncodedMessage.MessageHandler (requestLog.Log);
+                    this.OutputStream.ResponseMessage.MessageEvent += 
+                        new EncodedMessage.MessageHandler (responseLog.Log);
+                }
 	        } catch (Exception e) {
 	            LOGGER.Error (e);
 	            this.timeout = DEFAULT_TIMEOUT;
 	            this.authSleep = DEFAULT_AUTH_SLEEP;
-	            
+                    requestLog = new RequestLog ();
+                    responseLog = new ResponseLog ();
+                    
+                    this.InputStream.RequestMessage.MessageEvent += 
+                        new EncodedMessage.MessageHandler (requestLog.Log);
+                    this.OutputStream.ResponseMessage.MessageEvent += 
+                        new EncodedMessage.MessageHandler (responseLog.Log);
+
 	        }
 	    }
 		
