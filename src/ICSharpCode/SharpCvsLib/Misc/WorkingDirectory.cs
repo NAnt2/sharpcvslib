@@ -29,7 +29,7 @@
 // exception statement from your version.
 //
 //    Author:     Mike Krueger, 
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
+//                Clayton Harbour
 #endregion
 
 using System;
@@ -59,6 +59,8 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		private string  repositoryname;
 		
 		private Hashtable folders = new Hashtable();
+	    
+	    private Folder[] foldersToUpdate;
 		
         /// <summary>
         /// The name of the module.
@@ -93,6 +95,11 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 			get {
 				return folders;
 			}
+		}
+		
+		public Folder[] FoldersToUpdate {
+		    get {return this.foldersToUpdate;}
+		    set {this.foldersToUpdate = value;}
 		}
 		
         /// <summary>
@@ -298,6 +305,10 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 //		    if (null == this.Folders || 0 == this.Folders.Count) {
 //		        AddEntriesIn (Path.Combine (localdirectory, this.ModuleName));
 //		    }
-		}		
+		}
+		
+		public void SetFolders (Folder[] folders) {
+		    
+		}
 	}
 }

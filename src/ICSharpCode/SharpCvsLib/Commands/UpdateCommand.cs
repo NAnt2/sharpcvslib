@@ -110,17 +110,16 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// <param name="connection"></param>
 		public void Execute(CVSServerConnection connection)
 		{
-		    Manager manager = new Manager ();
-		    Hashtable _folders = manager.getFolders (this.workingdirectory.LocalDirectory);
 		    if (LOGGER.IsDebugEnabled) {
 		        String msg = "In execute, looking for working folders.  " +
 		            "count of working folders=[" + 
 		                workingdirectory.Folders.Count + "]";
 		        LOGGER.Debug (msg);
 		    }
-		    //Hashtable _folders = (Hashtable)workingdirectory.Folders.Clone ();
-			foreach (DictionaryEntry folder in _folders) {
-			    foreach (Entry entry  in ((Folder)folder.Value).Entries) {
+		    Folder[] _foldersToUpdate = 
+		        (Folder[])workingdirectory.FoldersToUpdate.Clone ();
+			foreach (Folder folder in _foldersToUpdate) {
+			    foreach (Entry entry  in folder.Entries) {
     				if (!entry.IsDirectory) {
     					DateTime old = entry.TimeStamp;
     					entry.TimeStamp = entry.TimeStamp;
@@ -136,8 +135,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     					        ";  workingdirectory.CvsRoot.CvsRepository=[" + 
     					            workingdirectory.CvsRoot.CvsRepository + "]" +
     					        ";  workingdirectory.WorkingDirectoryName=[" +
-    					            workingdirectory.WorkingDirectoryName + "]" +
-    					        ";  folder.Key.ToString ()=[" + folder.Key.ToString () + "]";
+    					            workingdirectory.WorkingDirectoryName + "]";
     					    LOGGER.Debug (msg);
     					}
     					string path = workingdirectory.CvsRoot.CvsRepository +  
@@ -160,7 +158,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     					}
     					
     					path = workingdirectory.CvsRoot.CvsRepository + 
-    							folder.Key.ToString();
+    							folder.Repos.FileContents;
     					
     					if (LOGGER.IsDebugEnabled) {
     					    String msg = "before we get the filename.  " +

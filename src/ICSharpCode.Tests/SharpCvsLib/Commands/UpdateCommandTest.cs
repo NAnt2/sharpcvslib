@@ -77,10 +77,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// </summary>
 		[Test]
 		public void UpdateTest () {
-		    string cvsPath = 
+		    string rootDir = 
 		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
 		    string buildFile = 
-		        Path.Combine (cvsPath, TestConstants.BUILD_FILE);
+		        Path.Combine (rootDir, TestConstants.BUILD_FILE);
 		    
 		    //Assertion.Assert ("File should be there, have not deleted it yet.  " +
 		    //                  "file=[" + buildFile + "]",
@@ -103,6 +103,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		    
             connection.Connect (working, TestConstants.PASSWORD_VALID);
 
+            // Update all files...
+            working.FoldersToUpdate = 
+                this.manager.FetchFilesToUpdate (rootDir);
+            
             command.Execute (connection);
             connection.Close ();
 		    
@@ -110,13 +114,13 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		                      buildFile + "]", File.Exists (buildFile));
 		    
 		    ICvsFile[] entries = 
-		        this.manager.Fetch(cvsPath, Entry.FILE_NAME);
+		        this.manager.Fetch(rootDir, Entry.FILE_NAME);
             int found = 0;	
 		    
 		    String[] files = 
-		        Directory.GetFiles (cvsPath);
+		        Directory.GetFiles (rootDir);
 		    String[] directories = 
-		        Directory.GetDirectories (cvsPath);
+		        Directory.GetDirectories (rootDir);
 		    // Plus the root folder.
 		    int total = files.Length + directories.Length + 1;
 		    Assertion.Assert ("Count of directories and files should be equal to " +

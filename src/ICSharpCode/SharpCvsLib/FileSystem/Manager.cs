@@ -38,6 +38,8 @@ using System.IO;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Misc;
+
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     
     /// <summary>
@@ -74,6 +76,30 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                     this.Add (dirEntry);
                 }
                 this.AddDirectories (directory);
+            }
+        }
+        
+        public Folder[] FetchFilesToUpdate (String directory) {
+            ArrayList folders = new ArrayList ();
+            Folder folder = new Folder ();
+            folder.Repos = (Repository)this.FetchSingle (directory, 
+                                                         Repository.FILE_NAME);
+            folder.Entries = new ArrayList (this.Fetch (directory, Entry.FILE_NAME));
+            folders.Add (folder);
+            this.FetchFilesToUpdateRecursive (folders, directory);
+            
+            return (Folder[])folders.ToArray (typeof (Folder));
+        }
+        
+        private void FetchFilesToUpdateRecursive (ArrayList folders, 
+                                                  String directory) {
+            foreach (String subDir in Directory.GetDirectories (directory)) {
+                Folder folder = new Folder ();
+                folder.Repos = (Repository)this.FetchSingle (directory, 
+                                                             Repository.FILE_NAME);
+                folder.Entries = new ArrayList (this.Fetch (directory, Entry.FILE_NAME));
+                folders.Add (folder);
+                this.FetchFilesToUpdateRecursive (folders, subDir);
             }
         }
                 

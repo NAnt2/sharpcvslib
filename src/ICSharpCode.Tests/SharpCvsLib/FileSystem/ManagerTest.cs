@@ -35,7 +35,7 @@ using System;
 using System.Collections;
 using System.IO;
 
-using ICSharpCode.SharpCvsLib.FileSystem;
+using ICSharpCode.SharpCvsLib.Misc;
 
 using log4net;
 using NUnit.Framework;
@@ -199,6 +199,26 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		                      "looking for=[4] and found=[" + found + "]", 
 		                      4 == found);
 		                      
+		}
+		
+		[Test]
+		public void FindAllWorkingFolders () {
+		    Manager manager = new Manager ();
+		    string rootDir = 
+		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
+
+            CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
+            WorkingDirectory working = 
+                new WorkingDirectory (root, 
+                                        rootDir, 
+                                        TestConstants.MODULE);
+            // Update all files...
+            working.FoldersToUpdate = manager.FetchFilesToUpdate (rootDir);
+		    
+		    Assertion.Assert ("Working folders count should be greater than 1.",
+		                      working.FoldersToUpdate.Length > 1);
+		                    
+
 		}
 
 
