@@ -102,8 +102,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
             try {
                 this.ParseOptions(this.unparsedOptions);
                 // create CvsRoot object parameter
-                if (localDirectory == null) {
+//FIXME: Local directory was not being set correctly.
+//                if (localDirectory == null) {
                     localDirectory = Environment.CurrentDirectory;
+//                }
+
+                if (LOGGER.IsDebugEnabled) {
+                    StringBuilder msg = new StringBuilder();
+                    msg.Append(Environment.NewLine).Append("Creating working directory:");
+                    msg.Append(Environment.NewLine).Append("\t cvsroot=[").Append(this.cvsRoot);
+                    msg.Append(Environment.NewLine).Append("\t localDirectory=[").Append(this.localDirectory);
+                    msg.Append(Environment.NewLine).Append("\t repository=[").Append(this.repository);
+
+                    LOGGER.Debug(msg);
                 }
                 this.currentWorkingDirectory = new WorkingDirectory(this.cvsRoot,
                     localDirectory, repository);

@@ -97,7 +97,13 @@ namespace ICSharpCode.SharpCvsLib.Tests {
         /// </summary>
         protected void CleanTempDirectory () {
             if (Directory.Exists(this.settings.Config.LocalPath)) {
-                Directory.Delete (this.settings.Config.LocalPath, true);
+                try {
+                    Directory.Delete (this.settings.Config.LocalPath, true);
+                } catch (IOException) {
+                    Environment.CurrentDirectory = 
+                        Path.Combine(this.settings.Config.LocalPath, ".." + Path.DirectorySeparatorChar);
+                    Directory.Delete (this.settings.Config.LocalPath, true);
+                }
             }
         }
 
