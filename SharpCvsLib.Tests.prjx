@@ -36,21 +36,21 @@
     <Reference type="Project" refto="SharpCvsLib" localcopy="True" />
   </References>
   <DeploymentInformation target="" script="" strategy="File" />
-  <Configuration runwithwarnings="False" name="Debug">
+  <Configuration runwithwarnings="True" name="Debug">
     <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="True" win32Icon="" />
     <Execution commandlineparameters="" consolepause="True" />
-    <Output directory=".\build\bin\Debug" assembly="ICSharpCode.SharpCvsLib.Tests" executeBeforeBuild="" executeAfterBuild="" />
+    <Output directory=".\build\bin\Debug" assembly="ICSharpCode.SharpCvsLib.Tests" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
   </Configuration>
   <Configurations active="Debug">
-    <Configuration runwithwarnings="False" name="Debug">
+    <Configuration runwithwarnings="True" name="Debug">
       <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="True" win32Icon="" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory=".\build\bin\Debug" assembly="ICSharpCode.SharpCvsLib.Tests" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory=".\build\bin\Debug" assembly="ICSharpCode.SharpCvsLib.Tests" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
     </Configuration>
-    <Configuration runwithwarnings="False" name="Release">
+    <Configuration runwithwarnings="True" name="Release">
       <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory=".\build\bin\Release" assembly="ICSharpCode.SharpCvsLib.Tests" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory=".\build\bin\Release" assembly="ICSharpCode.SharpCvsLib.Tests" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
     </Configuration>
   </Configurations>
 </Project>

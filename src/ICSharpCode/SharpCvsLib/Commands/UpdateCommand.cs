@@ -108,7 +108,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// Perform the update.
 		/// </summary>
 		/// <param name="connection"></param>
-		public void Execute(CVSServerConnection connection)
+		public void Execute(ICommandConnection connection)
 		{
 		    if (LOGGER.IsDebugEnabled) {
 		        String msg = "In execute, looking for working folders.  " +
@@ -178,7 +178,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		}
 
 
-		private void SetDirectory (CVSServerConnection connection, 
+		private void SetDirectory (ICommandConnection connection, 
 		                           Folder folder) {
             String absoluteDir = 
                 connection.Repository.CvsRoot.CvsRepository + "/" +
@@ -205,7 +205,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		    }
 		}
 		
-		private void FetchFile (CVSServerConnection connection,
+		private void FetchFile (ICommandConnection connection,
 		                        Entry entry) {
 			bool fileExists;
 			DateTime old = entry.TimeStamp;
@@ -223,14 +223,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 			} else if (File.GetLastAccessTime(entry.Filename) != 
 			           entry.TimeStamp.ToUniversalTime ()) {
 				connection.SubmitRequest(new ModifiedRequest(entry.Name));
-				
-				if (entry.IsBinaryFile) {
-					connection.UncompressedFileHandler.SendBinaryFile(connection.OutputStream, 
-					                                                  entry.Filename);
-				} else {
-					connection.UncompressedFileHandler.SendTextFile(connection.OutputStream, 
-					                                                entry.Filename);
-				}
+                connection.SendFile(entry.Filename, entry.IsBinaryFile);
 			} else {
 				connection.SubmitRequest(new EntryRequest(entry));
 				connection.SubmitRequest(new UnchangedRequest(entry.Name));

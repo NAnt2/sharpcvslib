@@ -1,6 +1,6 @@
 #region "Copyright"
-// ICommand.cs 
-// Copyright (C) 2001 Mike Krueger
+// ICommandConnection.cs
+// Copyright (C) 2003 Gerald Evans
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,22 +27,38 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    Author:     Gerald Evans
 #endregion
 
-using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.FileSystem;
+using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Requests;
 
-namespace ICSharpCode.SharpCvsLib.Commands { 
+
+namespace ICSharpCode.SharpCvsLib.Client { 
 	
     /// <summary>
-    /// Interface to be implemented by cvs commands.
+    /// Interface into the CVSServerConnection that is needed by the commands.
     /// </summary>
-	public interface ICommand
+	public interface ICommandConnection
 	{
         /// <summary>
-        /// Implement the functions of the cvs command.
+        /// Submit a request to the cvs repository.
         /// </summary>
-        /// <param name="connection"></param>
-		void Execute(ICommandConnection connection);
+        /// <param name="request"></param>
+		void SubmitRequest(IRequest request);
+	    		
+        /// <summary>
+        /// The repository information.
+        /// </summary>
+        WorkingDirectory Repository {get;}
+
+        /// <summary>
+        /// Send a file to the cvs repository.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="isBinary"></param>
+        void SendFile(string filename, bool isBinary);
 	}
 }
-

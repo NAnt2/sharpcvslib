@@ -109,7 +109,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// Do the dirty work.
 		/// </summary>
 		/// <param name="connection"></param>
-		public void Execute(CVSServerConnection connection)
+		public void Execute(ICommandConnection connection)
 		{
 			connection.SubmitRequest(new CaseRequest());
 			connection.SubmitRequest(new ArgumentRequest("-b"));
@@ -144,12 +144,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 					
 										
 					string fileName = Path.Combine (path, entry.Name);
-					
-					if (entry.IsBinaryFile) {
-						connection.UncompressedFileHandler.SendBinaryFile(connection.OutputStream, fileName);
-					} else {
-						connection.UncompressedFileHandler.SendTextFile(connection.OutputStream, fileName);
-					}
+                    connection.SendFile(fileName, entry.IsBinaryFile);
 					
 					entry.TimeStamp = old;
 				}

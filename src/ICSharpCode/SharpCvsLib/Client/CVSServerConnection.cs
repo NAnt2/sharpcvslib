@@ -63,7 +63,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
     /// <summary>
     /// Cvs server connection, handles connections to the cvs server.
     /// </summary>
-	public class CVSServerConnection : IConnection, IResponseServices
+	public class CVSServerConnection : IConnection, IResponseServices, ICommandConnection
 	{    
 	    private readonly ILog LOGGER = 
 	        LogManager.GetLogger (typeof (CVSServerConnection));
@@ -264,6 +264,20 @@ namespace ICSharpCode.SharpCvsLib.Client {
 				HandleResponses();
 			}
 		}
+		
+        /// <summary>
+        /// Send a file to the cvs repository.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="isBinary"></param>
+        public void SendFile(string filename, bool isBinary)
+        {
+			if (isBinary) {
+				UncompressedFileHandler.SendBinaryFile(OutputStream, filename);
+			} else {
+				UncompressedFileHandler.SendTextFile(OutputStream, filename);
+			}
+        }
 		
         /// <summary>
         /// Connect to the repository.

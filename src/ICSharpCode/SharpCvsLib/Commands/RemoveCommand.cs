@@ -70,7 +70,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// Do the dirty work.
         /// </summary>
         /// <param name="connection"></param>
-		public void Execute(CVSServerConnection connection)
+		public void Execute(ICommandConnection connection)
 		{
 			connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository + directory));
 			connection.SubmitRequest(new EntryRequest(entry));

@@ -65,7 +65,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// Execute checkout module command.
         /// </summary>
         /// <param name="connection">Server connection</param>
-        public void Execute(CVSServerConnection connection)
+        public void Execute(ICommandConnection connection)
         {
             workingDirectory.Clear();
             

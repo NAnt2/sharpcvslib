@@ -120,7 +120,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// Execute the diff command.
         /// </summary>
         /// <param name="connection"></param>
-		public void Execute(CVSServerConnection connection)
+		public void Execute(ICommandConnection connection)
 		{
 			connection.SubmitRequest(new DirectoryRequest(".", 
                            workingdirectory.CvsRoot.CvsRepository + 

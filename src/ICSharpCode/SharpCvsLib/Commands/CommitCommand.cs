@@ -106,7 +106,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// Execute the commit command
 		/// </summary>
 		/// <param name="connection">Cvs server connection</param>
-		public void Execute(CVSServerConnection connection)
+		public void Execute(ICommandConnection connection)
 		{
 			connection.SubmitRequest(new CaseRequest());
 			connection.SubmitRequest(new ArgumentRequest("-m"));
@@ -132,12 +132,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 							connection.SubmitRequest(new EntryRequest(entry));
 							connection.SubmitRequest(new ModifiedRequest(entry.Name));
 							files.Add(entry.Name);
-							
-							if (entry.IsBinaryFile) {
-								connection.UncompressedFileHandler.SendBinaryFile(connection.OutputStream, fileName);
-							} else {
-								connection.UncompressedFileHandler.SendTextFile(connection.OutputStream, fileName);
-							}
+							connection.SendFile(fileName, entry.IsBinaryFile);
 						}
 						
 						entry.TimeStamp = old;
