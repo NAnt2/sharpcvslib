@@ -85,6 +85,10 @@ public class CheckoutModuleCommand : ICommand
             connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.REVISION));
             connection.SubmitRequest(new ArgumentRequest(workingDirectory.Revision));
         }
+        if (workingDirectory.HasDate) {
+            connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.DATE));
+            connection.SubmitRequest(new ArgumentRequest(workingDirectory.GetDateAsString()));
+        }
         if (workingDirectory.HasOverrideDirectory) {
             connection.SubmitRequest (
                 new ArgumentRequest (ArgumentRequest.Options.OVERRIDE_DIRECTORY));

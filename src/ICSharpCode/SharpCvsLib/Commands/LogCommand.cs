@@ -33,6 +33,7 @@
 #endregion
 
 using System;
+using System.Collections;
 
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
@@ -50,6 +51,8 @@ public class LogCommand : ICommand
     private WorkingDirectory workingdirectory;
     private string directory;
     private Entry entry;
+    
+    private ArrayList dateArgs = new ArrayList();
 
     private bool defaultBranch     = false;
     private bool headerAndDescOnly = false;
@@ -104,6 +107,105 @@ public class LogCommand : ICommand
         }
     }
 
+    // TODO: see if there is a better way to handle optional DateTime arguments
+    // Note: you can't use null, as DateTime is a value type.
+    
+    /// <summary>
+    /// Adds a date range using exclusive dates.
+    /// This is equivalent to the command line option "-d startDate&lt;endDate"
+    /// 
+    /// <param name="startDate"></param>
+    /// <param name="endDate"></param>
+    /// </summary>
+    public void AddExclusiveDateRange(DateTime startDate, DateTime endDate) {
+        AddDateRange(true, startDate, true, endDate, "<");
+    }
+    
+    /// <summary>
+    /// Adds a open ended date range with an exclusive start date.
+    /// This is equivalent to the command line option "-d startDate&lt;"
+    /// 
+    /// <param name="startDate"></param>
+    /// </summary>
+    public void AddExclusiveDateStart(DateTime startDate) {
+        DateTime dummyDate = new DateTime();
+        AddDateRange(true, startDate, false, dummyDate, "<");
+    }
+    
+    /// <summary>
+    /// Adds a open ended date range with an exclusive start date.
+    /// This is equivalent to the command line option "-d &lt;endDate"
+    /// 
+    /// <param name="endDate"></param>
+    /// </summary>
+    public void AddExclusiveDateEnd(DateTime endDate) {
+        DateTime dummyDate = new DateTime();
+        AddDateRange(false, dummyDate, true, endDate, "<");
+    }
+
+    /// <summary>
+    /// Adds a date range using inclusive dates.
+    /// This is equivalent to the command line option "-d startDate&lt;=endDate"
+    /// 
+    /// <param name="startDate"></param>
+    /// <param name="endDate"></param>
+    /// </summary>
+    public void AddInclusiveDateRange(DateTime startDate, DateTime endDate) {
+        AddDateRange(true, startDate, true, endDate, "<=");
+    }
+    
+    /// <summary>
+    /// Adds a open ended date range with an inclusive start date.
+    /// This is equivalent to the command line option "-d startDate&lt;="
+    /// 
+    /// <param name="startDate"></param>
+    /// </summary>
+    public void AddInclusiveDateStart(DateTime startDate) {
+        DateTime dummyDate = new DateTime();
+        AddDateRange(true, startDate, false, dummyDate, "<");
+    }
+    
+    /// <summary>
+    /// Adds a open ended date range with an inclusive start date.
+    /// This is equivalent to the command line option "-d &lt;=endDate"
+    /// 
+    /// <param name="endDate"></param>
+    /// </summary>
+    public void AddInclusiveDateEnd(DateTime endDate) {
+        DateTime dummyDate = new DateTime();
+        AddDateRange(false, dummyDate, true, endDate, "<");
+    }
+    
+    /// <summary>
+    /// Adds a single date to specify the most recent revision at or prior to this date.
+    /// This is equivalent to the command line option "-d date"
+    /// 
+    /// <param name="date"></param>
+    /// </summary>
+    public void AddDate(DateTime date) {
+        // re-use the code for adding ranges.
+        DateTime dummyDate = new DateTime();
+        AddDateRange(true, date, false, dummyDate, "");
+    }
+    
+    private void AddDateRange(bool hasStartDate, DateTime startDate, 
+                              bool hasEndDate, DateTime endDate, 
+                              string separator) {
+        string dateArg = "";
+	    string dateFormat = "dd MMM yyyy";
+
+        if (hasStartDate || hasEndDate) {
+            if (hasStartDate) {
+                dateArg += startDate.ToString(dateFormat);
+            }
+            dateArg += separator;
+            if (hasEndDate) {
+                dateArg += endDate.ToString(dateFormat);
+            }
+            dateArgs.Add(dateArg);
+        }
+    }
+
     /// <summary>
     /// Constructor
     /// </summary>
@@ -136,6 +238,13 @@ public class LogCommand : ICommand
         }
         if (noTags) {
             connection.SubmitRequest(new ArgumentRequest("-N"));
+        }
+        
+        // add any date arguments
+        foreach (object o in dateArgs) {
+            string dateArg = (string)o;
+            connection.SubmitRequest(new ArgumentRequest("-d"));
+            connection.SubmitRequest(new ArgumentRequest(dateArg));
         }
 
         connection.SubmitRequest(new ArgumentRequest(entry.Name));

@@ -59,6 +59,8 @@ public class WorkingDirectory
     String  localdirectory;
     String  repositoryname;
     String revision;
+    bool hasDate = false;    // DateTime is a value type so we can't use null to indicate it hasn't been set
+    DateTime date = new DateTime();
     String overrideDirectory;
 
     private Hashtable folders = new Hashtable();
@@ -169,7 +171,12 @@ public String WorkingPath {
     /// requested.  This should correspond to a module tag.</summary>
     public String Revision {
         get {return this.revision;}
-        set {this.revision = value;}
+        set {
+            if (HasDate) {
+                throw new ArgumentException("Cannot specify both revision and date");
+            }
+            this.revision = value;
+        }
     }
 
     /// <summary>
@@ -180,6 +187,40 @@ public String WorkingPath {
     /// <code>false</code> otherwise.</returns>
     public bool HasRevision {
         get {return !(null == this.Revision);}
+    }
+
+    /// <summary>Specifies the most recent revision no later that the given date.</summary>
+    public DateTime Date {
+        get {return this.date;}
+        set {
+            if (HasRevision) {
+                throw new ArgumentException("Cannot specify both date and revision");
+            }
+            this.date = value; 
+            hasDate = true;
+        }
+    }
+    
+    /// <summary>
+    ///     Determine if a date has been specified.
+    /// </summary>
+    /// <returns><code>true</code> if a date has been
+    /// specified and <code>false</code> otherwise.</returns>
+    public bool HasDate {
+        get {return hasDate;}
+    }
+    
+    /// <summary>
+    ///     Returns the data as a string as required by the cvs server.
+    /// </summary>
+    public string GetDateAsString() {
+        string dateAsString = "";
+	    string dateFormat = "dd MMM yyyy";
+
+        if (hasDate) {
+            dateAsString = date.ToString(dateFormat);
+        }
+        return dateAsString;
     }
 
     /// <summary>

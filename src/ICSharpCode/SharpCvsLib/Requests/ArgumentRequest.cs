@@ -44,6 +44,11 @@ public class ArgumentRequest : AbstractRequest
         /// <summary>The cvs command used to specify a specific revision
         ///     is requested.</summary>
         public const String REVISION = "-r";
+
+        /// <summary>The cvs argument used to specify a revision
+        ///     by date.</summary>
+        public const String DATE = "-D";
+
         /// <summary>Cvs command to specify that the name of a cvs
         /// module is comming.</summary>
         public const String MODULE_NAME = "-N";

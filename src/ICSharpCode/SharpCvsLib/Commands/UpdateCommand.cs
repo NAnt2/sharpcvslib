@@ -134,6 +134,15 @@ public class UpdateCommand2 : ICommand
                 connection.SubmitRequest (
                     new ArgumentRequest (workingDirectory.OverrideDirectory));
             }
+            if (workingDirectory.HasRevision) {
+                connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.REVISION));
+                connection.SubmitRequest(new ArgumentRequest(workingDirectory.Revision));
+            }
+            if (workingDirectory.HasDate) {
+                connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.DATE));
+                connection.SubmitRequest(new ArgumentRequest(workingDirectory.GetDateAsString()));
+            }
+            
             foreach (Entry entry  in folder.Entries) {
                 if (!entry.IsDirectory) {
                     //    					String path = workingDirectory.CvsRoot.CvsRepository +
