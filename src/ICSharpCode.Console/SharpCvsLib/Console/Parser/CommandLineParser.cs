@@ -37,6 +37,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Text;
 
 using ICSharpCode.SharpCvsLib.Commands;
@@ -482,6 +483,29 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             LOGGER.Error(e);
                             throw new CommandLineParseException("Unable to create update command.", e);
                         }
+                        break;
+                    case "xml":
+                        ArrayList allArgs = new ArrayList();
+                        foreach (string argument in arguments) {
+                            allArgs.Add(argument);
+                        }
+                        ArrayList subArgs = new ArrayList();
+                        bool add = false;
+                        foreach (string argument in arguments) {
+                            if (add) {
+                                subArgs.Add(argument);
+                            }
+                            if (argument.Equals("xml")) {
+                                add = true;
+                            }
+                        }
+                        ICSharpCode.SharpCvsLib.Console.Commands.XmlLogCommand consoleCommand =
+                            new ICSharpCode.SharpCvsLib.Console.Commands.XmlLogCommand(this.CvsRoot, (string[])subArgs.ToArray(typeof(String))); 
+                        command = consoleCommand.CreateCommand();
+                        i = arguments.Length;
+                        this.currentWorkingDirectory = 
+                            consoleCommand.CurrentWorkingDirectory;
+
                         break;
                     default:
                         StringBuilder msg = new StringBuilder ();

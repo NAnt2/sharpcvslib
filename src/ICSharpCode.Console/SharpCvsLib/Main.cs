@@ -54,7 +54,11 @@ namespace ICSharpCode.SharpCvsLib {
             Assembly sharpcvslib = AssemblyHelper.LoadAssembly(AssemblyHelper.SHARPCVSLIB);
             Assembly sharpcvslibConsole = AssemblyHelper.LoadAssembly(AssemblyHelper.SHARPCVSLIB_CONSOLE);
             
-            Assembly log4net = AssemblyHelper.LoadLog4Net(sharpcvslibConsole);
+            try {
+                Assembly log4net = AssemblyHelper.LoadLog4Net(sharpcvslibConsole);
+            } catch (Exception e) {
+                System.Console.WriteLine(String.Format("Unable to load log4net: {0}.", e.Message));
+            }
             //Assembly log4net = AssemblyHelper.LoadAssembly(AssemblyHelper.LOG4NET);
 
             Type type = sharpcvslibConsole.GetType("ICSharpCode.SharpCvsLib.Console.ConsoleMain");

@@ -76,7 +76,10 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
     public class LogReportCommand
     {
         private ILog LOGGER = LogManager.GetLogger (typeof (LogReportCommand));
-    	
+
+    	private CvsRoot cvsRoot;
+        private WorkingDirectory workingDirectory;
+
    		// data set by ctor
         private string module;
         private string localDirectory;
@@ -109,12 +112,25 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
             this.module = module;
             this.localDirectory = localDirectory;
         }
+
+        /// <summary>
+        /// Create a new instance of the log report command.
+        /// </summary>
+        /// <param name="workingDirectory"></param>
+        /// <param name="module"></param>
+        public LogReportCommand(WorkingDirectory workingDirectory, string module) {
+            this.workingDirectory = workingDirectory;
+            this.module = module;
+            this.localDirectory = workingDirectory.LocalDirectory;
+            this.cvsRoot = workingDirectory.CvsRoot;
+        }
     
         /// <summary>
         /// If set, only report changes on or after this date
         /// </summary>
         public DateTime StartDate 
         {
+            get {return this.endDate;}
         	set { 
         		startDate = value;
         		hasStartDate = true;
@@ -126,6 +142,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
         /// </summary>
         public DateTime EndDate 
         {
+            get {return this.endDate;}
         	set { 
         		endDate = value;
         		hasEndDate = true;
@@ -149,15 +166,19 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
         public LogReport Run(string password)
         {
            // read Root and Repository from local directory
-            Manager manager = new Manager(localDirectory);
-            Root root = (Root)manager.FetchSingle (localDirectory,
-                                Factory.FileType.Root);
-        
-            CvsRoot cvsRoot = new CvsRoot(root.FileContents);
+            if (null == this.cvsRoot) {
+                Manager manager = new Manager(localDirectory);
+                Root root = (Root)manager.FetchSingle (localDirectory,
+                    Factory.FileType.Root);
+
+                cvsRoot = new CvsRoot(root.FileContents);
+            }
             
-            WorkingDirectory workingDirectory = new WorkingDirectory(cvsRoot,
-                                                                     localDirectory,
-                                                                     module);
+            if (null == this.workingDirectory) {
+                workingDirectory = new WorkingDirectory(cvsRoot,
+                    localDirectory,
+                    module);
+            }
             
             // Get a connection
             CVSServerConnection connection = new CVSServerConnection();
@@ -172,25 +193,33 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
         /// Alternate interface for when we are given a server cooection
         /// This is needed for the SharpCvsLib command line client
         /// </summary>
-        public LogReport Run(CVSServerConnection connection)
+        public LogReport Run(ICommandConnection connection)
         {
            // read Root and Repository from local directory
-            Manager manager = new Manager(localDirectory);
-            Repository repository = (Repository)manager.FetchSingle (localDirectory,
-                                Factory.FileType.Repository);
-            Root root = (Root)manager.FetchSingle (localDirectory,
-                                Factory.FileType.Root);
+            if (null == cvsRoot) {
+                Manager manager = new Manager(localDirectory);
+                Root root = (Root)manager.FetchSingle (localDirectory,
+                    Factory.FileType.Root);
         
-            CvsRoot cvsRoot = new CvsRoot(root.FileContents);
-            
-            WorkingDirectory workingDirectory = new WorkingDirectory(cvsRoot,
-                                                                     localDirectory,
-                                                                     module);
+                this.cvsRoot = new CvsRoot(root.FileContents);
+            }
+
+            if (null == workingDirectory) {
+                Manager manager = new Manager(localDirectory);
+                Repository repository = (Repository)manager.FetchSingle (localDirectory,
+                    Factory.FileType.Repository);
+
+                this.workingDirectory = new WorkingDirectory(cvsRoot,
+                    localDirectory,
+                    repository.FileContents);
+            }
         
             // Recursively add all cvs folders/files under the localDirectory
-            workingDirectory.FoldersToUpdate = FetchFiles(localDirectory);
+            if (Directory.Exists(localDirectory)) {
+                workingDirectory.FoldersToUpdate = FetchFiles(localDirectory);
+            }
             
-            LogCommand command = new LogCommand(workingDirectory, repository.FileContents, null);
+            LogCommand command = new LogCommand(workingDirectory, this.workingDirectory.ModuleName, null);
     
             // add any date restrictions        
             if (hasStartDate && hasEndDate) {
@@ -207,7 +236,10 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
             curLogRevision = new LogRevision();
             logState = LogState.WANT_FILE_HEADER_START;
              
-            connection.MessageEvent.MessageEvent += new EncodedMessage.MessageHandler(OnMessage);
+            if (connection.GetType() == typeof(CVSServerConnection)) {
+                CVSServerConnection cvsServerConnection = (CVSServerConnection)connection;
+                cvsServerConnection.MessageEvent.MessageEvent += new EncodedMessage.MessageHandler(OnMessage);
+            }
             command.Execute(connection);
 
             // return curLogReport but clear our reference to it

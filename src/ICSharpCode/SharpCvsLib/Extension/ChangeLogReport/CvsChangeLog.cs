@@ -83,25 +83,30 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
         {
             logCommand = new LogReportCommand(module, localDirectory);
         }
+
+        /// <summary>
+        /// Create a new instance of the cvs changelog command.
+        /// </summary>
+        /// <param name="workingDirectory"></param>
+        /// <param name="module"></param>
+        public CvsChangeLog(WorkingDirectory workingDirectory, string module) {
+            logCommand = new LogReportCommand(workingDirectory, module);
+        }
     
         /// <summary>
         /// If set, only report changes on or after this date
         /// </summary>
-        public DateTime StartDate 
-        {
-        	set { 
-        	    logCommand.StartDate = value;
-        	}
+        public DateTime StartDate {
+            get {return logCommand.StartDate;}
+        	set {logCommand.StartDate = value;}
         }
             
         /// <summary>
         /// If set, only report changes on or before this date
         /// </summary>
-        public DateTime EndDate 
-        {
-        	set { 
-        	    logCommand.EndDate = value;
-        	}
+        public DateTime EndDate {
+            get {return logCommand.EndDate;}
+        	set {logCommand.EndDate = value;}
         }
         
         /// <summary>
@@ -111,7 +116,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
         {
             logCommand.SetLastNDays(days);
         }
-        
+
         /// <summary>
         /// Adds a single mapping between a user name as used within cvs and
         /// a full users name.
@@ -136,6 +141,16 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
 //                throw e;
 //            }
         }
+
+        /// <summary>
+        /// Produce the report.
+        /// </summary>
+        /// <param name="xmlFilename"></param>
+        /// <param name="connection"></param>
+        public void Run(string xmlFilename, ICommandConnection connection) {
+            XmlTextWriter textWriter = new XmlTextWriter(xmlFilename, new UTF8Encoding());
+            Run(textWriter, connection);
+        }
         
         /// <summary>
         /// Produce the report
@@ -152,7 +167,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
         /// <summary>
         /// Produce the report
         /// </summary>
-        public void Run(XmlTextWriter textWriter, CVSServerConnection connection)
+        public void Run(XmlTextWriter textWriter, ICommandConnection connection)
         {
             // send the log command to the cvs server and get the LogReport
             LogReport logReport = logCommand.Run(connection);

@@ -62,8 +62,7 @@ namespace ICSharpCode.SharpCvsLib.Console {
         private string[] _args;
 
         private const string DEFAULT_CONFIG = 
-            @"
-<?xml version='1.0' encoding='utf-8' ?> 
+            @"<?xml version='1.0' encoding='utf-8'?>
 <configuration>
     <configSections>
         <section name='log4net' type='log4net.Config.Log4NetConfigurationSectionHandler,log4net'/>
@@ -122,8 +121,8 @@ namespace ICSharpCode.SharpCvsLib.Console {
             MemoryStream stream = new MemoryStream();
             try {
                 stream.Write(Encoding.UTF8.GetBytes(DEFAULT_CONFIG), 0, DEFAULT_CONFIG.Length);
-            }catch (Exception e) {
-                System.Console.WriteLine(e);
+            }catch (Exception) {
+                //System.Console.WriteLine(e);
             }
             return stream;
         }
@@ -157,9 +156,11 @@ namespace ICSharpCode.SharpCvsLib.Console {
             ICommand command = null;
             try {
                 command = parser.Execute ();
-            } catch (CommandLineParseException) {
+            } catch (CommandLineParseException e) {
 //                LOGGER.Debug (e);
-                System.Console.WriteLine(Usage.General);
+                System.Console.WriteLine(
+                    String.Format("{0}{1}{2}",
+                        Usage.General, Environment.NewLine, e.Message));
                 return;
             }
 

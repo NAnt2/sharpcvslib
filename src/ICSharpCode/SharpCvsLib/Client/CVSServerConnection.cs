@@ -77,6 +77,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
 
         private IFileHandler uncompressedFileHandler =
             new UncompressedFileHandler();
+        private IFileHandler compressedFileHandler =
+            new CompressedFileHandler();
 
         private const String PSERVER_AUTH_SUCCESS = "I LOVE YOU";
         private const String PSERVER_AUTH_FAIL = "I HATE YOU";
@@ -87,6 +89,15 @@ namespace ICSharpCode.SharpCvsLib.Client {
         private SharpCvsLibConfig config;
 
         private Process p = null;
+
+        /// <summary>
+        /// Time when the authentication was sent to the remote server.
+        /// </summary>
+        protected DateTime StartTime;
+        /// <summary>
+        /// Time when the connection was closed.
+        /// </summary>
+        protected DateTime EndTime;
 
         /// <summary>
         ///     Initialize the cvs server connection.
@@ -335,6 +346,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// </summary>
         /// <param name="password"></param>
         public void Authentication(string password) {
+            this.StartTime = DateTime.Now;
             switch (repository.CvsRoot.Protocol) {
                 case "ext": {
                     HandleExtAuthentication ();
@@ -517,6 +529,12 @@ namespace ICSharpCode.SharpCvsLib.Client {
                     break;
                 }
             }
+            this.EndTime = DateTime.Now;
+
+            TimeSpan elapsedTime = this.EndTime.Subtract(this.StartTime);
+            System.Console.WriteLine(String.Format("Processing time: {0}:{1}:{2}:{3}.",
+                elapsedTime.Hours, elapsedTime.Minutes, elapsedTime.Seconds,
+                elapsedTime.Milliseconds));
         }
     }
 }
