@@ -1,18 +1,29 @@
 <project name="Ccnet" default="Build">
     <property name="frameworks" value="net-1.1 mono-1.0"/>
     <target name="Build">
+        <call target="CreateBuildText"/>
         <foreach item="String" in="${frameworks}" property="framework" delim=" ">
             <nant buildfile="SharpCvsLib.build" target="clean dist" verbose="true" inheritall="false">
                 <properties>
                     <property name="nant.settings.currentframework" value="${framework}" readonly="true" />
                 </properties>
             </nant>
+            
+            <zip zipfile="${dir.ccnet.log}/${label-to-apply}/SharpCvsLib-${framework}-${platform-get-name()}.zip">
+                <fileset basedir="${dir.dist}/src">
+                    <include name="**" />
+                    <exclude name=".externalToolBuilders/**"/>
+                </fileset>
+                <fileset basedir="${dir.dist}/bin" prefix="bin">
+                    <include name="bin/**"/>
+                </fileset>
+                <fileset basedir="${dir.ccnet.log}">
+                    <include name="build.txt" />
+                </fileset>
+            </zip>
         </foreach>
         
         <if test="${property::exists('dir.ccnet.log')}">
-            <call target="CreateBuildText"/>
-            <call target="Package"/>
-
             <!--  
                 You will need to download junction (for symlinks) here: 
                 http://www.sysinternals.com/ntw2k/source/misc.shtml#junction 
@@ -27,24 +38,6 @@
             </exec>
         </if>    
     </target> 
-    
-    <target name="Package">
-        <mkdir dir="${ccnet.log.dir}/${label-to-apply}"/>
-        <zip zipfile="${ccnet.log.dir}/${label-to-apply}/${assembly.version}-src.zip">
-            <fileset basedir="${dir.dist}/src">
-                <include name="**" />
-                <exclude name=".externalToolBuilders/**"/>
-            </fileset>
-            <fileset basedir="${dir.dist}/bin" prefix="bin">
-                <include name="bin/**"/>
-            </fileset>
-        </zip>
-        <zip zipfile="${ccnet.log.dir}/${label-to-apply}/${assembly.version}-bin.zip">
-            <fileset basedir="${dir.dist}/bin">
-                <include name="**" />
-            </fileset>
-        </zip>
-    </target>
     
     <target name="CreateBuildText">
             <sysinfo/>            
