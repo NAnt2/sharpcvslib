@@ -77,6 +77,11 @@
                     AssemblyName = "log4net"
                     HintPath = "lib\ext\log4net.dll"
                 />
+                <Reference
+                    Name = "ICSharpCode.SharpCvsLib"
+                    AssemblyName = "ICSharpCode.SharpCvsLib"
+                    HintPath = "build\bin\ICSharpCode.SharpCvsLib.dll"
+                />
             </References>
         </Build>
         <Files>
@@ -101,12 +106,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\ICSharpCode.Console\SharpCvsLib\Console\Commands\AddCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src\ICSharpCode.Console\SharpCvsLib\Console\Commands\CheckoutCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "src\ICSharpCode.Console\SharpCvsLib\Console\Commands\CommitCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\ICSharpCode.Console\SharpCvsLib\Console\Commands\InitCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
