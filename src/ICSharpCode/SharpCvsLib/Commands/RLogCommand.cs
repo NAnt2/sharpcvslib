@@ -109,7 +109,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             }
         
             // add any date arguments
-            foreach (object o in DateArgs) {
+            foreach (object o in base.DateArgs) {
                 string dateArg = (string)o;
                 connection.SubmitRequest(new ArgumentRequest("-d"));
                 connection.SubmitRequest(new ArgumentRequest(dateArg));

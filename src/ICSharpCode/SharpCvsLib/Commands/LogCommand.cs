@@ -215,8 +215,17 @@ public class LogCommand : ICommand, ILogCommand
             if (hasEndDate) {
                 dateArg += endDate.ToString(dateFormat);
             }
-            dateArgs.Add(dateArg);
+            this.AddDateArg(dateArg);
         }
+    }
+
+    /// <summary>
+    /// Add the date argument to the date range collection.
+    /// </summary>
+    /// <param name="dateArg"></param>
+    protected void AddDateArg(string dateArg) {
+        System.Console.WriteLine(String.Format("Adding date argument: {0}.", dateArg));
+        this.dateArgs.Add(dateArg);
     }
 
     /// <summary>

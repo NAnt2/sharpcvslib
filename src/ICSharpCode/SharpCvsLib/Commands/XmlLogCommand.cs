@@ -68,7 +68,9 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         public DateTime StartDate {
             get {return cvsChangeLog.StartDate;}
-            set {this.cvsChangeLog.StartDate = value;}
+            set {
+//                System.Console.WriteLine(String.Format("Setting start date: {0}.", value));
+                this.cvsChangeLog.StartDate = value;}
         }
 
         /// <summary>
@@ -76,7 +78,9 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         public DateTime EndDate {
             get {return cvsChangeLog.EndDate;}
-            set {this.cvsChangeLog.EndDate = value;}
+            set {
+//                System.Console.WriteLine(String.Format("Setting end date: {0}.", value));
+                this.cvsChangeLog.EndDate = value;}
         }
 
         /// <summary>

@@ -54,7 +54,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         private CvsRoot CvsRoot {
             get {return this.cvsRoot;}
             set {
-                System.Console.WriteLine(String.Format("CvsRoot: {0}.", value));
+//                System.Console.WriteLine(String.Format("CvsRoot: {0}.", value));
                 this.cvsRoot = value;}
         }
 
@@ -62,7 +62,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         private string ModuleName {
             get {return this.moduleName;}
             set {
-                System.Console.WriteLine(String.Format("Module name: {0}.", value));
+//                System.Console.WriteLine(String.Format("Module name: {0}.", value));
                 this.moduleName = value;}
         }
         private string localDirectory;
@@ -111,8 +111,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         private string XmlFilename {
             get {return this.xmlFilename;}
             set {
-                System.Console.WriteLine(String.Format("Setting XmlFilename: {0}.", 
-                    value));
+//                System.Console.WriteLine(String.Format("Setting XmlFilename: {0}.", 
+//                    value));
                 this.xmlFilename = value;}
         }
 
@@ -120,8 +120,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         private string XslFilename {
             get {return this.xslFilename;}
             set {
-                System.Console.WriteLine(String.Format("Setting XslFilename: {0}.",
-                    value));
+//                System.Console.WriteLine(String.Format("Setting XslFilename: {0}.",
+//                    value));
                 this.xslFilename = value;
             }
         }
@@ -130,7 +130,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// Produce an xml log report.
         /// </summary>
         public XmlLogCommand(CvsRoot cvsroot, string[] args) {
-            System.Console.WriteLine(String.Format("Number of arguments: {0}.", args.Length));
+//            System.Console.WriteLine(String.Format("Number of arguments: {0}.", args.Length));
             this.cvsRoot = cvsroot;
             this.moduleName = args[args.Length - 1];
             int i = 0;
@@ -142,7 +142,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                         arg = args[i];
                         DateTime date = Util.DateParser.ParseCvsDate(arg);
 
-                        if (!(DateTime.MinValue == this.StartDate)) {
+                        if (DateTime.MinValue == this.StartDate) {
                             this.StartDate = date;
                         } else {
                             this.EndDate = date;
