@@ -34,6 +34,8 @@
 using System;
 using System.Text;
 
+using log4net;
+
 namespace ICSharpCode.SharpCvsLib.Util {
 
 /// <summary>
@@ -42,6 +44,7 @@ namespace ICSharpCode.SharpCvsLib.Util {
 /// </summary>
 public class EncodingUtil {
 
+    private static readonly ILog LOGGER = LogManager.GetLogger(typeof(EncodingUtil));
     /// <summary>
     /// Private constructor, all methods are static.
     /// </summary>
@@ -82,7 +85,18 @@ public class EncodingUtil {
     /// <param name="val">A byte value that has been cast to an integer
     ///     by the Stream.ReadByte() method.</param>
     public static String GetString (int val) {
-        return EncodingUtil.GetString (System.Convert.ToByte(val));
+        try {
+            if (val > 0) {
+                return EncodingUtil.GetString (System.Convert.ToByte(val));
+            } else {
+                return val.ToString();
+            }
+        } catch (OverflowException e) {
+            StringBuilder msg = new StringBuilder ();
+            msg.Append ("val=[").Append(val).Append("]");
+            LOGGER.Error(msg, e);
+            throw e;
+        }
     }
 }
 }

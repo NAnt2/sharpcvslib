@@ -76,6 +76,7 @@
                     Name = "SharpCvsLib"
                     Project = "{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                    Private = "False"
                 />
             </References>
         </Build>

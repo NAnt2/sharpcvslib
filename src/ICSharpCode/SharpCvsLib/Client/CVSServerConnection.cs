@@ -120,8 +120,7 @@ public class CVSServerConnection : IConnection, IResponseServices, ICommandConne
             this.authSleep = DEFAULT_AUTH_SLEEP;
         }
 
-        try
-        {
+        try {
             if (config.Log.DebugLog.Enabled) {
                 requestLog = new RequestLog ();
                 responseLog = new ResponseLog ();
@@ -133,16 +132,9 @@ public class CVSServerConnection : IConnection, IResponseServices, ICommandConne
             }
         } catch (Exception e) {
             LOGGER.Error (e);
-            requestLog = new RequestLog ();
-            responseLog = new ResponseLog ();
-
-            this.InputStream.RequestMessage.MessageEvent +=
-                new EncodedMessage.MessageHandler (requestLog.Log);
-            this.OutputStream.ResponseMessage.MessageEvent +=
-                new EncodedMessage.MessageHandler (responseLog.Log);
-
         }
 
+        LOGGER.Debug("Config=["  + config.ToString() + "]");
     }
 
     /// <summary>

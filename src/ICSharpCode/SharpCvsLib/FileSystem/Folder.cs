@@ -46,7 +46,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 ///     cvs server.
 /// </summary>
 public class Folder {
-    private ArrayList entries = new ArrayList();
+    private Entries entries = new Entries();
     private Repository repository;
     private Root root;
     private Tag tag;
@@ -90,7 +90,7 @@ public class Folder {
     /// <summary>
     /// List of entries.
     /// </summary>
-    public ArrayList Entries {
+    public Entries Entries {
         get {return entries;}
         set {this.entries = value;}
     }

@@ -285,7 +285,7 @@ public String WorkingPath {
         if (folders[folder] == null) {
             folders[folder] = new Folder();
         }
-        ((Folder)folders[folder]).Entries.Add(entry);
+        ((Folder)folders[folder]).Entries.Add(entry.Path, entry);
     }
 
     /// <summary>

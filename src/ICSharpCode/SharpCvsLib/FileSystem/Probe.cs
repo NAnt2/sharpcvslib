@@ -34,122 +34,130 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Text;
+
+using log4net;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
-/// <summary>
-/// Takes a single file or a collection of files and creates a new
-///     list of files based on the following rules:
-///         1) If a single file is specified then a check is performed to
-///             determine if the file exists.
-///                 a) If the file does not exist then the NonExistingFiles
-///                     collection is populated.
-///                 b) If the file doe exist then the ExistingFile collection
-///                     is populated.
-///         2) If a collection of files is specified, WITHOUT a directory
-///             then a non-recursive search is performed.  The ExistingFiles and
-///             NonExistingFiles collections are populated.
-///         3) If a collection of files is specified that contains a directory,
-///             or a directory is specified then a recursive search is performed
-///             to populate the ExistingFiles and NonExistingFiles collection.
-/// </summary>
-public class Probe {
-
-    const String ALL = "*";
-    ArrayList nonExistingFiles;
-    ArrayList existingFiles;
-    ICollection originalFiles;
-
-    /// <summary>Files that do not exist on the filesystem.</summary>
-    public ICollection NonExistingFiles {
-        get {return this.nonExistingFiles;}
-    }
-
-    /// <summary>Filest that exist on the filesystem.</summary>
-    public ICollection ExistingFiles {
-        get {return this.existingFiles;}
-    }
-
     /// <summary>
-    /// Optionally specify the original directory to being probing.  If the
-    ///     collection of OriginalFiles is not null then an exception is thrown
-    ///     if there is an attemp to set this property.
+    /// Takes a single file or a collection of files and creates a new
+    ///     list of files based on the following rules:
+    ///         1) If a single file is specified then a check is performed to
+    ///             determine if the file exists.
+    ///                 a) If the file does not exist then the NonExistingFiles
+    ///                     collection is populated.
+    ///                 b) If the file doe exist then the ExistingFile collection
+    ///                     is populated.
+    ///         2) If a collection of files is specified, WITHOUT a directory
+    ///             then a non-recursive search is performed.  The ExistingFiles and
+    ///             NonExistingFiles collections are populated.
+    ///         3) If a collection of files is specified that contains a directory,
+    ///             or a directory is specified then a recursive search is performed
+    ///             to populate the ExistingFiles and NonExistingFiles collection.
     /// </summary>
-    /// <exception name="ArgumentException">If the OriginalFiles collection
-    ///     is non-null before an attempt is made to use this method.</exception>
-    public String OriginalDirectory {
-        set {
-            if (null != originalFiles) {
-            String msg = "Unable to specify a directory when already probing a collection of files.";
-            throw new ArgumentException (msg);
+    public class Probe {
+
+        private ILog LOGGER = LogManager.GetLogger (typeof (Probe));
+        private const String ALL = "*";
+        private String start;
+        private ArrayList files;
+
+        private bool recursive = true;
+
+        private bool isStartDirectory;
+
+        private const String CVS_DIRECTORY = "CVS";
+
+        /// <summary>
+        /// The collection of files that have been identified below the given
+        ///     starting path if Start is a directory, or if Start is a file then
+        ///     this is the given file name.
+        /// </summary>
+        public ICollection Files {
+            get {return this.files;}
+        }
+
+
+        /// <summary>
+        /// Place to start the search.  By default the search will recurse through
+        ///     the directory tree from here if this is a directory path.
+        /// </summary>
+        /// <exception name="ArgumentException">If the OriginalFiles collection
+        ///     is non-null before an attempt is made to use this method.</exception>
+        public String Start {
+            set {
+                String tempStart = value;
+                if (Directory.Exists (tempStart)) {
+                    this.isStartDirectory = true;
+                } else if (File.Exists(tempStart)) {
+                    this.isStartDirectory = false;
+                } else {
+                    StringBuilder msg = new StringBuilder ();
+                    msg.Append ("Unknown starting position.");
+                    msg.Append ("start=[").Append(tempStart).Append("]");
+                    throw new ArgumentException(msg.ToString());
+                }
+
+                if (tempStart.EndsWith(CVS_DIRECTORY + Path.DirectorySeparatorChar)) {
+                    this.start = tempStart.Remove(tempStart.Length - CVS_DIRECTORY.Length + 1, CVS_DIRECTORY.Length + 1);
+                } else if (tempStart.EndsWith(CVS_DIRECTORY)) {
+                    this.start = tempStart.Remove(tempStart.Length - CVS_DIRECTORY.Length, CVS_DIRECTORY.Length);
+                } else {
+                    this.start = tempStart;
+                }
+                if (LOGGER.IsDebugEnabled) {
+                    StringBuilder msg = new StringBuilder();
+                    msg.Append("start=[").Append(start).Append("]");
+                    LOGGER.Debug (msg);
+                }
             }
-            ArrayList originalDirectory = new ArrayList ();
-            originalDirectory.Add (value);
-            this.originalFiles = originalDirectory;
+
         }
 
-    }
-    /// <summary>Original list of files that will be sorted.</summary>
-    public ICollection OriginalFiles {
-        get {return this.originalFiles;}
-        set {this.originalFiles = value;}
-    }
-
-    /// <summary>
-    /// Initialize the existing and non-existing file collections.
-    /// </summary>
-    public Probe () {
-        nonExistingFiles = new ArrayList ();
-        existingFiles = new ArrayList ();
-    }
-
-    /// <summary>
-    /// Begin searching the list of files and categorizing them into existing
-    ///     or non-existing.
-    /// </summary>
-    /// <exception>IllegalArgumentException if the or</exception>
-    public void Execute () {
-        if (this.originalFiles.Count < 1) {
-            // TODO: Create a custom exception.
-            throw new Exception ("No files to search.");
+        /// <summary>
+        /// Initialize the existing and non-existing file collections.
+        /// </summary>
+        public Probe () {
+            this.files = new ArrayList ();
         }
-        foreach (String file in this.originalFiles) {
-            if (Path.GetDirectoryName (file) == Path.GetFileName (file)) {
-                this.GetFiles (file);
-            } else {
-                SortFile (file);
+
+        /// <summary>
+        /// Begin searching the list of files and categorizing them into existing
+        ///     or non-existing.
+        /// </summary>
+        /// <exception>IllegalArgumentException if the or</exception>
+        public void Execute () {
+            if (this.isStartDirectory && this.recursive) {
+                GetFiles(this.files, start, ALL);
+            }
+        }
+
+        /// <summary>
+        /// Perform a recursive search through the current directory specified.
+        ///     Sort all files into existing or non-existing categories.
+        /// </summary>
+        private void GetFiles(ArrayList files, 
+                                     String currentDirectory, 
+                                     String searchPattern) {
+            if (LOGGER.IsDebugEnabled) {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append ("currentDirectory=[").Append(currentDirectory).Append("]");
+                msg.Append ("currentDirectory.ToUpper().EndsWith (CVS_DIRECTORY.ToUpper())")
+                    .Append(currentDirectory.ToUpper().EndsWith (CVS_DIRECTORY.ToUpper()))
+                    .Append("]");
+                LOGGER.Debug (msg);
+            }
+            if (!currentDirectory.ToUpper().EndsWith (CVS_DIRECTORY.ToUpper())) {
+                String[] currentFiles = Directory.GetFiles (currentDirectory);
+                foreach (String file in currentFiles) {
+                    files.Add (file);
+                }
+                
+                String[] currentDirectories = Directory.GetDirectories(currentDirectory);
+                foreach (String directory in currentDirectories) {
+                    GetFiles(files, directory, searchPattern);
+                }
             }
         }
     }
-
-    /// <summary>
-    /// Sort the file into <code>Existing</code> if the file exists on the
-    ///     client's filesystem; otherwise sort the file as
-    ///     <code>Non-Existing</code>.
-    /// </summary>
-    private void SortFile (String file) {
-        if (File.Exists (file)) {
-            this.existingFiles.Add (file);
-        } else {
-            this.nonExistingFiles.Add (file);
-        }
-    }
-
-    /// <summary>
-    /// Perform a recursive search through the current directory specified.
-    ///     Sort all files into existing or non-existing categories.
-    /// </summary>
-    /// <param name="currentDirectory">A directory to begin this current
-    ///     recursive level search.</param>
-    private void GetFiles(String currentDirectory) {
-        String[] files = Directory.GetFiles(currentDirectory, ALL);
-        foreach (String file in files) {
-            this.SortFile (file);
-        }
-
-        String[] directories = Directory.GetDirectories(currentDirectory);
-        foreach (String directory in directories) {
-            GetFiles(directory);
-        }
-    }
-}
 }

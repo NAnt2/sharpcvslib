@@ -36,54 +36,64 @@ using System.Xml;
 using System.Xml.Serialization;
 
 namespace ICSharpCode.SharpCvsLib.Config.Logging {
-/// <summary>
-/// Configuration settings for the sharpcvslib debug log.  These are used
-///     to configure the message delegates on the CvsStream class.
-/// </summary>
-public class Debug {
-
-    private bool enabled;
-    private String requestFile = "out.log";
-    private String responseFile = "in.log";
-
     /// <summary>
-    /// Constructor.
+    /// Configuration settings for the sharpcvslib debug log.  These are used
+    ///     to configure the message delegates on the CvsStream class.
     /// </summary>
-    public Debug () {
+    public class Debug {
 
+        private bool enabled = true;
+        private String requestFile = "out.log";
+        private String responseFile = "in.log";
+
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        public Debug () {
+        }
+
+        /// <summary>
+        /// <code>true</code> if the debug log is enabled,
+        ///     <code>false</code> otherwise.  If this is false nothing
+        ///     will be logged to the request and response files.
+        /// </summary>
+        [XmlElement ("enabled", typeof (bool))]
+        public bool Enabled {
+            get {return this.enabled;}
+            set {this.enabled = value;}
+        }
+
+        /// <summary>
+        /// Configure the name of the file that requests to the cvs
+        ///     server are logged to.
+        /// </summary>
+        [XmlElement ("request-file", typeof (String))]
+        public String RequestFile {
+            get {return this.requestFile;}
+            set {this.requestFile = value;}
+        }
+
+        /// <summary>
+        /// Configure the name of the file that responses from the cvs server
+        ///     are logged to.
+        /// </summary>
+        [XmlElement ("response-file", typeof (String))]
+        public String ResponseFile {
+            get {return this.responseFile;}
+            set {this.responseFile = value;}
+        }
+
+        /// <summary>
+        /// Return a human readable representation of the object.
+        /// </summary>
+        /// <returns>A human readable representation of the object.</returns>
+        public override String ToString () {
+            ICSharpCode.SharpCvsLib.Util.ToStringFormatter formatter =
+                new ICSharpCode.SharpCvsLib.Util.ToStringFormatter("Debug");
+            formatter.AddProperty("Enabled", this.Enabled);
+            formatter.AddProperty("RequestFile", this.RequestFile);
+            formatter.AddProperty("ResponseFile", this.ResponseFile);
+            return formatter.ToString();
+        }
     }
-
-    /// <summary>
-    /// <code>true</code> if the debug log is enabled,
-    ///     <code>false</code> otherwise.  If this is false nothing
-    ///     will be logged to the request and response files.
-    /// </summary>
-    [XmlElement ("enabled", typeof (bool))]
-    public bool Enabled {
-        get {return this.enabled;}
-        set {this.enabled = value;}
-    }
-
-    /// <summary>
-    /// Configure the name of the file that requests to the cvs
-    ///     server are logged to.
-    /// </summary>
-    [XmlElement ("request-file", typeof (String))]
-    public String RequestFile {
-        get {return this.requestFile;}
-        set {this.requestFile = value;}
-    }
-
-    /// <summary>
-    /// Configure the name of the file that responses from the cvs server
-    ///     are logged to.
-    /// </summary>
-    [XmlElement ("response-file", typeof (String))]
-    public String ResponseFile {
-        get {return this.responseFile;}
-        set {this.responseFile = value;}
-    }
-
-
-}
 }

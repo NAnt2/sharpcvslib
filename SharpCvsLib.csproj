@@ -76,11 +76,13 @@
                     Name = "ICSharpCode.SharpZipLib"
                     AssemblyName = "ICSharpCode.SharpZipLib"
                     HintPath = "lib\ICSharpCode.SharpZipLib.dll"
+                    Private = "False"
                 />
                 <Reference
                     Name = "log4net"
                     AssemblyName = "log4net"
                     HintPath = "lib\ext\log4net.dll"
+                    Private = "False"
                 />
             </References>
         </Build>
@@ -161,6 +163,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\ICSharpCode\SharpCvsLib\Commands\RTagCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src\ICSharpCode\SharpCvsLib\Commands\StatusCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -221,6 +228,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\ICSharpCode\SharpCvsLib\FileSystem\Entries.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src\ICSharpCode\SharpCvsLib\FileSystem\Entry.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -232,6 +244,11 @@
                 />
                 <File
                     RelPath = "src\ICSharpCode\SharpCvsLib\FileSystem\Folder.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\ICSharpCode\SharpCvsLib\FileSystem\Folders.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -452,6 +469,11 @@
                 />
                 <File
                     RelPath = "src\ICSharpCode\SharpCvsLib\Requests\RootRequest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\ICSharpCode\SharpCvsLib\Requests\RTagRequest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

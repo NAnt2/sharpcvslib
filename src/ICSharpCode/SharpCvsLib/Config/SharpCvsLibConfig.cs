@@ -39,68 +39,83 @@ using ICSharpCode.SharpCvsLib.Config.Logging;
 
 namespace ICSharpCode.SharpCvsLib.Config {
 
-/// <summary>
-///     Holds the core configuration settings for sharpcvslib.
-/// </summary>
-[XmlRoot ("sharpcvslib-config")]
-public class SharpCvsLibConfig {
-
     /// <summary>
-    ///     The sub section of this configuration entity in the application
-    ///         configuration file.
+    ///     Holds the core configuration settings for sharpcvslib.
     /// </summary>
-    public const String SUB_SECTION = "sharpcvslib-config";
+    [XmlRoot ("sharpcvslib-config")]
+    public class SharpCvsLibConfig {
 
-    int timeout;
-    int authSleep;
+        /// <summary>
+        ///     The sub section of this configuration entity in the application
+        ///         configuration file.
+        /// </summary>
+        public const String SUB_SECTION = "sharpcvslib-config";
 
-    bool verbose = false;
+        int timeout;
+        int authSleep;
 
-    private LogConfig log;
+        bool verbose = false;
 
-    /// <summary>
-    ///     The timeout value for the cvs server connection.
-    /// </summary>
-    [XmlElement ("timeout", typeof (int))]
-    public int Timeout {
-        get {return this.timeout;}
-        set {this.timeout = value;}
+        private LogConfig log;
+
+        /// <summary>
+        ///     The timeout value for the cvs server connection.
+        /// </summary>
+        [XmlElement ("timeout", typeof (int))]
+        public int Timeout {
+            get {return this.timeout;}
+            set {this.timeout = value;}
+        }
+
+        /// <summary>
+        ///     The time between when an authorization request is sent and the
+        ///         response is read.  This is used to handle problems from a
+        ///         slow network connection or a slow server.
+        /// </summary>
+        [XmlElement ("auth-sleep", typeof (int))]
+        public int AuthSleep {
+            get {return this.authSleep;}
+            set {this.authSleep = value;}
+        }
+
+        /// <summary>
+        ///     Set to <code>true</code> if the request/ response commands should
+        ///         be sent to a log file.
+        /// </summary>
+        public bool Verbose {
+            get {return this.verbose;}
+            set {this.verbose = value;}
+        }
+
+        /// <summary>
+        /// Logging configuration settings.
+        /// </summary>
+        [XmlElement ("log", typeof (LogConfig))]
+        public LogConfig Log {
+            get {return this.log;}
+            set {this.log = value;}
+        }
+
+        /// <summary>
+        /// Create a new instance of the logging configuration.
+        /// </summary>
+        public SharpCvsLibConfig () {
+            this.log = new LogConfig ();
+        }
+
+        /// <summary>
+        /// Return a human readable representation of the object.
+        /// </summary>
+        /// <returns>A human readable representation of the object.</returns>
+        public override String ToString () {
+            ICSharpCode.SharpCvsLib.Util.ToStringFormatter formatter = 
+                new ICSharpCode.SharpCvsLib.Util.ToStringFormatter ("SharpCvsLibConfig");
+            formatter.AddProperty("AuthSleep", this.AuthSleep);
+            formatter.AddProperty("Log", this.Log);
+            formatter.AddProperty("Timeout", this.Timeout);
+            formatter.AddProperty("Verbose", this.Verbose);
+
+            return formatter.ToString();
+        }
     }
-
-    /// <summary>
-    ///     The time between when an authorization request is sent and the
-    ///         response is read.  This is used to handle problems from a
-    ///         slow network connection or a slow server.
-    /// </summary>
-    [XmlElement ("auth-sleep", typeof (int))]
-    public int AuthSleep {
-        get {return this.authSleep;}
-        set {this.authSleep = value;}
-    }
-
-    /// <summary>
-    ///     Set to <code>true</code> if the request/ response commands should
-    ///         be sent to a log file.
-    /// </summary>
-    public bool Verbose {
-        get {return this.verbose;}
-        set {this.verbose = value;}
-    }
-
-    /// <summary>
-    /// Logging configuration settings.
-    /// </summary>
-    [XmlElement ("log", typeof (LogConfig))]
-    public LogConfig Log {
-        get {return this.log;}
-        set {this.log = value;}
-    }
-
-    /// <summary>
-    /// Create a new instance of the logging configuration.
-    /// </summary>
-    public SharpCvsLibConfig () {
-        this.Log = new LogConfig ();
-    }
-}
 }

@@ -29,60 +29,60 @@ using System;
 
 namespace ICSharpCode.SharpCvsLib.Requests {
 
-/// <summary>
-/// Response expected: no.
-/// Save argument for use in a subsequent command. Arguments accumulate until
-/// an argument-using command is given, at which point they are forgotten.
-/// </summary>
-public class ArgumentRequest : AbstractRequest
-{
-    private string arg;
-
-    /// <summary>The options that are available as
-    /// arguments to the cvs server.</summary>
-    public class Options {
-        /// <summary>The cvs command used to specify a specific revision
-        ///     is requested.</summary>
-        public const String REVISION = "-r";
-
-        /// <summary>The cvs argument used to specify a revision
-        ///     by date.</summary>
-        public const String DATE = "-D";
-
-        /// <summary>Cvs command to specify that the name of a cvs
-        /// module is comming.</summary>
-        public const String MODULE_NAME = "-N";
-
-        /// <summary>Cvs argument to specify that the local directory
-        /// will be different than the module directory.</summary>
-        public const String OVERRIDE_DIRECTORY = "-d";
-    }
-
     /// <summary>
-    /// An argument to use with the cvs command.
+    /// Response expected: no.
+    /// Save argument for use in a subsequent command. Arguments accumulate until
+    /// an argument-using command is given, at which point they are forgotten.
     /// </summary>
-    /// <param name="arg">The argument to send to the server.</param>
-    public ArgumentRequest(string arg)
+    public class ArgumentRequest : AbstractRequest
     {
-        this.arg = arg;
-    }
+        private string arg;
 
-    /// <summary>
-    /// Argument.
-    /// </summary>
-    public override string RequestString {
-        get {
-            return "Argument " + arg + "\n";
+        /// <summary>The options that are available as
+        /// arguments to the cvs server.</summary>
+        public class Options {
+            /// <summary>The cvs command used to specify a specific revision
+            ///     is requested.</summary>
+            public const String REVISION = "-r";
+
+            /// <summary>The cvs argument used to specify a revision
+            ///     by date.</summary>
+            public const String DATE = "-D";
+
+            /// <summary>Cvs command to specify that the name of a cvs
+            /// module is comming.</summary>
+            public const String MODULE_NAME = "-N";
+
+            /// <summary>Cvs argument to specify that the local directory
+            /// will be different than the module directory.</summary>
+            public const String OVERRIDE_DIRECTORY = "-d";
+        }
+
+        /// <summary>
+        /// An argument to use with the cvs command.
+        /// </summary>
+        /// <param name="arg">The argument to send to the server.</param>
+        public ArgumentRequest(string arg)
+        {
+            this.arg = arg;
+        }
+
+        /// <summary>
+        /// Argument.
+        /// </summary>
+        public override string RequestString {
+            get {
+                return "Argument " + arg + "\n";
+            }
+        }
+
+        /// <summary>
+        /// <code>false</code>, response is not expected.
+        /// </summary>
+        public override bool IsResponseExpected {
+            get {
+                return false;
+            }
         }
     }
-
-    /// <summary>
-    /// <code>false</code>, response is not expected.
-    /// </summary>
-    public override bool IsResponseExpected {
-        get {
-            return false;
-        }
-    }
-}
 }

@@ -25,6 +25,8 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using System;
+
 namespace ICSharpCode.SharpCvsLib.Requests {
 
 /// <summary>
@@ -37,6 +39,16 @@ namespace ICSharpCode.SharpCvsLib.Requests {
 public class GlobalOptionRequest : AbstractRequest
 {
     private string option;
+
+    /// <summary>
+    /// Options that are available globally.
+    /// </summary>
+    public class Options {
+        /// <summary>
+        /// Suppress the cvs chatter.
+        /// </summary>
+        public const String QUIET = "-q";
+    }
 
     /// <summary>
     /// Constructor

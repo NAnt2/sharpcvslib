@@ -88,6 +88,13 @@ public class Entry : ICvsFile
     }
 
     /// <summary>
+    /// The name of the actual file on the filesystem.
+    /// </summary>
+    public String ActualFilename {
+        get {return System.IO.Path.Combine (this.Path, this.Name);}
+    }
+
+    /// <summary>
     ///     The path to the folder above the cvs folder.
     /// </summary>
     public String Path {

@@ -67,7 +67,7 @@ public class ProbeTest {
     public void TestNoCvsFiles () {
         String searchDir = Path.GetTempPath ();
         Probe probe = new Probe ();
-        probe.OriginalDirectory = searchDir;
+        probe.Start = searchDir;
 
         probe.Execute ();
     }

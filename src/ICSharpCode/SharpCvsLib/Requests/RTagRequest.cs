@@ -1,4 +1,5 @@
 #region "Copyright"
+//
 // Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
@@ -28,44 +29,32 @@
 // exception statement from your version.
 //
 //    <author>Clayton Harbour</author>
-//
 #endregion
 
 using System;
-using System.Xml;
-using System.Xml.Serialization;
 
-namespace ICSharpCode.SharpCvsLib.Config.Logging {
-    /// <summary>
-    /// Logging configuration settings.
-    /// </summary>
-    public class LogConfig {
-        private Debug debugLog;
+namespace ICSharpCode.SharpCvsLib.Requests {
+	/// <summary>
+    /// Response expected: yes. Actually do a cvs command. This uses any previous 
+    /// Argument requests, if they have been sent. The client should not send 
+    /// Directory, Entry, or Modified requests for this command; they are not used. 
+    /// Arguments to these commands are module names, as described for co.
+	/// </summary>
+	public class RTagRequest : AbstractRequest {
 
         /// <summary>
-        /// Create a new instance of the debug log.
+        /// Do an recursive tag against the module specified.  If a directory or file
+        ///     has been specified then this will be ignored.
         /// </summary>
-        public LogConfig () {
-            this.debugLog = new Debug ();
-        }
-        /// <summary>
-        /// Configuration for the debugging log.
-        /// </summary>
-        [XmlElement ("debug-log", typeof (Debug))]
-        public Debug DebugLog {
-            get {return this.debugLog;}
-            set {this.debugLog = value;}
+        public override string RequestString {
+            get {return "rtag\n";}
         }
 
         /// <summary>
-        /// Return a human readable representation of the object.
+        /// <code>true</code>, a response is expected.
         /// </summary>
-        /// <returns>A human readable representation of the object.</returns>
-        public override String ToString () {
-            ICSharpCode.SharpCvsLib.Util.ToStringFormatter formatter = 
-                new ICSharpCode.SharpCvsLib.Util.ToStringFormatter("LogConfig");
-            formatter.AddProperty("DebugLog", this.DebugLog);
-            return formatter.ToString ();
+        public override bool IsResponseExpected {
+            get {return true;}
         }
-    }
+	}
 }
