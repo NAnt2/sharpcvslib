@@ -38,6 +38,8 @@ using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 
+using ICSharpCode.SharpCvsLib.Config.Tests;
+
 using log4net;
 using NUnit.Framework;
 
@@ -49,7 +51,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// </summary>
     [TestFixture]
     public class RepositoryTest {
-        
+        private TestSettings settings = new TestSettings ();
         private readonly String RELATIVE_PATH = "src";
         private readonly String REPOSITORY_ENTRY1 = "sharpcvslib/src";
         private readonly String REPOSITORY_ENTRY2 = "sharpcvslib/doc";
@@ -68,7 +70,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         [Test]
         public void CreateRepositoryTest () {
             String fullPath = 
-                Path.Combine (TestConstants.LOCAL_PATH, RELATIVE_PATH);
+                Path.Combine (this.settings.Config.LocalPath, RELATIVE_PATH);
             Repository repos = new Repository (fullPath, 
                                                this.REPOSITORY_ENTRY1);
             
@@ -86,8 +88,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void EqualsTest () {
-            String cvsPath = Path.Combine (TestConstants.LOCAL_PATH, 
-                                           TestConstants.MODULE);
+            String cvsPath = Path.Combine (this.settings.Config.LocalPath, 
+                                           this.settings.Config.Module);
             Repository reposSame1 = new Repository (cvsPath, this.REPOSITORY_ENTRY1);
             Repository reposSame2 = new Repository (cvsPath, this.REPOSITORY_ENTRY1);
             Repository reposDiff1 = new Repository (cvsPath, this.REPOSITORY_ENTRY2);
@@ -111,7 +113,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         [Test]
         public void NoSlashAtEnd () {
             String fullPath = 
-                Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
+                Path.Combine (this.settings.Config.LocalPath, this.settings.Config.Module);
             
             String repositoryEntryWithSlash = this.REPOSITORY_ENTRY1 + "/";
             
@@ -132,8 +134,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [TearDown]
         public void TearDown () {
-		    if (Directory.Exists (TestConstants.LOCAL_PATH)) {
-    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    if (Directory.Exists (this.settings.Config.LocalPath)) {
+    		    Directory.Delete (this.settings.Config.LocalPath, true);
 		    }            
         }
     }

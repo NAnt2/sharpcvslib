@@ -31,7 +31,7 @@
 using System;
 using System.IO;
 
-namespace ICSharpCode.SharpCvsLib {
+namespace ICSharpCode.SharpCvsLib.Config.Tests {
     
     /// <summary>
     ///     Holds constants used for test cases.

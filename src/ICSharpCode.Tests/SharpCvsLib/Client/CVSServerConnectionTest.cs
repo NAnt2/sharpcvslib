@@ -34,7 +34,10 @@ using NUnit.Framework;
 
 using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib;
+using ICSharpCode.SharpCvsLib.Config.Tests;
 using ICSharpCode.SharpCvsLib.Misc;
+
+using log4net;
 
 // TODO: Change to internalize helpers (remove)
 [assembly: log4net.Config.DOMConfigurator(
@@ -48,6 +51,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
     /// </summary>
     [TestFixture]
     public class CVSServerConnectionTest {
+        private ILog LOGGER = LogManager.GetLogger (typeof (CVSServerConnectionTest));
+        private TestSettings settings = new TestSettings ();
         
         /// <summary>
         ///     Constructor.
@@ -61,17 +66,18 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// </summary>
         [Test]
         public void MakeConnection_Good () {
+            LOGGER.Debug ("Settings=[" + this.settings.Config + "]");
             System.Threading.Thread.Sleep (500);
-            CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
+            CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
             WorkingDirectory working = 
                 new WorkingDirectory (root, 
-                                        TestConstants.LOCAL_PATH, 
-                                        TestConstants.MODULE);
+                                        this.settings.Config.LocalPath, 
+                                        this.settings.Config.Module);
 
             CVSServerConnection connection = new CVSServerConnection ();
             Assertion.AssertNotNull ("Should have a connection object.", connection);
             
-            connection.Connect (working, TestConstants.PASSWORD_VALID);
+            connection.Connect (working, this.settings.Config.ValidPassword);
         }
 
         /// <summary>
@@ -80,19 +86,20 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// </summary>
         [Test]
         public void MakeConnection_Bad () {
+            LOGGER.Debug ("Settings=[" + this.settings.Config + "]");
             System.Threading.Thread.Sleep (500);
-            CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
+            CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
             root.User = "some_other_user";
             WorkingDirectory working = 
                 new WorkingDirectory (root, 
-                                        TestConstants.LOCAL_PATH, 
-                                        TestConstants.MODULE);
+                                        this.settings.Config.LocalPath, 
+                                        this.settings.Config.Module);
 
             CVSServerConnection connection = new CVSServerConnection ();
             Assertion.AssertNotNull ("Should have a connection object.", connection);
             
             try {
-                connection.Connect (working, TestConstants.PASSWORD_INVALID);
+                connection.Connect (working, this.settings.Config.InvalidPassword);
                 Assertion.Assert ("Connection should have failed and this code " +
                                   "should not be reached.", true == false);
             } catch (Exception) {

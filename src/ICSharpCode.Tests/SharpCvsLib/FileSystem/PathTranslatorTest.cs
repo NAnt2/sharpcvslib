@@ -38,6 +38,7 @@ using log4net;
 using NUnit.Framework;
 
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Config.Tests;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
 	/// <summary>
@@ -51,6 +52,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		private ILog LOGGER = 
 			LogManager.GetLogger (typeof(EntryTest));
         private String moduleDir;
+	    
+	    private TestSettings settings = new TestSettings ();
 	    
         private const String ROOT_ENTRY1 = 
             ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
@@ -110,8 +113,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [TearDown]
         public void TearDown () {
-		    if (Directory.Exists (TestConstants.LOCAL_PATH)) {
-    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    if (Directory.Exists (this.settings.Config.LocalPath)) {
+    		    Directory.Delete (this.settings.Config.LocalPath, true);
 		    }            
         }
         

@@ -40,6 +40,8 @@ using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Commands;
 
+using ICSharpCode.SharpCvsLib.Config.Tests;
+
 using log4net;
 using NUnit.Framework;
 
@@ -50,6 +52,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// </summary>
     [TestFixture]
     public class ManagerTest {
+        private TestSettings settings = new TestSettings ();
         
 	    private String[] cvsEntries = 
 	        {
@@ -89,8 +92,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void AddRootTest () {
-            String path = Path.Combine (TestConstants.LOCAL_PATH, 
-                            TestConstants.MODULE);
+            String path = Path.Combine (this.settings.Config.LocalPath, 
+                            this.settings.Config.Module);
             this.AddCvsFileTest (path, this.ROOT_ENTRY, Factory.FileType.Root);
         }
         
@@ -100,7 +103,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void AddRootTwiceTest () {
-            String path = TestConstants.LOCAL_PATH;
+            String path = this.settings.Config.LocalPath;
             this.AddCvsFileTest (path, this.ROOT_ENTRY, Factory.FileType.Root);
             this.AddCvsFileTest (path, this.ROOT_ENTRY, Factory.FileType.Root);
             
@@ -113,7 +116,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary> 
         [Test]       
         public void AddDiffRootTest () {
-            String path = TestConstants.LOCAL_PATH;
+            String path = this.settings.Config.LocalPath;
             this.AddCvsFileTest (path, this.ROOT_ENTRY, Factory.FileType.Root);
             this.AddCvsFileTest (path, this.ROOT_ENTRY + "/changed", 
                                  Factory.FileType.Root);
@@ -126,8 +129,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void AddRepositoryTest () {
-            String path = Path.Combine (TestConstants.LOCAL_PATH, 
-                            TestConstants.MODULE);
+            String path = Path.Combine (this.settings.Config.LocalPath, 
+                            this.settings.Config.Module);
             this.AddCvsFileTest (path, 
                                  this.REPOSITORY_ENTRY, 
                                  Factory.FileType.Repository);
@@ -172,8 +175,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		public void WriteManyEntriesThenAddOneSame () {
 		    Manager manager = new Manager ();
 		    
-		    String path = Path.Combine (TestConstants.LOCAL_PATH, 
-		                                TestConstants.MODULE);
+		    String path = Path.Combine (this.settings.Config.LocalPath, 
+		                                this.settings.Config.Module);
 		    
 		    LOGGER.Debug ("Enter write many");
 		    
@@ -263,8 +266,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		[Test]
 		public void WriteDirectoryEntriesFromPathTest () {
 		    Manager manager = new Manager ();
-		    String rootDir = Path.Combine (TestConstants.LOCAL_PATH, 
-		                                   TestConstants.MODULE);
+		    String rootDir = Path.Combine (this.settings.Config.LocalPath, 
+		                                   this.settings.Config.Module);
 		    
 		    this.WriteTestDirectoryEntries (rootDir);
 		    
@@ -295,8 +298,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		public void AddDirectoryEntriesFromPath () {
 		    const String NEW_DIRECTORY = "test";
 		    Manager manager = new Manager ();
-		    String path = Path.Combine (TestConstants.LOCAL_PATH, 
-		                                TestConstants.MODULE);
+		    String path = Path.Combine (this.settings.Config.LocalPath, 
+		                                this.settings.Config.Module);
 		    
 		    String newDirectory = Path.Combine (path, NEW_DIRECTORY);
 		    Directory.CreateDirectory (newDirectory);
@@ -317,7 +320,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		    Assertion.Assert ("Should contain the directory entry.", 
 		                      null != manager.Find (path, NEW_DIRECTORY));
 		    Assertion.Assert ("There should be no cvs entry above the root directory.",
-		                      !Directory.Exists (Path.Combine (TestConstants.LOCAL_PATH,
+		                      !Directory.Exists (Path.Combine (this.settings.Config.LocalPath,
 		                                                       manager.CVS)));
 		                      
 		}
@@ -331,13 +334,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		public void FindAllWorkingFolders () {
 		    Manager manager = new Manager ();
 		    string rootDir = 
-		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
+		        Path.Combine (this.settings.Config.LocalPath, this.settings.Config.Module);
 
-            CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
+            CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
             WorkingDirectory working = 
                 new WorkingDirectory (root, 
                                         rootDir, 
-                                        TestConstants.MODULE);
+                                        this.settings.Config.Module);
 		    
 		    this.WriteTestDirectoryEntries (rootDir);
             this.AddCvsFileTest (rootDir, 
@@ -359,11 +362,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		}
 		
 		private void Checkout () {
-            CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
+            CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
             WorkingDirectory working = 
                 new WorkingDirectory (root, 
-                                        TestConstants.LOCAL_PATH, 
-                                        TestConstants.MODULE);
+                                        this.settings.Config.LocalPath, 
+                                        this.settings.Config.Module);
 
             CVSServerConnection connection = new CVSServerConnection ();
             Assertion.AssertNotNull ("Should have a connection object.", connection);
@@ -371,7 +374,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             ICommand command = new CheckoutModuleCommand (working);
             Assertion.AssertNotNull ("Should have a command object.", command);
 		    
-            connection.Connect (working, TestConstants.PASSWORD_VALID);
+            connection.Connect (working, this.settings.Config.ValidPassword);
 
             command.Execute (connection);
             connection.Close ();
@@ -388,7 +391,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		    Manager manager = new Manager ();
 		    
 		    string rootDir = 
-		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
+		        Path.Combine (this.settings.Config.LocalPath, this.settings.Config.Module);
 		    
 		    Directory.CreateDirectory (rootDir);
 		    string cvsDir =
@@ -409,8 +412,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		/// </summary>
 		[TearDown]
 		public void TearDown () {
-		    if (Directory.Exists (TestConstants.LOCAL_PATH)) {
-    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    if (Directory.Exists (this.settings.Config.LocalPath)) {
+    		    Directory.Delete (this.settings.Config.LocalPath, true);
 		    }
 		}
 		
@@ -423,7 +426,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		    Manager manager = new Manager ();
 
 		    string rootDir = 
-		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
+		        Path.Combine (this.settings.Config.LocalPath, this.settings.Config.Module);
 
             Entry entry = new Entry (rootDir, EntryTest.CHECKOUT_ENTRY_2);
 		    

@@ -40,6 +40,8 @@ using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Exceptions;
 
+using ICSharpCode.SharpCvsLib.Config.Tests;
+
 using log4net;
 using NUnit.Framework;
 
@@ -53,6 +55,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		private ILog LOGGER = 
 			LogManager.GetLogger (typeof(CheckoutModuleCommandTest));
 	    
+	    private TestSettings settings = new TestSettings ();
 	    private Manager manager;
 	    
 	    private const String CVSNT_CVSROOT = 
@@ -80,10 +83,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		///     that has not been checked out.</summary>
 		[Test]
 		public void UpdateNoCheckoutTest () {
-            CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
+            CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
             WorkingDirectory working = 
                 new WorkingDirectory (root, 
-                                        TestConstants.LOCAL_PATH, 
+                                        this.settings.Config.LocalPath, 
                                         CVSNT_MODULE);
 
             CVSServerConnection connection = new CVSServerConnection ();
@@ -92,7 +95,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             ICommand command = new UpdateCommand2 (working);
             Assertion.AssertNotNull ("Should have a command object.", command);
 		    
-            connection.Connect (working, TestConstants.PASSWORD_VALID);		    
+            connection.Connect (working, this.settings.Config.ValidPassword);		    
 		}
 		
 		/// <summary>Update from a cvsnt repository.  
@@ -108,7 +111,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		    CvsRoot root = new CvsRoot (CVSNT_CVSROOT);
 		    WorkingDirectory working =
 		        new WorkingDirectory (root, 
-		                              TestConstants.LOCAL_PATH,
+		                              this.settings.Config.LocalPath,
 		                              CVSNT_MODULE);
 		    
 		    CVSServerConnection connection = new CVSServerConnection ();
@@ -117,7 +120,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             ICommand command = new UpdateCommand2 (working);
             Assertion.AssertNotNull ("Should have a command object.", command);
 		    
-            connection.Connect (working, TestConstants.PASSWORD_VALID);
+            connection.Connect (working, this.settings.Config.ValidPassword);
 		}
 		
 		/// <summary>Checkout the cvsnt project and then update the project 
@@ -126,12 +129,12 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		public void UpdateFromCvsntTest_Checkout () {
 		    Manager manager = new Manager (); 
 		    string cvsPath = 
-		        Path.Combine (TestConstants.LOCAL_PATH, CVSNT_MODULE);
+		        Path.Combine (this.settings.Config.LocalPath, CVSNT_MODULE);
 		    
             CvsRoot root = new CvsRoot (CVSNT_CVSROOT);
             WorkingDirectory working = 
                 new WorkingDirectory (root, 
-                                        TestConstants.LOCAL_PATH, 
+                                        this.settings.Config.LocalPath, 
                                         CVSNT_MODULE);
 
             CVSServerConnection connection = new CVSServerConnection ();
@@ -141,7 +144,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             Assertion.AssertNotNull ("Should have a command object.", command);
 		    
 		    try {
-                connection.Connect (working, TestConstants.PASSWORD_VALID);
+                connection.Connect (working, this.settings.Config.ValidPassword);
 		    } catch (AuthenticationException) {
 		        Assertion.Assert ("Failed to authenticate with server.", true);
 		    }

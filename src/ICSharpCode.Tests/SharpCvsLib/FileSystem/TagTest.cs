@@ -38,6 +38,8 @@ using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 
+using ICSharpCode.SharpCvsLib.Config.Tests;
+
 using log4net;
 using NUnit.Framework;
 
@@ -48,6 +50,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// </summary>
     [TestFixture]
     public class TagTest {
+        private TestSettings settings = new TestSettings ();
         
         private readonly String TAG_ENTRY1 = 
             "TVer1.1";
@@ -67,7 +70,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void CreateTagTest () {
-            String fullPath = TestConstants.LOCAL_PATH;
+            String fullPath = this.settings.Config.LocalPath;
             Tag tag = new Tag (fullPath, this.TAG_ENTRY1);
             
             String cvsPath = Path.Combine (fullPath, "CVS");
@@ -86,8 +89,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void EqualsTest () {
-            String cvsPath = Path.Combine (TestConstants.LOCAL_PATH, 
-                                           TestConstants.MODULE);
+            String cvsPath = Path.Combine (this.settings.Config.LocalPath, 
+                                           this.settings.Config.Module);
             Tag tagSame1 = new Tag (cvsPath, this.TAG_ENTRY1);
             Tag tagSame2 = new Tag (cvsPath, this.TAG_ENTRY1);
             Tag tagDiff1 = new Tag (cvsPath, this.TAG_ENTRY2);
@@ -107,8 +110,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [TearDown]
         public void TearDown () {
-		    if (Directory.Exists (TestConstants.LOCAL_PATH)) {
-    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    if (Directory.Exists (this.settings.Config.LocalPath)) {
+    		    Directory.Delete (this.settings.Config.LocalPath, true);
 		    }            
         }        
     }

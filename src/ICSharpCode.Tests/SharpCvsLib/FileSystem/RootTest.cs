@@ -38,6 +38,8 @@ using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 
+using ICSharpCode.SharpCvsLib.Config.Tests;
+
 using log4net;
 using NUnit.Framework;
 
@@ -49,6 +51,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// </summary>
     [TestFixture]
     public class RootTest {
+        private TestSettings settings = new TestSettings ();
         
         private readonly String ROOT_ENTRY1 = 
             ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
@@ -68,7 +71,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void CreateRootTest () {
-            String fullPath = TestConstants.LOCAL_PATH;
+            String fullPath = this.settings.Config.LocalPath;
             Root root = new Root (fullPath, this.ROOT_ENTRY1);
             
             String cvsPath = Path.Combine (fullPath, "CVS");
@@ -85,8 +88,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void EqualsTest () {
-            String cvsPath = Path.Combine (TestConstants.LOCAL_PATH, 
-                                           TestConstants.MODULE);
+            String cvsPath = Path.Combine (this.settings.Config.LocalPath, 
+                                           this.settings.Config.Module);
             Root RootSame1 = new Root (cvsPath, this.ROOT_ENTRY1);
             Root RootSame2 = new Root (cvsPath, this.ROOT_ENTRY1);
             Root RootDiff1 = new Root (cvsPath, this.ROOT_ENTRY2);
@@ -106,8 +109,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [TearDown]
         public void TearDown () {
-		    if (Directory.Exists (TestConstants.LOCAL_PATH)) {
-    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    if (Directory.Exists (this.settings.Config.LocalPath)) {
+    		    Directory.Delete (this.settings.Config.LocalPath, true);
 		    }            
         }        
     }

@@ -4,7 +4,7 @@
     <File name=".\lib\ICSharpCode.SharpZipLib.dll" subtype="Code" buildaction="Nothing" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Commands" subtype="Directory" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Commands\CheckoutModuleCommandTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\TestConstants.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Config\Tests\TestConstants.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Client" subtype="Directory" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Client\CVSServerConnectionTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Commands\UpdateCommandTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -24,6 +24,10 @@
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Commands\UpdateCommandTestCvsnt.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Util" subtype="Directory" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Util\DateParserTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Config\Tests" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Config\Tests\SharpCvsLibTestsConfigHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Config\Tests\SharpCvsLibTestsConfig.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Config\Tests\TestSettings.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto=".\lib\ext\log4net.dll" localcopy="True" />

@@ -39,6 +39,7 @@ using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Exceptions;
+using ICSharpCode.SharpCvsLib.Config.Tests;
 
 using log4net;
 using NUnit.Framework;
@@ -55,6 +56,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     public class CheckoutModuleCommandTest  {
         string rootDir;
         string checkFile;
+        
+        private TestSettings settings = new TestSettings ();
         
         Manager manager;
 
@@ -73,9 +76,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         [SetUp]
         public void SetUp () { 
             this.rootDir =
-                Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
+                Path.Combine (this.settings.Config.LocalPath, 
+                              this.settings.Config.Module);
             this.checkFile =
-                Path.Combine (rootDir, TestConstants.TARGET_FILE);
+                Path.Combine (rootDir, this.settings.Config.TargetFile);
             this.manager = new Manager (); 
         }
         
@@ -106,21 +110,21 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             foreach (ICvsFile cvsEntry in entries) {
                 Entry entry = (Entry)cvsEntry;
                 System.Console.WriteLine ("entry=[" + entry + "]");
-                if (entry.Name.Equals (TestConstants.TARGET_FILE)) {
+                if (entry.Name.Equals (this.settings.Config.TargetFile)) {
                     foundFileEntry++;
                 }
                 
-                if (entry.Name.Equals (TestConstants.TARGET_DIRECTORY)) {
+                if (entry.Name.Equals (this.settings.Config.TargetDirectory)) {
                     foundDirectoryEntry++;
                 }
             }
             
             Assertion.Assert ("Build file should have a cvs entry.", foundFileEntry == 1);
-            Assertion.Assert (TestConstants.TARGET_DIRECTORY + " directory should have a cvs entry.", foundDirectoryEntry == 1);
+            Assertion.Assert (this.settings.Config.TargetDirectory + " directory should have a cvs entry.", foundDirectoryEntry == 1);
             Assertion.Assert ("Should not have a cvs directory above module path.", 
-                              !Directory.Exists (Path.Combine (TestConstants.LOCAL_PATH, manager.CVS)));
+                              !Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)));
             Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
-                              !Directory.Exists (Path.Combine (TestConstants.MODULE, manager.CVS)));
+                              !Directory.Exists (Path.Combine (this.settings.Config.Module, manager.CVS)));
             
             
         }
@@ -131,8 +135,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         [Test]
         public void CheckoutRevisionTest_Revision_1 () {
-            this.CheckoutRevisionTest (TestConstants.Revision.TAG_1, 
-                                       TestConstants.Revision.CONTENT_1);
+            this.CheckoutRevisionTest (this.settings.Config.Tag1, 
+                                       this.settings.Config.Content1);
         }
         
         /// <summary>
@@ -141,8 +145,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         [Test]
         public void CheckoutRevisionTest_Revision_2 () {
-            this.CheckoutRevisionTest (TestConstants.Revision.TAG_2, 
-                                       TestConstants.Revision.CONTENT_2);
+            this.CheckoutRevisionTest (this.settings.Config.Tag2, 
+                                       this.settings.Config.Tag2);
         }
         
         /// <summary>
@@ -164,24 +168,24 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             foreach (ICvsFile cvsEntry in entries) {
                 Entry entry = (Entry)cvsEntry;
                 System.Console.WriteLine ("entry=[" + entry + "]");
-                if (entry.Name.Equals (TestConstants.TARGET_FILE)) {
+                if (entry.Name.Equals (this.settings.Config.TargetFile)) {
                     foundFileEntry++;
                 }
                 
-                if (entry.Name.Equals (TestConstants.TARGET_DIRECTORY)) {
+                if (entry.Name.Equals (this.settings.Config.TargetDirectory)) {
                     foundDirectoryEntry++;
                 }
             }
             
             Assertion.Assert ("Build file should have a cvs entry.", foundFileEntry == 1);
-            Assertion.Assert (TestConstants.TARGET_DIRECTORY + " directory should have a cvs entry.", foundDirectoryEntry == 1);
+            Assertion.Assert (this.settings.Config.TargetDirectory + " directory should have a cvs entry.", foundDirectoryEntry == 1);
             Assertion.Assert ("Should not have a cvs directory above module path.", 
-                              !Directory.Exists (Path.Combine (TestConstants.LOCAL_PATH, manager.CVS)));
+                              !Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)));
             Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
-                              !Directory.Exists (Path.Combine (TestConstants.MODULE, manager.CVS))); 
+                              !Directory.Exists (Path.Combine (this.settings.Config.Module, manager.CVS))); 
 
             String tagFile = 
-                Path.Combine (Path.Combine (TestConstants.MODULE, manager.CVS), Tag.FILE_NAME);
+                Path.Combine (Path.Combine (this.settings.Config.Module, manager.CVS), Tag.FILE_NAME);
             Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
                               !Directory.Exists (tagFile)); 
             
@@ -213,11 +217,11 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         [Test]
         public void CheckoutOverrideDirectoryTest () {
             this.rootDir =
-                Path.Combine (TestConstants.LOCAL_PATH, TestConstants.OVERRIDE_DIRECTORY);
+                Path.Combine (this.settings.Config.LocalPath, this.settings.Config.OverrideDirectory);
             this.checkFile =
-                Path.Combine (rootDir, TestConstants.TARGET_FILE);
+                Path.Combine (rootDir, this.settings.Config.TargetFile);
 
-            this.Checkout (null, TestConstants.OVERRIDE_DIRECTORY);
+            this.Checkout (null, this.settings.Config.OverrideDirectory);
             Assertion.Assert ("Should have found the check file.  file=[" + 
                               checkFile + "]", File.Exists (checkFile));
             
@@ -229,24 +233,24 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             foreach (ICvsFile cvsEntry in entries) {
                 Entry entry = (Entry)cvsEntry;
                 System.Console.WriteLine ("entry=[" + entry + "]");
-                if (entry.Name.Equals (TestConstants.TARGET_FILE)) {
+                if (entry.Name.Equals (this.settings.Config.TargetFile)) {
                     foundFileEntry++;
                 }
                 
-                if (entry.Name.Equals (TestConstants.TARGET_DIRECTORY)) {
+                if (entry.Name.Equals (this.settings.Config.TargetDirectory)) {
                     foundDirectoryEntry++;
                 }
             }
             
             Assertion.Assert ("Build file should have a cvs entry.", foundFileEntry == 1);
-            Assertion.Assert (TestConstants.TARGET_DIRECTORY + " directory should have a cvs entry.", foundDirectoryEntry == 1);
+            Assertion.Assert (this.settings.Config.TargetDirectory + " directory should have a cvs entry.", foundDirectoryEntry == 1);
             Assertion.Assert ("Should not have a cvs directory above module path.", 
-                              !Directory.Exists (Path.Combine (TestConstants.LOCAL_PATH, manager.CVS)));
+                              !Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)));
             Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
-                              !Directory.Exists (Path.Combine (TestConstants.MODULE, manager.CVS))); 
+                              !Directory.Exists (Path.Combine (this.settings.Config.Module, manager.CVS))); 
 
             String tagFile = 
-                Path.Combine (Path.Combine (TestConstants.MODULE, manager.CVS), Tag.FILE_NAME);
+                Path.Combine (Path.Combine (this.settings.Config.Module, manager.CVS), Tag.FILE_NAME);
             Assertion.Assert ("Should not have a cvs directory and tag file in the current execution path.  ",
                               !Directory.Exists (tagFile)); 
         }
@@ -256,14 +260,13 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         ///         remove the directory.
         /// </summary>
         private void CleanTempDirectory () {
-            if (Directory.Exists(TestConstants.LOCAL_PATH)) {
-                Directory.Delete (TestConstants.LOCAL_PATH, true);
+            if (Directory.Exists(this.settings.Config.LocalPath)) {
+                Directory.Delete (this.settings.Config.LocalPath, true);
             }            
         }
         
         /// <summary>
-        ///     Perform a checkout command using the values in the
-        ///         <code>TestConstants</code> class.
+        ///     Perform a checkout command.
         /// </summary>
         public void Checkout () {
             this.Checkout (null);
@@ -271,7 +274,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 
         /// <summary>
         ///     Perform a checkout command using the values in the 
-        ///         <code>TestConstants</code> class.  The revision tag
+        ///         The revision tag
         ///         (if specified) is also used to select the code
         ///         to checkout.
         /// </summary>
@@ -284,13 +287,13 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         ///     is specified then the directory is not overridden
         ///     and the module name is used.</param>
         public void Checkout (String revision, String overrideDirectory) {
-            CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
+            CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
             WorkingDirectory working = 
                 new WorkingDirectory (root, 
-                                        TestConstants.LOCAL_PATH, 
-                                        TestConstants.MODULE);
+                                        this.settings.Config.LocalPath, 
+                                        this.settings.Config.Module);
             
-            System.Console.WriteLine (TestConstants.LOCAL_PATH);
+            System.Console.WriteLine (this.settings.Config.LocalPath);
 
             working.Revision = revision;
             working.OverrideDirectory = overrideDirectory;
@@ -302,7 +305,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             Assertion.AssertNotNull ("Should have a command object.", command);
             
             try {
-                connection.Connect (working, TestConstants.PASSWORD_VALID);
+                connection.Connect (working, this.settings.Config.ValidPassword);
             } catch (AuthenticationException) {
                 Assertion.Assert ("Failed to authenticate with server.", true);
             }
@@ -312,8 +315,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         }
         
         /// <summary>
-        ///     Perform a checkout command using the values in the 
-        ///         <code>TestConstants</code> class.  The revision tag
+        ///     Perform a checkout command.  The revision tag
         ///         (if specified) is also used to select the code
         ///         to checkout.
         /// </summary>

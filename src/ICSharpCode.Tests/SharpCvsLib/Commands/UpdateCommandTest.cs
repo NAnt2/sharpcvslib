@@ -38,6 +38,7 @@ using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
+using ICSharpCode.SharpCvsLib.Config.Tests;
 
 using log4net;
 using NUnit.Framework;
@@ -51,6 +52,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 	public class UpdateCommandTest	{
 		private ILog LOGGER = 
 			LogManager.GetLogger (typeof(CheckoutModuleCommandTest));
+	    
+	    private TestSettings settings = new TestSettings ();
 	    
 	    String rootDir;
 	    String checkFile;
@@ -69,11 +72,11 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// </summary>
 		[SetUp]
 		public void SetUp () {
-		    this.moduleDir = TestConstants.MODULE;
+		    this.moduleDir = this.settings.Config.Module;
 		    this.rootDir = 
-		        Path.Combine (TestConstants.LOCAL_PATH, this.moduleDir);
+		        Path.Combine (this.settings.Config.LocalPath, this.moduleDir);
 		    this.checkFile = 
-		        Path.Combine (rootDir, TestConstants.TARGET_FILE);
+		        Path.Combine (rootDir, this.settings.Config.TargetFile);
         }
 
         /// <summary>Wrapper for the checkout command test checkout method.</summary>        
@@ -102,8 +105,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         }
 
         private void CleanUp () {
-            if (Directory.Exists(TestConstants.LOCAL_PATH)) {
-                Directory.Delete (TestConstants.LOCAL_PATH, true);
+            if (Directory.Exists(this.settings.Config.LocalPath)) {
+                Directory.Delete (this.settings.Config.LocalPath, true);
             }            
         }
 
@@ -142,7 +145,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		        Entry entry = (Entry)cvsEntry;
 		        
 		        System.Console.WriteLine ("entry=[" + entry + "]");
-		        if (entry.Name.Equals (TestConstants.TARGET_FILE)) {
+		        if (entry.Name.Equals (this.settings.Config.TargetFile)) {
 		            found++;
 		        }
 		    }
@@ -151,17 +154,17 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		    
 		    // Had some problems with an extra module directory appearing under
 		    //    the main working folder.
-		    String doubleModuleDir = Path.Combine (rootDir, TestConstants.MODULE);
+		    String doubleModuleDir = Path.Combine (rootDir, this.settings.Config.Module);
 		    Assertion.Assert ("Should not be a module directory under root folder=[" + doubleModuleDir + "]",
 		                      !Directory.Exists (doubleModuleDir));
 		}
 		
 		private void UpdateAllRecursive (String rootDir, String overrideDirectory) {
-            CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
+            CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
             WorkingDirectory working = 
                 new WorkingDirectory (root, 
-                                        TestConstants.LOCAL_PATH, 
-                                        TestConstants.MODULE);
+                                        this.settings.Config.LocalPath, 
+                                        this.settings.Config.Module);
 
             working.OverrideDirectory = overrideDirectory;
 		    
@@ -171,7 +174,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             ICommand command = new UpdateCommand2 (working);
             Assertion.AssertNotNull ("Should have a command object.", command);
 		    
-            connection.Connect (working, TestConstants.PASSWORD_VALID);
+            connection.Connect (working, this.settings.Config.ValidPassword);
 
             // Update all files...
             LOGGER.Debug ("Fetching all files from rootDir=[" + rootDir + "]");
@@ -192,10 +195,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         [Test]
         public void UpdateRevisionTest () {
-            this.Checkout (TestConstants.Revision.TAG_1);
+            this.Checkout (this.settings.Config.Tag1);
             this.UpdateAllRecursive (this.rootDir);
             
-            CheckoutModuleCommandTest.AssertFileContentsEqualString (this.checkFile, TestConstants.Revision.CONTENT_1);
+            CheckoutModuleCommandTest.AssertFileContentsEqualString (this.checkFile, this.settings.Config.Content1);
         }
         
         /// <summary>
@@ -204,17 +207,17 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         [Test]
         public void UpdateOverrideDirectoryTest () {
-		    this.moduleDir = TestConstants.OVERRIDE_DIRECTORY;
+		    this.moduleDir = this.settings.Config.OverrideDirectory;
 		    this.rootDir = 
-		        Path.Combine (TestConstants.LOCAL_PATH, this.moduleDir);
+		        Path.Combine (this.settings.Config.LocalPath, this.moduleDir);
 		    this.checkFile = 
-		        Path.Combine (rootDir, TestConstants.TARGET_FILE);
+		        Path.Combine (rootDir, this.settings.Config.TargetFile);
 
-            this.Checkout (null, TestConstants.OVERRIDE_DIRECTORY);
+            this.Checkout (null, this.settings.Config.OverrideDirectory);
 		    File.Delete (checkFile);
 		    
 		    Assertion.Assert ("File should be gone now.  file=[" + checkFile + "]", !File.Exists (checkFile));
-		    this.UpdateAllRecursive (rootDir, TestConstants.OVERRIDE_DIRECTORY);
+		    this.UpdateAllRecursive (rootDir, this.settings.Config.OverrideDirectory);
 		    Assertion.Assert ("Should have found the file.  file=[" + 
 		                      checkFile + "]", File.Exists (checkFile));
 

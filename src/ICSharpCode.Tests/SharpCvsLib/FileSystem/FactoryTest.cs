@@ -37,6 +37,7 @@ using System.IO;
 using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Config.Tests;
 
 using log4net;
 using NUnit.Framework;
@@ -48,6 +49,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// </summary>
     [TestFixture]
     public class FactoryTest {
+        private TestSettings settings = new TestSettings ();
         
         private const String ENTRY_FILE_NAME = "Entries";
         private const String REPOSITORY_FILE_NAME = "Repository";
@@ -78,7 +80,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void CreateEntryTest () {
-            String fullPath = TestConstants.LOCAL_PATH;
+            String fullPath = this.settings.Config.LocalPath;
             
             ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Entries, ENTRY_LINE);
             Assertion.Assert (cvsFile is Entry);
@@ -91,7 +93,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void CreateRepositoryTest () {
-            String fullPath = TestConstants.LOCAL_PATH;
+            String fullPath = this.settings.Config.LocalPath;
             
             ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Repository, REPOSITORY_LINE);
             Assertion.Assert (cvsFile is Repository);
@@ -104,7 +106,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void CreateRootTest () {
-            String fullPath = TestConstants.LOCAL_PATH;
+            String fullPath = this.settings.Config.LocalPath;
             
             ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Root, ROOT_LINE);
             Assertion.Assert (cvsFile is Root);
@@ -117,7 +119,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void CreateTagTest () {
-            String fullPath = TestConstants.LOCAL_PATH;
+            String fullPath = this.settings.Config.LocalPath;
             
             ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Tag, TAG_LINE);
             Assertion.Assert (cvsFile is Tag);
@@ -142,8 +144,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [TearDown]
         public void TearDown () {
-		    if (Directory.Exists (TestConstants.LOCAL_PATH)) {
-    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    if (Directory.Exists (this.settings.Config.LocalPath)) {
+    		    Directory.Delete (this.settings.Config.LocalPath, true);
 		    }            
         }        
     }

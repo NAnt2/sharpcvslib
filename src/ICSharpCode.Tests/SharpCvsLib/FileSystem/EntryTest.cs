@@ -32,6 +32,8 @@ using System;
 using System.Collections;
 using System.IO;
 
+using ICSharpCode.SharpCvsLib.Config.Tests;
+
 using log4net;
 using NUnit.Framework;
 
@@ -49,7 +51,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 	public class EntryTest	{
 		private ILog LOGGER = 
 			LogManager.GetLogger (typeof(EntryTest));
-	    
+
+        private TestSettings settings = new TestSettings ();	    
 	    /// <summary>
 	    ///     Test entry 1: Standard checkout file.
 	    /// </summary>
@@ -119,9 +122,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void TestParseCheckoutEntry () {
-            Entry entry = new Entry (TestConstants.LOCAL_PATH, CHECKOUT_ENTRY);
+            Entry entry = new Entry (this.settings.Config.LocalPath, CHECKOUT_ENTRY);
             
-            Assertion.Assert (entry.Path.Equals (TestConstants.LOCAL_PATH));
+            Assertion.Assert (entry.Path.Equals (this.settings.Config.LocalPath));
             Assertion.Assert (entry.Filename.Equals (ENTRY_FILE_NAME));
             
             Assertion.Assert (entry.Name.Equals ("CvsFileManagerTest.cs"));
@@ -149,9 +152,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void TestParseRfc1123Entry () {
-            Entry entry = new Entry (TestConstants.LOCAL_PATH, CHECKOUT_ENTRY_2);
+            Entry entry = new Entry (this.settings.Config.LocalPath, CHECKOUT_ENTRY_2);
             
-            Assertion.Assert (entry.Path.Equals (TestConstants.LOCAL_PATH));
+            Assertion.Assert (entry.Path.Equals (this.settings.Config.LocalPath));
             Assertion.Assert (entry.Filename.Equals (ENTRY_FILE_NAME));
             
             Assertion.Assert (entry.Name.Equals ("EntryTest.cs"));
@@ -181,7 +184,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void TestParseFullCheckoutEntry () {
-            Entry entry = new Entry (TestConstants.LOCAL_PATH, CHECKOUT_ENTRY_3);
+            Entry entry = new Entry (this.settings.Config.LocalPath, CHECKOUT_ENTRY_3);
             
             Assertion.Assert (entry.Name.Equals ("ICSharpCode.SharpZipLib.dll"));
             Assertion.Assert (entry.Revision.Equals ("1.2"));
@@ -205,7 +208,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void TestParseDirEntry () {
-            Entry entry = new Entry (TestConstants.LOCAL_PATH, DIR_ENTRY);
+            Entry entry = new Entry (this.settings.Config.LocalPath, DIR_ENTRY);
             
             Assertion.Assert (entry.IsDirectory == true);
             
@@ -217,7 +220,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         [Test]
         [ExpectedException(typeof(ArgumentException))]
         public void TestTooManyArgsEntry () {
-            Entry entry = new Entry (TestConstants.LOCAL_PATH, INVALID_ENTRY_1);
+            Entry entry = new Entry (this.settings.Config.LocalPath, INVALID_ENTRY_1);
         }
                 
         /// <summary>
@@ -225,8 +228,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [TearDown]
         public void TearDown () {
-		    if (Directory.Exists (TestConstants.LOCAL_PATH)) {
-    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    if (Directory.Exists (this.settings.Config.LocalPath)) {
+    		    Directory.Delete (this.settings.Config.LocalPath, true);
 		    }            
         }
         
