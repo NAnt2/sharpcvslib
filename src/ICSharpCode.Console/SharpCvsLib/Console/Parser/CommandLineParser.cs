@@ -59,7 +59,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private String[] arguments;
 
         private CvsRoot cvsRoot;
-        private string command;
+        private string commandTxt;
         private string options;
         private string repository;
         private string singleOptions;
@@ -88,7 +88,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         ///     translated into one of the public API command objects.
         /// </summary>
         public String Command {
-            get {return this.command;}
+            get {return this.commandTxt;}
         }
         /// <summary>
         /// Value of the repository to use as a string.  This will be passed
@@ -197,7 +197,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "ad":
                     case "new":
                         // no single options for the Add command
-                        this.command = arguments[i];
+                        this.commandTxt = arguments[i];
                         i++;
                         // get rest of arguments which is options on the commit command.
                         while (arguments[i].IndexOf("-", 0, 1) >= 0) {
@@ -240,7 +240,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "ci":
                     case "com":
                         singleOptions = "DRcfln";
-                        this.command = arguments[i];
+                        this.commandTxt = arguments[i];
                         i++;
                         // get rest of arguments which is options on the commit command.
                         while (arguments[i].IndexOf("-", 0, 1) >= 0) {
@@ -283,7 +283,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "co":
                     case "get":
                         singleOptions = "ANPRcflnps";
-                        this.command = arguments[i];
+                        this.commandTxt = arguments[i];
                         i++;
                         // get rest of arguments which is options on the checkout command.
                         while (arguments[i].IndexOf("-", 0, 1) >= 0){
@@ -321,7 +321,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         }
                         break;
                     case "init":
-                        this.command = arguments[i];
+                        this.commandTxt = arguments[i];
                         try {
                             ICSharpCode.SharpCvsLib.Console.Commands.InitCommand initCommand =
                                 new ICSharpCode.SharpCvsLib.Console.Commands.InitCommand(this.CvsRoot);
@@ -336,7 +336,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "logon":
                     case "lgn":
                         // login to server
-                        this.command = arguments[i];
+                        this.commandTxt = arguments[i];
                         try {
                             LoginCommand loginCommand = 
                                 new LoginCommand(this.CvsRoot);
@@ -350,13 +350,14 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "passwd":
                     case "password":
                     case "setpass":
-                        this.command = arguments[i];
+                        this.commandTxt = arguments[i];
                         break;
                     case "remove":
                     case "delete":
                     case "rm":
                         singleOptions = "Rfl";
-                        this.command = arguments[i++];
+                        this.commandTxt = arguments[i];
+                        i++;
                         // get rest of arguments which is options on the update command.
                         while (arguments[i].IndexOf("-", 0, 1) >= 0) {
                             // Get options with second parameters?
@@ -397,7 +398,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "rtag":
                     case "rtfreeze":
                         singleOptions = "abBdfFlMnR";
-                        this.command = arguments[i++];
+                        this.commandTxt = arguments[i++];
                         // get rest of arguments which is options on the rtag command.
                         while (arguments[i].IndexOf("-", 0, 1) >= 0) {
                             // Get options with second parameters?
@@ -438,7 +439,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "upd":
                     case "update":
                         singleOptions = "ACPRbdfmp";
-                        this.command = arguments[i++];
+                        this.commandTxt = arguments[i++];
                             // get rest of arguments which is options on the update command.
                         while (arguments[i].IndexOf("-", 0, 1) >= 0) {
                             // Get options with second parameters?
