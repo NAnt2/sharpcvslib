@@ -101,8 +101,11 @@ public class CommandLineParser {
         this.options = String.Empty;
     }
 
-    /// <summary>Parse the command line options.</summary>
+    /// <summary>
+    ///      Parse the command line options.
+    /// </summary>
     public void Execute () {
+        const string singleOptions = "ANPRcflnps";
         if (arguments.Length < 1) {
             System.Console.WriteLine (Usage.General);
         }
@@ -116,8 +119,20 @@ public class CommandLineParser {
             case "co":
                 this.command = arguments[i++];
                 // get rest of arguments which is options on the checkout command.
-                // pass argument coOptions an array of strings.
-                if (arguments.Length < i) {
+                while (arguments[i].IndexOf("-", 0, 1) >= 0){
+                    // Get options with second parameters?
+                    if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0){
+                        for ( int cnt=1; cnt < arguments[i].Length; cnt++ ){
+                           this.options = this.options + "-" + arguments[i][cnt] + " "; // No
+                        }
+                        i++;
+                    }
+                    else{
+                        this.options = this.options + arguments[i++];       // Yes
+                        this.options = this.options + arguments[i++] + " ";
+                    }
+                }
+                if (arguments.Length > i){
                     // Safely grab the module, if not specified then
                     //  pass null into the reporitory...the cvs command
                     //  line for cvsnt/ cvs seems to bomb out when
@@ -154,8 +169,6 @@ public class CommandLineParser {
                 throw new System.Exception ("not known");
             }
         }
-        System.Console.WriteLine ("Thanks for using the command line tool.");
-
     }
 
 }
