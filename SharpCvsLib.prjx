@@ -1,7 +1,7 @@
 <Project name="SharpCvsLib" description="Cvs client library written in c#" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
   <Contents>
     <File name=".\lib\ICSharpCode.SharpZipLib.dll" subtype="Code" buildaction="Nothing" dependson="" data="" />
-    <File name=".\lib\ext" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\lib\ext" subtype="Directory" buildaction="Nothing" dependson="" data="" />
     <File name=".\lib\log4net.dll" subtype="Code" buildaction="Nothing" dependson="" data="" />
     <File name=".\conf\ICSharpCode.SharpCvsLib.dll.log4net" subtype="Code" buildaction="Nothing" dependson="" data="" />
     <File name=".\src\build.bat" subtype="Code" buildaction="Exclude" dependson="" data="" />
@@ -103,9 +103,9 @@
       <Output directory=".\bin\Debug" assembly="ICSharpCode.SharpCvsLib" />
     </Configuration>
     <Configuration runwithwarnings="False" name="Release">
-      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory=".\bin\Release" assembly="#CVSLibrary" />
+      <Output directory=".\bin\Release" assembly="ICSharpCode.SharpCvsLib" />
     </Configuration>
   </Configurations>
 </Project>

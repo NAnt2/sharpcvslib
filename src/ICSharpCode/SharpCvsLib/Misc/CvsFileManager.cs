@@ -95,6 +95,40 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         }
         
         /// <summary>
+        ///     Add the cvs line entry to the <code>Entries</code> file
+        ///         in the cvs directory under the path specified.
+        /// </summary>
+        /// <param name="path">The current path where the file exists.</param>
+        /// <param name="entry">An object that represents the cvs entry.</param>
+        public void AddEntry (String path, Entry entry) {
+            this.AppendToFile (path, this.ENTRIES, entry.FormattedEntry);
+            this.AppendToFile (path, this.ENTRIES_LOG, entry.FormattedEntry);
+        }
+        
+        /// <summary>
+        ///     Add the cvs line entry to the <code>Entries</code> file
+        ///         in the cvs directory under the path specified.
+        /// </summary>
+        /// <param name="localBase">The local base/ working path.</param>
+        /// <param name="localPath">The local path identified by the cvs repository response.</param>
+        /// <param name="entry">The cvs entry to add to the entries file.</param>
+        public void AddEntry (String localBase, String localPath, Entry entry) {
+            string cvsPath = Path.Combine (localBase, localPath);
+            this.AppendToFile (cvsPath, this.ENTRIES, entry.FormattedEntry);
+            this.AppendToFile (cvsPath, this.ENTRIES_LOG, entry.FormattedEntry);
+        }
+        
+        /// <summary>
+        ///     Add all of the cvs entries to the <code>Entries</code> file
+        ///         in the cvs directory under the path specified.
+        /// </summary>
+        public void AddEntries (String path, Entry[] entries) {
+            foreach (Entry entry in entries) {
+                this.AddEntry (path, entry);
+            }
+        }
+        
+        /// <summary>
         ///     Add all of the directory entries to the <code>Entries</code>
         ///         file in the cvs folder.
         /// </summary>
@@ -124,32 +158,27 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </summary>
         /// <param name="path">The path to the directory where the cvs 
         ///     directory is located or will be added.</param>
-        /// <param name="cvsroot">The cvs root text to add to the local cache.</param>
-        public void AddRoot (String path, String cvsroot) {
-            this.OverwriteFile (path, this.ROOT, cvsroot);
+        /// <param name="localBase">The local base/ working path.</param>
+        /// <param name="localPath">The local path identified by the cvs repository response.</param>
+        /// <param name="fileEntry">The cvs root entry to add to the root file.</param>
+        public void AddRoot (String localBase, String localPath, String fileEntry) {
+            string cvsPath = Path.Combine (localBase, localPath);
+            this.OverwriteFile (cvsPath, this.ROOT, fileEntry);
         }
         
         /// <summary>
         ///     Add the <code>Repository</code> file to cvs directory.
         /// </summary>
-        /// <param name="path">The path to the directory level with cvs.</param>
+        /// <param name="localBase">The path to the local working directory.</param>
+        /// <param name="localPath">The local relative path, usually identified by the
+        ///     cvs server.</param>
+        /// <param name="fileEntry">The string to add to the repository file.</param>
         /// <param name="repository">The repository text.</param>
-        public void AddRepository (String path, String repository) {
-            this.OverwriteFile (path, this.REPOSITORY, repository);
+        public void AddRepository (String localBase, String localPath, String fileEntry) {
+            string cvsPath = Path.Combine (localBase, localPath);
+            this.OverwriteFile (cvsPath, this.REPOSITORY, fileEntry);
         }
-        
-        /// <summary>
-        ///     Add the <code>Repository</code> file to the cvs directory.
-        /// </summary>
-        /// <param name="path">The path to the directory level with cvs.</param>
-        /// <param name="cvsroot">The cvsroot of the checkout.</param>
-        /// <param name="orgPath">The path and filename of the current entry returned from the cvs server.</param>
-        public void AddRepository (String path, String cvsroot, String orgPath) {
-            String _repository = orgPath.Substring (cvsroot.Length + 1);
-            _repository.Remove (_repository.LastIndexOf ('/'), _repository.Length);
-            this.AddRepository (path, _repository);
-        }
-        
+                
         private void AppendToFile (String path, String file, String text) {
             this.WriteToFile (path, file, text, true);
         }
@@ -217,6 +246,45 @@ namespace ICSharpCode.SharpCvsLib.Misc {
             LOGGER.Info (message);
         }
         
+        /// <summary>
+        ///     Reads all the entries in the <code>CVS\Entries</code>
+        ///         file and returns the 
+        /// </summary>
+        /// <param name="path">The path to look for cvs entries.</param>
+        /// <returns>An array of entries if found, or an empty array if no 
+        ///     entries were found.</returns>
+        public Entry [] ReadEntries (String path) {
+            ArrayList entries = new ArrayList ();
+            ArrayList entryStrings = new ArrayList ();
+            
+            entryStrings.Add (this.ReadFromFile (path, this.ENTRIES));
+            
+            foreach (String entryString in entryStrings) {
+                entries.Add (new Entry (entryString));
+            }
+            
+            return (Entry[])entries.ToArray (typeof (Entry));
+        }
+        
+        private ICollection ReadFromFile (String path, String file) {
+            ArrayList fileContents = new ArrayList ();
+            string filePath = path + file;
+			if (File.Exists(filePath)) {
+				StreamReader sr = File.OpenText(filePath);
+				
+				while (true) {
+					string line = sr.ReadLine();
+					if (line == null) {
+						break;
+					}
+					if (line.Length > 1) {					    
+						fileContents.Add(line);
+					}
+				}
+				sr.Close();
+			}
+			
+			return fileContents;
+        }
     }
-    
 }			

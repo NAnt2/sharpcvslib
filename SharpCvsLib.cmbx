@@ -4,8 +4,8 @@
     <Execute entry="SharpCvsLib.Tests" type="None" />
   </StartMode>
   <Entries>
-    <Entry filename=".\ICSharpCode.SharpCvsLib.prjx" />
-    <Entry filename=".\ICSharpCode.SharpCvsLib.Tests.prjx" />
+    <Entry filename=".\SharpCvsLib.prjx" />
+    <Entry filename=".\SharpCvsLib.Tests.prjx" />
   </Entries>
   <Configurations active="Debug">
     <Configuration name="Release">

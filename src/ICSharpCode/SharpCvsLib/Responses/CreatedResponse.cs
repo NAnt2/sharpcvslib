@@ -98,12 +98,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 			
 			if (!Directory.Exists(directory)) {
 				Directory.CreateDirectory(directory);
-			    manager.AddRoot (directory, 
-			                           services.Repository.CvsRoot.ToString ());
-			    manager.AddRepository (directory, 
-			                     services.Repository.CvsRoot.CvsRepository, 
-			                     orgpath);
 			}
+			
 			
 			if (services.NextFile != null && services.NextFile.Length > 0) {
 				localpath = services.NextFile;
@@ -128,7 +124,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 			File.SetLastAccessTime(localpath, e.TimeStamp);
 			File.SetLastWriteTime(localpath, e.TimeStamp);
 	        
-	        manager.AddEntry (directory, entry);
+	        manager.AddEntry (directory, e);
 	        String cvsMsg = "cvs server: U " + orgpath;	        
 	        manager.SendCvsMessage (cvsMsg);	        
 	    }

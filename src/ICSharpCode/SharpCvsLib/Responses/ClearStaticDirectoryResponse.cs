@@ -31,6 +31,8 @@
 
 using System;
 
+using ICSharpCode.SharpCvsLib.Misc;
+
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Responses { 
@@ -62,10 +64,17 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             string localPath      = cvsStream.ReadLine();
             string repositoryPath = cvsStream.ReadLine();
 	        if (LOGGER.IsDebugEnabled) {
-	            String msg = "localPath=[" + localPath + "]" +
-	                "repositoryPath=[" + repositoryPath + "]";
+	            String msg = "Clear static directory response.  " +
+	                "; localPath=[" + localPath + "]" +
+	                "; repositoryPath=[" + repositoryPath + "]";
+	            LOGGER.Debug (msg);
 	        }
-	    	// TODO : make something useful with this request
+	        CvsFileManager manager = new CvsFileManager ();
+		    manager.AddRepository (services.Repository.LocalDirectory, localPath, repositoryPath);
+		    manager.AddRoot (services.Repository.LocalDirectory, localPath, 
+		                           services.Repository.CvsRoot.ToString ());
+	        manager.AddEntry (services.Repository.LocalDirectory, localPath, new Entry ("D/" + localPath + "////"));
+	        
 	    }
 	    
         /// <summary>

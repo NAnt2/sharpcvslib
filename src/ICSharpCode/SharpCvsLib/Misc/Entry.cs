@@ -60,6 +60,13 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		private string options     = null;
 		private string tag         = null;
 		private string date        = null;
+	    
+	    private string cvsEntry;
+	    
+	    public const String RFC1123 = 
+	        "dd MMM yyyy HH':'mm':'ss '-0000'";
+	    public const String FORMAT_1 =
+	        "ddd MMM dd HH':'mm':'ss yyyy";
 		
         /// <summary>
         /// Timestamp for the file.
@@ -174,6 +181,14 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 			}
 		}
 		
+		/// <summary>
+		///     The 
+		/// </summary>
+		public String CvsEntry {
+		    get {return this.cvsEntry;}
+		    set {this.cvsEntry = value;}
+		}
+		
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -182,11 +197,14 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		}
 		
         /// <summary>
-        /// TODO: Figure out what this is for.
+        ///     The entry class converts a cvs entry string into an 
+        ///         entry object by parsing the string into the various
+        ///         components.
         /// </summary>
-        /// <param name="line"></param>
+        /// <param name="line">The cvs entry string.</param>
 		public Entry(string line)
 		{
+		    this.cvsEntry = line;
 			Parse(line);
 			NewEntry = false;
 		}
@@ -197,18 +215,31 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		public void SetTimeStamp()
 		{
 			if (date != null && date.Length > 0)  {
-			    if (LOGGER.IsDebugEnabled){
-				    LOGGER.Debug(">"+date+"<");
-			    }
 				try {
-					timestamp = DateTime.ParseExact(date, "dd MMM yyyy HH':'mm':'ss '-0000'", DateTimeFormatInfo.InvariantInfo);  
+					timestamp = DateTime.ParseExact(date, 
+				            RFC1123, 
+				            DateTimeFormatInfo.InvariantInfo);
 				} catch (Exception) {
 					try {
-						timestamp = DateTime.ParseExact("0" + date, "dd MMM yyyy HH':'mm':'ss '-0000'", DateTimeFormatInfo.InvariantInfo);  
+						timestamp = DateTime.ParseExact("0" + date, RFC1123, DateTimeFormatInfo.InvariantInfo);  
 					} catch (Exception) {
-						timestamp = DateTime.ParseExact(date, "ddd MMM dd HH':'mm':'ss yyyy", DateTimeFormatInfo.InvariantInfo);
+					    try {
+    						timestamp = DateTime.ParseExact(date, FORMAT_1, DateTimeFormatInfo.InvariantInfo);
+					    }
+					    catch (Exception) {
+					        timestamp = DateTime.ParseExact (date, RFC1123, DateTimeFormatInfo.InvariantInfo);
+					    }
+					    
 					}
 				}
+				
+			    if (LOGGER.IsDebugEnabled){
+			        String msg = "Converting date string.  " +
+			            "date=[" + date + "]" +
+			            "RFC1123Pattern=[" + DateTimeFormatInfo.CurrentInfo.RFC1123Pattern + "]" +
+			            "timestamp=[" + timestamp + "]";
+				    LOGGER.Debug(msg);
+			    }				
 			}
 		}
 		
@@ -238,7 +269,9 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 				date = date.Substring(0, conflictIndex);
 			}
 			
-			SetTimeStamp();
+			if (!this.isDir) {
+    			SetTimeStamp();
+			}
 			options   = tokens[4];
 			tag       = tokens[5];
 		}
@@ -332,7 +365,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 				str += "/";
 				
 				if (date != null) {
-					str += timestamp.ToString("ddd MMM dd HH':'mm':'ss yyyy", DateTimeFormatInfo.InvariantInfo);
+					str += timestamp.ToString(FORMAT_1, DateTimeFormatInfo.InvariantInfo);
 				}
 				if (conflict != null) {
 					str += "+" + conflict;
@@ -352,6 +385,55 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 				}
 			}
 			return str;
+		}
+		
+		/// <summary>
+		///     Return the information for this entry in a string format that
+		///         is defined by the cvs protocol.
+		/// 
+		///     / name / version / conflict / options / tag_or_date
+		/// </summary>
+		public String FormattedEntry {
+		    get {
+		        return this.cvsEntry;
+		        /*
+    			string str = "";
+    			if (isDir) {
+    				str += "D";
+    			}
+    			str += "/";
+    			if (name != null) {
+    				str += name + "/";
+    				if (revision != null && !isDir) {
+    					str += revision;
+    				}
+    				str += "/";
+    				
+    				if (date != null && !this.isDir) {
+    					str += 
+    					    timestamp.ToString(FORMAT_1, 
+                                DateTimeFormatInfo.InvariantInfo);
+    				}
+    				if (conflict != null) {
+    					str += "+" + conflict;
+    				}
+    				
+    				str += "/";
+    				
+    				if (options != null) {
+    					str += options;
+    				}
+    				
+    				str += "/";
+    				if (tag != null) {
+    					str += tag;
+    				} else if (date != null) {
+    					str += date;
+    				}
+    			}
+    			return str;*/
+
+		    }
 		}
 	}
 }

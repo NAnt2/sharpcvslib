@@ -11,27 +11,30 @@
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Tests\Requests" subtype="Directory" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Tests\Responses" subtype="Directory" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Tests\Server" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Tests\Misc\CvsFileManagerTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto=".\lib\log4net.dll" />
     <Reference type="Assembly" refto=".\lib\ICSharpCode.SharpZipLib.dll" />
+    <Reference type="Assembly" refto=".\lib\nunit.framework.dll" />
+    <Reference type="Project" refto="SharpCvsLib" />
   </References>
   <DeploymentInformation target="" script="" strategy="File" />
   <Configuration runwithwarnings="False" name="Debug">
     <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
     <Execution commandlineparameters="" consolepause="True" />
-    <Output directory=".\bin\Debug" assembly="ICSharpCode.SharpCvsLib" />
+    <Output directory=".\bin\Debug" assembly="ICSharpCode.SharpCvsLib.Tests" />
   </Configuration>
   <Configurations active="Debug">
     <Configuration runwithwarnings="False" name="Debug">
       <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory=".\bin\Debug" assembly="ICSharpCode.SharpCvsLib" />
+      <Output directory=".\bin\Debug" assembly="ICSharpCode.SharpCvsLib.Tests" />
     </Configuration>
     <Configuration runwithwarnings="False" name="Release">
-      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Exe" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory=".\bin\Release" assembly="#CVSLibrary" />
+      <Output directory=".\bin\Release" assembly="ICSharpCode.SharpCvsLib.Tests" />
     </Configuration>
   </Configurations>
 </Project>
