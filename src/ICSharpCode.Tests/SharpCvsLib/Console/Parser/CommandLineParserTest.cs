@@ -62,7 +62,7 @@ public class CommandLineParserTest{
     }
 
     /// <summary>
-    ///     Create a CommandLineParser object.
+    /// Test a CommandLineParser object is created successfully.
     ///
     /// </summary>
     [Test]
@@ -70,13 +70,6 @@ public class CommandLineParserTest{
         String[] args = {"--help"};
         // Test Creating a CommandLineParser object
         CommandLineParser newCommandLineParser = new CommandLineParser( args);
-        Assertion.AssertNotNull ("Should have a command object.", newCommandLineParser);
-        newCommandLineParser.Execute();
-
-        String[] coargs = {"-d", ":ext:skyward@cvs.sourceforge.net:/cvsroot/sharpcvslib",
-                           "co", "sharpcvslib"};
-        // Test processing checkout command with CommandLineParser object
-        newCommandLineParser = new CommandLineParser( coargs);
         Assertion.AssertNotNull ("Should have a command object.", newCommandLineParser);
         newCommandLineParser.Execute();
     }
@@ -103,6 +96,25 @@ public class CommandLineParserTest{
         } catch {
             Assertion.Fail ("Should not throw an exception, valid parameters.");
         }
+    }
+    /// <summary>
+    /// Test the options are parsed correctly and added to the Options property.
+    /// </summary>
+    [Test]
+    public void ParseOptions () {
+        String[] args = {"-d:pserver:anonymous:cvs.sf.net:/cvsroot/sharpcvslib",
+                         "co", "-r", "v0_3_1", "-d", "newlocation", "sharpcvslib"};
+        CommandLineParser parser = new CommandLineParser (args);
+        try 
+        {
+            parser.Execute ();
+        } 
+        catch 
+        {
+            Assertion.Fail ("Should not throw an exception, valid parameters.");
+        }
+        Assertion.Equals("-rv0_3_1 -dnewlocation ", parser.Options);
+        Assertion.Equals("sharpcvslib", parser.Repository);
     }
 }
 }
