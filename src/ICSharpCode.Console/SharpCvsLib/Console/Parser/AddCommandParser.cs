@@ -153,41 +153,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 }
             }
         }
-        /// <summary>
-        /// Setup the list of files to be a folder object for the cvs
-        ///     library to process.
-        /// </summary>
-        /// <param name="filesAdded">An array filenames that are to be added
-        ///     to the cvs repository.</param>
-        private Folders GetFoldersToAdd (ICollection filesAdded) {
-            Folders folders = new Folders();
-            Manager manager = new Manager(Environment.CurrentDirectory);
-            LOGGER.Debug("Number of files copied=[" + filesAdded.Count + "]");
-            foreach (String file in filesAdded) {
-                Folder folder;
-                if (!folders.Contains(Path.GetDirectoryName(file))) {
-                    folder = new Folder();
-                    LOGGER.Debug("file=[" + file + "]");
-                    LOGGER.Debug("file path=[" + Path.GetDirectoryName(file) + "]");
-                    folder.Repository = 
-                        manager.FetchRepository(Path.GetDirectoryName(file));
-                    folder.Root = 
-                        manager.FetchRoot(Path.GetDirectoryName(file));
-                    folder.Tag = 
-                        manager.FetchTag(Path.GetDirectoryName(file));
-                    folders.Add(Path.GetDirectoryName(file), folder);
-                } else {
-                    folder = folders[Path.GetDirectoryName(file)];
-                }
-                if (!folder.Entries.Contains(file)) {
-                    Entry entry = Entry.CreateEntry(new FileInfo(file));
-                    folder.Entries.Add (file, entry);
-                } else {
-                    folder.Entries[file] = Entry.CreateEntry(new FileInfo(file));
-                }
-            }
-            return folders;
-        }
 
         /// <summary>
         /// Output the command usage and arguements.

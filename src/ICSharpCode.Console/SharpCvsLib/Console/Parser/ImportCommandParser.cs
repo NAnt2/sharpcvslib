@@ -182,7 +182,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             break;
                         case "-W":
                             throw new NotImplementedException(string.Format("Argument not implemented {0}.", arg));
-                            break;
                     }
                 } else {
                     if (0 == noDashIndex) {
