@@ -9,9 +9,10 @@
     
     <property name="console.name" value="scvs" />
     <property name="tests.name" value="ICSharpCode.SharpCvsLib.Tests" />
-    
+
+<!-- Comment out net-1.0 framework and uncomment mono framework to run on mono -->    
     <property name="nant.settings.currentframework" value = "net-1.0"/>
-<!--    <property name="nant.settings.currentframework" value = "mono-1.0"/>-->
+<!--    <property name="nant.settings.currentframework" value = "mono-1.0"/>  -->
 
     <property name="build.dir" value="build/bin" /> 
     <property name="conf.dir" value="conf" />
