@@ -72,7 +72,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             Environment.CurrentDirectory = settings.Config.LocalPath;
 
             String commandLine = "-d" + settings.Config.Cvsroot + " up " +
-                settings.Config.Module;
+                Path.Combine( settings.Config.LocalPath, settings.Config.TargetFile);
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a consoleMain object to test the UpdateCommand object
             ConsoleMain consoleMain = new ConsoleMain();
@@ -89,7 +89,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             Environment.CurrentDirectory = settings.Config.LocalPath;
 
             String commandLine = "-d" + settings.Config.Cvsroot + " up -r " + 
-                                 settings.Config.Tag1 + " " + settings.Config.Module;
+                settings.Config.Tag1 + " " + 
+                Path.Combine( settings.Config.LocalPath, settings.Config.TargetFile);
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a consoleMain object to test the UpdateCommand object
             ConsoleMain consoleMain = new ConsoleMain();
@@ -105,7 +106,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             Directory.CreateDirectory( settings.Config.LocalPath);
             Environment.CurrentDirectory = settings.Config.LocalPath;
             String commandLine = "-d" + settings.Config.Cvsroot + " up -d newlocation " +
-                settings.Config.Module;
+                Path.Combine( settings.Config.LocalPath, settings.Config.TargetFile);
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a ConsoleMain object to test the UpdateCommand object
             ConsoleMain consoleMain = new ConsoleMain();
@@ -122,7 +123,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             Directory.CreateDirectory( settings.Config.LocalPath);
             Environment.CurrentDirectory = settings.Config.LocalPath;
             String commandLine = "-d" + settings.Config.Cvsroot + " up -D 01.28.03 " +
-                                  settings.Config.Module;
+                        Path.Combine( settings.Config.LocalPath, settings.Config.TargetFile);
             String [] commandLineArgs = commandLine.Split(' ');
            
             // Test Creating a ConsoleMain object to test the UpdateCommand object
