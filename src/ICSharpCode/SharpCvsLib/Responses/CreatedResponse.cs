@@ -27,11 +27,15 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    Author:     Mike Krueger, 
+//                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
 using System;
 using System.IO;
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.FileSystem;
 
 using log4net;
 
@@ -68,66 +72,79 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// <param name="services"></param>
 	    public void Process(CvsStream cvsStream, IResponseServices services)
 	    {
-	        CvsFileManager manager = new CvsFileManager ();
+	        Manager manager = new Manager ();
 	        
 			cvsStream.ReadLine();
-			string orgpath   = cvsStream.ReadLine();
-			string localpath = services.Repository.ToLocalPath(orgpath);
-	        string directory = Path.GetDirectoryName (localpath);
+	        PathTranslator orgPath =
+	            new PathTranslator (services.Repository, cvsStream.ReadLine ());
+			string localPathAndFilename = orgPath.LocalPathAndFilename;
+	        string directory = orgPath.LocalPath;
 	        
 			string entry     = cvsStream.ReadLine();
 			string flags     = cvsStream.ReadLine();
-			string sizestr   = cvsStream.ReadLine();
-			bool compress = sizestr[0] == 'z';
+			string sizeStr   = cvsStream.ReadLine();
+			bool compress = sizeStr[0] == 'z';
 			
 			if (LOGGER.IsDebugEnabled) {
 			    String msg = "In created response process.  " +
-			        "orgPath=[" + orgpath + "]" +
-			        "localpath=[" + localpath + "]" +
+			        "orgPath=[" + orgPath.ToString () + "]" +
+			        "localPathAndFilename=[" + localPathAndFilename + "]" +
 			        "directory=[" + directory + "]" +
 			        "entry=[" + entry + "]" +
 			        "flags=[" + flags + "]" +
-			        "sizestr=[" + sizestr + "]";
+			        "sizestr=[" + sizeStr + "]";
 			    LOGGER.Debug (msg);
 			}
 			
 			if (compress) {
-				sizestr = sizestr.Substring(1);
+				sizeStr = sizeStr.Substring(1);
 			}
 			
-			int size  = Int32.Parse(sizestr);
-			
-			if (!Directory.Exists(directory)) {
-				Directory.CreateDirectory(directory);
+			int size  = Int32.Parse(sizeStr);
+
+			if (!Directory.Exists(orgPath.LocalPath)) {
+				Directory.CreateDirectory(orgPath.LocalPath);
 			}
 			
 			
 			if (services.NextFile != null && services.NextFile.Length > 0) {
-				localpath = services.NextFile;
+				localPathAndFilename = services.NextFile;
 				services.NextFile = null;
 			}
-			Entry e = new Entry(entry);
+			
+			Entry e;
+			if (orgPath.IsDirectory) {
+			    e = manager.CreateDirectoryEntry (orgPath);
+			}
+			else {
+    			e = new Entry(directory, entry);
+			}
 			
 			if (e.IsBinaryFile) {
-				services.UncompressedFileHandler.ReceiveBinaryFile(cvsStream, localpath, size);
+				services.UncompressedFileHandler.ReceiveBinaryFile(cvsStream, 
+				                                                   localPathAndFilename, 
+				                                                   size);
 			} else {
-				services.UncompressedFileHandler.ReceiveTextFile(cvsStream, localpath, size);
-				
+				services.UncompressedFileHandler.ReceiveTextFile(cvsStream, 
+				                                                 localPathAndFilename, 
+				                                                 size);				
 			}
 			
 			e.Date = services.NextFileDate;
-			services.Repository.AddEntry(orgpath.Substring(0, orgpath.LastIndexOf('/')), e);
+			//services.Repository.AddEntry(orgPath.Substring(0, orgPath.LastIndexOf('/')), e);
 			services.NextFileDate = null;
 			
 			// set the timestamp from the server to the newly created file
-			e.TimeStamp = e.TimeStamp.ToLocalTime();
-			File.SetCreationTime(localpath, e.TimeStamp);
-			File.SetLastAccessTime(localpath, e.TimeStamp);
-			File.SetLastWriteTime(localpath, e.TimeStamp);
+			// TODO: See if this is messing up the timestamp for the cvs entry.
+			//    For now I have just commented it out.
+			//e.TimeStamp = e.TimeStamp.ToLocalTime();
+			File.SetCreationTime(localPathAndFilename, e.TimeStamp);
+			File.SetLastAccessTime(localPathAndFilename, e.TimeStamp);
+			File.SetLastWriteTime(localPathAndFilename, e.TimeStamp);
 	        
-	        manager.AddEntry (directory, e);
+	        manager.Add (e);
 	        
-	        String cvsMsg = "cvs server: U " + orgpath;	        
+	        String cvsMsg = "cvs server: U " + orgPath;	        
 	        manager.SendCvsMessage (cvsMsg);	        
 	    }
 	    

@@ -1,6 +1,5 @@
 #region "Copyright"
-// ClearStickyResponse.cs
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,58 +27,57 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
+//    Author: Clayton Harbour
+//     claytonharbour@sporadicism.com
 #endregion
 
 using System;
+using System.Collections;
+using System.Text;
+using System.IO;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Misc;
-using ICSharpCode.SharpCvsLib.FileSystem;
-
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
+namespace ICSharpCode.SharpCvsLib.FileSystem {
+    
     /// <summary>
-    /// Handle a clear sticky tag response.
+    ///     Creates the cvs object necessary based on the filename.
     /// </summary>
-	public class ClearStickyResponse : IResponse
-	{
-	    private readonly ILog LOGGER = 
-	        LogManager.GetLogger (typeof (ClearStickyResponse));
+    public class Factory {
+        
         /// <summary>
-        /// Process a clear sticky tag response.
+        ///     Constructor.
         /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-	    public void Process(CvsStream cvsStream, IResponseServices services)
-	    {
-            string localPath      = cvsStream.ReadLine();
-            string reposPath = cvsStream.ReadLine();
-	        PathTranslator repositoryPath = new PathTranslator (services.Repository, 
-	                                                            reposPath);
-	        
-	        // TODO: Remove this duplication, find good common place for 
-	        //    the directory entry creation.
-	        if (LOGGER.IsDebugEnabled) {
-	            String msg = "Clear sticky response.  " +
-	                "; localPath=[" + localPath + "]" +
-	                "; repositoryPath=[" + repositoryPath.ToString () + "]";
-	            LOGGER.Debug (msg);
-	        }
-	        Manager manager = new Manager ();
-	        manager.Add (manager.CreateDirectoryEntryFromPath (repositoryPath.LocalPath));
-
-	    }
-	    
+        public Factory () {
+            
+        }
+        
         /// <summary>
-        /// Return true if this response cancels the transaction
+        ///     Create the cvs file based on the filename.  Returns the 
+        ///         cvs file interface.
         /// </summary>
-		public bool IsTerminating {
-			get {
-				return false;
-			}
-		}
-	}
+        public ICvsFile CreateCvsObject (String path, 
+                                       String filename, 
+                                       String line) {
+            ICvsFile entry;
+            switch (filename) {
+                case (Entry.FILE_NAME):
+                    entry = new Entry (path, line);
+                    break;
+                case (Repository.FILE_NAME):
+                    entry = new Repository (path, line);
+                    break;
+                case (Root.FILE_NAME):
+                    entry = new Root (path, line);
+                    break;
+                default:
+                    String msg = "Unable to create object, " +
+                        "unknown filename type=[" + filename + "]";
+                    throw new Exception (msg);
+                    
+            }
+            return entry;
+            
+        }
+    }
 }

@@ -1,6 +1,5 @@
-#region "Copyright"
-// StatusCommand.cs 
-// Copyright (C) 2002 Mike Krueger
+#region Copyright
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,54 +27,51 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
+//    Author: Clayton Harbour
+//     claytonharbour@sporadicism.com
 #endregion
 
 using System;
+using System.Collections;
+using System.IO;
+using System.Globalization;
 
-using ICSharpCode.SharpCvsLib.Requests;
-using ICSharpCode.SharpCvsLib.Misc;
-using ICSharpCode.SharpCvsLib.Client;
-using ICSharpCode.SharpCvsLib.FileSystem;
+using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Commands { 
-	
-    /// <summary>
-    /// Status command.
-    ///     TODO: Figure out what this is used for.
-    /// </summary>
-	public class StatusCommand : ICommand
-	{
-		private WorkingDirectory workingdirectory;
-		private string directory;
-		private Entry entry;
-		
+namespace ICSharpCode.SharpCvsLib.FileSystem { 
+    public class Root : ICvsFile {
+        
+	    public const String FILE_NAME = "Root";
+	    private String path;
+	    private String fileContents;
+        
         /// <summary>
-        /// Constructor.
+        ///     The name of the cvs file that the object represents.
         /// </summary>
-        /// <param name="workingdirectory"></param>
-        /// <param name="directory"></param>
-        /// <param name="entry"></param>
-		public StatusCommand(WorkingDirectory workingdirectory, string directory, Entry entry)
-		{
-			this.workingdirectory    = workingdirectory;
-			this.directory = directory;
-			this.entry = entry;
-		}
-		
+        public String Filename {
+            get {return Root.FILE_NAME;}
+        }
+        
         /// <summary>
-        /// Do the dirty work.
+        ///     The path up to the folder containing the cvs folder.
         /// </summary>
-        /// <param name="connection"></param>
-		public void Execute(CVSServerConnection connection)
-		{
-			connection.SubmitRequest(new DirectoryRequest(".", 
-                            workingdirectory.CvsRoot.CvsRepository + 
-                            directory));
-		    
-			connection.SubmitRequest(new ArgumentRequest(entry.Name));
-			connection.SubmitRequest(new StatusRequest());
-		}
-	}
+        public String Path {
+            get {return this.path;}
+        }
+        
+        /// <summary>
+        ///     The contents of the cvs file.
+        /// </summary>
+        public String FileContents {
+            get {return this.fileContents;}
+        }
+        
+        /// <summary>
+        ///     Constructor for the root object.
+        /// </summary>
+        public Root (String path, String fileContents) {
+            this.path = path;
+            this.fileContents = fileContents;
+        }
+    }
 }

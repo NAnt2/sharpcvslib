@@ -123,43 +123,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		    Entry logEntry = new Entry (addEntryString);
 		    this.manager.AddLogEntry (TestConstants.LOCAL_PATH, logEntry);
 		}
-		
-		/// <summary>
-		///     Insert a number of entries into the cvs entries file.
-		///     
-		///     Verify that all entries were added correctly.
-		/// 
-		///     Add another entry to the file that has the same name as another
-		///         entry.  
-		/// 
-		///     Verify that there are not duplicate entries.
-		/// </summary>
-		[Test]
-		public void WriteManyEntriesThenAddOneSame () {
-		    ArrayList entries = new ArrayList ();
-		    LOGGER.Debug ("Enter write many");
-		    foreach (String cvsEntry in this.cvsEntries) {
-	            LOGGER.Debug ("cvsEntry=[" + cvsEntry + "]");
-		        entries.Add (new Entry (cvsEntry));
-		    }
-		    
-		    this.manager.AddEntries (TestConstants.LOCAL_PATH, 
-		                             (Entry[])entries.ToArray (typeof (Entry)));
-		    		    
-		    this.verifyEntryCount (TestConstants.LOCAL_PATH, 
-		                           this.cvsEntries.Length);
-		    
-		    string newEntry = 
-		        "/MyNewFile.cs/1.1/Sun May 11 09:07:28 2003//";
-		    
-		    this.manager.AddEntry (TestConstants.LOCAL_PATH, 
-		                           new Entry (newEntry));
-		    
-		    this.verifyEntryCount (TestConstants.LOCAL_PATH,
-		                           this.cvsEntries.Length + 1);
-		    
-		}
-		
+				
 		[Test]
 		public void WriteDirectoryEntriesFromPathTest () {
 		    String[] directories = {"/sharpcvslib-tests/conf",

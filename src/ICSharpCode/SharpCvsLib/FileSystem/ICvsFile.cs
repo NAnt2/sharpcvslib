@@ -1,6 +1,5 @@
-#region "Copyright"
-// StatusCommand.cs 
-// Copyright (C) 2002 Mike Krueger
+#region Copyright
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,54 +27,36 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
+//    Author: Clayton Harbour
+//     claytonharbour@sporadicism.com
 #endregion
 
 using System;
+using System.Collections;
+using System.IO;
+using System.Globalization;
 
-using ICSharpCode.SharpCvsLib.Requests;
-using ICSharpCode.SharpCvsLib.Misc;
-using ICSharpCode.SharpCvsLib.Client;
-using ICSharpCode.SharpCvsLib.FileSystem;
+using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Commands { 
-	
-    /// <summary>
-    /// Status command.
-    ///     TODO: Figure out what this is used for.
-    /// </summary>
-	public class StatusCommand : ICommand
-	{
-		private WorkingDirectory workingdirectory;
-		private string directory;
-		private Entry entry;
-		
+namespace ICSharpCode.SharpCvsLib.FileSystem { 
+
+    public interface ICvsFile {
         /// <summary>
-        /// Constructor.
+        ///     The name of the file.  This will be a constant for each
+        ///         type of file (i.e. Repository, Entry, etc.).
         /// </summary>
-        /// <param name="workingdirectory"></param>
-        /// <param name="directory"></param>
-        /// <param name="entry"></param>
-		public StatusCommand(WorkingDirectory workingdirectory, string directory, Entry entry)
-		{
-			this.workingdirectory    = workingdirectory;
-			this.directory = directory;
-			this.entry = entry;
-		}
-		
+        String Filename {get;}
         /// <summary>
-        /// Do the dirty work.
+        ///     The path to the folder above the CVS directory.  The
+        ///         CVS directory will be appended to this path by
+        ///         the manager.
         /// </summary>
-        /// <param name="connection"></param>
-		public void Execute(CVSServerConnection connection)
-		{
-			connection.SubmitRequest(new DirectoryRequest(".", 
-                            workingdirectory.CvsRoot.CvsRepository + 
-                            directory));
-		    
-			connection.SubmitRequest(new ArgumentRequest(entry.Name));
-			connection.SubmitRequest(new StatusRequest());
-		}
-	}
+        String Path {get;}
+        
+        /// <summary>
+        ///     The contents that are going to be written to the file.
+        /// </summary>        
+        String FileContents {get;}
+                
+    }
 }

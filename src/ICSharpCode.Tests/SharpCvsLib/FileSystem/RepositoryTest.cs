@@ -1,6 +1,5 @@
 #region "Copyright"
-// ClearStickyResponse.cs
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,59 +26,54 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
-//
-//    Author:     Mike Krueger, 
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
+//    Author: Clayton Harbour
+//     claytonharbour@sporadicism.com
 #endregion
 
 using System;
+using System.Collections;
+using System.IO;
+
+using ICSharpCode.SharpCvsLib;
+using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.Misc;
 
 using log4net;
+using NUnit.Framework;
 
-using ICSharpCode.SharpCvsLib.Misc;
-using ICSharpCode.SharpCvsLib.FileSystem;
+namespace ICSharpCode.SharpCvsLib.FileSystem {
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
     /// <summary>
-    /// Handle a clear sticky tag response.
+    ///     Test the repository file parses the input string correctly
+    ///         and assigns the correct values to the properties.
     /// </summary>
-	public class ClearStickyResponse : IResponse
-	{
-	    private readonly ILog LOGGER = 
-	        LogManager.GetLogger (typeof (ClearStickyResponse));
+    [TestFixture]
+    public class RepositoryTest {
+        
+        private readonly String RELATIVE_PATH = "src";
+        private readonly String REPOSITORY_ENTRY = 
+            "sharpcvslib/src";
         /// <summary>
-        /// Process a clear sticky tag response.
+        ///     Constructory for test case.
         /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-	    public void Process(CvsStream cvsStream, IResponseServices services)
-	    {
-            string localPath      = cvsStream.ReadLine();
-            string reposPath = cvsStream.ReadLine();
-	        PathTranslator repositoryPath = new PathTranslator (services.Repository, 
-	                                                            reposPath);
-	        
-	        // TODO: Remove this duplication, find good common place for 
-	        //    the directory entry creation.
-	        if (LOGGER.IsDebugEnabled) {
-	            String msg = "Clear sticky response.  " +
-	                "; localPath=[" + localPath + "]" +
-	                "; repositoryPath=[" + repositoryPath.ToString () + "]";
-	            LOGGER.Debug (msg);
-	        }
-	        Manager manager = new Manager ();
-	        manager.Add (manager.CreateDirectoryEntryFromPath (repositoryPath.LocalPath));
-
-	    }
-	    
+        public RepositoryTest () {
+            
+        }
+        
         /// <summary>
-        /// Return true if this response cancels the transaction
+        ///     Ensure that the values the repository is initialized with 
+        ///         can be determined.
         /// </summary>
-		public bool IsTerminating {
-			get {
-				return false;
-			}
-		}
-	}
+        [Test]
+        public void CreateRepositoryTest () {
+            String fullPath = 
+                Path.Combine (TestConstants.LOCAL_PATH, RELATIVE_PATH);
+            Repository repos = new Repository (fullPath, 
+                                               this.REPOSITORY_ENTRY);
+            
+            String cvsPath = Path.Combine (fullPath, "CVS");
+            Assertion.Assert (repos.Path.Equals (fullPath));
+            Assertion.Assert (repos.FileContents.Equals (this.REPOSITORY_ENTRY));
+        }
+    }
 }

@@ -27,6 +27,9 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    Author:     Mike Krueger, 
+//                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
 using System;
@@ -35,6 +38,7 @@ using System.IO;
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.FileSystem;
 
 namespace ICSharpCode.SharpCvsLib.Commands { 
 	
@@ -79,8 +83,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                             "/" + workingdirectory.ModuleName));
 		    
 			connection.SubmitRequest(new CheckoutRequest());
-		    CvsFileManager manager = new CvsFileManager ();
-		    manager.AddDirectories (this.workingdirectory);
+		    Manager manager = new Manager ();
+		    manager.AddDirectories (this.workingdirectory.LocalDirectory);
 
 		}
 	}

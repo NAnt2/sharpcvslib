@@ -27,11 +27,15 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    Author:     Mike Krueger, 
+//                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
 using System;
 
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.FileSystem;
 
 using log4net;
 
@@ -62,21 +66,28 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	    public void Process(CvsStream cvsStream, IResponseServices services)
 	    {
             string localPath      = cvsStream.ReadLine();
-            string repositoryPath = cvsStream.ReadLine();
+            string reposPath = cvsStream.ReadLine();
+	        PathTranslator repositoryPath = 
+	            new PathTranslator (services.Repository,
+	                                reposPath);
 	        if (LOGGER.IsDebugEnabled) {
 	            String msg = "Clear static directory response.  " +
 	                "; localPath=[" + localPath + "]" +
 	                "; repositoryPath=[" + repositoryPath + "]";
 	            LOGGER.Debug (msg);
 	        }
-	        CvsFileManager manager = new CvsFileManager ();
-		    manager.AddRepository (services.Repository.LocalDirectory, localPath, repositoryPath);
-		    manager.AddRoot (services.Repository.LocalDirectory, 
-		                     localPath,
-		                     services.Repository.CvsRoot.ToString ());
-	        manager.AddEntry (services.Repository.LocalDirectory, 
-	                          localPath, 
-	                          manager.CreateDirectoryEntryFromPath (localPath));
+	        Manager manager = new Manager ();
+	        Factory factory = new Factory ();
+	        ICvsFile repository = factory.CreateCvsObject (repositoryPath.LocalPath, 
+	                                                       Repository.FILE_NAME,
+	                                                       localPath);
+	        ICvsFile root = factory.CreateCvsObject (repositoryPath.LocalPath,
+	                                                 Root.FILE_NAME,
+	                                                 services.Repository.CvsRoot.ToString ());
+	        ICvsFile entry = manager.CreateDirectoryEntryFromPath (localPath);
+		    manager.Add (repository);
+		    manager.Add (root);
+	        manager.Add (entry);
 	        
 	    }
 	    

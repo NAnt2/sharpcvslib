@@ -222,7 +222,6 @@ namespace ICSharpCode.SharpCvsLib {
 				}
 				builder.Append((char)i);
 			}
-			this.ShowResponse (builder.ToString ());
 			return builder.ToString();
 		}
 		
@@ -240,7 +239,6 @@ namespace ICSharpCode.SharpCvsLib {
 					Thread.Sleep(10);
 				}
 			}
-			this.ShowResponse (line);
 			return line;			
 		}
 		
@@ -260,17 +258,9 @@ namespace ICSharpCode.SharpCvsLib {
 					break;
 				}
 			}
-			this.ShowResponse (builder.ToString ());
 			return builder.ToString();
 		}
-		
-		/// <summary>
-		/// Displays the response from the server
-		/// </summary>
-		private void ShowResponse (String response) {
-		    System.Console.WriteLine ("cvs server: " + response);
-		}
-		
+				
         /// <summary>
         /// Read a block of data from the stream.
         /// </summary>

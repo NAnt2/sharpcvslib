@@ -26,6 +26,8 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    Author:    Clayton Harbour
 #endregion
 
 using System;
@@ -35,6 +37,7 @@ using System.IO;
 using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.FileSystem;
 
 using log4net;
 using NUnit.Framework;
@@ -49,7 +52,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		private ILog LOGGER = 
 			LogManager.GetLogger (typeof(CheckoutModuleCommandTest));
 	    
-	    private CvsFileManager manager;	    
+	    private Manager manager;	    
 		/// <summary>
 		/// Constructor for customer db test.
 		/// </summary>
@@ -62,7 +65,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// </summary>
 		[SetUp]
 		public void SetUp () {
-		    this.manager = new CvsFileManager ();
+		    this.manager = new Manager ();
 //		    CheckoutModuleCommandTest checkout =
 //		        new CheckoutModuleCommandTest ();
 //		    checkout.CheckoutTest ();
@@ -106,9 +109,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		    Assertion.Assert ("Should have found the build file.  file=[" + 
 		                      buildFile + "]", File.Exists (buildFile));
 		    
-		    ICollection entries = 
-		        this.manager.ReadEntries (cvsPath);
-		    IEnumerator entriesEnum = entries.GetEnumerator ();
+		    ICvsFile[] entries = 
+		        this.manager.Fetch(cvsPath, Entry.FILE_NAME);
             int found = 0;	
 		    
 		    String[] files = 
@@ -119,13 +121,13 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		    int total = files.Length + directories.Length + 1;
 		    Assertion.Assert ("Count of directories and files should be equal to " +
 		                      "the entries in the CVS/Entries file.  They are not.  " +
-		                      "entriesCount=[" + entries.Count + "]" + 
+		                      "entriesCount=[" + entries.Length + "]" + 
 		                      "files=[" + files.Length + "]" +
 		                      "directories=[" + directories.Length + "]" +
 		                      "total=[" + total + "]", 
-		                      entries.Count == total);
-		    while (entriesEnum.MoveNext ()) {
-		        Entry entry = (Entry)entriesEnum.Current;
+		                      entries.Length == total);
+		    foreach (ICvsFile cvsEntry in entries) {
+		        Entry entry = (Entry)cvsEntry;
 		        
 		        System.Console.WriteLine ("entry=[" + entry + "]");
 		        if (entry.Name.Equals (TestConstants.BUILD_FILE)) {

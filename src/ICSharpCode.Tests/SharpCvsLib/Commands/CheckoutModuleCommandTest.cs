@@ -26,6 +26,8 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    Author:    Clayton Harbour
 #endregion
 
 using System;
@@ -35,6 +37,7 @@ using System.IO;
 using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.FileSystem;
 
 using log4net;
 using NUnit.Framework;
@@ -52,7 +55,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		private ILog LOGGER = 
 			LogManager.GetLogger (typeof(CheckoutModuleCommandTest));
 	    
-	    private CvsFileManager manager;	    
+	    private Manager manager;	    
 		/// <summary>
 		/// Constructor for customer db test.
 		/// </summary>
@@ -64,7 +67,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// </summary>
 		[SetUp]
 		public void SetUp () {
-		    this.manager = new CvsFileManager ();    
+		    this.manager = new Manager ();    
 		}
 		
 		/// <summary>
@@ -97,15 +100,13 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		    Assertion.Assert ("Should have found the build file.  file=[" + 
 		                      buildFile + "]", File.Exists (buildFile));
 		    
-		    ICollection entries = 
-		        manager.ReadEntries (cvsPath);
-		    IEnumerator entriesEnum = entries.GetEnumerator ();
+		    ICvsFile[] entries = 
+		        manager.Fetch (cvsPath, Entry.FILE_NAME);
             int foundFileEntry = 0;	
 		    int foundDirectoryEntry = 0;
 		    
-		    while (entriesEnum.MoveNext ()) {
-		        Entry entry = (Entry)entriesEnum.Current;
-		        
+		    foreach (ICvsFile cvsEntry in entries) {
+		        Entry entry = (Entry)cvsEntry;
 		        System.Console.WriteLine ("entry=[" + entry + "]");
 		        if (entry.Name.Equals (TestConstants.BUILD_FILE)) {
 		            foundFileEntry++;
@@ -118,6 +119,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		    
 		    Assertion.Assert ("Build file should have a cvs entry.", foundFileEntry == 1);
 		    Assertion.Assert ("Conf directory should have a cvs entry.", foundDirectoryEntry == 1);
+		    Assertion.Assert ("Should not have a cvs directory above module path.", 
+		                      Directory.Exists (Path.Combine (TestConstants.LOCAL_PATH, manager.CVS)));
 		}
 	}
 }

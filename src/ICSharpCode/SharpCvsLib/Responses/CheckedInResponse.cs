@@ -27,10 +27,14 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    Author:     Mike Krueger, 
+//                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
 using System;
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.FileSystem;
 
 namespace ICSharpCode.SharpCvsLib.Responses { 
 	
@@ -51,8 +55,9 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             string entryLine      = cvsStream.ReadLine();
             
             string fileName = services.ConvertPath(localPath, repositoryPath);
-            Entry  entry = new Entry(entryLine);
+            Entry  entry = new Entry(fileName, entryLine);
             
+            // TODO: Determine if this is needed or not.
             services.SetEntry(fileName, entry);
 	    }
 	    

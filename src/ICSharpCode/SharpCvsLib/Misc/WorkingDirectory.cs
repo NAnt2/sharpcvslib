@@ -27,6 +27,9 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    Author:     Mike Krueger, 
+//                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
 using System;
@@ -35,6 +38,8 @@ using System.Text;
 using System.IO;
 
 using log4net;
+
+using ICSharpCode.SharpCvsLib.FileSystem;
 
 namespace ICSharpCode.SharpCvsLib.Misc { 
 		
@@ -46,7 +51,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
     /// </summary>
 	public class WorkingDirectory
 	{
-	    private CvsFileManager manager = new CvsFileManager ();
+	    private Manager manager = new Manager ();
 	    private readonly ILog LOGGER = 
 	        LogManager.GetLogger (typeof (WorkingDirectory));
 		private CvsRoot cvsroot;
@@ -159,50 +164,46 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </summary>
         /// <param name="directory">The directory path.</param>
         /// <returns></returns>
-		public string ToRemotePath(string directory)
-		{
+		public string ToRemotePath(string directory) {
 			return directory.Substring(
 			                           localdirectory.Length).Replace(Path.DirectorySeparatorChar, '/');
 		}
-				
+		
         /// <summary>
         /// Convert the directory name to a win32 directory name
         ///     with the appropriate slashes.
         /// 
         /// TODO: Clean up this dirty bad boy and move the functionality
-        ///     to the CvsFileManager
+        ///     to the Manager
         /// </summary>
         /// <param name="directory">The directory path.</param>
         /// <returns></returns>
-		public string ToLocalPath(string directory)
-		{
+        [Obsolete ("Use the OrgPath to parse the org path string")]
+		public string ToLocalPath(string orgPath) {
 		    string _localBasePath = this.localdirectory;
-		    string _localModulePath = this.ModuleName;
 		    
-		    string _serverWithModuleName = 
-		        directory.Substring (this.cvsroot.CvsRepository.Length);
-		    string _serverModulePath = this.ModuleName;
+		    string _orgPathWithoutRoot =
+		        orgPath.Substring (this.cvsroot.CvsRepository.Length + 1);
 		    
-		    string _serverBasePath =
-		        _serverWithModuleName.Replace (_serverModulePath + "/", "");
-	    
-		    string localPathAndFileName = 
-		        _localBasePath + Path.DirectorySeparatorChar +
-		        _localModulePath + _serverBasePath;
+		    String [] splitOrgPath = orgPath.Split ('/');
+		    String filename = splitOrgPath[splitOrgPath.Length - 1];
+		    string _orgPathWithoutFilename =
+		        _orgPathWithoutRoot.Replace (filename, "");
+		    string _localPath = 
+		        Path.Combine (_localBasePath, _orgPathWithoutFilename);
 		    
-		    localPathAndFileName = 
-		        localPathAndFileName.Replace ('/', Path.DirectorySeparatorChar);
+		    _localPath = 
+		        _localPath.Replace ('/', Path.DirectorySeparatorChar);
 		    if (LOGGER.IsDebugEnabled) {
                 String msg = "Converting server path and filename to local path and filename.  " +
                     "_localBasePath=[" + _localBasePath + "]" +
-                    "_localModulePath=[" + _localModulePath + "]" +
-                    "_serverBasePath=[" + _serverBasePath + "]" +
-                    "_serverModulePath=[" + _serverModulePath + "]" +
-                    "localPathAndFileName=[" + localPathAndFileName + "]";
+                    "_orgPathWithoutRoot=[" + _orgPathWithoutRoot + "]" +
+                    "_orgPathWithoutFilename=[" + _orgPathWithoutFilename + "]" +
+                    "localPath=[" + _localPath + "]";
 		        LOGGER.Debug (msg);
 		    }
 		        
-			return localPathAndFileName;
+			return _localPath;
 		}
 				
 		/// <summary>
@@ -248,14 +249,14 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		        LOGGER.Debug (msg);
 		    }
 		    ArrayList entryCollection = 
-		        new ArrayList (this.manager.ReadEntries (directory));
+		        new ArrayList (this.manager.Fetch (directory, Entry.FILE_NAME));
 			Entry[] entries = (Entry[])entryCollection.ToArray (typeof (Entry));
 		    // TODO: Remove this line -- Entry.RetrieveEntries(directory);
 			if (entries != null && entries.Length > 0) {
 				string cvsdir    = ToRemotePath(directory);
-				if (File.Exists(Path.Combine (directory, this.manager.REPOSITORY))) {
+				if (File.Exists(Path.Combine (directory, Repository.FILE_NAME))) {
 					StreamReader sr = 
-					    File.OpenText(Path.Combine (directory, this.manager.REPOSITORY));
+					    File.OpenText(Path.Combine (directory, Repository.FILE_NAME));
 					string line = sr.ReadLine();
 					if (line != null && line.Length > 0) {
 					    // TODO: Figure out what to do with this path seperator
