@@ -39,7 +39,7 @@
                     OutputPath = "..\bin\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "true"
+                    TreatWarningsAsErrors = "false"
                     WarningLevel = "4"
                 />
                 <Config
@@ -282,6 +282,16 @@
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Extension\LogReporter\LogRevision.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Extension\LogReporter\LogSymbolicName.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Extension\LogReporter\LogSymbolicNames.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

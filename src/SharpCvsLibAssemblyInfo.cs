@@ -15,9 +15,9 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisibleAttribute(false)]
 [assembly: CLSCompliantAttribute(true)]
-[assembly: AssemblyVersionAttribute("0.36.4305.8357")]
+[assembly: AssemblyVersionAttribute("0.36.4320.3023")]
 [assembly: AssemblyTitleAttribute("Concurrent Versions System (sharpCVS) (client)")]
-[assembly: AssemblyDescriptionAttribute("win32; net-1.0; 2004/08/05 11:12:50")]
+[assembly: AssemblyDescriptionAttribute("win32; net-1.0; 2004/08/20 08:23:50")]
 [assembly: AssemblyCopyrightAttribute("Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004\r\n\r\nCVS may be copied onl" +
 "y under the terms of the GNU General Public License,\r\na copy of which can be fou" +
 "nd with the CVS distribution kit.")]

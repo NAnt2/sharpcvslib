@@ -39,7 +39,7 @@
                     OutputPath = "..\bin\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
-                    TreatWarningsAsErrors = "true"
+                    TreatWarningsAsErrors = "false"
                     WarningLevel = "4"
                 />
                 <Config
@@ -105,11 +105,6 @@
         </Build>
         <Files>
             <Include>
-                <File
-                    RelPath = "SharpCvsLibAssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Client\CVSServerConnection.cs"
                     SubType = "Code"
@@ -281,6 +276,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Extension\LogReporter\LogSymbolicName.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Extension\LogReporter\LogSymbolicNames.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode\SharpCvsLib\FileHandler\CompressedFileHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -416,6 +421,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Messages\ProcessEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Messages\ProcessEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Messages\UpdateMessage.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -472,6 +487,26 @@
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Options\UnsupportedOptionException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Protocols\AbstractProtocol.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Protocols\ExtProtocol.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Protocols\IProtocol.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Protocols\PServerProtocol.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -621,6 +656,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Requests\RLogRequest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Requests\RootRequest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -672,6 +712,11 @@
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Requests\ValidResponsesRequest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Responses\AbstractResponse.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -756,6 +801,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Responses\ResponseMessageEvents.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Responses\SetStaticDirectoryResponse.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -806,10 +856,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\AssemblyInfo.cs"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "ICSharpCode.Console\SharpCvsLib\Main.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -825,42 +871,22 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\AddCommand.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\CheckoutCommand.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\CommitCommand.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\InitCommand.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\LoginCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\RemoveCommand.cs"
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\AbstractCommandParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\RTagCommand.cs"
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\AddCommandParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\UpdateCommand.cs"
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\CheckoutCommandParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -880,12 +906,47 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\CommandNames.cs"
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\CommandParserFactory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\CommitCommandParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\ICommandParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\InitCommandParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\RemoveCommandParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\RTagCommandParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\UpdateCommandParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\Usage.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\XmlLogCommandParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -898,10 +959,6 @@
                     RelPath = "ICSharpCode.Tests\SharpCvsLib\MainTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode.Tests\SharpCvsLib\Tests.build"
-                    BuildAction = "None"
                 />
                 <File
                     RelPath = "ICSharpCode.Tests\SharpCvsLib\Client\CVSServerConnectionTest.cs"

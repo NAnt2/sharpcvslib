@@ -111,12 +111,12 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// </summary>
         public override ICollection Nicks {
             get {
-                if (nicks.Count == 0) {
-                    nicks.Add("rm");
-                    nicks.Add("delete");
+                if (commandNicks.Count == 0) {
+                    commandNicks.Add("rm");
+                    commandNicks.Add("delete");
                 }
 
-                return nicks;
+                return commandNicks;
             }
         }
 

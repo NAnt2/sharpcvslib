@@ -161,8 +161,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// </summary>
         public override ICollection Nicks {
             get {
-                base.nicks.Clear();
-                return nicks;
+                commandNicks.Clear();
+                return commandNicks;
             }
         }
 

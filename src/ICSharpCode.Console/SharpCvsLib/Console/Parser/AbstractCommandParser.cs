@@ -104,19 +104,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <summary>
         /// Private backer for the nick collection.
         /// </summary>
-        protected ArrayList nicks = new ArrayList();
+        protected ArrayList commandNicks = new ArrayList();
         /// <summary>
         /// Any nick names that the command might have.
         /// </summary>
         public virtual ICollection Nicks {
             get {
-                if (null == nicks) {
-                    nicks = new ArrayList();
+                if (null == commandNicks) {
+                    commandNicks = new ArrayList();
                 }
-                if (0 == nicks.Count) {
-                    nicks.Add("Enter a nick for your command here.");
+                if (0 == commandNicks.Count) {
+                    commandNicks.Add("Enter a nick for your command here.");
                 }
-                return nicks;
+                return commandNicks;
             }
         }
 

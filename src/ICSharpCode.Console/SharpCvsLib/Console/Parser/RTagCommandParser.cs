@@ -112,12 +112,12 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// </summary>
         public override ICollection Nicks {
             get {
-                if (nicks.Count == 0) {
-                    nicks.Add("rt");
-                    nicks.Add("rfreeze");
+                if (commandNicks.Count == 0) {
+                    commandNicks.Add("rt");
+                    commandNicks.Add("rfreeze");
                 }
 
-                return nicks;
+                return commandNicks;
             }
         }
 

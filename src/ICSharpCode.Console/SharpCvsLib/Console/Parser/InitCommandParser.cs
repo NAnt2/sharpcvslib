@@ -31,7 +31,9 @@
 //    <author>Steve Kenzell</author>
 //    <author>Clayton Harbour</author>
 #endregion
+
 using System;
+using System.Collections;
 using System.Globalization;
 using System.Text;
 using ICSharpCode.SharpCvsLib.Misc;
@@ -85,6 +87,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// </summary>
         public override string CommandName {
             get {return "init";}
+        }
+
+        /// <summary>
+        /// Nicknames for the add command.
+        /// </summary>
+        public override ICollection Nicks {
+            get {
+                if (commandNicks.Count == 0) {
+                    commandNicks.Add("init");
+                }
+
+                return commandNicks;
+            }
         }
 
         /// <summary>
