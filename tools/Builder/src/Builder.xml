@@ -4,52 +4,6 @@
         <name>Builder</name>
     </assembly>
     <members>
-        <member name="T:Sporadicism.Builder.Runner.StartRunner">
-            <summary>
-            Provides a quick, easy way to start a new process.
-            </summary>
-        </member>
-        <member name="F:Sporadicism.Builder.Runner.StartRunner.Instance">
-            <summary>
-            Static accessor for the <see cref="T:Sporadicism.Builder.Runner.StartRunner"/> class.
-            </summary>
-        </member>
-        <member name="M:Sporadicism.Builder.Runner.StartRunner.Run(System.String)">
-            <summary>
-            Create a new process that will handle the given target.
-            </summary>
-            <param name="target">This can either be an application or an associated file
-                type such as <code>.jpg</code> or <code>.html</code>.  The default 
-                application will be launched to handle the request.</param>
-        </member>
-        <member name="M:Sporadicism.Builder.Runner.StartRunner.Run(System.String,System.String)">
-            <summary>
-            Launch the given target and pass in the args specified.
-            </summary>
-            <param name="target"></param>
-        </member>
-        <member name="T:Microsoft.MSDNMag.AsyncUtils.AlreadyRunningException">
-             <summary>
-             Exception thrown by AsyncOperation if attempt to start
-             an already running process is attempted.
-             </summary>
-             <remarks>From the MSDN Magazine Article "Give Your .NET-based 
-             Application a Fast and Responsive UI with Multiple Threads" by 
-             Ian Griffiths. 
-             See the May 2003 issue at http://msdn.microsoft.com/
-             MSDN Magazine does not make any representation or warranty, 
-             express or implied, with respect to any code or other information
-             herein. 
-             MSDN Magazine disclaims any liability whatsoever for any use of such
-             code 
-             or other information. 
-            </remarks>
-        </member>
-        <member name="M:Microsoft.MSDNMag.AsyncUtils.AlreadyRunningException.#ctor">
-            <summary>
-            Constructor.
-            </summary>
-        </member>
         <member name="T:Sporadicism.Builder.Event.TargetEventArgs">
             <summary>
             The <see cref="T:Sporadicism.Builder.Event.TargetEventArgs"/> class is used to provide feedback on the output
@@ -73,9 +27,67 @@
             The output of the build target.
             </summary>
         </member>
-        <member name="T:Sporadicism.Builder.NAnt.Target">
+        <member name="T:Sporadicism.Builder.Event.TargetEventHandler">
             <summary>
-            Summary description for Target.
+            Summary description for TargetEventHandler.
+            </summary>
+        </member>
+        <member name="T:Sporadicism.Builder.MainForm">
+            <summary>
+            Summary description for Form1.
+            </summary>
+        </member>
+        <member name="F:Sporadicism.Builder.MainForm.components">
+            <summary>
+            Required designer variable.
+            </summary>
+        </member>
+        <member name="M:Sporadicism.Builder.MainForm.#ctor">
+            <summary>
+            Main application entry point.
+            </summary>
+        </member>
+        <member name="M:Sporadicism.Builder.MainForm.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:Sporadicism.Builder.MainForm.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:Sporadicism.Builder.MainForm.Main">
+            <summary>
+            The main entry point for the application.
+            </summary>
+        </member>
+        <member name="T:Sporadicism.Builder.NAnt.NAntTargets">
+            <summary>
+            Summary description for NAntTargets.
+            </summary>
+        </member>
+        <member name="T:Microsoft.MSDNMag.AsyncUtils.AlreadyRunningException">
+             <summary>
+             Exception thrown by AsyncOperation if attempt to start
+             an already running process is attempted.
+             </summary>
+             <remarks>From the MSDN Magazine Article "Give Your .NET-based 
+             Application a Fast and Responsive UI with Multiple Threads" by 
+             Ian Griffiths. 
+             See the May 2003 issue at http://msdn.microsoft.com/
+             MSDN Magazine does not make any representation or warranty, 
+             express or implied, with respect to any code or other information
+             herein. 
+             MSDN Magazine disclaims any liability whatsoever for any use of such
+             code 
+             or other information. 
+            </remarks>
+        </member>
+        <member name="M:Microsoft.MSDNMag.AsyncUtils.AlreadyRunningException.#ctor">
+            <summary>
+            Constructor.
             </summary>
         </member>
         <member name="T:Sporadicism.Builder.Runner.NAntRunner">
@@ -285,36 +297,34 @@
             Name of the application.
             </summary>
         </member>
-        <member name="T:Sporadicism.Builder.MainForm">
+        <member name="T:Sporadicism.Builder.NAnt.Target">
             <summary>
-            Summary description for Form1.
+            Summary description for Target.
             </summary>
         </member>
-        <member name="F:Sporadicism.Builder.MainForm.components">
+        <member name="T:Sporadicism.Builder.Runner.StartRunner">
             <summary>
-            Required designer variable.
+            Provides a quick, easy way to start a new process.
             </summary>
         </member>
-        <member name="M:Sporadicism.Builder.MainForm.#ctor">
+        <member name="F:Sporadicism.Builder.Runner.StartRunner.Instance">
             <summary>
-            Main application entry point.
+            Static accessor for the <see cref="T:Sporadicism.Builder.Runner.StartRunner"/> class.
             </summary>
         </member>
-        <member name="M:Sporadicism.Builder.MainForm.Dispose(System.Boolean)">
+        <member name="M:Sporadicism.Builder.Runner.StartRunner.Run(System.String)">
             <summary>
-            Clean up any resources being used.
+            Create a new process that will handle the given target.
             </summary>
+            <param name="target">This can either be an application or an associated file
+                type such as <code>.jpg</code> or <code>.html</code>.  The default 
+                application will be launched to handle the request.</param>
         </member>
-        <member name="M:Sporadicism.Builder.MainForm.InitializeComponent">
+        <member name="M:Sporadicism.Builder.Runner.StartRunner.Run(System.String,System.String)">
             <summary>
-            Required method for Designer support - do not modify
-            the contents of this method with the code editor.
+            Launch the given target and pass in the args specified.
             </summary>
-        </member>
-        <member name="M:Sporadicism.Builder.MainForm.Main">
-            <summary>
-            The main entry point for the application.
-            </summary>
+            <param name="target"></param>
         </member>
         <member name="T:Sporadicism.Builder.ThreadHandler.StartThread">
             <summary>
@@ -332,16 +342,6 @@
             Start a ne thread on the given target.
             </summary>
             <param name="target"></param>
-        </member>
-        <member name="T:Sporadicism.Builder.Event.TargetEventHandler">
-            <summary>
-            Summary description for TargetEventHandler.
-            </summary>
-        </member>
-        <member name="T:Sporadicism.Builder.NAnt.NAntTargets">
-            <summary>
-            Summary description for NAntTargets.
-            </summary>
         </member>
     </members>
 </doc>

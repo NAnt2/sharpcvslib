@@ -143,35 +143,30 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser{
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
         public override ICommand CreateCommand () {
             CheckoutModuleCommand checkoutCommand;
-            try {
-                this.ParseOptions(this.unparsedOptions);
+            this.ParseOptions(this.unparsedOptions);
 
-                this.CurrentDir = new DirectoryInfo(Environment.CurrentDirectory);
-                this.CurrentWorkingDirectory = 
-                    new WorkingDirectory(this.CvsRoot,
-                    this.CurrentDir.FullName, this.Module);
-                if (revision != null) {
-                    this.CurrentWorkingDirectory.Revision = revision;
-                }
-                if (!date.Equals(DateTime.MinValue)) {
-                    this.CurrentWorkingDirectory.Date = date;
-                }
-                // Create new CheckoutModuleCommand object
-                checkoutCommand = new CheckoutModuleCommand(this.CurrentWorkingDirectory);
+            this.CurrentDir = new DirectoryInfo(Environment.CurrentDirectory);
+            this.CurrentWorkingDirectory = 
+                new WorkingDirectory(this.CvsRoot,
+                this.CurrentDir.FullName, this.Module);
 
-                if (revision != null) {
-                    this.CurrentWorkingDirectory.Revision = revision;
-                }
-                if (!date.Equals(DateTime.MinValue)) {
-                    this.CurrentWorkingDirectory.Date = date;
-                }
-                // Create new CheckoutModuleCommand object
-                checkoutCommand = new CheckoutModuleCommand(this.CurrentWorkingDirectory);
+            if (revision != null) {
+                this.CurrentWorkingDirectory.Revision = revision;
             }
-            catch (Exception e) {
-                LOGGER.Error (e);
-                throw e;
+            if (!date.Equals(DateTime.MinValue)) {
+                this.CurrentWorkingDirectory.Date = date;
             }
+            // Create new CheckoutModuleCommand object
+            checkoutCommand = new CheckoutModuleCommand(this.CurrentWorkingDirectory);
+
+            if (revision != null) {
+                this.CurrentWorkingDirectory.Revision = revision;
+            }
+            if (!date.Equals(DateTime.MinValue)) {
+                this.CurrentWorkingDirectory.Date = date;
+            }
+            // Create new CheckoutModuleCommand object
+            checkoutCommand = new CheckoutModuleCommand(this.CurrentWorkingDirectory);
             return checkoutCommand;
         }
 

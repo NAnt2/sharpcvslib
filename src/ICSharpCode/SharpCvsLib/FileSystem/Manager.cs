@@ -1009,6 +1009,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     managed by CVS.</param>
         /// <returns>The Entry file that has been added.</returns>
         public Entry AddEntry (Entry entry) {
+            if (!entry.CvsFile.Exists) {
+                this.Touch(entry.CvsFile);
+            }
             Entries entries = Entries.Load(entry.CvsFile.Directory);
             if (!entries.Contains(entry.FullPath)) {
                 entries.Add(entry);
