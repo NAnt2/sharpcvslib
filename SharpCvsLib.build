@@ -23,24 +23,24 @@
     <property name="log4net" value="log4net.dll" />
     <property name="nunit" value="nunit.framework.dll" />    
     <property name="ziplib" value="ICSharpCode.SharpZipLib.dll" />
-        
+
     <target name="Debug" depends="update.src, SharpCvsLib.Debug" />
     <target name="Release" depends="SharpCvsLib.Release" />
     
+        <property name="debug" value="true" />
+        <property name="unsafe" value="/unsafe-" />
+        <property name="checked" value="/checked-" />
+        <property name="define" value="DEBUG;TRACE" />
+
     <!-- Documentation variables -->
     <property name="copyright-text" value="Mike Krueger 2001-2002, Clayton Harbour 2003" />
     <property name="copyright-href" value="http://www.gnu.org/copyleft/lesser.html#TOC1" />
     
     <target name="update.src" description="Updates the source from cvs.">
-<!--       <cvs-update  module="nant" 
+       <cvs-update  module="nant" 
                     cvsroot=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/nant"
-                    destination="e:/dev/build/nant/"
-                    password="" />-->
-        <exec 
-            basedir="." 
-            program="E:/dev/build/sharpcvslib/cvswithplinkrsh.bat" 
-            commandline="-q update -P -d" 
-        />
+                    destination="${src.dir}"
+                    password="" />
     </target>
 
     <target name="setup">
@@ -143,8 +143,7 @@
                     <property name="DefaulTOC" value="" />
                     <property name="ShowVisualBasic" value="True" />
                 </documenter>
-<!--
-                <documenter name="JavaDoc">
+<!--                <documenter name="JavaDoc">
                     <property name="Title" value="${Title}" />
                     <property name="OutputDirectory" value="${OutputDirectory}/JavaDoc" />
 
