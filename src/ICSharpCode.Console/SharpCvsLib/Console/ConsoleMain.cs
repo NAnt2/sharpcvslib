@@ -118,73 +118,10 @@ namespace ICSharpCode.SharpCvsLib.Console {
                         }
                     }
                 }
-                // run the execute checkout command on cvs repository.
+                // Execute the command on cvs repository.
                 command.Execute(serverConn);
                 serverConn.Close();
             }
-/*  This code is duplicated and I was not sure what should be moved to the 
- *      CommandLineParser and what was already there.
-            switch (parser.Command){
-            case "add":
-            case "ad":
-            case "new":
-                break;
-            case "checkout":
-            case "co":
-            case "get":
-                CheckoutCommand coCommand =
-                new CheckoutCommand(parser.Cvsroot, parser.Repository,
-                                    parser.Options);
-                coCommand.Execute();
-                break;
-            case "commit":
-            case "ci":
-            case "com":
-                break;
-            case "login":
-            case "logon":
-            case "lgn":
-                // login to server
-                LoginCommand login = new LoginCommand(parser.Cvsroot);
-                login.Execute();
-                break;
-            case "passwd":
-            case "password":
-            case "setpass":
-                // add to .cvspass file
-                // scramble password
-                // write to file
-                break;
-            case "remove":
-            case "rm":
-            case "delete":
-                break;
-            case "up":
-            case "upd":
-            case "update":
-                UpdateCommand upCommand =
-                    new UpdateCommand(parser.Cvsroot, parser.Repository,
-                    parser.Options);
-                upCommand.Execute();
-                break;
-            case "--help":
-                System.Console.WriteLine (Usage.General);
-                break;
-            case "--help-options":
-                System.Console.WriteLine (Usage.Options);
-                break;
-            case "--help-commands":
-                System.Console.WriteLine (Usage.Commands);
-                break;
-            case "--help-synonyms":
-                System.Console.WriteLine (Usage.Synonyms);
-                break;
-            default:
-                System.Console.WriteLine ("Not a valid comand.");
-                break;
-            }
-            */
         }
-        
     }
 }
