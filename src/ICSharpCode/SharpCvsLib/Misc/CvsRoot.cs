@@ -52,10 +52,11 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// Regular expression for matching a cvsroot.
         /// </summary>
         public const string CVSROOT_REGEX = 
-              @":(ext|pserver|ssh|local|sspi)
-              :((?:[\w]*@)?[\w]+(?:\.[\w|-]+)*)
-              :?((?:[\d]*)?)
-              :((?:(?:[A-Za-z]:/)|/).[^\s]*)";
+              @":(?<Protocol>ext|pserver|ssh|local|sspi)
+                :(?<User>[\w\.-]*)[@]*
+                (?<Host>[\w\d]+[\.\w\d]*)
+                :(?<Port>[\d]+)*
+                [:]*(?<Repository>(?:(?:[A-Za-z]:/)|/).[^\s]*)";
 
         private readonly ILog LOGGER = LogManager.GetLogger(typeof(CvsRoot));
 
@@ -128,22 +129,6 @@ namespace ICSharpCode.SharpCvsLib.Misc {
                 LOGGER.Debug(String.Format("Host: {0}", value)); 
                 AssertNotEmpty(value, "Host");
                 host = value;}
-        }
-
-        private string UserHost {
-            set {
-                if (value.IndexOf("@") > -1) {
-                    string[] userHost = value.Split('@');
-                    this.User = userHost[0];
-                    this.Host = userHost[1];
-                } else {
-                    this.Host = value;
-                }
-
-                if (HasUserVar(this.TransportProtocol)) {
-                    AssertNotEmpty(this.User, "User");
-                }
-            }
         }
 
         /// <summary>
@@ -279,10 +264,17 @@ namespace ICSharpCode.SharpCvsLib.Misc {
     Found ( {0} )",
                     cvsRoot));
             }
-            this.Protocol = matches.Groups[1].Value;
-            this.UserHost = matches.Groups[2].Value;
-            this.PortString = matches.Groups[3].Value;
-            this.CvsRepository = matches.Groups[4].Value;
+            this.Protocol = matches.Groups["Protocol"].Value;
+            if (matches.Groups["User"].Success) {
+                this.User = matches.Groups["User"].Value;
+            }
+            this.Host = matches.Groups["Host"].Value;
+            if (matches.Groups["Port"].Success) {
+                this.Port = Convert.ToInt32(matches.Groups["Port"].Value);
+            } else {
+                this.Port = 2401;
+            }
+            this.CvsRepository = matches.Groups["Repository"].Value;
         }
 
         /// <summary>
