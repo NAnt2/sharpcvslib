@@ -3,11 +3,54 @@ using System;
 
 class MainClass
 {
-    public static void Main(string[] args)
+    private String cvsroot;
+    private String command;
+    private String options;
+    
+    public String Command {
+        get {return this.command;}
+        set {this.command = value;}
+    }
+    
+    public String Cvsroot {
+        get {return this.cvsroot;}
+        set {this.cvsroot = value;}
+    }
+    
+    public String Options {
+        get {return this.options;}
+        set {this.options = value;}
+    }
+    
+    public static void Main(String[] args)
     {
         if (args.Length < 1) {
             System.Console.WriteLine (Usage);
         }
+        
+        MainClass main = new MainClass ();
+    
+        for (int i = 0; i < args.Length; i++) {
+            switch (args[i].Substring (0, 2)) {
+                case "checkout":
+                case "co": 
+                    main.Command = args[i];
+                    break;
+                case "update":
+                    main.command = args[i];
+                    break;
+                case "--help":
+                    main.command = args[i];
+                    break;
+                case "-d":
+                    main.cvsroot = args[i];
+                    break;
+                default:
+                    throw new System.Exception ("not knowon");
+            }
+        }
+        System.Console.WriteLine ("Thanks for using the command line tool.");
+        
     }
     
     private static String Usage {
