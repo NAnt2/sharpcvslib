@@ -63,6 +63,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
             set { Dictionary[fullPath] = value; }
         }
 
+        public void Add(Entry entry) {
+            if (null == entry || null == entry.FullPath) {
+                throw new ArgumentException("Entry must contain a path value.");
+            }
+            Dictionary.Add(entry.FullPath, entry);
+        }
+
         /// <summary>
         /// Add a new entry to the entry collection.
         /// </summary>

@@ -178,6 +178,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 
         /// <summary>Used to specify the revision of the module
         /// requested.  This should correspond to a module tag.</summary>
+        [Obsolete(@"Use the UpdateCommand2.Revision object to specify the checkout/ update revision.")]
         public String Revision {
             get {return this.revision;}
             set {
@@ -199,6 +200,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         }
 
         /// <summary>Specifies the most recent revision no later that the given date.</summary>
+        [Obsolete(@"Use the UpdateCommand2.Date to specify the checkout/ update date.")]
         public DateTime Date {
             get {return this.date;}
             set {
@@ -215,6 +217,8 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </summary>
         /// <returns><code>true</code> if a date has been
         /// specified and <code>false</code> otherwise.</returns>
+        [Obsolete(@"Use the UpdateCommand2.HasDate to check if the date property has been
+            set.")]
         public bool HasDate {
             get {return hasDate;}
         }
@@ -222,6 +226,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <summary>
         ///     Returns the data as a string as required by the cvs server.
         /// </summary>
+        [Obsolete(@"Use the UpdateCommand2.GetDateAsString.")]
         public string GetDateAsString() {
             string dateAsString = "";
 	        string dateFormat = "dd MMM yyyy";

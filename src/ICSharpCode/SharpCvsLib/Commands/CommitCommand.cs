@@ -109,54 +109,22 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             connection.SubmitRequest(new ArgumentRequest("-m"));
             connection.SubmitRequest(new ArgumentRequest("LOG MESSAGE"));
             connection.SubmitRequest(new ArgumentRequest(ArgumentRequest.Options.DASH));
-//            StringCollection files = new StringCollection();
-//            if (LOGGER.IsDebugEnabled) {
-//                LOGGER.Debug("workdir cvs repository : " +
-//                            workingdirectory.CvsRoot.CvsRepository);
-//            }
-//            connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository));
             foreach (DictionaryEntry folderEntry in workingdirectory.Folders) {
                 Folder folder = (Folder)folderEntry.Value;
                 this.SetDirectory(connection, folder);
-//                connection.SubmitRequest(new DirectoryRequest(".", 
-//                    workingdirectory.CvsRoot.CvsRepository + "/" + 
-//                    folder.Repository.FileContents));
                 foreach (DictionaryEntry entryEntry  in folder.Entries) {
                     Entry entry = (Entry)entryEntry.Value;
-                    LOGGER.Debug("Commit command.  Entry=[" + entry + "]");
-                    LOGGER.Debug("entry.FullPath=[" + entry.FullPath + "]");
                     if (!entry.IsDirectory) {
                         this.SendFileRequest(connection, entry);
-//                        DateTime old = entry.TimeStamp;
-//                        entry.TimeStamp = entry.TimeStamp;
-
-//                        string path = Path.Combine (workingdirectory.CvsRoot.CvsRepository,
-//                                                    folderEntry.Key.ToString());
-
-//                        string fileName = entry.FullPath;
-
-//                        if (File.GetLastAccessTime(fileName) != entry.TimeStamp) {
-//                            connection.SubmitRequest(new EntryRequest(entry));
-//                            connection.SubmitRequest(new ModifiedRequest(entry.Name));
-//                            files.Add(entry.Name);
-//                            connection.SendFile(fileName, entry.IsBinaryFile);
-//                        }
-
-//                        entry.TimeStamp = old;
                     }
                 }
 
                 this.SetDirectory(connection, folder);
-//                connection.SubmitRequest(new DirectoryRequest(".", 
-//                    workingdirectory.CvsRoot.CvsRepository + "/" + 
-//                    folder.Repository.FileContents));
 
                 foreach (DictionaryEntry entryEntry in folder.Entries) {
                     Entry entry = (Entry)entryEntry.Value;
                     if (!entry.IsDirectory) {
-//                        if (File.GetLastAccessTime(fileName) != entry.TimeStamp) {
-                            connection.SubmitRequest(new ArgumentRequest(entry.Name));
-//                        }
+                        connection.SubmitRequest(new ArgumentRequest(entry.Name));
                     }
                 }
             }

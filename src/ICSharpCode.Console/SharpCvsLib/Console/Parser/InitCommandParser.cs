@@ -75,7 +75,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         }
 
         /// <summary>
-        /// Create a new instance of the <see cref="CheckoutCommandParser"/>.
+        /// Create a new instance of the <see cref="InitCommandParser"/>.
         /// </summary>
         /// <returns></returns>
         public static ICommandParser GetInstance() {

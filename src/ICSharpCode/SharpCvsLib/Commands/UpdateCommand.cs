@@ -58,6 +58,9 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         private string  logmessage;
         private string  vendor  = "vendor";
         private string  release = "release";
+        private string  revision;
+        bool hasDate = false;    // DateTime is a value type so we can't use null to indicate it hasn't been set
+        DateTime date = new DateTime();
 
         private class Arguments {
             /// <summary>
@@ -95,6 +98,77 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         }
 
         /// <summary>
+        /// Update using specified revision/tag (is sticky).
+        /// <br/>
+        /// <warn>Only one of revision or date can be specified, NOT BOTH.</warn>
+        /// </summary>
+        /// <value>This corresponds to the option value 
+        ///     -r sent to the cvs server.</value>
+        public string Revision {
+            get { 
+                // check the working directory revision if there is no value, 
+                //  this is to preserve backwards compatibility.
+                if (null == this.revision) {
+                    this.revision = this.workingDirectory.Revision;
+                }
+                return this.revision; 
+            } 
+            set { 
+                if (this.hasDate) {
+                    throw new ArgumentException("Cannot specify both date and revision");
+                }
+
+                this.revision = value; 
+            }
+        } 
+  
+        /// <summary>
+        /// Set date to update from (is sticky).
+        /// <br/>
+        /// <warn>Only one of revision or date can be specified, NOT BOTH.</warn>
+        /// </summary>
+        /// <value>This corresponds to the option value -D
+        ///     sent to the cvs server.
+        /// </value>
+        public DateTime Date {
+            get {
+                if (!this.hasDate && this.workingDirectory.HasDate) {
+                    this.date = this.workingDirectory.Date;
+                }
+                return this.date;
+            }
+            set {
+                if (this.revision != null) {
+                    throw new ArgumentException("Cannot specify both date and revision");
+                }
+                this.date = value; 
+                hasDate = true;
+            }
+        }
+
+        /// <summary>
+        ///     Returns the data as a string as required by the cvs server.
+        /// </summary>
+        public string GetDateAsString() {
+            string dateAsString = "";
+            string dateFormat = "dd MMM yyyy";
+
+            if (hasDate) {
+                dateAsString = date.ToString(dateFormat);
+            }
+            return dateAsString;
+        }
+
+        /// <summary>
+        /// Indicate whether a date has been specified for this update.
+        /// </summary>
+        /// <value><code>true</code> if a date has been specified, 
+        ///     otherwise <code>false</code>.</value>
+        public bool HasDate {
+            get { return this.hasDate || this.workingDirectory.HasDate; }
+        }
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="workingDirectory"></param>
@@ -121,9 +195,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                     connection.SubmitRequest (
                         new ArgumentRequest (workingDirectory.OverrideDirectory));
                 }
-                if (workingDirectory.HasRevision) {
+
+                if (this.Revision != null || this.Revision != string.Empty) {
                     connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.REVISION));
-                    connection.SubmitRequest(new ArgumentRequest(workingDirectory.Revision));
+                    connection.SubmitRequest(new ArgumentRequest(this.Revision));
                 }
                 if (workingDirectory.HasDate) {
                     connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.DATE));

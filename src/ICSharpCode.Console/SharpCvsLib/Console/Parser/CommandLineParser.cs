@@ -412,6 +412,17 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         command = initCommand.CreateCommand ();
                         this.currentWorkingDirectory = initCommand.CurrentWorkingDirectory;
                         break;
+                    case "log":
+                    case "lo":
+                        this.commandTxt = arguments[i++];
+                        string[] logArgs = new string[arguments.Length - i];
+                        Array.Copy(arguments, i, logArgs, 0, arguments.Length - i);
+                        LogCommandParser logCommandParser = 
+                            new LogCommandParser(this.CvsRoot, logArgs);
+                        command = logCommandParser.CreateCommand();
+                        this.currentWorkingDirectory = logCommandParser.CurrentWorkingDirectory;
+                        i = arguments.Length;
+                        break;
                     case "login":
                     case "logon":
                     case "lgn":

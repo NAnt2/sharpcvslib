@@ -63,20 +63,32 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public Folder () {
             this.entries = new Entries();
         }
+
+        /// <summary>
+        /// Create a new folder object passing in the directory that it represents.
+        /// </summary>
+        /// <param name="path"></param>
+        public Folder (DirectoryInfo path) : this() {
+            this.path = path;
+        }
         /// <summary>
         ///     The repository object.
         /// </summary>
         [Obsolete ("Use Repository")]
         public Repository Repos {
-            get {return this.repository;}
-            set {this.repository = value;}
+            get {return this.Repository;}
+            set {this.Repository = value;}
         }
 
         /// <summary>
         /// Root file, holds cvsroot information.
         /// </summary>
         public Root Root {
-            get {return this.root;}
+            get {
+                if (null == this.Root) {
+                    this.root = Root.Load(this.Path);
+                }
+                return this.root;}
             set {this.root = value;}
         }
 
@@ -85,7 +97,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     folder on the server.
         /// </summary>
         public Repository Repository {
-            get {return this.repository;}
+            get {
+                if (null == this.repository) {
+                    this.repository = Repository.Load(this.Path);
+                }
+                return this.repository;}
             set {this.repository = value;}
         }
 
@@ -95,7 +111,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     revision.
         /// </summary>
         public Tag Tag {
-            get {return this.tag;}
+            get {
+                if (null == this.tag) {
+                    this.tag = Tag.Load(this.Path);
+                }
+                return this.tag;}
             set {this.tag = value;}
         }
 

@@ -61,6 +61,19 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         }
 
         /// <summary>
+        /// Add the folder to the folders collection.
+        /// <br/>
+        /// </summary>
+        /// <param name="folder">The folder to add to the collection.</param>
+        /// <exception cref="ArgumentException">If the Folder.Path value is null.</exception>
+        public void Add(Folder folder) {
+            if (null == folder.Path) {
+                throw new ArgumentException("Folder.Path cannot be null.");
+            }   
+            Dictionary.Add(folder.Path.FullName, folder);
+        }   
+
+        /// <summary>
         /// Add the given folder to the collection.  The folder key is the path to
         ///     the folder on the filesystem.
         /// </summary>

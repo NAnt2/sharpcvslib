@@ -131,6 +131,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 fileContents = reader.ReadToEnd();
             }
 
+            // strip off line return characters
+            fileContents = fileContents.Replace(Environment.NewLine, "");
+
             return new Repository(repositoryFile, fileContents);
             
         }
