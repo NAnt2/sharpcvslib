@@ -38,6 +38,7 @@ using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 
+using ICSharpCode.SharpCvsLib.Tests;
 using ICSharpCode.SharpCvsLib.Tests.Config;
 
 using log4net;
@@ -53,6 +54,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         private SharpCvsLibTestsConfig settings = 
             SharpCvsLibTestsConfig.GetInstance();
 
+        /// <summary>
+        /// The module name is the top level directory in the repository  folder,
+        ///     in our examples it is sharpcvslib.
+        /// </summary>
+        private readonly String MODULE_NAME = "sharpcvslib";
         private readonly String RELATIVE_PATH = "src";
         private readonly String REPOSITORY_ENTRY1 = "sharpcvslib/src";
         private readonly String REPOSITORY_ENTRY2 = "sharpcvslib/doc";
@@ -76,11 +82,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                                             this.REPOSITORY_ENTRY1);
 
             String cvsPath = Path.Combine (fullPath, "CVS");
-            Assertion.Assert ("Path not set/returned", repos.Path.Equals (fullPath));
-            Assertion.Assert ("FileContents not set/returned", repos.FileContents.Equals (this.REPOSITORY_ENTRY1));
-            Assertion.Assert ("Filename not correct", repos.Filename.Equals (this.REPOSITORY_FILE_NAME));
-            Assertion.Assert ("Type not correct", repos.Type == Factory.FileType.Repository);
-            Assertion.Assert ("IsMultiLined not correct", repos.IsMultiLined == false);
+            Assertion.AssertEquals ("Path not set/returned", fullPath, repos.FullPath);
+            Assertion.AssertEquals ("FileContents not set/returned", this.REPOSITORY_ENTRY1, repos.FileContents);
+            Assertion.AssertEquals ("Filename not correct", this.REPOSITORY_FILE_NAME, repos.Filename);
+            Assertion.AssertEquals ("Type not correct", Factory.FileType.Repository, repos.Type);
+            Assertion.AssertEquals ("IsMultiLined not correct", false, repos.IsMultiLined);
+            Assertion.AssertEquals(MODULE_NAME, repos.ModuleName);
         }
 
         /// <summary>
@@ -90,7 +97,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         [Test]
         public void EqualsTest () {
             String cvsPath = Path.Combine (this.settings.Config.LocalPath,
-                                        this.settings.Config.Module);
+                                        MODULE_NAME);
             Repository reposSame1 = new Repository (cvsPath, this.REPOSITORY_ENTRY1);
             Repository reposSame2 = new Repository (cvsPath, this.REPOSITORY_ENTRY1);
             Repository reposDiff1 = new Repository (cvsPath, this.REPOSITORY_ENTRY2);
@@ -103,6 +110,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Assertion.Assert (!reposDiff1.Equals (reposSame2));
             Assertion.Assert (!reposSame1.Equals (reposDiff1));
             Assertion.Assert (!reposSame2.Equals (reposDiff1));
+
+            Assertion.AssertEquals(MODULE_NAME, reposSame1.ModuleName);
+            Assertion.AssertEquals(MODULE_NAME, reposSame2.ModuleName);
+            Assertion.AssertEquals(MODULE_NAME, reposDiff1.ModuleName);
         }
 
         /// <summary>
@@ -128,6 +139,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Assertion.Assert ("FileContents should equal module name.  FileContents=[" +
                             repos.FileContents + "]",
                             repos.FileContents.Equals ("sharpcvslib/src"));
+
+            Assertion.AssertEquals(MODULE_NAME, repos.ModuleName);
         }
 
         /// <summary>

@@ -47,6 +47,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// </summary>
     public class Repository : AbstractCvsFile, ICvsFile {
         private ILog LOGGER = LogManager.GetLogger (typeof (Repository));
+        private String moduleName;
 
         /// <summary>
         ///     The name of the repository file.
@@ -75,12 +76,44 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         /// <summary>
+        /// Return the module name from the repository object.  The cvs module name
+        ///     is stored as the topmost directory in the Repository relative path.
+        /// </summary>
+        /// <example>
+        ///     <p>In the repository path represented by:
+        ///         <code>sharpcvslib/src/ICSharpCode</code>
+        ///     The module name would be:
+        ///         <code>sharpcvslib</code>
+        ///     </p>
+        /// </example>
+        public String ModuleName {
+            get {return this.moduleName;}
+        }
+
+        /// <summary>
         /// Format the string as a repository entry.  Remove any trailing
         ///     slashes from the line.
         /// </summary>
+        /// <param name="line">The one line intry in the Repository file.</param>
+        /// <example>
+        ///     A CVS\Repository file that looks like:
+        ///         <code>sharpcvslib/src/ICSharpCode</code>
+        ///     would be parsed into the following components:
+        ///     <ul>
+        ///         <li>
+        ///             moduleName: sharpcvslib
+        ///         </li>
+        ///         <li>fileContents: sharpcvslib/src/ICSharpCode</li>
+        ///     </ul>
+        /// </example>
         public override void Parse (String line) {
             if (line.EndsWith ("/")) {
                  line = line.Substring (0, line.Length - 1);
+            }
+            if (line.IndexOf("/") >=0) {
+                this.moduleName = line.Substring(0, line.IndexOf("/"));
+            } else {
+                this.moduleName = line;
             }
             this.FileContents = line;
         }
