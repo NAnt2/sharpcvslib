@@ -61,10 +61,14 @@
     <!-- Targets -->
     <target name="src.update" description="Updates the source from cvs.">
        <!-- To run locally you must have your public key uploaded to sf.net -->
-       <cvs-update  module="sharpcvslib" 
-                    cvsroot=":ext:${name.developer}@cvs.sourceforge.net:/cvsroot/sharpcvslib"
-                    destination="${dir.base}/.."
-                    password="" />
+       <property name="cvs.command" value="update -Pd" />
+       <echo message="Updating ${dir.base} using cvs command: ${cvs.command}." />
+       
+       <cvs     module="sharcvslib" 
+                cvsroot=":ext:${name.developer}@cvs.sourceforge.net:/cvsroot/sharpcvslib"
+                destination="${dir.base}"
+                command="${cvs.command}"
+                usesharpcvslib="false" />
     </target>
     
     <target name="update.version" description="Generate the assembly info file for the project.  Pass in the version number.">
