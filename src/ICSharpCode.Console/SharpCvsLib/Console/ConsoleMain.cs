@@ -42,50 +42,84 @@ using ICSharpCode.SharpCvsLib.Console.Parser;
 
 namespace ICSharpCode.SharpCvsLib.Console {
 
-/// <summary>The main driver/ entry point into the program.</summary>
-public class ConsoleMain {
+    /// <summary>The main driver/ entry point into the program.</summary>
+    public class ConsoleMain {
 
-    /// <summary>Constructor.
-    ///     TODO: Fill in more of a usage/ explanation.</summary>
-    public ConsoleMain () {
-    }
+        /// <summary>Constructor.
+        ///     TODO: Fill in more of a usage/ explanation.</summary>
+        public ConsoleMain () {
+        }
 
-    /// <summary>
-    /// Driver for console application.
-    ///
-    /// TODO: Write a better description :-)
-    /// </summary>
-    public void Execute (String[] args) {
-        CommandLineParser parser = new CommandLineParser (args);
+        /// <summary>
+        /// Driver for console application.
+        ///
+        /// TODO: Write a better description :-)
+        /// </summary>
+        public void Execute (String[] args) {
+            CommandLineParser parser = new CommandLineParser (args);
 
-        parser.Execute ();
+            parser.Execute ();
 
-        switch (parser.Command){
-        case "checkout":
-        case "co":
-            CheckoutCommand coCommand =
+            switch (parser.Command){
+            case "add":
+            case "ad":
+            case "new":
+                break;
+            case "checkout":
+            case "co":
+            case "get":
+                CheckoutCommand coCommand =
                 new CheckoutCommand(parser.Cvsroot, parser.Repository,
                                     parser.Options);
-            coCommand.Execute();
-            break;
-        case "login":
-            // login to server
-            LoginCommand login = new LoginCommand(parser.Cvsroot);
-            login.Execute();
-            break;
-        case "passwd":
-            // add to .cvspass file
-            // scramble password
-            // write to file
-            break;
-        case "update":
-            break;
-        default:
-            System.Console.WriteLine ("Not a valid comand.");
-            break;
+                coCommand.Execute();
+                break;
+            case "commit":
+            case "ci":
+            case "com":
+                break;
+            case "login":
+            case "logon":
+            case "lgn":
+                // login to server
+                LoginCommand login = new LoginCommand(parser.Cvsroot);
+                login.Execute();
+                break;
+            case "passwd":
+            case "password":
+            case "setpass":
+                // add to .cvspass file
+                // scramble password
+                // write to file
+                break;
+            case "remove":
+            case "rm":
+            case "delete":
+                break;
+            case "up":
+            case "upd":
+            case "update":
+                UpdateCommand upCommand =
+                    new UpdateCommand(parser.Cvsroot, parser.Repository,
+                    parser.Options);
+                upCommand.Execute();
+                break;
+            case "--help":
+                System.Console.WriteLine (Usage.General);
+                break;
+            case "--help-options":
+                System.Console.WriteLine (Usage.Options);
+                break;
+            case "--help-commands":
+                System.Console.WriteLine (Usage.Commands);
+                break;
+            case "--help-synonyms":
+                System.Console.WriteLine (Usage.Synonyms);
+                break;
+            default:
+                System.Console.WriteLine ("Not a valid comand.");
+                break;
+            }
+            System.Console.WriteLine ("Thanks for using the command line tool.");
         }
-        System.Console.WriteLine ("Thanks for using the command line tool.");
     }
-}
-
 }
