@@ -65,9 +65,13 @@ namespace ICSharpCode.SharpCvsLib.Client {
                                     this.Settings.Config.Module);
 
             CVSServerConnection connection = new CVSServerConnection ();
-            Assertion.AssertNotNull ("Should have a connection object.", connection);
+            Assertion.AssertNotNull ("Should have a connection object.  WorkingDirectory=[" + working + "]", connection);
 
-            connection.Connect (working, this.Settings.Config.ValidPassword);
+            try {
+                connection.Connect (working, this.Settings.Config.ValidPassword);
+            } catch (Exception e) {
+                Assertion.Fail (e.ToString () + "; WorkingDirectory=[" + working + "]");
+            }
             connection.Close();
         }
 
