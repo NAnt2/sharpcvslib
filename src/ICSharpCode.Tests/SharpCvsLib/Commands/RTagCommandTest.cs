@@ -73,7 +73,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             RTagCommand command = new RTagCommand(workingDirectory);
             command.TagName = TEST_TAG_1;
 
-            connection.Connect (workingDirectory, "William");
+            connection.Connect (workingDirectory, this.settings.ValidPassword);
             command.Execute (connection);
         }
 
