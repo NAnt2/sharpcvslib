@@ -3,6 +3,7 @@
         http://sharpcvslib.sourceforge.net
 -->
 <project name="Sharpcvslib" default="run-tests-sample">
+    <include buildfile="SharpCvsLib.local.xml" failonerror="false"/>
     <include buildfile="SharpCvsLib.common.xml" />
     <!-- Targets -->
     <target name="src.update" description="Updates the source from cvs.">
