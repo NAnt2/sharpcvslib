@@ -181,6 +181,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         /// <param name="connection"></param>
         public void Execute(ICommandConnection connection) {
+            if (workingDirectory.FoldersToUpdate == null) {
+                LOGGER.Info("Nothing to update on WorkingDirectory.FoldersToUpdate.");
+                return;
+            }
             Folder[] _foldersToUpdate =
                 (Folder[])workingDirectory.FoldersToUpdate.Clone ();
             foreach (Folder folder in _foldersToUpdate) {
