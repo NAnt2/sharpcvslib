@@ -3,6 +3,14 @@
         http://sharpcvslib.sourceforge.net
 -->
 <project name="${name.top-level}-${name.project}" default="build.all">
+    <!-- Comment out net-1.0 framework and uncomment mono framework to run on mono 
+    
+    FIXME: Having security issues with the 1-1 framework, is this just
+        my machine??!
+    
+    -->
+    <property name="nant.settings.currentframework" value = "net-1.0"/>
+    <!--<property name="nant.settings.currentframework" value = "mono-1.0-linux"/>  -->
 
     <!-- Names of the files generated -->
     <property name="name.top-level" value="ICSharpCode" />
@@ -22,10 +30,6 @@
     <property name="compile.checked" value="/checked-" />
     <property name="compile.define" value="DEBUG;TRACE" />
     
-<!-- Comment out net-1.0 framework and uncomment mono framework to run on mono 
-    <property name="nant.settings.currentframework" value = "net-1.0"/>
-    <property name="nant.settings.currentframework" value = "mono-1.0-linux"/>  -->  
-
     <!-- Directory structure -->
     <property name="dir.base" value="${nant.project.basedir}" />
     <property name="dir.build" value="${dir.base}/build/bin" /> 
