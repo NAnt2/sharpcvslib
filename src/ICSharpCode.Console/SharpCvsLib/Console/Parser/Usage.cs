@@ -55,45 +55,11 @@ public class Usage {
 	private static String companyInfo;
 	private static String description;
 
-    private static SortedList allCommands;
-    private static SortedList availableCommands;
-
 	private static ILog LOGGER = LogManager.GetLogger(typeof(Usage));
 
     /// <summary>Private constructor so the class is never instantiated.</summary>
     private Usage () {
         // should never get called.
-    }
-
-    /// <summary>
-    /// Gets a list of available commands.  Available commands are cvs commands that are currently
-    /// implemented in #cvslib and have an associated command parser in the commandline client.
-    /// </summary>
-    public static SortedList AvailableCommands {
-        get {
-            if (null == availableCommands) {
-                availableCommands = new SortedList();
-                Assembly cvsLibAssembly = Assembly.GetAssembly(typeof(Usage));
-
-                if (null == cvsLibAssembly) {
-                    throw new Exception("Unable to load #cvslib assembly.");
-                }
-
-                Type[] types = cvsLibAssembly.GetTypes();
-                foreach(Type type in types) {
-                    if (type.IsClass && type.GetInterface("ICommandParser") != null && !type.IsAbstract) {
-                        ICommandParser commandParser = (ICommandParser)Activator.CreateInstance(type);
-                        Command command = new Command(commandParser.CommandName, commandParser.CommandDescription);
-                        command.Implemented = true;
-
-                        availableCommands.Add(command.CommandName, command);
-                    }
-                }
-            }
-
-            return availableCommands;
-
-        }
     }
 
     /// <summary>Displays default/ general help message.</summary>
@@ -121,81 +87,21 @@ Thanks for using the command line tool.";
         }
     }
 
-    private static SortedList AllCommands {
-        get {
-            if (null == allCommands) {
-                allCommands = new SortedList();
-
-                allCommands.Add("add", new Command("add", "Add a new file/directory to the repository"));
-                allCommands.Add("admin", new Command("admin", "Administration front end for rcs"));
-                allCommands.Add("annotate", new Command("annotate", "Show last revision where each line was modified"));
-                allCommands.Add("chac1", new Command("chac1", "Change the Access Control List for a directory"));
-                allCommands.Add("checkout", new Command("checkout", "Change the owner of a directory"));
-                allCommands.Add("commit", new Command("commit", "Check files into the repository"));
-                allCommands.Add("diff", new Command("diff", "Show differences between revisions"));
-                allCommands.Add("edit", new Command("edit", "Get ready to edit a watched file"));
-                allCommands.Add("editors", new Command("editors", "See who is editing a watched file"));
-                allCommands.Add("export", new Command("export", "Export sources from CVS, similar to checkout"));
-                allCommands.Add("history", new Command("history", "Show repository access history"));
-                allCommands.Add("import", new Command("import", "Import sources into CVS, using vendor branches"));
-                allCommands.Add("init", new Command("init", "Create a CVS repository if it doesn't exist"));
-                allCommands.Add("info", new Command("info", "Display information about supported protocols"));
-                allCommands.Add("log", new Command("log", "Print out history information for files"));
-                //#ifdef CLIENT_SUPPORT
-                allCommands.Add("login", new Command("login", "Prompt for password for authenticating server"));
-                allCommands.Add("logout", new Command("logout", "Removes entry in .cvspass for remote repository"));
-                //#endif /* CLIENT_SUPPORT */
-                allCommands.Add("ls", new Command("ls", "List files in the repository"));
-                allCommands.Add("lsacl", new Command("lsacl", "List the directories Access Control List"));
-                allCommands.Add("passwd", new Command("passwd", "Set the user's password (Admin: Administer users)"));
-                //#if defined(SERVER_SUPPORT)
-                allCommands.Add("authserver", new Command("authserver", "Authentication server mode"));
-                //#endif
-                allCommands.Add("rannotate", new Command("rannotate", "Show last revision where each line of module was modified"));
-                allCommands.Add("rdiff", new Command("rdiff", "Create 'patch' format diffs between releases"));
-                allCommands.Add("release", new Command("release", "Indicate that a Module is no longer in use"));
-                allCommands.Add("remove", new Command("remove", "Remove an entry from the repository"));
-                allCommands.Add("cvs_rename", new Command("cvs_rename", "Rename a file in the repository"));
-                allCommands.Add("rlog", new Command("rlog", "Print out history information for a module"));
-                allCommands.Add("rtag", new Command("rtag", "Add a symbolic tag to a module"));
-                //#if defined(SERVER_SUPPORT)
-                allCommands.Add("server", new Command("server", "Server mode"));
-                //#endif
-                allCommands.Add("status", new Command("status", "Display status information on checked out files"));
-                allCommands.Add("tag", new Command("tag", "Add a symbolic tag to checked out version of files"));
-                allCommands.Add("unedit", new Command("unedit", "Undo an edit command"));
-                allCommands.Add("update", new Command ("update", "Bring work tree in sync with repository"));
-                allCommands.Add("version", new Command("version", "Show current CVS version(s)"));
-                allCommands.Add("watch", new Command("watch", "Set watches"));
-                allCommands.Add("watchers", new Command("watchers", "See who is watching a file"));
-                allCommands.Add("xml", new Command("xml", "Create an xml report containing the history information for a module"));
-            }  
-            return allCommands;
-        }
-    }
-
     /// <summary>Displays usage message for commands.</summary>
     public static String Commands {
         get {
             StringBuilder commandMenu = new StringBuilder();
             commandMenu.Append("CVS commands are:").Append(Environment.NewLine);
 
-            SortedList commands = AllCommands;
+            SortedList commands = CommandParserFactory.AllCommands;
 
-            int FIRST_COLUMN = 8;
-            int SECOND_COLUMN = 20;
+            //int FIRST_COLUMN = 8;
+            //int SECOND_COLUMN = 12;
             foreach (Command command in commands.Values) {
-                for (int i = 0; i < FIRST_COLUMN; i++) {
-                    commandMenu.Append(" ");
-                }
+                commandMenu.Append(String.Format("        {0,-12}{1}",
+                    command.CommandName, command.Description));
 
-                commandMenu.Append(command.CommandName);
-                for (int i = command.CommandName.Length + FIRST_COLUMN; i < SECOND_COLUMN; i++) {
-                    commandMenu.Append(" ");
-                }
-                commandMenu.Append(command.Description);
-
-                if (!AvailableCommands.ContainsKey(command.CommandName)) {
+                if (!command.Implemented) {
                     commandMenu.Append (" (NOT IMPLEMENTED)");
                 }
                 commandMenu.Append(Environment.NewLine);
@@ -247,19 +153,23 @@ Thanks for using the command line tool.";
     /// <summary>Displays commands synonyms.</summary>
     public static string Synonyms {
         get {
-            CommandNames commands = new CommandNames();
+            SortedList commands = CommandParserFactory.AllCommands;
             StringBuilder msg = new StringBuilder ();
-            msg.Append ("CVS command synonyms are:\r\n");
+            msg.Append ("CVS command synonyms are:").Append(Environment.NewLine);
             // loop through commands for synonyms
-            foreach(Command command in commands.Commands) {
-                if (command.Nick1 != null) {
+            foreach(Command command in commands.Values) {
+                if (command.Nick1 != null && command.Nick1 != String.Empty) {
                     string syn_output = String.Format("        {0,-11}  {1} {2}",
                                                       command.First, command.Nick1, command.Nick2);
-                    msg.Append (syn_output).Append ("\r\n");
+                    msg.Append (syn_output);
+                    if (!command.Implemented) {
+                        msg.Append (" (NOT IMPLEMENTED)");
+                    }
+                    msg.Append (Environment.NewLine);
                 }
             }
-            msg.Append ("(Specify the --help option for a list of other help options)").Append("\r\n");
-            msg.Append("\r\nThanks for using the command line tool.");
+            msg.Append ("(Specify the --help option for a list of other help options)");
+            msg.Append(Environment.NewLine);
             return msg.ToString ();
         }
     }

@@ -32,6 +32,7 @@
 //    <author>Clayton Harbour</author>
 #endregion
 using System;
+using System.Collections;
 using System.Globalization;
 using System.Text;
 using System.IO;
@@ -105,6 +106,26 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             this.cvsRoot = cvsroot;
             this.fileNames = fileNames;
             this.unparsedOptions = upOptions;
+        }
+
+        /// <summary>
+        /// Nicknames for the add command.
+        /// </summary>
+        public override ICollection Nicks {
+            get {
+                if (0 == nicks.Count) {
+                    nicks.Add("up");
+                    nicks.Add("upd");
+                }
+                return nicks;
+            }
+        }
+
+        /// <summary>
+        /// The add command is implemented in the library and commandline parser.
+        /// </summary>
+        public override bool IsImplemented {
+            get {return true;}
         }
 
         /// <summary>

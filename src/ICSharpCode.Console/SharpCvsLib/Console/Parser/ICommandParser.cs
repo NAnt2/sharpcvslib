@@ -71,6 +71,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         string CommandDescription {get;}
 
         /// <summary>
+        /// Alternate names that the command is referenced by.
+        /// </summary>
+        ICollection Nicks {get;}
+
+        /// <summary>
+        /// Indicates if the command is implemented currently in the command line client and/ or the
+        /// sharpcvs library.  <code>true</code> if it is implemented, otherwise <code>false</code>.
+        /// 
+        /// NOTE: This will eventually go away.
+        /// </summary>
+        bool IsImplemented {get;}
+
+        /// <summary>
         /// Create the command object that will be used to act on the repository.
         /// </summary>
         /// <returns>The command object that will be used to act on the

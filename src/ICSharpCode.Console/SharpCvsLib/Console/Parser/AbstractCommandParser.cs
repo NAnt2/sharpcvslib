@@ -102,6 +102,32 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         }
 
         /// <summary>
+        /// Private backer for the nick collection.
+        /// </summary>
+        protected ArrayList nicks = new ArrayList();
+        /// <summary>
+        /// Any nick names that the command might have.
+        /// </summary>
+        public virtual ICollection Nicks {
+            get {
+                if (null == nicks) {
+                    nicks = new ArrayList();
+                }
+                if (0 == nicks.Count) {
+                    nicks.Add("Enter a nick for your command here.");
+                }
+                return nicks;
+            }
+        }
+
+        /// <summary>
+        /// Indicate if the command is implemented or not.  
+        /// </summary>
+        public virtual bool IsImplemented {
+            get {return false;}
+        }
+
+        /// <summary>
         /// Create a new instance of the given 
         /// </summary>
         /// <param name="type"></param>

@@ -39,6 +39,7 @@
 
 using System;
 using System.Collections;
+using System.Reflection;
 
 using ICSharpCode.SharpCvsLib.Commands;
 using ICSharpCode.SharpCvsLib.Misc;
@@ -48,7 +49,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 	/// <summary>
 	/// Summary description for CommandFactory.
 	/// </summary>
-	public class CommandParserFactory {
+    public class CommandParserFactory {
 
         private bool showUsage;
         /// <summary>
@@ -63,6 +64,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private string[] args;
         private CvsRoot cvsRoot;
         private WorkingDirectory workingDirectory;
+        private static SortedList allCommands;
+        private static SortedList availableCommands;
 
         /// <summary>
         /// Creates a new instance of the command parser.
@@ -71,13 +74,116 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <param name="args"></param>
         /// <param name="cvsRoot"></param>
         /// <param name="workingDirectory"></param>
-		public CommandParserFactory(string command, string[] args,
+        public CommandParserFactory(string command, string[] args,
             CvsRoot cvsRoot, WorkingDirectory workingDirectory){
             this.command = command;
             this.args = GetArgsAfterCommandName(args);
             this.cvsRoot = cvsRoot;
             this.workingDirectory = workingDirectory;
-		}
+        }
+
+        /// <summary>
+        /// Gets a list of available commands.  Available commands are cvs commands that are currently
+        /// implemented in #cvslib and have an associated command parser in the commandline client.
+        /// </summary>
+        public static SortedList AvailableCommands {
+            get {
+                if (null == availableCommands) {
+                    availableCommands = new SortedList();
+                    Assembly cvsLibAssembly = Assembly.GetAssembly(typeof(Usage));
+
+                    if (null == cvsLibAssembly) {
+                        throw new Exception("Unable to load #cvslib assembly.");
+                    }
+
+                    Type[] types = cvsLibAssembly.GetTypes();
+                    foreach(Type type in types) {
+                        if (type.IsClass && type.GetInterface("ICommandParser") != null && !type.IsAbstract) {
+                            ICommandParser commandParser = (ICommandParser)Activator.CreateInstance(type);
+                            Command command = new Command(commandParser.CommandName, commandParser.CommandDescription, commandParser.Nicks);
+                            command.Implemented = true;
+
+                            availableCommands.Add(command.CommandName, command);
+                        }
+                    }
+                }
+
+                return availableCommands;
+
+            }
+        }
+
+        private static Command GetCom (string commandName, string commandDescription, string[] args) {
+            ArrayList nicks = new ArrayList();
+            foreach (string arg in args) {
+                nicks.Add(arg);
+            }
+            return new Command(commandName, commandDescription, nicks);
+        }
+
+        private static Command GetCom (string commandName, string commandDescription, ArrayList list) {
+            return new Command(commandName, commandDescription, list);
+        }
+
+        /// <summary>
+        /// All commands that are available for the most common cvs clients.
+        /// </summary>
+        public static SortedList AllCommands {
+            get {
+                if (null == allCommands) {
+                    allCommands = new SortedList();
+
+                    allCommands.Add("add", GetCom("add", "Add a new file/directory to the repository", new string[]{"ad", "new"}));
+                    allCommands.Add("admin", GetCom("admin", "Administration front end for rcs", new string[]{"adm", "rcs"}));
+                    allCommands.Add("annotate", GetCom("annotate", "Show last revision where each line was modified", new string[]{"ann"}));
+                    allCommands.Add("chac1", GetCom("chac1", "Change the Access Control List for a directory", new string[] {"setacl", "setperm"}));
+                    allCommands.Add("checkout", GetCom("checkout", "Change the owner of a directory", new string[]{"co", "get"}));
+                    allCommands.Add("commit", GetCom("commit", "Check files into the repository", new string[]{"ci", "com"}));
+                    allCommands.Add("diff", GetCom("diff", "Show differences between revisions", new string[]{"di", "dif"}));
+                    allCommands.Add("edit", GetCom("edit", "Get ready to edit a watched file", new ArrayList()));
+                    allCommands.Add("editors", GetCom("editors", "See who is editing a watched file", new ArrayList()));
+                    allCommands.Add("export", GetCom("export", "Export sources from CVS, similar to checkout", new string[]{"exp", "ex"}));
+                    allCommands.Add("history", GetCom("history", "Show repository access history", new string[]{"hi", "his"}));
+                    allCommands.Add("import", GetCom("import", "Import sources into CVS, using vendor branches", new string[]{"im", "imp"}));
+                    allCommands.Add("init", GetCom("init", "Create a CVS repository if it doesn't exist", new ArrayList()));
+                    allCommands.Add("info", GetCom("info", "Display information about supported protocols", new string[]{"inf"}));
+                    allCommands.Add("log", GetCom("log", "Print out history information for files", new string[]{"lo"}));
+                    //#ifdef CLIENT_SUPPORT
+                    allCommands.Add("login", GetCom("login", "Prompt for password for authenticating server", new string[]{"logon", "lgn"}));
+                    allCommands.Add("logout", GetCom("logout", "Removes entry in .cvspass for remote repository", new ArrayList()));
+                    //#endif /* CLIENT_SUPPORT */
+                    allCommands.Add("ls", GetCom("ls", "List files in the repository", new string[]{"dir", "list"}));
+                    allCommands.Add("lsacl", GetCom("lsacl", "List the directories Access Control List", new string[]{"lsattr", "listperm"}));
+                    allCommands.Add("passwd", GetCom("passwd", "Set the user's password (Admin: Administer users)", new string[]{"password", "setpass"}));
+                    //#if defined(SERVER_SUPPORT)
+                    allCommands.Add("authserver", GetCom("authserver", "Authentication server mode", new ArrayList()));
+                    //#endif
+                    allCommands.Add("rannotate", GetCom("rannotate", "Show last revision where each line of module was modified", new string[]{"rann", "ra"}));
+                    allCommands.Add("rdiff", GetCom("rdiff", "Create 'patch' format diffs between releases", new string[]{"patch", "pa"}));
+                    allCommands.Add("release", GetCom("release", "Indicate that a Module is no longer in use", new string[]{"re", "rel"}));
+                    allCommands.Add("remove", GetCom("remove", "Remove an entry from the repository", new string[]{"rm", "delete"}));
+                    allCommands.Add("cvs_rename", GetCom("cvs_rename", "Rename a file in the repository", new string[]{"ren", "move"}));
+                    allCommands.Add("rlog", GetCom("rlog", "Print out history information for a module", new string[]{"rl"}));
+                    allCommands.Add("rtag", GetCom("rtag", "Add a symbolic tag to a module", new string[]{"rt", "rfreeze"}));
+                    //#if defined(SERVER_SUPPORT)
+                    allCommands.Add("server", GetCom("server", "Server mode", new ArrayList()));
+                    //#endif
+                    allCommands.Add("status", GetCom("status", "Display status information on checked out files", new string[]{"st", "cvs_stat"}));
+                    allCommands.Add("tag", GetCom("tag", "Add a symbolic tag to checked out version of files", new string[]{"ta", "freeze"}));
+                    allCommands.Add("unedit", GetCom("unedit", "Undo an edit command", new ArrayList()));
+                    allCommands.Add("update", GetCom ("update", "Bring work tree in sync with repository", new string[]{"up", "upd"}));
+                    allCommands.Add("version", GetCom("version", "Show current CVS version(s)", new string[]{"ve", "ver"}));
+                    allCommands.Add("watch", GetCom("watch", "Set watches", new ArrayList()));
+                    allCommands.Add("watchers", GetCom("watchers", "See who is watching a file", new ArrayList()));
+                    allCommands.Add("xml", GetCom("xml", "Create an xml report containing the history information for a module", new ArrayList()));
+
+                    foreach (Command command in AvailableCommands.Values) {
+                        ((Command)allCommands[command.CommandName]).Implemented = command.Implemented;
+                    }
+                }  
+                return allCommands;
+            }
+        }
 
         private string[] GetArgsAfterCommandName (string[] args) {
             ArrayList subArgs = new ArrayList();

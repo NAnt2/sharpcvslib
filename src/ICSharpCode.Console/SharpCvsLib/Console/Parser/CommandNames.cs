@@ -48,26 +48,26 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private Command [] commands =
             {new Command("add",      "ad",       "new"),
              new Command("admin",    "adm",      "rcs"),
-             new Command("annotate", "ann",      null),
+             new Command("annotate", "ann",      (string)null),
              //#if defined(SERVER_SUPPORT)
-             new Command("authserver",  "pserver",   null),
+             new Command("authserver",  "pserver",   (string)null),
              //#endif
              new Command("chacl",    "setacl",   "setperm"),
              new Command("checkout", "co",       "get"),
-             new Command("chown",     "setowner", null),
+             new Command("chown",     "setowner", (string)null),
              new Command("commit",   "ci",       "com"),
              new Command("diff",     "di",       "dif"),
-             new Command("edit",     null,       null),
-             new Command("editors",  null,       null),
+             new Command("edit",     (string)null,       (string)null),
+             new Command("editors",  (string)null,       (string)null),
              new Command("export",   "exp",      "ex"),
              new Command("history",  "hi",       "his"),
              new Command("import",   "im",       "imp"),
-             new Command("init",     null,       null),
-             new Command("info",      "inf",      null),
-             new Command("log",      "lo",       null),
+             new Command("init",     (string)null,       (string)null),
+             new Command("info",      "inf",      (string)null),
+             new Command("log",      "lo",       (string)null),
              //#ifdef CLIENT_SUPPORT
              new Command("login",    "logon",    "lgn"),
-             new Command("logout",   null,       null),
+             new Command("logout",   (string)null,       (string)null),
              //#endif /* CLIENT_SUPPORT */
              new Command("ls",        "dir",       "list"),
              new Command("lsacl",     "lsattr",    "listperm"),
@@ -77,20 +77,20 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
              new Command("release",   "re",        "rel"),
              new Command("cvs_rename", "ren",      "move"),
              new Command("remove",   "rm",       "delete"),
-             new Command("rcsfile",  null,        null),
-             new Command("rlog",     "rl",       null),
+             new Command("rcsfile",  (string)null,        (string)null),
+             new Command("rlog",     "rl",       (string)null),
              new Command("rtag",     "rt",       "rfreeze"),
              //#ifdef SERVER_SUPPORT
-             new Command("server",   null,       null),
+             new Command("server",   (string)null,       (string)null),
              //#endif
              new Command("status",   "st",       "cvs_stat"),
              new Command("tag",      "ta",       "freeze"),
-             new Command("unedit",   null,       null),
+             new Command("unedit",   (string)null,       (string)null),
              new Command("update",   "up",       "upd"),
              new Command("version",  "ve",       "ver"),
-             new Command("watch",    null,       null),
-             new Command("watchers", null,       null),
-             new Command("xml",     null,       null)
+             new Command("watch",    (string)null,       (string)null),
+             new Command("watchers", (string)null,       (string)null),
+             new Command("xml",     (string)null,       (string)null)
             } ;
 
         /// <summary>Holds a list of command objects.</summary>

@@ -37,6 +37,7 @@
 #endregion
 
 using System;
+using System.Collections;
 
 namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
@@ -44,8 +45,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     public class Command {
 
         private String first;
-        private String nick1;
-        private String nick2;
+        private ArrayList nicks;
         private string description;
         private bool implemented;
 
@@ -60,14 +60,24 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// Nickname/ synonym for the command.
         /// </summary>
         public String Nick1 {
-            get {return this.nick1;}
+            get {
+                if (null != this.nicks && this.nicks.Count > 0) {
+                    return (string)this.nicks[0];
+                }
+                return String.Empty;
+            }
         }
 
         /// <summary>
         /// Nickname/ synonym for the command
         /// </summary>
         public String Nick2 {
-            get {return this.nick2;}
+            get {
+                if (null != this.nicks && this.nicks.Count > 1) {
+                    return (string)this.nicks[1];
+                }
+                return String.Empty;            
+            }
         }
 
         /// <summary>
@@ -99,8 +109,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <param name="nick2">Second alternate name for the command.</param>
         public Command (string first, string nick1, string nick2) { 
             this.first = first;
-            this.nick1 = nick1;
-            this.nick2 = nick2;
+            this.nicks = new ArrayList();
+            this.nicks.Add(nick1);
+            this.nicks.Add(nick2);
         }
 
         /// <summary>
@@ -108,9 +119,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// </summary>
         /// <param name="commandName">Name of the command.</param>
         /// <param name="description">Description of the command.</param>
-        public Command (string commandName, string description) {
+        /// <param name="nicks">Nicknames for the command.</param>
+        public Command (string commandName, string description, ICollection nicks) {
             this.first = commandName;
             this.description = description;
+            this.nicks = new ArrayList(nicks);
         }
     }
 }

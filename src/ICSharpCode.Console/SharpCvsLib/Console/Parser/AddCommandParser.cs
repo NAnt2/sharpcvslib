@@ -108,6 +108,29 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         }
 
         /// <summary>
+        /// Nicknames for the add command.
+        /// </summary>
+        public override ICollection Nicks {
+            get {
+                if (nicks.Count == 0) {
+                    nicks.Add("ad");
+                    nicks.Add("new");
+                }
+
+                return nicks;
+            }
+        }
+
+        /// <summary>
+        /// The add command is implemented in the library and commandline parser.
+        /// </summary>
+        public override bool IsImplemented {
+            get {return true;}
+        }
+
+
+
+        /// <summary>
         /// Create the command object that will be used to act on the repository.
         /// </summary>
         /// <returns>The command object that will be used to act on the

@@ -33,6 +33,7 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.Globalization;
 using System.IO;
 using System.Text;
@@ -113,6 +114,26 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser{
             this.cvsRoot = cvsRoot;
             repository = repositoryName;
             this.unparsedOptions = coOptions;
+        }
+
+        /// <summary>
+        /// Nicknames for the add command.
+        /// </summary>
+        public override ICollection Nicks {
+            get {
+                if (nicks.Count == 0) { 
+                    nicks.Add("co");
+                    nicks.Add("get");
+                }
+                return nicks;
+            }
+        }
+
+        /// <summary>
+        /// The checkout command is implemented in the library and commandline parser.
+        /// </summary>
+        public override bool IsImplemented {
+            get {return true;}
         }
 
         /// <summary>
