@@ -63,6 +63,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         private const string OPT_PASSWORD = "pwd";
         private string[] args;
 
+        private readonly ILog LOGGER = 
+            LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         private ConsoleWriter writer;
 
         private ConsoleWriter Writer {
@@ -155,7 +158,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         public void Execute () {
             if (null != this.CvsRoot && this.CvsRoot.Protocol != 
                 ICSharpCode.SharpCvsLib.Misc.CvsRoot.HostProtocol.PSERVER) {
-                System.Console.WriteLine(string.Format("cvs [login aborted]: The :{0}: protocol does not support the login command",
+                LOGGER.Info(string.Format("cvs [login aborted]: The :{0}: protocol does not support the login command",
                     this.CvsRoot.Protocol));
                 return;
             }

@@ -230,14 +230,14 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
 System.Console.WriteLine("GNE workingDirectory.WorkingPath = {0}", workingDirectory.WorkingPath);
 System.Console.WriteLine("GNE localDirectory: {0}", localDirectory);
  //           if (Directory.Exists(workingDirectory.WorkingPath)) {
-            if (Directory.Exists(localDirectory)) {
+            if (Directory.Exists(localDirectory) && File.Exists(Path.Combine(localDirectory, "Repository"))) {
                 workingDirectory.FoldersToUpdate = FetchFiles(localDirectory);
                 command = 
                     new LogCommand(workingDirectory, this.workingDirectory.ModuleName, null);
             } else {
                 command = 
 // GNE - this wont compile                   new LogCommand(workingDirectory, this.workingDirectory.ModuleName);
-                    new LogCommand(workingDirectory, this.workingDirectory.ModuleName, null);
+                    new RLogCommand(workingDirectory, this.workingDirectory.ModuleName);
             }
     
             // add any date restrictions        

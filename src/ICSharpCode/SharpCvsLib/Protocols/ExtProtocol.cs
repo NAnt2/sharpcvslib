@@ -86,12 +86,6 @@ namespace ICSharpCode.SharpCvsLib.Protocols
             ProcessStartInfo startInfo =
                 this.GetProcessInfo(this.Config.Shell, VERSION_ONE);
 
-
-            startInfo.RedirectStandardError  = true;
-            startInfo.RedirectStandardInput  = true;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.UseShellExecute        = false;
-
             try {
                 p = new Process();
 
@@ -104,7 +98,8 @@ namespace ICSharpCode.SharpCvsLib.Protocols
                 p.Start();
             } catch (Exception) {
                 try {
-                    p.StartInfo = this.GetProcessInfo(this.Config.Shell, VERSION_TWO);;
+                    p.StartInfo = this.GetProcessInfo(this.Config.Shell, VERSION_TWO);
+                    p.Start();
                 } catch (Exception e) {
                     throw new ExecuteShellException(
                         string.Format("{0} {1}",
@@ -121,17 +116,26 @@ namespace ICSharpCode.SharpCvsLib.Protocols
 
         private ProcessStartInfo GetProcessInfo (string program, string version) {
             string tProgram = Path.GetFileNameWithoutExtension(program);
+            ProcessStartInfo startInfo;
             switch (tProgram) {
                 case "plink": {
-                    return this.GetPlinkProcessInfo(version);
+                    startInfo = this.GetPlinkProcessInfo(version);
+                    break;
                 }
                 case "ssh": {
-                    return this.GetSshProcessInfo(version);
+                    startInfo = this.GetSshProcessInfo(version);
+                    break;
                 }
                 default:
                     throw new ArgumentException(string.Format("Unknown ssh program specified ( {0} )",
                         this.Config.Shell));
             }
+            startInfo.RedirectStandardError  = true;
+            startInfo.RedirectStandardInput  = true;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.UseShellExecute        = false;
+
+            return startInfo;
         }
 
         private ProcessStartInfo GetPlinkProcessInfo (string version) {
