@@ -36,6 +36,8 @@ using System.Globalization;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Misc;
+
 namespace ICSharpCode.SharpCvsLib.Misc { 
 	
     /// <summary>
@@ -287,11 +289,13 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		/// <returns>
 		/// null if no entry could be read.
 		/// </returns>
-		public static Entry[] RetrieveEntries(string path)
-		{
-			if (File.Exists(path + "\\CVS\\Entries")) {
+		public static Entry[] RetrieveEntries(string path) {
+            CvsFileManager manager = new CvsFileManager ();		    
+		    string entriesPath = Path.Combine (path, manager.ENTRIES);
+		    string entriesLogPath = Path.Combine (path, manager.ENTRIES_LOG);
+			if (File.Exists(entriesPath)) {
 				ArrayList entries = new ArrayList();
-				StreamReader sr = File.OpenText(path + "\\CVS\\Entries");
+				StreamReader sr = File.OpenText(entriesPath);
 				
 				while (true) {
 					string line = sr.ReadLine();
@@ -303,44 +307,46 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 					}
 				}
 				sr.Close();
-				
-				if (File.Exists(path + "\\CVS\\Entries.Log")) {
-					sr = File.OpenText(path + "\\CVS\\Entries.Log");
-					
-					while (true) {
-						string line = sr.ReadLine();
-						if (line == null) {
-							break;
-						}
-						if (line.Length > 1) {
-							switch (line[0]) {
-								case 'A':  // Add file
-									entries.Add(new Entry(line.Substring(2)));
-									break;
-								case 'R':  // Remove entry
-									Entry removeMe = new Entry(line.Substring(2));
-									Entry removeObject = null;
-									
-									foreach (Entry entry in entries) {
-										if (removeMe.ToString() == entry.ToString()) {
-											removeObject = entry;
-											break;
-										}
-									}
-									if (removeObject != null) {
-										entries.Remove(removeObject);
-									}
-									break;
-								default:  // other chars are silently ignored (specified behaviour)
-									break;
-							}
-							
-						}
-					}
-				}
-				sr.Close();
-				
-				return (Entry[])entries.ToArray(typeof(Entry));
+    		    entries.Add (manager.ReadEntries (path));
+    		    if (entries.Count > 0) {
+    				if (File.Exists (entriesLogPath)) {
+    					sr = File.OpenText(entriesLogPath);
+    					
+    					while (true) {
+    						string line = sr.ReadLine();
+    						if (line == null) {
+    							break;
+    						}
+    						if (line.Length > 1) {
+    							switch (line[0]) {
+    								case 'A':  // Add file
+    									entries.Add(new Entry(line.Substring(2)));
+    									break;
+    								case 'R':  // Remove entry
+    									Entry removeMe = new Entry(line.Substring(2));
+    									Entry removeObject = null;
+    									
+    									foreach (Entry entry in entries) {
+    										if (removeMe.ToString() == entry.ToString()) {
+    											removeObject = entry;
+    											break;
+    										}
+    									}
+    									if (removeObject != null) {
+    										entries.Remove(removeObject);
+    									}
+    									break;
+    								default:  // other chars are silently ignored (specified behaviour)
+    									break;
+    							}
+    							
+    						}
+    					}
+    				    sr.Close();					
+    				}
+    				
+    				return (Entry[])entries.ToArray(typeof(Entry));
+    			}
 			}
 			return null;				
 		}

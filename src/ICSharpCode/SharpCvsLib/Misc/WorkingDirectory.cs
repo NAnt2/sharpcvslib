@@ -155,10 +155,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		{
 			this.repositoryname = repositoryname;
 			this.cvsroot        = cvsroot;
-			this.localdirectory = 
-			    localdirectory + 
-			    Path.DirectorySeparatorChar + 
-			    repositoryname;
+			this.localdirectory = localdirectory;
 		}
 		
         /// <summary>
@@ -322,11 +319,17 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <param name="directory">The name of the directory.</param>
 		public void AddEntriesIn(string directory)
 		{
+		    if (LOGGER.IsDebugEnabled) {
+		        String msg = "Adding cvs entries to request updates.  " +
+		            "directory=[" + directory + "]";
+		        LOGGER.Debug (msg);
+		    }
 			Entry[] entries = Entry.RetrieveEntries(directory);
 			if (entries != null && entries.Length > 0) {
 				string cvsdir    = ToRemotePath(directory);
-				if (File.Exists(directory + REPOSITORY)) {
-					StreamReader sr = File.OpenText(directory + REPOSITORY);
+				if (File.Exists(Path.Combine (directory, REPOSITORY))) {
+					StreamReader sr = 
+					    File.OpenText(Path.Combine (directory, REPOSITORY));
 					string line = sr.ReadLine();
 					if (line != null && line.Length > 0) {
 					    // TODO: Figure out what to do with this path seperator
@@ -336,7 +339,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 				}
 				foreach (Entry entry in entries) {
 					if (entry.IsDirectory) {
-						AddEntriesIn(directory + Path.DirectorySeparatorChar + entry.Name);
+						AddEntriesIn(Path.Combine (directory, entry.Name));
 					}
 					
 					if (LOGGER.IsDebugEnabled) {
@@ -410,7 +413,15 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		public void ReadAllExistingEntries()
 		{
 			Clear();
+		    if (LOGGER.IsDebugEnabled) {
+		        String msg = "Read all existing entries in the " +
+		            "localdirectory=[" + this.localdirectory + "]";
+		        LOGGER.Debug (msg);
+		    }
 			AddEntriesIn(localdirectory);
+		    if (null == this.Folders || 0 == this.Folders.Count) {
+		        AddEntriesIn (Path.Combine (localdirectory, this.ModuleName));
+		    }
 		}
 		
         /// <summary>

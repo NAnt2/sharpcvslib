@@ -39,20 +39,27 @@ using NUnit.Framework;
 
 namespace ICSharpCode.SharpCvsLib.Misc {
 	/// <summary>
-	/// Summary description for CustomDBTest.
+    /// A cvs entry can contain the following items:
+    ///     / name / version / conflict / options / tag_or_date
+    /// 
+    /// Sharpcvslib converts each cvs entry into an object so the data
+    ///     can be accessed easier.  This class tests the parsing of the 
+    ///     cvs string and other behavoir related to this entry.
+    /// 
 	/// </summary>
 	[TestFixture]
-	public class CvsFileManagerTest	{
+	public class EntryTest	{
 		private ILog LOGGER = 
-			LogManager.GetLogger (typeof(CvsFileManagerTest));
+			LogManager.GetLogger (typeof(Entry));
 	    
 	    private CvsFileManager manager;
-	    private readonly String TEST_PATH = "c:/test/sharpdevelop-tests/";
-		
+	    private readonly String TEST_PATH =
+	        "c:/test/sharpdevelop-tests/";
+	    
 		/// <summary>
 		/// Constructor for customer db test.
 		/// </summary>
-		public CvsFileManagerTest () {
+		public EntryTest () {
 		}
 
         /// <summary>
@@ -63,34 +70,40 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         public void SetUp () {
             this.manager = new CvsFileManager ();
         }
-		/// <summary>
-		/// Test that a cvs entry is added to the correct location and 
-		///     contains the correct data.  This tests read and write 
-		///     functionality.
-		/// </summary>
-		[Test]
-		public void EntryWriteReadTest ()	{
-		    string entryString = 
-		        "/CvsFileManager.cs/1.1/Sun May 11 09:07:28 2003//";
-		    Entry entry = new Entry (entryString);
-		    this.manager.AddEntry (TEST_PATH, entry);
-
-            // FIXME: Test is not working, maybe path combine is wrong?		    
-		    string entryFile = 
-		        Path.Combine (this.TEST_PATH, this.manager.ENTRIES);
-		    Assertion.Assert ("Missing file=[" + entryFile + "]", 
-		                      File.Exists (entryFile));
-		    
-		    ArrayList entries = new ArrayList ();
-		    entries.Add (this.manager.ReadEntries (this.TEST_PATH));
-		    Assertion.Assert ("There should only be 1 entry, found=[" + entries.Count + "]",
-		                      entries.Count == 1);
-
-            IEnumerator entryEnumerator = entries.GetEnumerator ();
-            entryEnumerator.MoveNext ();
-            Entry readEntry = (Entry)entryEnumerator.Current;
-            Assertion.Assert ("Cvs entry should match the entryString.", 
-                              readEntry.CvsEntry.Equals (entryString));
-		}
+        
+        /// <summary>
+        /// 
+        /// The items that should be parsed out of the cvs string are:
+        ///         <ol>
+        ///             <li>name</li>
+        ///             <li>version</li>
+        ///             <li>conflict</li>
+        ///             <li>options</li>
+        ///             <li>tag or date</li>
+        ///         </ol>
+        /// </summary>
+        [Test]
+        public void TestParseCheckoutEntry () {
+    	    const String CHECKOUT_ENTRY = 
+    	        "/CvsFileManagerTest.cs/1.1/Tue May 13 05:10:17 2003//";            
+            Entry entry = new Entry (CHECKOUT_ENTRY);
+            
+            Assertion.Assert (entry.Name.Equals ("CvsFileManagerTest.cs"));
+            Assertion.Assert (entry.Revision.Equals ("1.1"));
+            Assertion.Assert (entry.Date.Equals ("Tue May 13 05:10:17 2003"));
+            
+            Assertion.Assert (entry.TimeStamp.Day == 13);
+            Assertion.Assert (entry.TimeStamp.Month == 5);
+            Assertion.Assert (entry.TimeStamp.Year == 2003);
+            Assertion.Assert (entry.TimeStamp.Hour == 5);
+            Assertion.Assert (entry.TimeStamp.Minute == 10);
+            Assertion.Assert (entry.TimeStamp.Second == 17);
+            
+            Assertion.Assert (entry.IsBinaryFile == false);
+            Assertion.Assert (entry.IsDirectory == false);
+            
+            Assertion.Assert (entry.CvsEntry.Equals (CHECKOUT_ENTRY));
+        }
 	}
 }
+

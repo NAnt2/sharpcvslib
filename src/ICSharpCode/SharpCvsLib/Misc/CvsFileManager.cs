@@ -90,8 +90,8 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <param name="path">The current path where the file exists.</param>
         /// <param name="entry">The cvs entry for the file being added locally.</param>
         public void AddEntry (String path, String entry) {
-            this.AppendToFile (path, this.ENTRIES, entry);
-            this.AppendToFile (path, this.ENTRIES_LOG, entry);
+            this.WriteToFile (path, this.ENTRIES, entry);
+            this.WriteToFile (path, this.ENTRIES_LOG, entry);
         }
         
         /// <summary>
@@ -101,8 +101,8 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <param name="path">The current path where the file exists.</param>
         /// <param name="entry">An object that represents the cvs entry.</param>
         public void AddEntry (String path, Entry entry) {
-            this.AppendToFile (path, this.ENTRIES, entry.FormattedEntry);
-            this.AppendToFile (path, this.ENTRIES_LOG, entry.FormattedEntry);
+            this.WriteToFile (path, this.ENTRIES, entry.FormattedEntry);
+            this.WriteToFile (path, this.ENTRIES_LOG, entry.FormattedEntry);
         }
         
         /// <summary>
@@ -114,8 +114,8 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <param name="entry">The cvs entry to add to the entries file.</param>
         public void AddEntry (String localBase, String localPath, Entry entry) {
             string cvsPath = Path.Combine (localBase, localPath);
-            this.AppendToFile (cvsPath, this.ENTRIES, entry.FormattedEntry);
-            this.AppendToFile (cvsPath, this.ENTRIES_LOG, entry.FormattedEntry);
+            this.WriteToFile (cvsPath, this.ENTRIES, entry.FormattedEntry);
+            this.WriteToFile (cvsPath, this.ENTRIES_LOG, entry.FormattedEntry);
         }
         
         /// <summary>
@@ -127,32 +127,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
                 this.AddEntry (path, entry);
             }
         }
-        
-        /// <summary>
-        ///     Add all of the directory entries to the <code>Entries</code>
-        ///         file in the cvs folder.
-        /// </summary>
-        /// <param name="localPath">The local path that starts the spider.</param>
-        public void AddDirectoryEntries (String localPath) {
-            foreach (String dir in Directory.GetDirectories (localPath)) {
-                this.AddDirectoryEntry (dir, dir.Substring (localPath.Length + 1));
-                if (dir.IndexOf ("CVS") < 0) {
-                    this.AddDirectoryEntries (dir);
-                }
-            }
-        }
-        /// <summary>
-        ///     Add a directory entry to the <code>Entries</code> file
-        ///         in the cvs directory under the path specified.
-        /// </summary>
-        /// <param name="path">The path to the file.</param>
-        /// <param name="directoryName">The name of the directory to add.</param>
-        public void AddDirectoryEntry (String path, String directoryName) {
-            string _entry = "D/" + directoryName + "////";
-            this.AppendToFile (path, this.ENTRIES, _entry);
-            this.AppendToFile (path, this.ENTRIES_LOG, _entry);
-        }
-        
+                
         /// <summary>
         ///     Add the <code>Root</code> file to the cvs directory.
         /// </summary>
@@ -163,7 +138,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <param name="fileEntry">The cvs root entry to add to the root file.</param>
         public void AddRoot (String localBase, String localPath, String fileEntry) {
             string cvsPath = Path.Combine (localBase, localPath);
-            this.OverwriteFile (cvsPath, this.ROOT, fileEntry);
+            this.WriteToFile (cvsPath, this.ROOT, fileEntry);
         }
         
         /// <summary>
@@ -176,18 +151,16 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <param name="repository">The repository text.</param>
         public void AddRepository (String localBase, String localPath, String fileEntry) {
             string cvsPath = Path.Combine (localBase, localPath);
-            this.OverwriteFile (cvsPath, this.REPOSITORY, fileEntry);
-        }
-                
-        private void AppendToFile (String path, String file, String text) {
-            this.WriteToFile (path, file, text, true);
+            this.WriteToFile (cvsPath, this.REPOSITORY, fileEntry);
         }
         
-        private void OverwriteFile (String path, String file, String text) {
-            this.WriteToFile (path, file, text, false);
+        private bool IsEntry (String file) {
+            if (file.Equals (this.ENTRIES) || file.Equals (this.ENTRIES_LOG)) {
+                return true;
+            }
+            return false;
         }
-        
-        private void WriteToFile (String path, String file, String text, bool append) {
+        private void WriteToFile (String path, String file, String text) {
             if (path.LastIndexOf (Path.DirectorySeparatorChar) != path.Length) {
                 path = path + Path.DirectorySeparatorChar;
             }
@@ -198,16 +171,25 @@ namespace ICSharpCode.SharpCvsLib.Misc {
                 String msg = "Writing to a cvs file.  " +
                     "path=[" + path + "]" +
                     "file=[" + file + "]" +
-                    "append=[" + append + "]" +
                     "text=[" + text + "]";
                 LOGGER.Debug (msg);
             }
 
-            String _fileText;            
-            if (append) {
+            String _fileText = String.Empty;            
+            if (this.IsEntry (file)) {
                 if (File.Exists (path)) {
-                    StreamReader sr = new StreamReader (path + file);
-                    _fileText = sr.ReadToEnd () + text + "\n";
+                    Entry modifiedEntry = new Entry (text);                    
+                    ArrayList list = new ArrayList ();
+                    list.Add (this.ReadEntries (path));
+                    Entry[] entries = (Entry[])list.ToArray (typeof(Entry));
+                    foreach (Entry entry in entries) {
+                        if (modifiedEntry.Name.Equals (entry.Name)) {
+                            _fileText = modifiedEntry.CvsEntry + "\n";
+                        }
+                        else {                            
+                            _fileText = entry.CvsEntry + "\n";
+                        }
+                    }                    
                 }
                 else {
                     _fileText = text;
@@ -216,7 +198,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
                 _fileText = text;
             }
 			StreamWriter sw = 
-			    new StreamWriter(path + file, append, Encoding.ASCII);                
+			    new StreamWriter(path + file, false, Encoding.ASCII);                
             sw.WriteLine (_fileText);    
             
             
@@ -253,17 +235,18 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <param name="path">The path to look for cvs entries.</param>
         /// <returns>An array of entries if found, or an empty array if no 
         ///     entries were found.</returns>
-        public Entry [] ReadEntries (String path) {
+        public ICollection ReadEntries (String path) {
             ArrayList entries = new ArrayList ();
             ArrayList entryStrings = new ArrayList ();
             
             entryStrings.Add (this.ReadFromFile (path, this.ENTRIES));
-            
+
+// FIXME: Fix the invalid case exception occuring here.            
             foreach (String entryString in entryStrings) {
                 entries.Add (new Entry (entryString));
-            }
+            }                
             
-            return (Entry[])entries.ToArray (typeof (Entry));
+            return entries;
         }
         
         private ICollection ReadFromFile (String path, String file) {
