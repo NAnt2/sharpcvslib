@@ -132,7 +132,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                         endofOptions = rtOptions.IndexOf(" -", i, rtOptions.Length - i) - 2;
                     }
                     localDirectory = rtOptions.Substring(i, endofOptions);
-                }
+					i = i + endofOptions;
+				}
                 if (rtOptions[i]== '-' && rtOptions[i+1] == 'r') {
                     i += 2;
                     // get revision of files to tag
@@ -144,7 +145,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                         endofOptions = rtOptions.IndexOf(" -", i, rtOptions.Length - i) - 2;
                     }
                     revision = rtOptions.Substring(i, endofOptions);
-                }
+					i = i + endofOptions;
+				}
                 if (rtOptions[i]== '-' && rtOptions[i+1] == 'D') {
                     i += 2;
                     // get date of files for rtag
@@ -160,7 +162,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                     try {
                         // Parse string to DateTime format
                         string datepar = rtOptions.Substring(i, endofOptions);
-                        date = System.Convert.ToDateTime(datepar, DateTimeFormatInfo.CurrentInfo);
+						i = i + endofOptions;
+						date = System.Convert.ToDateTime(datepar, DateTimeFormatInfo.CurrentInfo);
                     }
                     catch {
                         StringBuilder msg = new StringBuilder ();

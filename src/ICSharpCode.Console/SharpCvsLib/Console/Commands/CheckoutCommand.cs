@@ -143,7 +143,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
                         endofOptions = coOptions.IndexOf(" -", i, coOptions.Length - i) - 2;
                     }
                     revision = coOptions.Substring(i, endofOptions);
-                }
+					i = i + endofOptions;
+				}
                 if (coOptions[i]== '-' && coOptions[i+1] == 'd'){
                     i += 2;
                     // get location to place files locally
@@ -155,7 +156,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
                         endofOptions = coOptions.IndexOf(" -", i, coOptions.Length - i) - 2;
                     }
                     localDirectory = coOptions.Substring(i, endofOptions);
-                }
+					i = i + endofOptions;
+				}
                 if (coOptions[i]== '-' && coOptions[i+1] == 'D'){
                     i += 2;
                     // get date of files to checkout
@@ -171,7 +173,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
                     try{
                         // Parse string to DateTime format
                         string datepar = coOptions.Substring(i, endofOptions);
-                        date = System.Convert.ToDateTime(datepar, DateTimeFormatInfo.CurrentInfo);
+						i = i + endofOptions;
+						date = System.Convert.ToDateTime(datepar, DateTimeFormatInfo.CurrentInfo);
                     }
                     catch{
                         StringBuilder msg = new StringBuilder ();

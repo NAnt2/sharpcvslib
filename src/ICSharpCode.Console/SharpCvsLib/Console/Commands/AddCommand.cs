@@ -147,6 +147,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                         endofOptions = adOptions.IndexOf(" -", i, adOptions.Length - i) - 2;
                     }
                     message = adOptions.Substring(i, endofOptions);
+					i = i + endofOptions;
                 }
                 if (adOptions[i]== '-' && adOptions[i+1] == 'k') {
                     i += 2;
@@ -158,7 +159,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                         endofOptions = adOptions.IndexOf(" -", i, adOptions.Length - i) - 2;
                     }
                     kflag = adOptions.Substring(i, endofOptions);
-                }
+					i = i + endofOptions;
+				}
             }
         }
         /// <summary>

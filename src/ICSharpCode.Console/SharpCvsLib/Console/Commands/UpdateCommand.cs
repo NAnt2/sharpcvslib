@@ -149,7 +149,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                         endofOptions = upOptions.IndexOf(" -", i, upOptions.Length - i) - 2;
                     }
                     revision = upOptions.Substring(i, endofOptions);
-                }
+					i = i + endofOptions;
+				}
                 if (upOptions[i]== '-' && upOptions[i+1] == 'D') {
                     i += 2;
                     // get date of files to update
@@ -165,7 +166,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                     try {
                         // Parse string to DateTime format
                         string datepar = upOptions.Substring(i, endofOptions);
-                        date = System.Convert.ToDateTime(datepar, DateTimeFormatInfo.CurrentInfo);
+						i = i + endofOptions;
+						date = System.Convert.ToDateTime(datepar, DateTimeFormatInfo.CurrentInfo);
                     }
                     catch {
                         StringBuilder msg = new StringBuilder ();
@@ -186,7 +188,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                         endofOptions = upOptions.IndexOf(" -", i, upOptions.Length - i) - 2;
                     }
                     localDirectory = upOptions.Substring(i, endofOptions);
-                }
+					i = i + endofOptions;
+				}
                 if (upOptions[i]== '-' && upOptions[i+1] == 'j') {
                     i += 2;
                     // get revision of files 
@@ -198,7 +201,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                     }
                     // Set revision attribute for update command
                     //revisionTo = upOptions.Substring(i, endofOptions);
-                }
+					i = i + endofOptions;
+				}
                 if (upOptions[i]== '-' && upOptions[i+1] == 'k') {
                     i += 2;
                     // get kopt
@@ -210,7 +214,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                     }
                     // Set kopt attribute for update command
                     //????? = upOptions.Substring(i, endofOptions);
-                }
+					i = i + endofOptions;
+				}
                 if (upOptions[i]== '-' && upOptions[i+1] == 'I') {
                     i += 2;
                     // get More file to ignore 
@@ -222,7 +227,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                     }
                     //set attribute for this command 
                     //????? = upOptions.Substring(i, endofOptions);
-                }
+					i = i + endofOptions;
+				}
                 if (upOptions[i]== '-' && upOptions[i+1] == 'W') {
                     i += 2;
                     // get wrapper specification line
@@ -233,7 +239,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                         endofOptions = upOptions.IndexOf(" -", i, upOptions.Length - i) - 2;
                     }
                     //revision = upOptions.Substring(i, endofOptions);
-                }
+					i = i + endofOptions;
+				}
                 if (upOptions[i]== '-' && upOptions[i+1] == 'A') {
                     String msg = "The -A update option is not  " +
                         "implemented.";
