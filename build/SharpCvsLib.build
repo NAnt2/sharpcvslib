@@ -192,7 +192,7 @@
     </target>
     
     <target name="netdoc.include">
-        <copy file="${dir.doc}/${license}" todir="${dir.doc.msdn}" />
+        <copy file="${dir.doc}/www/${license}" todir="${dir.doc.msdn}" />
         <style style="${dir.doc}/NamespaceSummary.xslt" in="${dir.doc}/NamespaceSummary.xml" out="${dir.doc.msdn}/index.html" />
     </target>
     
