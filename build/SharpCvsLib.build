@@ -253,6 +253,14 @@
         <delete dir="${dir.dist}/doc" />
     </target>
     
+    <target name="integration" depends="dist">
+        <copy todir="${ccnet.log.dir}/${label-to-apply}">
+            <fileset basedir="${dir.dist}">
+                <includes name="**"/>
+            </fileset>
+        </copy>
+    </target>
+    
     <target name="build-release.common">
         <call target="dist" />
         <property name="dir.output" value="${dir.release}/${assembly.version}" />
