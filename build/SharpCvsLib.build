@@ -70,7 +70,7 @@
                 command="${cvs.command}"
                 usesharpcvslib="false" />
     </target>
-    
+
     <target name="update.version" description="Generate the assembly info file for the project.  Pass in the version number.">
         <!-- Gets the version number and places it in a property called build.version -->
         <ifnot propertyexists="assembly.version">
