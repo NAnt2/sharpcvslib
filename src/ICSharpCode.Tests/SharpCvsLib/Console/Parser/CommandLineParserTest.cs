@@ -73,6 +73,14 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser
 			String[] args = {"--help"};
 			// Test Creating a CommandLineParser object
 			CommandLineParser newCommandLineParser = new CommandLineParser( args);
+			Assertion.AssertNotNull ("Should have a command object.", newCommandLineParser);
+			newCommandLineParser.Execute();
+
+			String[] coargs = {"-d", ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib", 
+								  "co", "sharpcvslib"};
+			// Test processing checkout command with CommandLineParser object
+			newCommandLineParser = new CommandLineParser( coargs);
+			Assertion.AssertNotNull ("Should have a command object.", newCommandLineParser);
 			newCommandLineParser.Execute();
 		}
 	}

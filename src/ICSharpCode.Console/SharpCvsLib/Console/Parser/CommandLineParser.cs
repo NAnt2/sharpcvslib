@@ -37,6 +37,8 @@
 #endregion
 
 using System;
+using ICSharpCode.SharpCvsLib.Commands;
+using ICSharpCode.SharpCvsLib.Console.Commands;
 
 namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
@@ -88,7 +90,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             // TODO: Remove this hack when add method to set options.
             this.options = String.Empty;
         }
-        
+
+		/// <summary>Create a new instance of the command line parser and 
+		///     initialize the arguments object.</summary>
+		/// <param name="args">A collection of strings that represent the command
+		///     line arguments sent into the program.</param>
+		public CommandLineParser () 
+		{
+			//this.arguments = args; 
+            
+			// TODO: Remove this hack when add method to set options.
+			//this.options = String.Empty;
+		}
+       
         /// <summary>Parse the command line options.</summary>
         public void Execute () {
             if (arguments.Length < 1) {
@@ -99,10 +113,25 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 switch (arguments[i]) {
                     case "checkout":
                     case "co": 
-                        this.command = arguments[i];
+                        this.command = arguments[i++];
+                        // if cvsroot is not set abort checkout
+                        // get rest of arguments which is options on the checkout command.
+                        // pass argument coOptions an array of strings.
+                        string repositoryname = arguments[i];
+                        CheckoutCommand coCommand = 
+                            new CheckoutCommand(cvsroot, repositoryname);
+                        break;
+                    case "login":
+                        // login to server
+                        break;
+                    case "passwd":
+                        // add to .cvspass file 
+                        // scramble password
+                        // write to file
+                        this.command = arguments[++i];
                         break;
                     case "update":
-                        this.command = arguments[i];
+                        this.command = arguments[++i];
                         break;
                     case "--help":
                         System.Console.WriteLine (Usage.General);
@@ -117,7 +146,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         System.Console.WriteLine (Usage.Synonyms);
                         break;
                     case "-d":
-                        cvsroot = arguments[i];
+                        cvsroot = arguments[++i];
                         break;
                     default:
                         System.Console.WriteLine (Usage.General);
