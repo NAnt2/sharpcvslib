@@ -146,19 +146,19 @@
         <call target="build.test-sample" />
     </target>
 
-    <target name="build.lib">
+    <target name="build.lib" depends="setup">
         <nant buildfile="${dir.src}/${name.top-level}/${name.project}/${name.project}.build" target="build"/>
     </target>
 
-    <target name="build.console" depends="build.lib">
+    <target name="build.console" depends="setup, build.lib">
         <nant buildfile="${dir.src}/${name.top-level}.${name.console}/${name.project}/${name.console}.build" target="build"/>
     </target>
     
-    <target name="build.test" depends="build.lib, build.console">
+    <target name="build.test" depends="setup, build.lib, build.console">
         <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="build"/>
     </target>
     
-    <target name="build.test-sample" depends="build.test" description="Builds all project sources as well as a test binary containing a faster running subset of unit tests..">
+    <target name="build.test-sample" depends="setup, build.test" description="Builds all project sources as well as a test binary containing a faster running subset of unit tests..">
         <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="build-sample"/>
     </target>
 
