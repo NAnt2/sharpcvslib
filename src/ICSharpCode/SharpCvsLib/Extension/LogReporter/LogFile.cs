@@ -59,7 +59,12 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter
 		/// The repository path+filename
 		/// </summary>
 	    public string WorkingFnm {
-	        get { return workingFnm; }
+	        get { 
+                if (null == this.workingFnm || String.Empty == this.workingFnm) {
+                    // remove the ,v from the end of the file.
+                    return this.RepositoryFnm.Substring(0, this.RepositoryFnm.Length - 2);
+                }
+                return workingFnm; }
 	        set { workingFnm = value; }
 	    }
 	    

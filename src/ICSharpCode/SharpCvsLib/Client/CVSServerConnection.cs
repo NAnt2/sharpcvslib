@@ -377,7 +377,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// <param name="password"></param>
         public void Authentication(string password) {
             this.StartTime = DateTime.Now;
-            LOGGER.Warn(String.Format("Trying to authenticate with cvsroot ( {0} ) and password ( {1} ).",
+            LOGGER.Info(String.Format("Trying to authenticate with cvsroot ( {0} ) and password ( {1} ).",
                 repository.CvsRoot.ToString(), password));
             switch (repository.CvsRoot.Protocol) {
                 case "ext": 
@@ -442,7 +442,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
             this.EndTime = DateTime.Now;
 
             TimeSpan elapsedTime = this.EndTime.Subtract(this.StartTime);
-            System.Console.WriteLine(String.Format("Processing time: {0}:{1}:{2}:{3}.",
+            LOGGER.Info(String.Format("Processing time: {0}:{1}:{2}:{3}.",
                 elapsedTime.Hours, elapsedTime.Minutes, elapsedTime.Seconds,
                 elapsedTime.Milliseconds));
         }

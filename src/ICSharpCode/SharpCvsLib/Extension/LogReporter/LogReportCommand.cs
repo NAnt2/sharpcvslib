@@ -304,6 +304,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
         public void OnMessage(string message)
         {
             const string repositoryFnmPrefix = "RCS file: ";
+            const string repositoryFnmPrefixWithM = "M RCS file: ";
             const string workingFnmPrefix = "Working file: ";
             const string descriptionPrefix = "description:";
             const string revisionPrefix = "revision ";
@@ -367,6 +368,11 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
                             if (message.StartsWith(repositoryFnmPrefix)) {
                                 // file line is of form 'RCS file: <filename>'
                                 curLogFile.RepositoryFnm = message.Substring(repositoryFnmPrefix.Length);
+                                logState = LogState.WANT_FILE_HEADER;
+                            } 
+                            else if (message.StartsWith(repositoryFnmPrefixWithM)) {
+                                // file line is of form 'M RCS file: <filename>'
+                                curLogFile.RepositoryFnm = message.Substring(repositoryFnmPrefixWithM.Length);
                                 logState = LogState.WANT_FILE_HEADER;
                             }
                             else if (message.StartsWith(workingFnmPrefix)) {

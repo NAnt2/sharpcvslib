@@ -148,7 +148,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 string newLevelString = match.Groups[1].Value;
 
                 if (null != newLevelString && String.Empty != newLevelString) {
-                    System.Console.WriteLine(String.Format("Changing logging level to {0}.", newLevelString));
                     log4net.Core.LevelMap map = log4net.LogManager.GetRepository().LevelMap;
                     log4net.Core.Level newLevel = map[newLevelString];
                     log4net.LogManager.GetRepository().Threshold = newLevel;
