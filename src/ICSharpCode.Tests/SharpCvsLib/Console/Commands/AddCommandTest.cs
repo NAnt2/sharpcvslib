@@ -68,21 +68,33 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// </summary>
         [Test]
         public void MakeAddCommandTest () {
+            String fullPath = null;
             Directory.CreateDirectory( settings.Config.LocalPath);
             Environment.CurrentDirectory = settings.Config.LocalPath;
             // add file TargetFile
             // commit file TargetFile
             // remove file TargetFile
             // commit remove TargetFile
+            String[] files = Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, 
+                settings.Config.Module), "*.txt");
+            Assertion.Assert(files.Length > 0);
+
+            foreach (String file in files) {
+                LOGGER.Debug("file=[" + file + "]");
+                // Remove the .txt when everything works, giving me bugs...
+                String newFileName = Guid.NewGuid().ToString() + ".txt";
+                fullPath = Path.Combine(Environment.CurrentDirectory, newFileName);
+                File.Copy (file, fullPath);
+            }
             String commandLine = "-d" + settings.Config.Cvsroot + " add " + 
-            Path.Combine(settings.Config.LocalPath, settings.Config.TargetFile);
+                Path.Combine(settings.Config.LocalPath, fullPath);
             String [] commandLineArgs = commandLine.Split(' ');
             // Create consoleMain object to test the Add command
             ConsoleMain consoleMain = new ConsoleMain();
             Assertion.AssertNotNull ("Should have a command object.", consoleMain);
             
             consoleMain.Execute(commandLineArgs);
-            Assertion.Assert(File.Exists(Path.Combine(settings.Config.LocalPath, settings.Config.TargetFile)));
+            Assertion.Assert(File.Exists(fullPath));
         }
     }
 }
