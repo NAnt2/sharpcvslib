@@ -57,7 +57,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             terminating = message.Trim().ToUpper() == "OK";
             // Fire message event to the client app
             Services.SendMessage("cvs server: M " + message);
-            String msg = "cvs server: M " + message;
+            String msg = message;
             LOGGER.Debug (msg);
             Services.ResponseMessageEvents.SendResponseMessage(msg, this.GetType());
         }

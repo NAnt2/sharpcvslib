@@ -51,23 +51,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     /// Update modules in the cvs repository.
     /// </summary>
     public class UpdateCommandParser : AbstractCommandParser {
-        private CvsRoot cvsRootVar;
         private string fileNames;
         private string revision;
-        private string localDirectory;
         private DateTime date;
         private string unparsedOptions;
-
-        private CvsRoot CvsRootVar {
-            get { return this.cvsRootVar; }
-            set { this.cvsRootVar = value; }
-        }
-
-        private void InvalidRepository () {
-            System.Console.WriteLine(String.Format("cvs update: No CVSROOT specified!  Please use the `-d' option"));
-            System.Console.WriteLine(String.Format("cvs [update aborted]: or set the CVSROOT environment variable."));
-            System.Environment.Exit(-1);
-        }
 
         /// <summary>
         /// Create a new instance of the <see cref="UpdateCommandParser"/>.
@@ -115,7 +102,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <param name="fileNames">Files</param>
         /// <param name="upOptions">Options</param>
         public UpdateCommandParser(CvsRoot cvsroot, string fileNames, string upOptions) {
-            this.cvsRootVar = cvsroot;
+            this.CvsRoot = cvsroot;
             this.fileNames = fileNames;
             this.unparsedOptions = upOptions;
         }
@@ -158,35 +145,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             // note the sandbox is actually above the CVS directory
             Manager manager = new Manager(dir.Parent);
 
-            Repository repository = null;
-            Root root = null;
-
-            try {
-                repository = Repository.Load(dir); 
-                root = Root.Load(dir);
-            } catch (NullReferenceException) {
-                this.InvalidRepository();
-            } catch (CvsFileNotFoundException) {
-                this.InvalidRepository();
-            }
-
-            if (null == repository) {
-                this.InvalidRepository();
-            }
-
-            try {
-                this.cvsRootVar = new CvsRoot(root.FileContents);
-            } catch (ICSharpCode.SharpCvsLib.Exceptions.CvsRootParseException) {
-                this.InvalidRepository();
-            }
-
-            // If this fails error out and state the user
-            //    is not in a CVS repository directory tree.
-            if (localDirectory == null) {
-                localDirectory = dir.Parent.FullName;
-            }
-            CurrentWorkingDirectory = new WorkingDirectory( this.CvsRootVar,
-                localDirectory, repository.FileContents);
             if (revision != null) {
                 CurrentWorkingDirectory.Revision = revision;
             }
@@ -260,7 +218,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     else {
                         endofOptions = upOptions.IndexOf(" -", i, upOptions.Length - i) - 2;
                     }
-                    localDirectory = upOptions.Substring(i, endofOptions);
+                    this.SetLocalDirectory(upOptions.Substring(i, endofOptions));
 					i = i + endofOptions;
 				}
                 if (upOptions[i]== '-' && upOptions[i+1] == 'j') {

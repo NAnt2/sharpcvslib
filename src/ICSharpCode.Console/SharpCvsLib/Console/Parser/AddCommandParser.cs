@@ -50,7 +50,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     /// Add file(s) in the cvs repository.
     /// </summary>
     public class AddCommandParser : AbstractCommandParser {
-        private CvsRoot cvsRoot;
         private string fileNames;
         private string unparsedOptions;
         private string message;
@@ -80,7 +79,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <param name="fileNames">Files to remove</param>
         /// <param name="adOptions">Options</param>
         public AddCommandParser(CvsRoot cvsroot, string fileNames, string adOptions) {
-            this.cvsRoot = cvsroot;
+            this.CvsRoot = cvsroot;
             this.fileNames = fileNames;
             this.unparsedOptions = adOptions;
         }
@@ -143,10 +142,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 // Open the Repository file in the CVS directory
                 Manager manager = new Manager(Environment.CurrentDirectory);
                 Repository repository = manager.FetchRepository(Environment.CurrentDirectory); 
-                // If this fails error out and state the user
-                //    is not in a CVS repository directory tree.
-                CurrentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
-                    Environment.CurrentDirectory, repository.FileContents);
+
                 CurrentWorkingDirectory.OverrideDirectory = Environment.CurrentDirectory;
                 // If fileNames has a wild card (*) like '*.txt'
                 // Create new AddCommand object

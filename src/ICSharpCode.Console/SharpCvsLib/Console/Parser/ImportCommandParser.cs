@@ -50,9 +50,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     /// Initialize the cvs repository.
     /// </summary>
     public class ImportCommandParser : AbstractCommandParser {
-        private CvsRoot cvsRoot;
         private string[] unparsedOptions;
-        private string repository;
 
         private string message;
         private string vendor;
@@ -81,7 +79,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <param name="cvsroot">User Information</param>
         /// <param name="args">Commandline arguments.</param>
         public ImportCommandParser(CvsRoot cvsroot, string[] args) {
-            this.cvsRoot = cvsroot;
+            this.CvsRoot = cvsroot;
             this.unparsedOptions = args;
         }
 
@@ -134,8 +132,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             ICSharpCode.SharpCvsLib.Commands.ImportModuleCommand importCommand;
             try {
                 this.ParseOptions(this.unparsedOptions);
-                CurrentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
-                    Environment.CurrentDirectory, this.repository);
                 Manager manager = new Manager(Environment.CurrentDirectory);
 
                 DirectoryInfo importDir = new DirectoryInfo(Environment.CurrentDirectory);
@@ -218,9 +214,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 //  pass null into the repository...the cvs command
                 //  line for cvsnt/ cvs seems to bomb out when
                 //  it sends to the server
-                this.repository = arguments[i++];
+                this.Module = arguments[i++];
             } else {
-                this.repository = String.Empty;
+                this.Module = String.Empty;
             }
 
             if (arguments.Length > i){

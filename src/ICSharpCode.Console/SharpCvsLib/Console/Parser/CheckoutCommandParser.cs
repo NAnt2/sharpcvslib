@@ -50,10 +50,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser{
     /// Check out module files from a cvs repository.
     /// </summary>
     public class CheckoutCommandParser : AbstractCommandParser{
-        private CvsRoot cvsRoot;
-        private string repository;
         private string revision;
-        private string localDirectory;
         private DateTime date;
 
         private string unparsedOptions;
@@ -94,7 +91,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser{
         /// <param name="cvsRoot">The cvs root to use for this checkout.</param>
         /// <param name="args">Commandline arguments to be parsed out and used for the command.</param>
         public CheckoutCommandParser (CvsRoot cvsRoot, string[] args) {
-            this.cvsRoot = cvsRoot;
+            this.CvsRoot = cvsRoot;
             StringBuilder coOptions = new StringBuilder ();
             foreach (string arg in args) {
                 coOptions.Append(arg);
@@ -107,12 +104,12 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser{
         ///     in a checkout.
         /// </summary>
         /// <param name="cvsRoot">The cvs root to use for this checkout.</param>
-        /// <param name="repositoryName">Name of the local repository path.</param>
+        /// <param name="module">Name of the local module path.</param>
         /// <param name="coOptions">All unparsed checkout options.</param>
         [Obsolete("Use CheckCommandParser(CvsRoot, string[])")]
-        public CheckoutCommandParser (CvsRoot cvsRoot, string repositoryName, string coOptions) {
-            this.cvsRoot = cvsRoot;
-            repository = repositoryName;
+        public CheckoutCommandParser (CvsRoot cvsRoot, string module, string coOptions) {
+            this.CvsRoot = cvsRoot;
+            this.Module = module;
             this.unparsedOptions = coOptions;
         }
 
@@ -148,12 +145,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser{
             CheckoutModuleCommand checkoutCommand;
             try {
                 this.ParseOptions(this.unparsedOptions);
-                // create CvsRoot object parameter
-                if (localDirectory == null) {
-                    localDirectory = Environment.CurrentDirectory;
-                }
-                this.CurrentWorkingDirectory = new WorkingDirectory(this.cvsRoot,
-                    localDirectory, repository);
                 if (revision != null) {
                     this.CurrentWorkingDirectory.Revision = revision;
                 }
@@ -202,7 +193,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser{
                     else{
                         endofOptions = coOptions.IndexOf(" -", i, coOptions.Length - i) - 2;
                     }
-                    localDirectory = coOptions.Substring(i, endofOptions);
+                    this.SetLocalDirectory(coOptions.Substring(i, endofOptions));
 					i = i + endofOptions;
                 }
                 if (coOptions[i]== '-' && coOptions[i+1] == 'D'){

@@ -60,20 +60,75 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             get {return this.logger;}
         }
 
+        private DirectoryInfo _currentDir;
+        /// <summary>
+        /// The current working directory.
+        /// </summary>
+        public DirectoryInfo CurrentDir {
+            get {
+                if (null == this._currentDir) {
+                    this._currentDir =
+                        new DirectoryInfo(Environment.CurrentDirectory); 
+                }
+                return this._currentDir;
+            }
+            set { 
+                this._currentDir = value; 
+                this.RecalculateRoot();
+            }
+        }
+
+        private string _module;
+        public string Module {
+            get { return this._module; }
+            set { this._module = value; }
+        }
+
         /// <summary>
         /// The current working directory.
         /// </summary>
         public WorkingDirectory CurrentWorkingDirectory {
-            get {return this.currentWorkingDirectory;}
-            set {this.currentWorkingDirectory = value;}
+            get {
+                if (null == this.currentWorkingDirectory) {
+                    this.RecalculateRoot();
+                }
+                return this.currentWorkingDirectory;
+            }
+            set {
+                this.currentWorkingDirectory = value;
+                if (null == this.currentWorkingDirectory) {
+                    this.RecalculateRoot();
+                } else if (null != this.currentWorkingDirectory.LocalDir) {
+                    this.SetLocalDirectory(this.currentWorkingDirectory.LocalDir.FullName);
+                }
+            }
+        }
+
+        private Repository _repository;
+        /// <summary>
+        /// The cvs root to use for the command.
+        /// </summary>
+        public Repository Repository {
+            get {
+                if (null == this._repository) {
+                    this.RecalculateRoot();
+                }
+                return this._repository;
+            }
+            set { this._repository = value; }
         }
 
         /// <summary>
         /// The cvs root to use for the command.
         /// </summary>
         public CvsRoot CvsRoot {
-            get {return this.cvsRoot;}
-            set {this.cvsRoot = value;}
+            get {
+                if (null == this.cvsRoot) {
+                    this.RecalculateRoot();
+                }
+                return this.cvsRoot;
+            }
+            set { this.cvsRoot = value; }
         }
 
         private string[] args;
@@ -165,6 +220,33 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// </summary>
         public virtual string Usage {
             get {return String.Format("Implement usage for command {0}.", this.GetType().FullName);}
+        }
+
+        protected void SetLocalDirectory(string localDirectory) {
+            this.CurrentDir = new DirectoryInfo(localDirectory);
+        }
+
+        private void RecalculateRoot () {
+            try {
+                Root root = Root.Load(new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "CVS")));
+                this.cvsRoot = new CvsRoot(root.FileContents);
+            } catch (Exception e) {
+                ConsoleMain.ExitProgram("Not a valid cvs folder.", e);
+            }
+
+            try {
+                this._repository = 
+                    Repository.Load(
+                    new DirectoryInfo(
+                    Path.Combine(Environment.CurrentDirectory, 
+                    "CVS")));
+            } catch (Exception e) {
+                ConsoleMain.ExitProgram("Not a valid cvs folder.", e);
+            }
+
+            this.currentWorkingDirectory = 
+                new WorkingDirectory(this.CvsRoot, this.CurrentDir.FullName, 
+                this.Repository.FileContents);
         }
     }
 }

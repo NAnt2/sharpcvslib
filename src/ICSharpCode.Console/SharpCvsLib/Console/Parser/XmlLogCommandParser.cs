@@ -49,16 +49,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     /// Produce an xml log report.
     /// </summary>
     public class XmlLogCommandParser : AbstractCommandParser, ICommandParser {
-        private string moduleName;
-        private string ModuleName {
-            get {return this.moduleName;}
-            set {
-                //                System.Console.WriteLine(String.Format("Module name: {0}.", value));
-                this.moduleName = value;}
-        }
-
-        private string localDirectory;
-
         private const string OPT_DATE = "-D";
         private const string OPT_DAYS = "-Ds";
         private const string OPT_OUTPUT_XML_FILENAME = "-oxml";
@@ -180,26 +170,14 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         public override ICommand CreateCommand () {
             ICSharpCode.SharpCvsLib.Commands.XmlLogCommand xmlLogCommand;
 
-            try {
-                // create CvsRoot object parameter
-                if (localDirectory == null || localDirectory.Length == 0) {
-                    localDirectory = Environment.CurrentDirectory;
-                }
-                this.CurrentWorkingDirectory = new WorkingDirectory(this.CvsRoot,
-                    localDirectory, this.moduleName);
-                xmlLogCommand = 
-                    new ICSharpCode.SharpCvsLib.Commands.XmlLogCommand(this.CurrentWorkingDirectory, 
-                    this.CurrentWorkingDirectory.ModuleName);
-                xmlLogCommand.StartDate = this.StartDate;
-                xmlLogCommand.EndDate = this.EndDate;
-                xmlLogCommand.XmlFilename = this.XmlFilename;
-                xmlLogCommand.XslFilename = this.XslFilename;
-                xmlLogCommand.HtmlFilename = this.HtmlFilename;
-            }
-            catch (Exception e) {
-                LOGGER.Error (e);
-                throw e;
-            }
+            xmlLogCommand = 
+                new ICSharpCode.SharpCvsLib.Commands.XmlLogCommand(this.CurrentWorkingDirectory, 
+                this.CurrentWorkingDirectory.ModuleName);
+            xmlLogCommand.StartDate = this.StartDate;
+            xmlLogCommand.EndDate = this.EndDate;
+            xmlLogCommand.XmlFilename = this.XmlFilename;
+            xmlLogCommand.XslFilename = this.XslFilename;
+            xmlLogCommand.HtmlFilename = this.HtmlFilename;
             return xmlLogCommand;        
         }
  
@@ -212,7 +190,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             base.ParseOptions();
 
             if (Args.Length > 1) {
-                this.moduleName = Args[Args.Length - 1];
+                this.Module = Args[Args.Length - 1];
             }
             int i = 0;
             while (i < Args.Length - 1) {

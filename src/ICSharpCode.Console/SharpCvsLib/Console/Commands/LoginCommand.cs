@@ -103,7 +103,17 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         ///     translated into one of the public API command objects.
         /// </summary>
         public CvsRoot CvsRoot {
-            get {return this.cvsRoot;}
+            get {
+                if (null == this.cvsRoot) {
+                    Root root = Root.Load(new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "CVS")));
+                    try {
+                        this.cvsRoot = new CvsRoot(root.FileContents);
+                    } catch (Exception e) {
+                        ConsoleMain.ExitProgram("Not a valid cvs folder.", e);
+                    }
+                }
+                return this.cvsRoot;
+            }
         }
 
         /// <summary>

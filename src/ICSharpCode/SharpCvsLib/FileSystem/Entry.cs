@@ -415,6 +415,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             return entry;
         }
 
+        public static Entry Load (FileInfo managedFile) {
+            Entries entries = 
+                Entries.Load(new DirectoryInfo(
+                System.IO.Path.Combine(managedFile.Directory.FullName, "CVS")));
+            return entries[managedFile.FullName];
+        }
+
         /// <summary>
         /// Set the file timestamp.
         /// </summary>

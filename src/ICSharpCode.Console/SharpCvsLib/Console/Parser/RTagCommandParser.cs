@@ -49,9 +49,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
     /// Remove file(s) in the cvs repository.
     /// </summary>
     public class RTagCommandParser : AbstractCommandParser {
-        private CvsRoot cvsRoot;
-        private string repository;
-        private string localDirectory;
         private string revision;
         private DateTime date;
         private string unparsedOptions;
@@ -80,8 +77,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <param name="repository">Repository that contains the files to be tagged</param>
         /// <param name="rtOptions">Options</param>
         public RTagCommandParser(CvsRoot cvsroot, string repository, string rtOptions) {
-            this.cvsRoot = cvsroot;
-            this.repository = repository;
+            this.CvsRoot = cvsroot;
+            this.Module = repository;
             this.unparsedOptions = rtOptions;
         }
 
@@ -140,11 +137,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             ICSharpCode.SharpCvsLib.Commands.RTagCommand rtagCommand;
             try {
                 this.ParseOptions(this.unparsedOptions);
-                if (localDirectory == null) {
-                    localDirectory = Environment.CurrentDirectory;
-                }
-                CurrentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
-                    localDirectory, repository);
                 // Create new RTagCommand object
                 rtagCommand = new ICSharpCode.SharpCvsLib.Commands.RTagCommand(
                                  this.CurrentWorkingDirectory );
@@ -175,7 +167,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                     else {
                         endofOptions = rtOptions.IndexOf(" -", i, rtOptions.Length - i) - 2;
                     }
-                    localDirectory = rtOptions.Substring(i, endofOptions);
+                    this.SetLocalDirectory(rtOptions.Substring(i, endofOptions));
 					i = i + endofOptions;
 				}
                 if (rtOptions[i]== '-' && rtOptions[i+1] == 'r') {

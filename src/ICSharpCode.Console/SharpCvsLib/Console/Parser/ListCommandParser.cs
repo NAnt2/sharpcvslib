@@ -50,9 +50,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser{
     /// Check out module files from a cvs repository.
     /// </summary>
     public class ListCommandParser : AbstractCommandParser{
-        private string repository;
         private string revision;
-        private string localDirectory;
         private DateTime date;
 
         private string unparsedOptions;
@@ -96,7 +94,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser{
         [Obsolete("Use ListCommandParser(CvsRoot, string[])")]
         public ListCommandParser (CvsRoot cvsRoot, string repositoryName, string coOptions) {
             this.CvsRoot = cvsRoot;
-            repository = repositoryName;
+            this.Module = repositoryName;
             this.unparsedOptions = coOptions;
         }
 
@@ -146,11 +144,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser{
             ListCommand listCommand;
             this.ParseOptions();
             // create CvsRoot object parameter
-            if (localDirectory == null) {
-                localDirectory = Environment.CurrentDirectory;
-            }
-            this.CurrentWorkingDirectory = new WorkingDirectory(this.CvsRoot,
-                localDirectory, repository);
+
             if (revision != null) {
                 this.CurrentWorkingDirectory.Revision = revision;
             }
@@ -196,7 +190,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser{
                     else{
                         endofOptions = unparsedOptions.IndexOf(" -", i, unparsedOptions.Length - i) - 2;
                     }
-                    localDirectory = unparsedOptions.Substring(i, endofOptions);
+                    this.SetLocalDirectory(unparsedOptions.Substring(i, endofOptions));
 					i = i + endofOptions;
                 }
                 if (unparsedOptions[i]== '-' && unparsedOptions[i+1] == 'D'){

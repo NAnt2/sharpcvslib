@@ -51,7 +51,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// </summary>
         public override void Process() {
             string message = this.ReadLine();
-            String msg = "cvs server: M " + message;
+            String msg = message;
             Services.SendErrorMessage(msg);
             LOGGER.Debug (msg);
 

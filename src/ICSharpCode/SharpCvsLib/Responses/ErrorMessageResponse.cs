@@ -47,27 +47,18 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         private readonly ILog LOGGER =
             LogManager.GetLogger (typeof (ErrorMessageResponse));
 
-        public static bool ListingFiles;
         /// <summary>
         /// Process an error message response.
         /// </summary>
         public override void Process() {
             string message = this.ReadLine();
-            if (message.Equals("Listing modules on server") || ListResponse.IsHandling) {
-                if (!ListResponse.IsHandling) {
-                    ListResponse.IsHandling = true;
-                }
-                ListResponse response = new ListResponse();
-                response.DelegateMessage = message;
-                response.Process((CvsStream)null, this.Services);
-            } else {
-                // Fire message event to the client app
-                Services.SendMessage("E " + message);
-                String msg = "cvs server: E " + message;
-                LOGGER.Debug (msg);
+            // Fire message event to the client app
+            Services.SendMessage("E " + message);
+            String msg = message;
+            LOGGER.Debug (msg);
 
-                Services.ResponseMessageEvents.SendResponseMessage(msg, this.GetType());
-            }
+            Services.ResponseMessageEvents.SendResponseMessage(msg, 
+                this.GetType());
         }
 
         /// <summary>

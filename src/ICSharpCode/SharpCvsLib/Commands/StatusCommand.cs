@@ -168,6 +168,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                     }
                 }
             }
+
             connection.ResponseMessageEvents.MessageResponseMessageEvent +=
                 new MessageEventHandler(this.WriteEvent);
             connection.SubmitRequest(new StatusRequest());

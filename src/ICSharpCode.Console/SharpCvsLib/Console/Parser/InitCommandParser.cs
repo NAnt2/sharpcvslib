@@ -49,8 +49,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     /// Initialize the cvs repository.
     /// </summary>
     public class InitCommandParser : AbstractCommandParser {
-        private CvsRoot cvsRoot;
-
         /// <summary>
         /// Default constructor.
         /// </summary>
@@ -71,7 +69,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// </summary>
         /// <param name="cvsroot">User Information</param>
         public InitCommandParser(CvsRoot cvsroot) {
-            this.cvsRoot = cvsroot;
+            this.CvsRoot = cvsroot;
         }
 
         /// <summary>
@@ -119,16 +117,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
         public override ICommand CreateCommand () {
             ICSharpCode.SharpCvsLib.Commands.InitCommand initCommand;
-            try {
-                CurrentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
-                    null, null);
-                // Create new InitCommand object
-                initCommand = new ICSharpCode.SharpCvsLib.Commands.InitCommand( this.cvsRoot );
-            }
-            catch (Exception e) {
-                LOGGER.Error (e);
-                throw e;
-            }
+            initCommand = new ICSharpCode.SharpCvsLib.Commands.InitCommand( this.CvsRoot );
             return initCommand;
         }
 

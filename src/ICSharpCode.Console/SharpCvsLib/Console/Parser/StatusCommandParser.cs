@@ -51,24 +51,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     /// Update modules in the cvs repository.
     /// </summary>
     public class StatusCommandParser : AbstractCommandParser {
-        private CvsRoot cvsRootVar;
         private string fileNames;
         private string revision;
-        private string localDirectory;
         private DateTime date;
         private string unparsedOptions;
-        private string repository;
-
-        private CvsRoot CvsRootVar {
-            get { return this.cvsRootVar; }
-            set { this.cvsRootVar = value; }
-        }
-
-        private void InvalidRepository () {
-            System.Console.WriteLine(String.Format("cvs update: No CVSROOT specified!  Please use the `-d' option"));
-            System.Console.WriteLine(String.Format("cvs [update aborted]: or set the CVSROOT environment variable."));
-            System.Environment.Exit(-1);
-        }
 
         /// <summary>
         /// Create a new instance of the <see cref="UpdateCommandParser"/>.
@@ -116,7 +102,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <param name="fileNames">Files</param>
         /// <param name="upOptions">Options</param>
         public StatusCommandParser(CvsRoot cvsroot, string fileNames, string upOptions) {
-            this.cvsRootVar = cvsroot;
+            this.CvsRoot = cvsroot;
             this.fileNames = fileNames;
             this.unparsedOptions = upOptions;
         }
@@ -153,25 +139,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             DirectoryInfo dir = 
                 new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "CVS"));
             StatusCommand statusCommand;
-            this.localDirectory = Directory.GetCurrentDirectory();
-
-            try {
-                this.repository = Repository.Load(dir).FileContents; 
-                this.CvsRoot = new CvsRoot(Root.Load(dir).FileContents);
-            } catch (NullReferenceException) {
-                this.InvalidRepository();
-            } catch (CvsFileNotFoundException) {
-                this.InvalidRepository();
-            } catch (ICSharpCode.SharpCvsLib.Exceptions.CvsRootParseException) {
-                this.InvalidRepository();
-            }
-
-            CurrentWorkingDirectory = new WorkingDirectory(this.CvsRoot,
-                localDirectory, this.repository);
 
             // Create new command object
             statusCommand = new StatusCommand(CurrentWorkingDirectory);
-            statusCommand.Folders = this.GetCurrentDirectory(new DirectoryInfo(localDirectory));
+            statusCommand.Folders = this.GetCurrentDirectory(new DirectoryInfo(this.CurrentDir.FullName));
             this.ParseOptions(statusCommand, this.Args);
 
             return statusCommand;

@@ -50,7 +50,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     /// Commit changes in the cvs repository.
     /// </summary>
     public class CommitCommandParser : AbstractCommandParser {
-        private CvsRoot cvsRoot;
         private string fileNames;
         private string unparsedOptions;
         private string revision;
@@ -81,7 +80,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <param name="fileNames">Files to remove</param>
         /// <param name="ciOptions">Options</param>
         public CommitCommandParser(CvsRoot cvsroot, string fileNames, string ciOptions) {
-            this.cvsRoot = cvsroot;
+            this.CvsRoot = cvsroot;
             this.fileNames = fileNames;
             this.unparsedOptions = ciOptions;
         }
@@ -141,31 +140,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             try {
                 this.ParseOptions(this.unparsedOptions);
                 string cvsFolder = Path.Combine(Environment.CurrentDirectory, "CVS");
-                // set properties before creation of CommitCommand2
-                // Open the Repository file in the CVS directory
-                Manager manager = new Manager(cvsFolder);
-                Repository repository = null;
-                Root root = null;
-                try {
-                    repository = manager.FetchRepository(cvsFolder); 
-                } catch (CvsFileNotFoundException e) {
-                    ConsoleMain.ExitProgram("Not a valid cvs repository.", e);
-                }
-                try {
-                    root = manager.FetchRoot(cvsFolder);
-                    if (null == this.cvsRoot) {
-                        this.cvsRoot = new CvsRoot(root.FileContents);
-                    }
-                } catch (CvsFileNotFoundException e) {
-                    ConsoleMain.ExitProgram("Not a valid cvs repository.", e);
-                }
-                // If this fails error out and the user
-                //    is not in a CVS repository directory tree.
-                CurrentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
-                    cvsFolder, repository.FileContents);
-                if (revision != null) {
-                    this.CurrentWorkingDirectory.Revision = revision;
-                }
 
                 ArrayList files = new ArrayList();
                 if (fileNames == null || fileNames == string.Empty) {

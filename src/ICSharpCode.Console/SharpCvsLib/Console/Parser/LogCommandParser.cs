@@ -50,9 +50,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     /// Initialize the cvs repository.
     /// </summary>
     public class LogCommandParser : AbstractCommandParser {
-        private CvsRoot cvsRoot;
         private string[] unparsedOptions;
-        private string repository;
 
         private string revision;
         private DateTime date;
@@ -80,7 +78,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <param name="cvsroot">User Information</param>
         /// <param name="args">Commandline arguments.</param>
         public LogCommandParser(CvsRoot cvsroot, string[] args) {
-            this.cvsRoot = cvsroot;
+            this.CvsRoot = cvsroot;
             this.unparsedOptions = args;
         }
 
@@ -133,30 +131,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory());
 
             this.ParseOptions(this.unparsedOptions);
-            try {
-                Repository repository = Repository.Load(dir);
-                if (null == repository || null == repository.FileContents) {
-                    throw new CvsFileNotFoundException(
-                        string.Format("Valid CVS\\Repository file not found in {0}",
-                        dir));
-                }
-                this.repository = repository.FileContents;
-                Root root = Root.Load(dir);
-                if (null == root || null == root.FileContents) {
-                    throw new CvsFileNotFoundException(
-                        string.Format("Valid CVS\\Root file not found in {0}",
-                        dir));
-                }   
-                this.cvsRoot = new CvsRoot(root.FileContents);
-            } catch (CvsFileNotFoundException e) {
-                LOGGER.Error(e);
-                ConsoleMain.ExitProgram("Not a CVS repository.", e);
-            }
-
-            CurrentWorkingDirectory = new WorkingDirectory(this.cvsRoot,
-                dir.FullName, this.repository);
-
-
             logCommand = 
                 new ICSharpCode.SharpCvsLib.Commands.LogCommand(
                 CurrentWorkingDirectory, folders);

@@ -39,6 +39,7 @@ using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.FileSystem;
+using ICSharpCode.SharpCvsLib.Messages;
 
 using log4net;
 
@@ -50,6 +51,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     /// <warn>NOTE: Only works on cvsnt servers.</warn>
     /// </summary>
     [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    [Author("Gary Gu", "cvsclient@sourceforge.net", "2005")]
     public class ListCommand : ICommand {
         private class Option {
             public const string DATE = "-D";
@@ -313,8 +315,33 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                 connection.SubmitRequest(new ArgumentRequest(dateArg));
             }
 
+            //Gary Gu - added on 2005/01/17 - starts
+            if(this.workingDirectory.ModuleName.Length > 0) {
+                connection.SubmitRequest(new
+                    ArgumentRequest(this.workingDirectory.ModuleName));
+
+                connection.SubmitRequest(new DirectoryRequest(".",
+                    workingDirectory.CvsRoot.CvsRepository +
+                    "/" + this.workingDirectory.ModuleName));
+            }
+            //Gary Gu - added on 2005/01/17 - ends
+
+            connection.ResponseMessageEvents.ErrorResponseMessageEvent +=
+                new MessageEventHandler(this.WriteEvent);
+            connection.ResponseMessageEvents.MessageResponseMessageEvent +=
+                new MessageEventHandler(this.WriteEvent);
+
             connection.SubmitRequest (new ListRequest());
         }     
+
+        public void WriteEvent(object sender, MessageEventArgs args) {
+            string msg = args.Message;
+            if (null != msg && msg.IndexOf("M ") == 0) {
+                msg = msg.Substring(2);
+            }
+
+            System.Console.WriteLine(msg);
+        }
     }
 }
 

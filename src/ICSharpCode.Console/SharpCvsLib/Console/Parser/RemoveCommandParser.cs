@@ -51,7 +51,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     /// Remove file(s) in the cvs repository.
     /// </summary>
     public class RemoveCommandParser : AbstractCommandParser {
-        private CvsRoot cvsRoot;
         private string fileNames;
         private string unparsedOptions;
 
@@ -79,7 +78,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <param name="fileNames">Files to remove</param>
         /// <param name="rmOptions">Options</param>
         public RemoveCommandParser(CvsRoot cvsroot, string fileNames, string rmOptions) {
-            this.cvsRoot = cvsroot;
+            this.CvsRoot = cvsroot;
             this.fileNames = fileNames;
             this.unparsedOptions = rmOptions;
         }
@@ -138,26 +137,14 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         public override ICommand CreateCommand () {
             ICSharpCode.SharpCvsLib.Commands.RemoveCommand removeCommand;
             this.ParseOptions(this.unparsedOptions);
-            try {
-                String currentDirectory = Environment.CurrentDirectory;
-                Entry removeEntry;
-                // Open the Repository file in the CVS directory
-                Manager manager = new Manager(currentDirectory);
-                Repository repository = manager.FetchRepository(currentDirectory); 
-                removeEntry = manager.FetchEntry(currentDirectory, fileNames );
-                // If this fails error out and state the user
-                //    is not in a CVS repository directory tree.
-                CurrentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
-                    currentDirectory, repository.FileContents);
-                // Create new RemoveCommand object
-                removeCommand = new ICSharpCode.SharpCvsLib.Commands.RemoveCommand(
-                                 this.CurrentWorkingDirectory, currentDirectory,
-                                 removeEntry);
-            }
-            catch (Exception e) {
-                LOGGER.Error (e);
-                throw e;
-            }
+
+            // TODO: I think the fileNames needs to be parsed out
+            Entry removeEntry = Entry.Load(new FileInfo(fileNames));
+
+            // Create new RemoveCommand object
+            removeCommand = new ICSharpCode.SharpCvsLib.Commands.RemoveCommand(
+                                this.CurrentWorkingDirectory, this.CurrentDir.FullName,
+                                removeEntry);
             return removeCommand;
         }
  
