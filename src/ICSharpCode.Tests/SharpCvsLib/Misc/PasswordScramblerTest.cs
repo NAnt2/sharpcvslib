@@ -1,5 +1,5 @@
 #region "Copyright"
-// Copyright (C) 2003 Clayton Harbour
+// Copyright (C) 2003 Gerald Evans
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,7 +27,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author: Gerald Evans
+//    <author>Gerald Evans</author>
 #endregion
 
 using System;
