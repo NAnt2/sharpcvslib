@@ -123,9 +123,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// Gets a file handler for files that are not zipped.
         /// </summary>
 		public IFileHandler UncompressedFileHandler {
-			get {
-				return uncompressedFileHandler;
-			}
+			get {return uncompressedFileHandler;}
 		}
 		
 		/// <summary>
