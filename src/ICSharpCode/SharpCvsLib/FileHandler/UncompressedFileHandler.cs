@@ -98,27 +98,17 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
 
             inputStream.ReadBlock(buffer, length);
 
-            // write to a temp file
-            string tmpFileName = Path.GetTempFileName();
-            FileStream tmpFile = File.Create(tmpFileName);
-            tmpFile.Write(buffer, 0, length);
-            tmpFile.Close();
-
-            StreamReader tmpTxtFile = File.OpenText(tmpFileName);
-            StreamWriter fs = File.CreateText(fileName);
-            while (true) {
-                string line = tmpTxtFile.ReadLine();
-//                if (line == null || line.Length == 0 || String.Empty == line) {
-                if (line == null) {
-                    break;
+            // Take care to preserve none printable or other culture token
+            // encodings
+            using (MemoryStream ms = new MemoryStream(buffer, 0, length)) {
+                StreamReader sr = new StreamReader(ms, Encoding.Default);
+                StreamWriter sw = new StreamWriter(fileName, false, Encoding.Default);
+                while (sr.Peek() >= 0) {
+                    sw.WriteLine(sr.ReadLine());
                 }
-                fs.WriteLine(line);
+                sw.Close();
+                sr.Close();
             }
-            tmpTxtFile.Close();
-            fs.Close();
-
-            // delete temp file
-            File.Delete(tmpFileName);
         }
 
         /// <summary>
