@@ -29,6 +29,7 @@
 // exception statement from your version.
 //
 //    <author>Steve Kenzell</author>
+//    <author>Clayton Harbour</author>
 #endregion
 using System;
 using System.Globalization;
@@ -43,34 +44,32 @@ using ICSharpCode.SharpCvsLib.FileSystem;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Console.Commands {
+namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
     /// <summary>
     /// Add file(s) in the cvs repository.
     /// </summary>
-    public class AddCommand {
-        private WorkingDirectory currentWorkingDirectory;
+    public class AddCommandParser : AbstractCommandParser {
         private CvsRoot cvsRoot;
         private string fileNames;
         private string unparsedOptions;
         private string message;
         private string kflag; // could be enumeration
-        private readonly ILog LOGGER = 
-            LogManager.GetLogger (typeof(AddCommand));
 
         /// <summary>
-        /// The current working directory.
+        /// Default constructor.
         /// </summary>
-        public WorkingDirectory CurrentWorkingDirectory {
-            get {return this.currentWorkingDirectory;}
+        public AddCommandParser () {
+
         }
+
         /// <summary>
         /// Add file(s) from a cvs repository.
         /// </summary>
         /// <param name="cvsroot">User information</param>
         /// <param name="fileNames">Files to remove</param>
         /// <param name="adOptions">Options</param>
-        public AddCommand(string cvsroot, string fileNames, string adOptions) : 
+        public AddCommandParser(string cvsroot, string fileNames, string adOptions) : 
             this(new CvsRoot(cvsroot), fileNames, adOptions){
         }
 
@@ -80,7 +79,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <param name="cvsroot">User Information</param>
         /// <param name="fileNames">Files to remove</param>
         /// <param name="adOptions">Options</param>
-        public AddCommand(CvsRoot cvsroot, string fileNames, string adOptions) {
+        public AddCommandParser(CvsRoot cvsroot, string fileNames, string adOptions) {
             this.cvsRoot = cvsroot;
             this.fileNames = fileNames;
             this.unparsedOptions = adOptions;
@@ -94,7 +93,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <exception cref="Exception">TODO: Make a more specific exception</exception>
         /// <exception cref="NotImplementedException">If the command argument
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
-        public ICommand CreateCommand () {
+        public override ICommand CreateCommand () {
             ICSharpCode.SharpCvsLib.Commands.AddCommand addCommand;
             this.ParseOptions(this.unparsedOptions);
             try {
@@ -103,13 +102,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 Repository repository = manager.FetchRepository(Environment.CurrentDirectory); 
                 // If this fails error out and state the user
                 //    is not in a CVS repository directory tree.
-                currentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
+                CurrentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
                     Environment.CurrentDirectory, repository.FileContents);
-                currentWorkingDirectory.OverrideDirectory = Environment.CurrentDirectory;
+                CurrentWorkingDirectory.OverrideDirectory = Environment.CurrentDirectory;
                 // If fileNames has a wild card (*) like '*.txt'
                 // Create new AddCommand object
                 addCommand = new ICSharpCode.SharpCvsLib.Commands.AddCommand(
-                                 this.currentWorkingDirectory);
+                                 this.CurrentWorkingDirectory);
 
                 String[] files = Directory.GetFiles(Environment.CurrentDirectory, fileNames);
                 ArrayList copiedFiles = new ArrayList ();
@@ -197,6 +196,21 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 }
             }
             return folders;
+        }
+
+        /// <summary>
+        /// Output the command usage and arguements.
+        /// </summary>
+        public override string Usage {
+            get {
+                string usage = 
+@"Usage: cvs add [-k rcs-kflag] [-m message] files...
+        -k      Use ""rcs-kflag"" to add the file with the specified kflag.
+        -m      Use ""message"" for the creation log.
+(Specify the --help global option for a list of other help options)";
+
+                return usage;
+            }
         }
     }
 }
