@@ -3,7 +3,9 @@
         http://sharpcvslib.sourceforge.net
 -->
 <project name="Sharpcvslib" default="run-tests-sample">
-    <include buildfile="SharpCvsLib.local.xml" failonerror="false"/>
+    <if test="${file::exists('SharpCvsLib.local.xml')}">
+       <include buildfile="SharpCvsLib.local.xml" />
+    </if>
     <include buildfile="SharpCvsLib.common.xml" />
     <!-- Targets -->
     <target name="src.update" description="Updates the source from cvs.">
@@ -51,10 +53,10 @@
 
     <target name="update.version" description="Generate the assembly info file for the project.  Pass in the version number.">
         <!-- Gets the version number and places it in a property called build.version -->
-        <ifnot propertyexists="assembly.version">
-            <version    buildtype="monthday" 
-                        path="build.number" 
-                        revisiontype="automatic" 
+        <ifnot test="${property::exists('assembly.version')}">
+            <version    buildtype="monthday"
+                        path="build.number"
+                        revisiontype="automatic"
                         startDate="${assembly.start-date}"
                         prefix="assembly." />
             <property name="assembly.version" value="${assembly.version}" />
