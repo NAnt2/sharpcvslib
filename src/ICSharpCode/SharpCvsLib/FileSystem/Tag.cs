@@ -81,6 +81,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         public static Tag Load (DirectoryInfo cvsDir) {
+            if (cvsDir.Name != "CVS") {
+                cvsDir = new DirectoryInfo(
+                    System.IO.Path.Combine(cvsDir.FullName, "CVS"));
+            }
             return Load (
                 new FileInfo(
                 System.IO.Path.Combine(cvsDir.FullName, Tag.FILE_NAME)));

@@ -58,25 +58,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private string unparsedOptions;
 
         private CvsRoot CvsRootVar {
-            get {
-                if (null == cvsRootVar) {
-                    try {
-                        Manager m = new Manager(Environment.CurrentDirectory);
-                        Root root = m.FetchRoot(Environment.CurrentDirectory);
-                        this.cvsRootVar = new CvsRoot(root.FileContents);
-                    } catch (CvsFileNotFoundException) {
-                        this.cvsRootVar = new CvsRoot(Environment.GetEnvironmentVariable("CVSROOT"));
-
-                        if (null == this.cvsRootVar) {
-                            this.InvalidRepository();
-                        }
-                    }
-                }
-                return this.cvsRootVar;
-            }
-            set {
-                this.cvsRootVar = value;
-            }
+            get { return this.cvsRootVar; }
+            set { this.cvsRootVar = value; }
         }
 
         private void InvalidRepository () {
@@ -165,15 +148,18 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <exception cref="NotImplementedException">If the command argument
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
         public override ICommand CreateCommand () {
+            DirectoryInfo dir = 
+                new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "CVS"));
+
             UpdateCommand2 updateCommand;
 
             this.ParseOptions(this.unparsedOptions);
-            Manager manager = new Manager(Environment.CurrentDirectory);
+            // note the sandbox is actually above the CVS directory
+            Manager manager = new Manager(dir.Parent);
 
             Repository repository = null;
             Root root = null;
-            DirectoryInfo dir = 
-                new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "CVS"));
+
             try {
                 repository = Repository.Load(dir); 
                 root = Root.Load(dir);
@@ -207,7 +193,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 CurrentWorkingDirectory.Date = date;
             }
             CurrentWorkingDirectory.FoldersToUpdate =
-                manager.FetchFilesToUpdate (Environment.CurrentDirectory);
+                manager.FetchFilesToUpdate (dir.FullName);
             // Create new UpdateCommand2 object
             updateCommand = new UpdateCommand2(CurrentWorkingDirectory);
 

@@ -108,7 +108,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
         public static Repository Load (DirectoryInfo cvsDir) {
             if (cvsDir.Name != "CVS") {
-                throw new ArgumentException("Not a valid CVS directory", "cvsDir");
+                cvsDir = new DirectoryInfo(
+                    System.IO.Path.Combine(cvsDir.FullName, "CVS"));
             }
 
             return Load(new FileInfo(System.IO.Path.Combine(

@@ -211,42 +211,45 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public Folder[] FetchFilesToUpdate (String directory) {
             Folders folders = new Folders ();
             Folder folder = new Folder ();
+            DirectoryInfo dir = new DirectoryInfo(directory);
             try {
-                folder.Repository = 
-                    this.FetchRepository (directory);
-                folder.Entries = this.FetchEntries(Path.Combine(directory, Entry.FILE_NAME));
+                folder.Repository = Repository.Load(dir);
+                folder.Entries = Entries.Load(dir);
 
                 folders.Add (directory, folder);
             } catch (CvsFileNotFoundException) {
                 // File not found, this is normal recursing through the tree.
             }
 
-            if (!PathTranslator.IsCvsDir(directory)) {
-                this.FetchFilesToUpdateRecursive (folders, directory);
+            if (dir.Name != "CVS") {
+                this.FetchFilesToUpdateRecursive (folders, dir);
+            } else if (this.IsInSandbox(dir.Parent.FullName) &&
+                dir.Parent.Name != "CVS") {
+                this.FetchFilesToUpdateRecursive (folders, dir.Parent);
             }
 
             return (Folder[])(new ArrayList(folders.Values)).ToArray (typeof (Folder));
         }
 
         private void FetchFilesToUpdateRecursive (Folders folders,
-                String directory) {
+                DirectoryInfo dir) {
 
-            foreach (String subDir in Directory.GetDirectories (directory)) {
-                Folder folder = new Folder ();
-
-                try {
-                    folder.Repository = (Repository)this.FetchRepository (directory);
-                    Entries colEntries = this.FetchEntries (Path.Combine(directory, Entry.FILE_NAME));
-
-                    foreach (DictionaryEntry dicEntry in colEntries) {
-                        Entry entry = (Entry)dicEntry.Value;
-                        folder.Entries.Add (entry.FullPath, entry);
-                    }
-                    folders.Add (subDir, folder);
-                } catch (CvsFileNotFoundException) {
-                    //File not found, this is normal recursing through the tree.
-                }
+            foreach (DirectoryInfo subDir in dir.GetDirectories()) {
                 if (!PathTranslator.IsCvsDir(subDir)) {
+                    Folder folder = new Folder ();
+
+                    try {
+                        folder.Repository = Repository.Load(dir);
+                        Entries colEntries = Entries.Load(dir);
+
+                        foreach (DictionaryEntry dicEntry in colEntries) {
+                            Entry entry = (Entry)dicEntry.Value;
+                            folder.Entries.Add (entry.FullPath, entry);
+                        }
+                        folders.Add (subDir.FullName, folder);
+                    } catch (CvsFileNotFoundException) {
+                        //File not found, this is normal recursing through the tree.
+                    }
                     this.FetchFilesToUpdateRecursive (folders, subDir);
                 }
             }

@@ -570,30 +570,26 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         }
 
         /// <summary>
+        /// <p>
         /// Parse the command line arguments to determine if there are any help
         ///     requests.  If there are help requests then return true, this can
         ///     then be used to direct the flow of the application to not evaulate
         ///     any other commands.
-        ///     
+        /// </p>
+        /// <p>     
         ///     Also looks at all -- command line arguments, this will be assumed 
         ///     to have been attempts at help but were malformed.
-        ///     
-        ///     Later this can be used to handle command help options.
+        /// </p>
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>
         /// <example>
-        ///         Parses help commands such as:
-        ///                 cvs --help
-        ///                 cvs --help-options
-        ///                 cvs --help-commands
-        ///                 cvs --help-synonyms
-        ///                 
-        ///         TODO: FUTURE REVSIONS should also parse something like
-        ///                 cvs --help co
-        ///                 cvs --help commit
-        ///                 cvs --help rtag
-        ///                 ...
+        /// <br/>        Parses help commands such as:
+        /// <br/>           cvs --help
+        /// <br/>           cvs --help-options
+        /// <br/>           cvs --help-commands
+        /// <br/>           cvs --help-synonyms
+        /// <br/>           
         /// </example>
         private bool ParseHelp (String[] args) {
             if (args.Length < 1) {
