@@ -10,8 +10,8 @@
     <property name="console.name" value="scvs" />
     <property name="tests.name" value="ICSharpCode.SharpCvsLib.Tests" />
     
-<!--    <property name="nant.settings.currentframework" value = "net-1.0"/>-->
-    <property name="nant.settings.currentframework" value = "mono-1.0"/>
+    <property name="nant.settings.currentframework" value = "net-1.0"/>
+<!--    <property name="nant.settings.currentframework" value = "mono-1.0"/>-->
 
     <property name="build.dir" value="build/bin" /> 
     <property name="conf.dir" value="conf" />
@@ -21,19 +21,28 @@
     <property name="lib.ext.dir" value="${lib.dir}/ext" />
 
     <property name="log4net" value="log4net.dll" />
-<!--
-    <property name="nunit" value="NUnit.Framework-mono.dll" />    
--->
     <property name="nunit" value="nunit.framework.dll" />    
     <property name="ziplib" value="ICSharpCode.SharpZipLib.dll" />
         
-    <target name="Debug" depends="SharpCvsLib.Debug" />
+    <target name="Debug" depends="update.src, SharpCvsLib.Debug" />
     <target name="Release" depends="SharpCvsLib.Release" />
     
     <!-- Documentation variables -->
     <property name="copyright-text" value="Mike Krueger 2001-2002, Clayton Harbour 2003" />
     <property name="copyright-href" value="http://www.gnu.org/copyleft/lesser.html#TOC1" />
     
+    <target name="update.src" description="Updates the source from cvs.">
+<!--       <cvs-update  module="nant" 
+                    cvsroot=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/nant"
+                    destination="e:/dev/build/nant/"
+                    password="" />-->
+        <exec 
+            basedir="." 
+            program="E:/dev/build/sharpcvslib/cvswithplinkrsh.bat" 
+            commandline="-q update -P -d" 
+        />
+    </target>
+
     <target name="setup">
         <mkdir dir="${build.dir}" />
         <copy todir="${build.dir}">
