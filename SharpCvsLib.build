@@ -9,11 +9,12 @@
     
     <property name="nant.settings.currentframework" value = "net-1.0"/>
 
+    <property name="build.dir" value="build/bin" /> 
+    <property name="conf.dir" value="conf" />
+    <property name="dist.dir" value="dist" />
     <property name="src.dir" value="src" />
     <property name="lib.dir" value="lib" />
     <property name="lib.ext.dir" value="${lib.dir}/ext" />
-    <property name="build.dir" value="build/bin" /> 
-    <property name="dist.dir" value="dist" />
 
     <property name="log4net" value="log4net-net-1.0.dll" />
     <property name="nunit" value="nunit.framework.dll" />
@@ -25,16 +26,20 @@
     <target name="setup">
         <mkdir dir="${build.dir}" />
         <copy todir="${build.dir}">
-             <fileset basedir="${lib.dir}">
-                    <includes name="${ziplib}" />
-                    <includes name="conf/**/*.conf" />
-               </fileset>
-          </copy>        
-          <copy todir="${build.dir}">
-              <fileset basedir="${lib.ext.dir}">
+            <fileset basedir="${lib.dir}">
+                <includes name="${ziplib}" />
+            </fileset>
+        </copy>        
+        <copy todir="${build.dir}">
+            <fileset basedir="${lib.ext.dir}">
                 <includes name="${log4net}" />
-              </fileset>
-          </copy>
+            </fileset>
+        </copy>
+        <copy todir="${build.dir}">
+            <fileset basedir="${conf.dir}">
+                <includes name="*.config" />
+            </fileset>
+        </copy>
     </target>
 
     <target name="setup.tests">
@@ -61,21 +66,32 @@
                 <excludes name="**/build**" />
             </fileset>
         </copy>
+        <zip zipfile="${dist.dir}/${assembly.version}/${assembly.name}-${assembly.version}-src.zip">
+            <fileset basedir="${dist.src}">
+                <includes name="**/**.*" />
+            </fileset>
+        </zip>
     </target>
     
     <target name="dist.bin">
         <property name="dist.bin" value="${dist.dir}/${assembly.version}/bin" />
         
         <mkdir dir="${dist.bin}" />
-        
+        <echo message="${build.dir}" />
         <copy todir="${dist.bin}/${assembly.name}">
-            <fileset basedir="{build.dir}">
+            <fileset basedir="${build.dir}">
                 <includes name="**/**.dll"/>
                 <includes name="**/**.config"/>
             </fileset>
         </copy>
+        
+        <zip zipfile="${dist.dir}/${assembly.version}/${assembly.name}-${assembly.version}-bin.zip">
+            <fileset basedir="${dist.bin}">
+                <includes name="**/**.*" />
+            </fileset>
+        </zip>
     </target>
-    <target name="dist"> <!-- depends="SharpCvsLib.Release">-->
+    <target name="dist" depends="SharpCvsLib.Release">
         <call target="dist.src" />
         <call target="dist.bin" />
     </target>
