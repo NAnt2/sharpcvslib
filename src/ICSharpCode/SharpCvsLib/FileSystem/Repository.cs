@@ -123,7 +123,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     </ul>
         /// </example>
         public override void Parse (String line) {
-            this.moduleName = line.Substring(0, line.IndexOf("/"));
+            int moduleLength = line.Length;
+            if (line.IndexOf("/") > -1) {
+                moduleLength = line.IndexOf("/");
+            }
+            this.moduleName = line.Substring(0, moduleLength);
             this.FileContents = line;
         }
 

@@ -144,7 +144,21 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 // set properties before creation of CommitCommand2
                 // Open the Repository file in the CVS directory
                 Manager manager = new Manager(cvsFolder);
-                Repository repository = manager.FetchRepository(cvsFolder); 
+                Repository repository = null;
+                Root root = null;
+                try {
+                    repository = manager.FetchRepository(cvsFolder); 
+                } catch (CvsFileNotFoundException e) {
+                    ConsoleMain.ExitProgram("Not a valid cvs repository.", e);
+                }
+                try {
+                    root = manager.FetchRoot(cvsFolder);
+                    if (null == this.cvsRoot) {
+                        this.cvsRoot = new CvsRoot(root.FileContents);
+                    }
+                } catch (CvsFileNotFoundException e) {
+                    ConsoleMain.ExitProgram("Not a valid cvs repository.", e);
+                }
                 // If this fails error out and the user
                 //    is not in a CVS repository directory tree.
                 CurrentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
@@ -152,14 +166,16 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 if (revision != null) {
                     this.CurrentWorkingDirectory.Revision = revision;
                 }
-                String[] files = Directory.GetFiles(cvsFolder, fileNames);
-                ArrayList copiedFiles = new ArrayList ();
-                foreach (String file in files) {
-                    LOGGER.Debug("file=[" + file + "]");
-                    String fullPath = Path.Combine(cvsFolder, file);
-                    copiedFiles.Add(fullPath);
+
+                ArrayList files = new ArrayList();
+                if (fileNames == null || fileNames == string.Empty) {
+                    this.GetFilesRecursive((new DirectoryInfo(cvsFolder)).Parent, files);
+                } else {
+                    DirectoryInfo cvsFolderInfo = new DirectoryInfo(cvsFolder);
+                    files = new ArrayList(cvsFolderInfo.GetFiles(fileNames));
                 }
-                CurrentWorkingDirectory.Folders = GetFoldersToCommit(copiedFiles);
+
+                CurrentWorkingDirectory.Folders = GetFoldersToCommit(files);
                 // Create new CommitCommand2 object
                 commitCommand = new ICSharpCode.SharpCvsLib.Commands.CommitCommand2(
                     this.CurrentWorkingDirectory );
@@ -188,33 +204,46 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private Folders GetFoldersToCommit (ICollection filesCommitted) {
             Folders folders = new Folders();
             Manager manager = new Manager(Environment.CurrentDirectory);
-            LOGGER.Debug("Number of files copied=[" + filesCommitted.Count + "]");
-            foreach (String file in filesCommitted) {
+            foreach (FileInfo file in filesCommitted) {
                 Folder folder;
-                if (!folders.Contains(Path.GetDirectoryName(file))) {
+                if (!folders.Contains(file.DirectoryName)) {
                     folder = new Folder();
-                    LOGGER.Debug("file=[" + file + "]");
-                    LOGGER.Debug("file path=[" + Path.GetDirectoryName(file) + "]");
-                    string cvsFolder = Path.Combine(Path.GetDirectoryName(file), "CVS");
+                    string cvsFolder = Path.Combine(file.DirectoryName, "CVS");
                     folder.Repository = 
                         manager.FetchRepository(cvsFolder);
                     folder.Root = 
-                        manager.FetchRoot(Path.GetDirectoryName(cvsFolder));
-                    folder.Tag = 
-                        manager.FetchTag(Path.GetDirectoryName(cvsFolder));
-                    folders.Add(Path.GetDirectoryName(file), folder);
+                        manager.FetchRoot(cvsFolder);
+                    try {
+                        folder.Tag = 
+                            manager.FetchTag(cvsFolder);
+                    } catch (CvsFileNotFoundException) {
+                        // ignore, tag missing normal
+                    }
+                    folders.Add(file.DirectoryName, folder);
                 } 
                 else {
-                    folder = folders[Path.GetDirectoryName(file)];
+                    folder = folders[file.DirectoryName];
                 }
-                if (!folder.Entries.Contains(file)) {
-                    Entry entry = Entry.CreateEntry(new FileInfo(file));
-                    folder.Entries.Add (file, entry);
+                if (!folder.Entries.Contains(file.FullName)) {
+                    Entry entry = Entry.CreateEntry(file);
+                    folder.Entries.Add (file.FullName, entry);
                 } else {
-                    folder.Entries[file] = Entry.CreateEntry(new FileInfo(file));
+                    folder.Entries[file.FullName] = Entry.CreateEntry(file);
                 }
             }
             return folders;
+        }
+
+        private void GetFilesRecursive(DirectoryInfo dir, ArrayList files) {
+            if (!(dir.Name.IndexOf("CVS") > -1)) {
+                foreach (FileInfo file in dir.GetFiles()) {
+                    files.Add(file);
+                }
+
+                foreach (DirectoryInfo dirInfo in dir.GetDirectories()) {
+                    this.GetFilesRecursive(dirInfo, files);
+                }
+            }
         }
 
         /// <summary>

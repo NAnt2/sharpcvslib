@@ -143,6 +143,22 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
             this.Parse(fileContents);
 		}
 
+        protected static string LoadFile(string filePath) {
+            return LoadFile(new FileInfo(filePath));
+        }
+
+        /// <summary>
+        /// Load the file from the current directory.
+        /// </summary>
+        /// <returns>The string contents of the file.</returns>
+        protected static string LoadFile (FileInfo filePath) {
+            string fileContents;
+            using (StreamReader reader = new StreamReader(filePath.FullName)) {
+                fileContents = reader.ReadToEnd();
+            }
+            return fileContents;
+        }
+
         /// <summary>
         /// Parse command that must be overridden for subclasses.
         /// </summary>

@@ -303,6 +303,17 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         /// <summary>
+        /// Load file using the current directory, if the file cannot be found
+        /// in the current directory appends cvs and tries again.
+        /// </summary>
+        public Entry Load() {
+            FileInfo entryPath = new FileInfo(
+                System.IO.Path.Combine(System.IO.Path.Combine(Environment.CurrentDirectory, "CVS"), 
+                "Entries"));
+            return new Entry(entryPath.DirectoryName, LoadFile(entryPath));
+        }
+
+        /// <summary>
         /// Creates an <see cref="Entry"/> object that manages the file being passed in.
         /// </summary>
         /// <param name="managedFile">The file that is under cvs control.</returns>
