@@ -182,6 +182,9 @@ public class CheckoutCommand{
             if (revision != null){
                 workingDirectory.Revision = revision;
             }
+            if (date.Equals(null)) {
+                workingDirectory.Date = date;
+            }
             // Create new CheckoutModuleCommand object
             getCommand = new CheckoutModuleCommand(workingDirectory);
         }

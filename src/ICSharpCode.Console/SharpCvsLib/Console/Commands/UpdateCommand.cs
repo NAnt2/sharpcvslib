@@ -227,6 +227,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 if (revision != null) {
                     workingDirectory.Revision = revision;
                 }
+                if (date.Equals(null)) {
+                    workingDirectory.Date = date;
+                }
                 // Create new UpdateCommand2 object
                 updateCommand = new UpdateCommand2(workingDirectory);
             }
