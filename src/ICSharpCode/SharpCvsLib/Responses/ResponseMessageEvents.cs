@@ -32,6 +32,7 @@
 #endregion
 
 using System;
+using log4net;
 
 using ICSharpCode.SharpCvsLib.Messages;
 
@@ -40,6 +41,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	/// Encapsulates the messages that can be triggered by a cvs server response.
 	/// </summary>
 	public class ResponseMessageEvents {
+        private readonly ILog LOGGER = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         /// <summary>
         /// Occurs when a file is being updated from the repository.
         /// </summary>
@@ -86,20 +88,28 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             }
 
             if (responseType == typeof(UpdatedResponse)) {
-                this.UpdatedResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.DEFAULT_PREFIX));
+                if (null != this.UpdatedResponseMessageEvent) {
+                    this.UpdatedResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.DEFAULT_PREFIX));
+                }
             } else if (responseType == typeof(SetStaticDirectoryResponse)) {
-                this.SetStaticDirectoryResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
+                if (null != this.SetStaticDirectoryResponseMessageEvent) {
+                    this.SetStaticDirectoryResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
+                }
             }  else if (responseType == typeof(ClearStaticDirectoryResponse)) {
-                this.ClearStaticDirectoryResponseMessageEvent(this, 
-                    new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
+                if (null != this.ClearStaticDirectoryResponseMessageEvent) {
+                    this.ClearStaticDirectoryResponseMessageEvent(this, 
+                        new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
+                }
             } else if (responseType == typeof(ErrorResponse) || responseType == typeof(ErrorMessageResponse)) {
-                if (ErrorResponseMessageEvent != null) {
+                if (null != ErrorResponseMessageEvent) {
                     this.ErrorResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.ERROR_PREFIX));
                 }
+            } else {
+                if (null != this.UnspecifiedResponseMessageEvent) {
+                    this.UnspecifiedResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
+                }
             }
-            else {
-                this.UnspecifiedResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
-            }
+
         }
 	}
 }

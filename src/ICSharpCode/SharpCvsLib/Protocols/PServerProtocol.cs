@@ -90,7 +90,9 @@ namespace ICSharpCode.SharpCvsLib.Protocols
         /// Disconnect from the cvs server.
         /// </summary>
         public override void Disconnect() {
-            this.TcpClient.Close();
+            if (null != this.TcpClient) {
+                this.TcpClient.Close();
+            }
         }
 
         ///<summary>Either accept the pserver authentication response from the server or if the user
