@@ -242,6 +242,7 @@
         <copy todir="${dir.dist}/bin">
             <fileset basedir="${dir.bin}">
                 <includes name="**/**.dll"/>
+                <includes name="**/**.exe"/>
                 <includes name="**/**.config"/>
             </fileset>
         </copy>
