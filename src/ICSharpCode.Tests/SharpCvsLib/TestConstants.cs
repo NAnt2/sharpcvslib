@@ -46,11 +46,11 @@ namespace ICSharpCode.SharpCvsLib {
         ///     Cvs root to use for test cases.
         /// </summary>
         public const String CVSROOT = 
-            ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/nant";
+            ":pserver:anonymous@linux.sporadicism.com:/home/cvs/src";
         /// <summary>
         ///     Project/ module to use.
         /// </summary>
-        public const String MODULE = "nant";
+        public const String MODULE = "Sporadicism.Blogger";
         /// <summary>
         ///     The valid password for a login.
         /// </summary>
@@ -62,11 +62,11 @@ namespace ICSharpCode.SharpCvsLib {
         /// <summary>
         ///     The file that will be checked after update/ checkout.
         /// </summary>
-        public const String TARGET_FILE = "NAnt.build";
+        public const String TARGET_FILE = "blogger.build";
         /// <summary>
         ///     The directory that will be searched for after an update/ checkout.
         /// </summary>
-        public const String TARGET_DIRECTORY = "bin";
+        public const String TARGET_DIRECTORY = "src";
         
     }
 }

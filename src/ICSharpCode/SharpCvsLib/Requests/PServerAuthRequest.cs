@@ -23,7 +23,10 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using System;
 using ICSharpCode.SharpCvsLib.Misc;
+
+using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Requests { 
 	
@@ -36,6 +39,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
 		private string cvsroot;
 		private string username;
 		private string password;
+	    
+	    private readonly ILog LOGGER = 
+	        LogManager.GetLogger (typeof (PServerAuthRequest));
 		
         /// <summary>
         /// Constructor.
@@ -55,6 +61,13 @@ namespace ICSharpCode.SharpCvsLib.Requests {
         /// </summary>
 		public override string RequestString {
 			get {
+			    if (LOGGER.IsDebugEnabled) {
+			        String msg = "Password Scrambled=[" +
+                                  PasswordScrambler.Scramble (password) +
+                                  "]";
+
+			        LOGGER.Debug (msg);
+			    }
 				return "BEGIN AUTH REQUEST\n" + 
 						cvsroot + "\n" +
 						username + "\n" +

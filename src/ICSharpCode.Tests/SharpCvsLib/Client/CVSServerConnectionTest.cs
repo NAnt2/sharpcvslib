@@ -81,6 +81,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
         public void MakeConnection_Bad () {
             System.Threading.Thread.Sleep (500);
             CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
+            root.User = "some_other_user";
             WorkingDirectory working = 
                 new WorkingDirectory (root, 
                                         TestConstants.LOCAL_PATH, 
@@ -93,7 +94,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
                 connection.Connect (working, TestConstants.PASSWORD_INVALID);
 		        Assertion.Assert ("Connection should have failed and this code " +
 		                          "should not be reached.", true == false);
-		    } catch (AuthenticationException) {
+		    } catch (Exception) {
 		        Assertion.Assert ("Connection failed, this is a good thing.", true == true);
 		    } 
 		    

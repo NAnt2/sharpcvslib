@@ -283,12 +283,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
         ///     </ol>
         /// </summary>
 		public string Shell {
-			get {
-				return shell;
-			}
-			set {
-				shell = value;
-			}
+			get {return shell;}
+			set {shell = value;}
 		}
 		
 		private Process p = null; 
@@ -346,11 +342,11 @@ namespace ICSharpCode.SharpCvsLib.Client {
 					outputstream = new CvsStream(new BufferedStream(p.StandardInput.BaseStream));
 					break;
 				case "pserver":
-					tcpclient = new TcpClient();
+			        tcpclient = new TcpClient ();
 			        tcpclient.SendTimeout = this.Timeout;
-					tcpclient.Connect(repository.CvsRoot.Host, DEFAULT_PORT);
-					inputstream  = outputstream = new CvsStream(tcpclient.GetStream());
 			        
+				    tcpclient.Connect(repository.CvsRoot.Host, DEFAULT_PORT);
+					inputstream  = outputstream = new CvsStream(tcpclient.GetStream());
 			        if (LOGGER.IsDebugEnabled) {
 			            String msg = "Before submitting pserver connect request.  " +
 			                "repository.CvsRoot.CvsRepository=[" + repository.CvsRoot.CvsRepository + "]" +
@@ -358,9 +354,17 @@ namespace ICSharpCode.SharpCvsLib.Client {
 			                "password=[" + password + "]";
 			            LOGGER.Debug (msg);
 			        }
-					SubmitRequest(new PServerAuthRequest(repository.CvsRoot.CvsRepository, 
-					                                     repository.CvsRoot.User, 
-					                                     password));
+			        for (int i=0; i < 5; i++) {
+			            try {
+        					SubmitRequest(new PServerAuthRequest(repository.CvsRoot.CvsRepository, 
+        					                                     repository.CvsRoot.User, 
+        					                                     password));
+        	                break;
+			            } catch (Exception e) {
+			                LOGGER.Error (e);
+			            }
+			        }
+
 					inputstream.Flush();
 
                     string retStr;			        
@@ -395,7 +399,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
 			SubmitRequest(new RootRequest(repository.CvsRoot.CvsRepository));
 			SubmitRequest(new UseUnchangedRequest());
 		}
-		
+				
         /// <summary>
         /// Convert the specified path to winnt format.
         /// </summary>
@@ -468,6 +472,6 @@ namespace ICSharpCode.SharpCvsLib.Client {
 					break;
 				}
 			}
-		}
+		}		
 	}
 }

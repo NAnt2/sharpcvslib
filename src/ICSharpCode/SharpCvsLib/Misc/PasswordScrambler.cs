@@ -32,6 +32,8 @@
 
 using System;
 
+using log4net;
+
 namespace ICSharpCode.SharpCvsLib.Misc { 
 	
 	/// <summary>
@@ -48,6 +50,8 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 	/// </summary>
 	public class PasswordScrambler 
 	{
+	    private static readonly ILog LOGGER = 
+	        LogManager.GetLogger (typeof (PasswordScrambler));
 		/// <summary>
 		/// Map characters to each other randomly and symmetrically, A &lt;--&gt; B.
 		/// 
@@ -90,11 +94,17 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 	    {
 	        string str = "A";
 	
-	        if (text != null) {
-	        	foreach (char ch in text) {
-	        		str += (char)shifts[(byte)ch];
-	        	}
+	        if (LOGGER.IsDebugEnabled) {
+	            String msg = "text to scramble=[" + text + "]";
+	            LOGGER.Debug (msg);
 	        }
+	        if (text == null || text == String.Empty) {
+	            return str;
+	        }
+	        
+        	foreach (char ch in text) {
+        		str += (char)shifts[(byte)ch];
+        	}
 	        return str;
 	    }
 	    

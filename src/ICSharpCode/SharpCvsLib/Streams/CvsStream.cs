@@ -34,6 +34,8 @@ using System.IO;
 using System.Text;
 using System.Threading;
 
+using log4net;
+
 namespace ICSharpCode.SharpCvsLib { 
 	
     /// <summary>
@@ -41,6 +43,7 @@ namespace ICSharpCode.SharpCvsLib {
     /// </summary>
 	public class CvsStream : Stream
 	{
+	    private readonly ILog LOGGER = LogManager.GetLogger (typeof (CvsStream));
 		Stream baseStream;
 		
         /// <summary>
