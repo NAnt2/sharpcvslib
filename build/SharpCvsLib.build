@@ -75,6 +75,7 @@
         <call target="setup" />
         <call target="build.lib" />
         <call target="build.console" />
+        <call target="build.addin" />
         <call target="build.test" />
         <call target="build.test-sample" />
         <call target="build.examples"/>
@@ -86,6 +87,10 @@
 
     <target name="build.console" depends="setup, build.lib">
         <nant buildfile="${dir.build}/${name.console}.build.xml" target="build"/>
+    </target>
+    
+    <target name="build.addin" depends="build.lib">
+		<nant buildfile="${dir.build}/${name.addin}.build.xml" target="build" />
     </target>
     
     <target name="build.test" depends="setup">
