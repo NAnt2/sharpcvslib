@@ -84,7 +84,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         [TearDown]
         public void TearDown () {
-//           this.CleanTempDirectory ();
+           this.CleanTempDirectory ();
         }
 
         

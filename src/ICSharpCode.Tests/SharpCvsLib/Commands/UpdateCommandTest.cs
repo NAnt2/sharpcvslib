@@ -98,7 +98,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// </summary>
 		[TearDown]
         public void TearDown () {
-//            this.CleanUp ();
+            this.CleanUp ();
         }
 
         private void CleanUp () {
