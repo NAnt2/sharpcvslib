@@ -19,7 +19,8 @@
                     module="${cvs.module}"
                     cvsrsh="ssh"
                     overwritelocal="true"
-                    usesharpcvslib="false">
+                    usesharpcvslib="false"
+                    verbose="true">
             <fileset>
                 <include name="${dir.build}/build.number"/>
                 <include name="${dir.src}/SharpCvsLibAssemblyInfo.cs"/>
