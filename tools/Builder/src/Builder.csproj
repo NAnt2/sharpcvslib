@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "WinExe"
                 PreBuildEvent = ""
-                PostBuildEvent = ""
+                PostBuildEvent = "copy $(ProjectDir)App.exe.manifest $(TargetDir)Builder.exe.manifest"
                 RootNamespace = "Builder"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
@@ -101,6 +101,10 @@
                     RelPath = "App.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "App.exe.manifest"
+                    BuildAction = "Content"
                 />
                 <File
                     RelPath = "App.ico"
