@@ -54,6 +54,7 @@ a copy of which can be found with the CVS distribution kit." />
     <property name="dir.dist" value="${dir.base}/dist" />
     <property name="dir.doc" value="${dir.base}/doc" />
     <property name="dir.external-build" value="${dir.base}/.externalToolBuilders" />
+    <property name="dir.examples" value="${dir.base}/examples"/>
     <property name="dir.src" value="${dir.base}/src" />
     <property name="dir.lib" value="${dir.base}/lib" />
     <property name="dir.lib.ext" value="${dir.lib}/ext" />

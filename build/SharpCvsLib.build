@@ -89,6 +89,7 @@
         <call target="build.console" />
         <call target="build.test" />
         <call target="build.test-sample" />
+        <call target="build.examples"/>
     </target>
 
     <target name="build.lib" depends="setup">
@@ -106,6 +107,10 @@
     <target name="build.test-sample" depends="setup, build.test" description="Builds all project sources as well as a test binary containing a faster running subset of unit tests..">
         <nant buildfile="${dir.build}/${name.tests}.build.xml" target="build-sample"/>
     </target>
+    
+    <target name="build.examples" depends="setup, build.test" description="Builds all project sources as well as a test binary containing a faster running subset of unit tests..">
+        <nant buildfile="${dir.examples}/examples.build" target="build"/>
+    </target>    
 
     <target name="run-tests" depends="build.all">
         <nant buildfile="${dir.build}/${name.tests}.build.xml" target="run-tests"/>
