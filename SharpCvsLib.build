@@ -118,48 +118,45 @@
 
         <property name="doc.include-assembly-version" value="True" />
         
-        <!-- Hack to get upload to work on mono -->
-        <if uptodatefile="${doc.exe}" comparefile="temp.cs">
-            <ndoc verbose="true">
-                <assemblies basedir="${dir.build}">
-                    <includes name="${name.top-level}.${name.lib}.dll" />
-                    <includes name="${name.console.exe}.exe" />
-                    <excludes name="${name.top-level}.${name.lib}.${name.tests}.dll"/>
-                </assemblies>
-                <summaries basedir="${dir.build}">
-                    <includes name="NamespaceSummary.xml"/>
-                </summaries>
-                <documenters>
-                    <documenter name="MSDN">
-                        <property name="Title" value="${doc.title}" />
-                        <property name="OutputDirectory" value="${dir.doc.msdn}" />
+        <ndoc verbose="true">
+            <assemblies basedir="${dir.build}">
+                <includes name="${name.top-level}.${name.lib}.dll" />
+                <includes name="${name.console.exe}.exe" />
+                <excludes name="${name.top-level}.${name.lib}.${name.tests}.dll"/>
+            </assemblies>
+            <summaries basedir="${dir.build}">
+                <includes name="NamespaceSummary.xml"/>
+            </summaries>
+            <documenters>
+                <documenter name="MSDN">
+                    <property name="Title" value="${doc.title}" />
+                    <property name="OutputDirectory" value="${dir.doc.msdn}" />
 
-                        <property name="ShowMissingSummaries" value="${doc.show-missing-summaries}" />
-                        <property name="ShowMissingRemarks" value="${doc.show-missing-remarks}" />
-                        <property name="ShowMissingParams" value="${doc.show-missing-params}" />
-                        <property name="ShowMissingReturns" value="${doc.show-missing-returns}" />
-                        <property name="ShowMissingValues" value="${doc.show-missing-values}" />
+                    <property name="ShowMissingSummaries" value="${doc.show-missing-summaries}" />
+                    <property name="ShowMissingRemarks" value="${doc.show-missing-remarks}" />
+                    <property name="ShowMissingParams" value="${doc.show-missing-params}" />
+                    <property name="ShowMissingReturns" value="${doc.show-missing-returns}" />
+                    <property name="ShowMissingValues" value="${doc.show-missing-values}" />
 
-                        <property name="DocumentInternals" value="${doc.internals}" />
-                        <property name="DocumentProtected" value="${doc.protected}" />
-                        <property name="DocumentPrivates" value="${doc.privates}" />
-                        <property name="DocumentEmptyNamespaces" value="${doc.empty-namespaces}" />
+                    <property name="DocumentInternals" value="${doc.internals}" />
+                    <property name="DocumentProtected" value="${doc.protected}" />
+                    <property name="DocumentPrivates" value="${doc.privates}" />
+                    <property name="DocumentEmptyNamespaces" value="${doc.empty-namespaces}" />
 
-                        <property name="IncludeAssemblyVersion" value="${doc.include-assembly-version}" />
-                        <property name="CopyrightText" value="${doc.copyright.text}" />
-                        <property name="CopyrightHref" value="${doc.copyright.href}" />
+                    <property name="IncludeAssemblyVersion" value="${doc.include-assembly-version}" />
+                    <property name="CopyrightText" value="${doc.copyright.text}" />
+                    <property name="CopyrightHref" value="${doc.copyright.href}" />
 
-                        <property name="HtmlHelpName" value="${doc.title}" />
-                        <property name="HtmlHelpCompilerFilename" value="${doc.exe}" />
-                        <property name="IncludeFavorites" value="False" />
-                        <property name="SplitTOCs" value="False" />
-                        <property name="DefaulTOC" value="" />
-                        <property name="ShowVisualBasic" value="True" />
-                    </documenter>
-                </documenters> 
-            </ndoc>
-            <style style="${dir.doc}/NamespaceSummary.xslt" in="${dir.doc}/NamespaceSummary.xml" out="${dir.doc.msdn}/index.html" />
-        </if>
+                    <property name="HtmlHelpName" value="${doc.title}" />
+                    <property name="HtmlHelpCompilerFilename" value="${doc.exe}" />
+                    <property name="IncludeFavorites" value="False" />
+                    <property name="SplitTOCs" value="False" />
+                    <property name="DefaulTOC" value="" />
+                    <property name="ShowVisualBasic" value="True" />
+                </documenter>
+            </documenters> 
+        </ndoc>
+        <style style="${dir.doc}/NamespaceSummary.xslt" in="${dir.doc}/NamespaceSummary.xml" out="${dir.doc.msdn}/index.html" />
     </target>
     
     <target name="dist" depends="build.lib, build.test, build.console">
