@@ -4,6 +4,8 @@ OPEN_SOLUTION_FROM_CVS = Open Solution From CVS...
 OPEN_SOLUTION_FROM_CVS_DESC = Open a solution from CVS repository
 SET_CVS_REPOSITORY = Set CVS Repository...
 SET_CVS_REPOSITORY_DESC = Set CVS repository information
+CVS_UPDATE_COMMAND=CVS Update
+CVS_UPDATE_COMMAND_DESC=Refresh sandbox with latest code from the CVS repository.
 ; output window
 OUTPUT_WINDOW_PANE=CVS Add-In Status
 ; dialog box captions

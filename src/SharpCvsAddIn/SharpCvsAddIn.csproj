@@ -278,6 +278,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Commands\UpdateCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Events\AbstractEvents.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

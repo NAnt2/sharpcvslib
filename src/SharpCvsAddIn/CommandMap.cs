@@ -9,6 +9,7 @@ using EnvDTE;
 using System.Diagnostics;
 using Microsoft.Office.Core;
 using System.Runtime.InteropServices;
+using log4net;
 
 namespace SharpCvsAddIn
 {
@@ -17,6 +18,7 @@ namespace SharpCvsAddIn
     /// </summary>
     public class CommandMap : DictionaryBase
     {
+		private static readonly ILog log_ = LogManager.GetLogger(typeof(CommandMap));
         /// <summary>
         /// Private constructor to avoid instantiation.
         /// </summary>
@@ -128,6 +130,8 @@ namespace SharpCvsAddIn
 			
 			string menuText = controller.GetLocalizedString( attr.TextResource );
 			string toolTip = controller.GetLocalizedString( attr.ToolTipResource );
+
+			log_.Debug( string.Format( "Adding menu item {0} resource name is {1}", menuText, attr.TextResource ));
 
             cmd.Command = controller.DTE.Commands.AddNamedCommand( controller.AddIn, attr.Name, menuText,
 				toolTip, true,
