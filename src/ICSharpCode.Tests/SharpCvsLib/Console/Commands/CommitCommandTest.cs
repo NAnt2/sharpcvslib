@@ -82,7 +82,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
             Assertion.Assert (Directory.Exists(Path.Combine(settings.Config.LocalPath, "sharpcvslib")));
         }
         /// <summary>
-        ///     Checkout files based on revision specified in -r option.
+        ///     Commit files based on revision specified in -r option.
         ///
         /// </summary>
         [Test]
@@ -91,43 +91,39 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
 //            String repository = "sharpcvslib";
 //            String options = "-rv0_3_1 ";
             // Test Creating a CommitCommand object
-//            CommitCommand newCommitCommand = new CheckoutCommand(root, repository, options);
+//            CommitCommand newCommitCommand = new CommitCommand(root, repository, options);
 //            Assertion.AssertNotNull ("Should have a command object.", newCommitCommand);
 //            newCommitCommand.Execute();
         }
         /// <summary>
-        ///     Checkout files to specified local location instead of current local location
-        ///     with the -d option
+        ///     Commit files with message in specified log file
+        ///     with the -F option
         /// </summary>
         [Test]
-        public void MinusdOptionCommitFileIntoDir (){
+        public void MinusdOptionCommitFileWithLogFileMsg (){
 //            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
 //            String repository = "sharpcvslib";
-//            String options = "-dnewlocation ";
-            // Test Creating a CheckoutCommand object
+//            String options = "-Flogfile.txt ";
+            // Test Creating a CommitCommand object
 //            CheckoutCommand newCheckoutCommand = new CheckoutCommand(root, repository, options);
 //            Assertion.AssertNotNull ("Should have a command object.", newCheckoutCommand);
 //            newCheckoutCommand.Execute();
 //            Assertion.Assert(Directory.Exists("newlocation"));
         }
         /// <summary>
-        ///     Checkout files no earlier than the specified Date 
-        ///     with the -D option
+        ///     Commit files with specified message text 
+        ///     with the -m option
         /// </summary>
         [Test]
-        public void MinusDOptionCommitByCertainDate (){
+        public void MinusDOptionCommitFilesWithMsg (){
 //            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
 //            String repository = "sharpcvslib";
-//            String options = "-D01.28.03 ";
+//            String options = "-m01.28.03 ";
             // Test Creating a CheckoutCommand object
 //            CheckoutCommand newCheckoutCommand = new CheckoutCommand(root, repository, options);
 //            Assertion.AssertNotNull ("Should have a command object.", newCheckoutCommand);
 //            newCheckoutCommand.Execute();
-            // Find a file that should exist 
-            //Assertion.Assert ("Should have found the check file.  file=[" +
-            //    checkFile + "]", File.Exists (checkFile));
-
-            // Find a file that should not exist
+            // Verify file with new message text 
             //Assertion.Assert ("Should have found the check file.  file=[" +
             //    checkFile + "]", File.Exists (checkFile));
 
