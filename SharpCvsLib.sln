@@ -1,0 +1,21 @@
+Microsoft Visual Studio Solution File, Format Version 7.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsLib", "SharpCvsLib.csproj", "{C0A18410-37EB-4F7A-8D78-07711B83756C}"
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		ConfigName.0 = Debug
+		ConfigName.1 = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{C0A18410-37EB-4F7A-8D78-07711B83756C}.Debug.ActiveCfg = Release|.NET
+		{C0A18410-37EB-4F7A-8D78-07711B83756C}.Debug.Build.0 = Release|.NET
+		{C0A18410-37EB-4F7A-8D78-07711B83756C}.Release.ActiveCfg = Release|.NET
+		{C0A18410-37EB-4F7A-8D78-07711B83756C}.Release.Build.0 = Release|.NET
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal

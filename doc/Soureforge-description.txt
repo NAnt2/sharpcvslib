@@ -1,0 +1,5 @@
+SharpCvsLib is an open source port of a cvs client for the .net framework.  It offers an API to interact with a cvs repository and can be integrated with many different projects that require cvs support.
+
+Currently I am working to integrate the API into the nant project (a .net build tool modeled after ant) which does not currently have cvs support.  Future uses may include integration with the draco .net build tool as a replacement for their cvsnt shell commands (which do not currently support linux cvs repositories).  In the future it may even become a plug-in for visual studio .net.
+
+Currently only Windows is supported under the .net framework however support for Linux under mono is high priority.

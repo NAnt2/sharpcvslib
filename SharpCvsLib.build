@@ -1,0 +1,80 @@
+<!--
+    Build file for the 
+-->
+<project name="ICSharpCode.SharpCvsLib" default="Debug">
+    <property name="src.dir" value="src" />
+    <property name="lib.dir" value="lib" />
+    <property name="build.dir" value="bin" /> 
+    
+    <property name="assembly.name" value="ICSharpCode.SharpCvsLib" />    
+    <property name="assembly.version" value="0.3" />   
+    
+    <target name="Debug" depends="SharpCvsLib.Debug" />
+    <target name="Release" depends="SharpCvsLib.Release" />
+    
+    <target name="setup">
+        <mkdir dir="${build.dir}" />
+   	    <copy todir="${build.dir}">
+	        <fileset basedir="${lib.dir}">
+                <includes name="ICSharpCode.SharpZipLib.dll" />
+      	        <includes name="log4net.dll" />
+            </fileset>
+		</copy>        
+    </target>
+    
+    <target name="SharpCvsLib.Debug">
+        <property name="project.name" value="SharpCvsLib" />
+        <property name="build.dir" value="${build.dir}\Debug" />
+        <property name="output" value="${build.dir}\${assembly.name}.dll" />
+        <property name="debug" value="true" />
+        <property name="unsafe" value="/unsafe-" />
+        <property name="checked" value="/checked-" />
+        <property name="define" value="DEBUG;TRACE" />
+        <property name="doc" value="${build.dir}\sharpcvslib.xml" />
+        <call target="SharpCvsLib" />
+    </target>
+    
+    <target name="SharpCvsLib.Release">
+        <property name="project.name" value="SharpCvsLib" />
+        <property name="build.dir" value="${build.dir}\Release" />
+        <property name="output" value="${build.dir}\${assembly.name}.dll" />
+        <property name="debug" value="false" />
+        <property name="unsafe" value="/unsafe-" />
+        <property name="checked" value="/checked-" />
+        <property name="define" value="TRACE" />
+        <property name="doc" value="" />
+        <call target="SharpCvsLib" />
+    </target>
+    
+    <target name="SharpCvsLib" depends="setup">
+        <csc target="library" output="${output}" debug="${debug}" define="${define}" doc="${doc}">
+            <arg value="${unsafe}" />
+            <arg value="${checked}" />
+            <sources basedir="${src.dir}">
+                <includes name="**/*.cs" />
+            </sources>
+            <references>
+                <includes name="System.Web.dll" />
+                <includes name="System.Web.Services.dll" />
+                <includes name="System.dll" />            
+                <includes name="${lib.dir}\ICSharpCode.SharpZipLib.dll" />
+                <includes name="${lib.dir}\log4net.dll" />
+            </references>
+        </csc>
+    </target>
+    
+    <target name="DebugClean">
+        <property name="build.dir" value="${build.dir}\Debug" />
+        <call target="Clean" />
+    </target>
+    
+    <target name="ReleaseClean">
+        <property name="build.dir" value="${build.dir}\Release" />
+        <call target="Clean" />
+    </target>
+    
+    <target name="Clean">
+        <delete file="${build.dir}\${assembly.name}.dll" failonerror="false" />
+        <delete file="${build.dir}\${assembly.name}.pdb" failonerror="false" />
+    </target>
+</project>
