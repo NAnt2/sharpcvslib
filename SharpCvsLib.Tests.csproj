@@ -679,12 +679,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\ICSharpCode.Console\SharpCvsLib\Console\Commands\CommitCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src\ICSharpCode.Console\SharpCvsLib\Console\Commands\LoginCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "src\ICSharpCode.Console\SharpCvsLib\Console\Commands\RemoveCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\ICSharpCode.Console\SharpCvsLib\Console\Commands\RTagCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -784,6 +794,11 @@
                 />
                 <File
                     RelPath = "src\ICSharpCode.Tests\SharpCvsLib\Console\Commands\CheckoutCommandTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\ICSharpCode.Tests\SharpCvsLib\Console\Commands\CommitCommandTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
