@@ -32,7 +32,10 @@
 #endregion
 using System;
 using System.Globalization;
+using System.Collections;
+using System.IO;
 using System.Text;
+using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Commands;
 using ICSharpCode.SharpCvsLib.Client;
@@ -48,8 +51,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
     public class CommitCommand {
         private WorkingDirectory currentWorkingDirectory;
         private CvsRoot cvsRoot;
-        private string repository;
-        private string localDirectory;
+        private string fileNames;
         private string unparsedOptions;
         private string revision;
         private string logFile;
@@ -67,21 +69,21 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// Commit changes to a cvs repository.
         /// </summary>
         /// <param name="cvsroot">User information</param>
-        /// <param name="repository">Files to remove</param>
+        /// <param name="fileNames">Files to remove</param>
         /// <param name="ciOptions">Options</param>
-        public CommitCommand(string cvsroot, string repository, string ciOptions) : 
-            this(new CvsRoot(cvsroot), repository, ciOptions){
+        public CommitCommand(string cvsroot, string fileNames, string ciOptions) : 
+            this(new CvsRoot(cvsroot), fileNames, ciOptions){
         }
 
         /// <summary>
         ///    Commit changes in the cvs repository
         /// </summary>
         /// <param name="cvsroot">User Information</param>
-        /// <param name="repository">Files to remove</param>
+        /// <param name="fileNames">Files to remove</param>
         /// <param name="ciOptions">Options</param>
-        public CommitCommand(CvsRoot cvsroot, string repository, string ciOptions) {
+        public CommitCommand(CvsRoot cvsroot, string fileNames, string ciOptions) {
             this.cvsRoot = cvsroot;
-            this.repository = repository;
+            this.fileNames = fileNames;
             this.unparsedOptions = ciOptions;
         }
 
@@ -98,11 +100,21 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             try {
                 this.ParseOptions(this.unparsedOptions);
                 // set properties before creation of CommitCommand2
-                if (localDirectory == null) {
-                    localDirectory = Environment.CurrentDirectory;
-                }
+                // Open the Repository file in the CVS directory
+                Manager manager = new Manager(Environment.CurrentDirectory);
+                Repository repository = manager.FetchRepository(Environment.CurrentDirectory); 
+                // If this fails error out and the user
+                //    is not in a CVS repository directory tree.
                 currentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
-                    localDirectory, repository);
+                    Environment.CurrentDirectory, repository.FileContents);
+                String[] files = Directory.GetFiles(Environment.CurrentDirectory, fileNames);
+                ArrayList copiedFiles = new ArrayList ();
+                foreach (String file in files) {
+                    LOGGER.Debug("file=[" + file + "]");
+                    String fullPath = Path.Combine(Environment.CurrentDirectory, file);
+                    copiedFiles.Add(fullPath);
+                }
+                currentWorkingDirectory.Folders = GetFoldersToCommit(copiedFiles);
                 // Create new CommitCommand2 object
                 commitCommand = new ICSharpCode.SharpCvsLib.Commands.CommitCommand2(
                                  this.currentWorkingDirectory );
@@ -118,13 +130,52 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
          
             return commitCommand;
         }
- 
+        /// <summary>
+        /// Setup the list of files to be a folder object for the cvs
+        ///     library to process.
+        /// </summary>
+        /// <param name="filesCommitted">An array filenames that are to be committed
+        ///     to the cvs repository.</param>
+        private Folders GetFoldersToCommit (ICollection filesCommitted) {
+            Folders folders = new Folders();
+            Manager manager = new Manager(Environment.CurrentDirectory);
+            LOGGER.Debug("Number of files copied=[" + filesCommitted.Count + "]");
+            foreach (String file in filesCommitted) {
+                Folder folder;
+                if (!folders.Contains(Path.GetDirectoryName(file))) {
+                    folder = new Folder();
+                    LOGGER.Debug("file=[" + file + "]");
+                    LOGGER.Debug("file path=[" + Path.GetDirectoryName(file) + "]");
+                    folder.Repository = 
+                        manager.FetchRepository(Path.GetDirectoryName(file));
+                    folder.Root = 
+                        manager.FetchRoot(Path.GetDirectoryName(file));
+                    folder.Tag = 
+                        manager.FetchTag(Path.GetDirectoryName(file));
+                    folders.Add(Path.GetDirectoryName(file), folder);
+                } 
+                else {
+                    folder = folders[Path.GetDirectoryName(file)];
+                }
+                if (!folder.Entries.Contains(file)) {
+                    Entry entry = Entry.CreateEntry(file);
+                    folder.Entries.Add (file, entry);
+                } 
+                else {
+                    folder.Entries[file] = Entry.CreateEntry(file);
+                }
+            }
+            return folders;
+        }
+
         /// <summary>
         /// Parse the command line options/ arguments and populate the command
         ///     object with the arguments.
         /// </summary>
         /// <param name="ciOptions">A string value that holds the command
         ///     line options the user has selected.</param>
+        /// <exception cref="NotImplementedException">If the command argument
+        ///     is not implemented currently.  TODO: Implement the argument.</exception>
         private void ParseOptions (String ciOptions) {
             int endofOptions = 0;
             for (int i = 0; i < ciOptions.Length; i++) {
