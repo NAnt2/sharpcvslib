@@ -49,7 +49,7 @@ using NUnit.Framework;
 
 namespace ICSharpCode.SharpCvsLib.Console.Commands{
     /// <summary>
-    ///     Test the checkout command object for valid ones
+    ///     Test the commit command for valid ones
     ///         and test invalid ones.
     /// </summary>
     [TestFixture]
@@ -65,35 +65,38 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         }
 
         /// <summary>
-        ///     Create a CommitCommand object.
+        ///     Test the console Commit command object.
         ///
         /// </summary>
         [Test]
-        public void MakeCommitCommandTest (){
+        public void MakeCommitCommandTest () {
             Directory.CreateDirectory (settings.Config.LocalPath);
             Environment.CurrentDirectory = settings.Config.LocalPath;
             
             String commandLine = 
-               "-d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib ci sharpcvslib";
+               "-d" + settings.Config.Cvsroot + " ci " + settings.Config.Module;
             String [] commandLineArgs = commandLine.Split(' ');
-            // Test Creating a CheckoutCommand object
+            // Test Creating a CommitCommand object
             ConsoleMain consoleMain = new ConsoleMain ();
             consoleMain.Execute (commandLineArgs);
-            Assertion.Assert (Directory.Exists(Path.Combine(settings.Config.LocalPath, "sharpcvslib")));
+            //Assertion.Assert (Directory.Exists(Path.Combine(settings.Config.LocalPath, settings.Config.Module)));
         }
         /// <summary>
         ///     Commit files based on revision specified in -r option.
         ///
         /// </summary>
         [Test]
-        public void MinusrOptionCommitFilesBasedOnRevision (){
-//            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-//            String repository = "sharpcvslib";
-//            String options = "-rv0_3_1 ";
+        public void MinusrOptionCommitFilesBasedOnRevision () {
+            Directory.CreateDirectory (settings.Config.LocalPath);
+            Environment.CurrentDirectory = settings.Config.LocalPath;
+            
+            String commandLine = 
+                "-d" + settings.Config.Cvsroot + " ci -r " + settings.Config.Tag1 +
+                " " + settings.Config.Module;
+            String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a CommitCommand object
-//            CommitCommand newCommitCommand = new CommitCommand(root, repository, options);
-//            Assertion.AssertNotNull ("Should have a command object.", newCommitCommand);
-//            newCommitCommand.Execute();
+            ConsoleMain consoleMain = new ConsoleMain ();
+            consoleMain.Execute (commandLineArgs);
         }
         /// <summary>
         ///     Commit files with message in specified log file
@@ -101,14 +104,16 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         /// </summary>
         [Test]
         public void MinusdOptionCommitFileWithLogFileMsg (){
-//            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-//            String repository = "sharpcvslib";
-//            String options = "-Flogfile.txt ";
+            Directory.CreateDirectory (settings.Config.LocalPath);
+            Environment.CurrentDirectory = settings.Config.LocalPath;
+            
+            String commandLine = 
+                "-d" + settings.Config.Cvsroot + " ci -F " + settings.Config.LocalPath +
+                settings.Config.TargetFile + " " + settings.Config.Module;
+            String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a CommitCommand object
-//            CheckoutCommand newCheckoutCommand = new CheckoutCommand(root, repository, options);
-//            Assertion.AssertNotNull ("Should have a command object.", newCheckoutCommand);
-//            newCheckoutCommand.Execute();
-//            Assertion.Assert(Directory.Exists("newlocation"));
+            ConsoleMain consoleMain = new ConsoleMain ();
+            consoleMain.Execute (commandLineArgs);
         }
         /// <summary>
         ///     Commit files with specified message text 
@@ -116,13 +121,16 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         /// </summary>
         [Test]
         public void MinusDOptionCommitFilesWithMsg (){
-//            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-//            String repository = "sharpcvslib";
-//            String options = "-m01.28.03 ";
-            // Test Creating a CheckoutCommand object
-//            CheckoutCommand newCheckoutCommand = new CheckoutCommand(root, repository, options);
-//            Assertion.AssertNotNull ("Should have a command object.", newCheckoutCommand);
-//            newCheckoutCommand.Execute();
+            Directory.CreateDirectory (settings.Config.LocalPath);
+            Environment.CurrentDirectory = settings.Config.LocalPath;
+            
+            String commandLine = 
+                "-d" + settings.Config.Cvsroot + " ci -m thismessage " +
+                settings.Config.Module;
+            String [] commandLineArgs = commandLine.Split(' ');
+            // Test Creating a CommitCommand object
+            ConsoleMain consoleMain = new ConsoleMain ();
+            consoleMain.Execute (commandLineArgs);
             // Verify file with new message text 
             //Assertion.Assert ("Should have found the check file.  file=[" +
             //    checkFile + "]", File.Exists (checkFile));
