@@ -313,23 +313,27 @@ namespace ICSharpCode.SharpCvsLib.Client {
 			switch (repository.CvsRoot.Protocol) {
 				case "ext":
 					try {
+						StringBuilder processArgs = new StringBuilder ();
+						processArgs.Append ("-l ").Append (repository.CvsRoot.User);
+						processArgs.Append (" ").Append (repository.CvsRoot.Host);
+						processArgs.Append (" \"cvs server\"");
 						ProcessStartInfo startInfo = 
-						    new ProcessStartInfo(shell, "-l " + 
-						                         repository.CvsRoot.User + 
-						                         " " + 
-						                         repository.CvsRoot.Host + 
-						                         " \"cvs server\"");
+						    new ProcessStartInfo(shell, processArgs.ToString ());
 					    if (LOGGER.IsDebugEnabled)
 					    {
-						    LOGGER.Debug("-l " + repository.CvsRoot.User + 
-						                 " " + 
-						                 repository.CvsRoot.Host + 
-						                 " \"cvs server\"");
+					    	StringBuilder msg = new StringBuilder ();
+					    	msg.Append("Process=[").Append(shell).Append("]");
+					    	msg.Append("Process Arguments=[").Append(processArgs).Append("]");
+						    LOGGER.Debug(msg);
 					    }
 						startInfo.RedirectStandardError  = true;
 						startInfo.RedirectStandardInput  = true;
 						startInfo.RedirectStandardOutput = true;
 						startInfo.UseShellExecute        = false;
+						BufferedStream errstream = new BufferedStream(p.StandardError.BaseStream);
+						inputstream  = new CvsStream(new BufferedStream(p.StandardOutput.BaseStream));
+						outputstream = new CvsStream(new BufferedStream(p.StandardInput.BaseStream));
+
 						p = new Process();
 						p.StartInfo = startInfo;
 						p.Exited += new EventHandler(ExitShellEvent);
@@ -340,10 +344,6 @@ namespace ICSharpCode.SharpCvsLib.Client {
 					    }
 						throw new ExecuteShellException(shell);
 					}
-					inputstream = outputstream = new CvsStream (tcpclient.GetStream ());
-//					BufferedStream errstream = new BufferedStream(p.StandardError.BaseStream);
-//					inputstream  = new CvsStream(new BufferedStream(p.StandardOutput.BaseStream));
-//					outputstream = new CvsStream(new BufferedStream(p.StandardInput.BaseStream));
 					break;
 				case "pserver":
 			        tcpclient = new TcpClient ();
@@ -393,7 +393,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
 							throw new AuthenticationException();
 						default:
 							SendMessage("Unknown Server response : >" + retStr + "<");
-							throw new ApplicationException("Unknown Server response : >" + retStr + "<"); // TODO : invent a better exception for this case.
+							// TODO : invent a better exception for this case.
+							throw new ApplicationException("Unknown Server response : >" + retStr + "<"); 
 					}
 					break;
 			}
