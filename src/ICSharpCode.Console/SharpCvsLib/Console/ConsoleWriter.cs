@@ -51,7 +51,7 @@ namespace ICSharpCode.SharpCvsLib.Console
         private static Regex TextRegex = new Regex(REGEX_TEXT, RegexOptions.Multiline);
         private static Regex FNameRegex = new Regex(REGEX_FNAME, RegexOptions.Multiline);
 
-        private const string DEFAULT_PREFIX = "[sharpcvslib]";
+        private const string DEFAULT_PREFIX = "";
         private const bool DEFAULT_USE_PREFIX = true;
 
 

@@ -801,8 +801,13 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console.build"
-                    BuildAction = "None"
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\AssemblyHelper.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\AssemblyInfo.cs"
+                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "ICSharpCode.Console\SharpCvsLib\Main.cs"
@@ -811,6 +816,11 @@
                 />
                 <File
                     RelPath = "ICSharpCode.Console\SharpCvsLib\Console\ConsoleMain.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\ConsoleWriter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -990,6 +1000,41 @@
                 />
                 <File
                     RelPath = "ICSharpCode.Tests\SharpCvsLib\Console\Parser\UsageTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Tests\SharpCvsLib\Extension\ChangeLogReport\CvsChangeLogTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Tests\SharpCvsLib\Extension\ChangeLogReport\FileRevisionTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Tests\SharpCvsLib\Extension\ChangeLogReport\LogEntryTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Tests\SharpCvsLib\Extension\LogReporter\LogFileTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Tests\SharpCvsLib\Extension\LogReporter\LogReportCommandTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Tests\SharpCvsLib\Extension\LogReporter\LogReportTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Tests\SharpCvsLib\Extension\LogReporter\LogRevisionTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

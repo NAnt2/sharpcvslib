@@ -88,6 +88,16 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                 msg.Append("\n\t entry.Path=[").Append(entry.Path).Append("]");
                 LOGGER.Debug (msg);
             }
+
+            Services.ResponseMessageEvents.SendResponseMessage(
+                String.Format("Updating {0}", RemoveTrailingSlash(localPath)), this.GetType());
+        }
+
+        private string RemoveTrailingSlash(string localPath) {
+            if (localPath.EndsWith("/")) {
+                return localPath.Substring(0, localPath.Length - 1);
+            }
+            return localPath;
         }
 
         /// <summary>

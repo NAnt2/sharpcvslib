@@ -46,7 +46,7 @@ namespace ICSharpCode.SharpCvsLib.Messages {
 
         /// <summary>Default prefix that is appended to all requests without a 
         /// prefix specified.</summary>
-        public const string DEFAULT_PREFIX = "--message--";
+        public const string DEFAULT_PREFIX = "";
         /// <summary>Prefix that is appended to client requests.</summary>
         public const string CLIENT_PREFIX = "sharpcvslib";
         /// <summary>Prefix that is appended to server responses.</summary>
@@ -105,12 +105,34 @@ namespace ICSharpCode.SharpCvsLib.Messages {
         }
 
         /// <summary>
+        /// Create a new message event arguments.
+        /// </summary>
+        /// <param name="request">An <see cref="ICSharpCode.SharpCvsLib.Requests.IRequest"/> 
+        /// object used to construct the message argument.</param>
+        /// <param name="message">An additional message to append to the message event.</param>
+        public MessageEventArgs(IRequest request, string message) : 
+            this(String.Format("{0} - ( {1} )", request.RequestString, message), 
+            MessageEventArgs.CLIENT_PREFIX) {
+        }
+
+        /// <summary>
         /// The response string.
         /// </summary>
         /// <param name="response">An <see cref="ICSharpCode.SharpCvsLib.Responses.IResponse"/>
         /// object used to construct the message argument.</param>
         public MessageEventArgs(IResponse response) : 
             this(response.ResponseString, MessageEventArgs.SERVER_PREFIX) {
+        }
+
+        /// <summary>
+        /// The response string.
+        /// </summary>
+        /// <param name="response">An <see cref="ICSharpCode.SharpCvsLib.Responses.IResponse"/>
+        /// object used to construct the message argument.</param>
+        /// <param name="message">An additional message to append to the message event.</param>
+        public MessageEventArgs(IResponse response, string message) : 
+            this(String.Format("{0} - ( {1} )", response.ResponseString, message), 
+            MessageEventArgs.SERVER_PREFIX) {
         }
 	}
 }

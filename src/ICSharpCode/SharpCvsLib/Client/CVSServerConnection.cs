@@ -90,11 +90,6 @@ namespace ICSharpCode.SharpCvsLib.Client {
         private IProtocol protocol;
 
         /// <summary>
-        /// Time when the authentication was sent to the remote server.
-        /// </summary>
-        protected DateTime StartTime;
-
-        /// <summary>
         /// Fired when an attempt is made to connect to the repository.
         /// </summary>
         public event ProcessEventHandler StartProcessEvent;
@@ -102,11 +97,6 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// Fired when all processing is done and the connection is closed.
         /// </summary>
         public event ProcessEventHandler StopProcessEvent;
-
-        /// <summary>
-        /// Time when the connection was closed.
-        /// </summary>
-        protected DateTime EndTime;
 
         /// <summary>
         ///     Initialize the cvs server connection.
@@ -307,7 +297,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
                 }
                 if (null != response && null != response.ResponseString) {
                     try {
-                        this.ResponseMessageEvent(this, new MessageEventArgs(response));
+                        this.ResponseMessageEvent(this, new MessageEventArgs(response,
+                            response.GetType().Name));
                     } catch (NullReferenceException) {
                         LOGGER.Debug("No one is listening to the response message event.");
                     }
@@ -329,7 +320,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
 
             if (null != request && null != request.RequestString) {
                 try {
-                    this.RequestMessageEvent(this, new MessageEventArgs(request));
+                    this.RequestMessageEvent(this, new MessageEventArgs(request,
+                        request.GetType().Name));
                 } catch (NullReferenceException) {
                     LOGGER.Debug("No one is listening to request message event.");
                 }
@@ -376,8 +368,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// </summary>
         /// <param name="password"></param>
         public void Authentication(string password) {
-            this.StartTime = DateTime.Now;
-            LOGGER.Info(String.Format("Trying to authenticate with cvsroot ( {0} ) and password ( {1} ).",
+            LOGGER.Debug(String.Format("Trying to authenticate with cvsroot ( {0} ) and password ( {1} ).",
                 repository.CvsRoot.ToString(), password));
             switch (repository.CvsRoot.Protocol) {
                 case "ext": 
@@ -439,12 +430,6 @@ namespace ICSharpCode.SharpCvsLib.Client {
         public void Close() {
             this.protocol.Disconnect();
             this.StopProcessEvent(this, new ProcessEventArgs());
-            this.EndTime = DateTime.Now;
-
-            TimeSpan elapsedTime = this.EndTime.Subtract(this.StartTime);
-            LOGGER.Info(String.Format("Processing time: {0}:{1}:{2}:{3}.",
-                elapsedTime.Hours, elapsedTime.Minutes, elapsedTime.Seconds,
-                elapsedTime.Milliseconds));
         }
     }
 }

@@ -50,6 +50,11 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// </summary>
         public event MessageEventHandler SetStaticDirectoryResponseMessageEvent;
         /// <summary>
+        /// Occurs when a <see cref="Responses.ClearStaticDirectoryResponse"/> event is sent
+        /// from the server.
+        /// </summary>
+        public event MessageEventHandler ClearStaticDirectoryResponseMessageEvent;
+        /// <summary>
         /// Occurs when a <see cref="ICSharpCode.SharpCvsLib.Responses.ErrorResponse"/> is sent
         /// from the cvs server.
         /// </summary>
@@ -81,10 +86,13 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             }
 
             if (responseType == typeof(UpdatedResponse)) {
-                this.UpdatedResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
+                this.UpdatedResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.DEFAULT_PREFIX));
             } else if (responseType == typeof(SetStaticDirectoryResponse)) {
                 this.SetStaticDirectoryResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
-            } else if (responseType == typeof(ErrorResponse)) {
+            }  else if (responseType == typeof(ClearStaticDirectoryResponse)) {
+                this.ClearStaticDirectoryResponseMessageEvent(this, 
+                    new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
+            } else if (responseType == typeof(ErrorResponse) || responseType == typeof(ErrorMessageResponse)) {
                 this.ErrorResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.ERROR_PREFIX));
             }
             else {

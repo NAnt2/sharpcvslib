@@ -218,6 +218,8 @@ namespace ICSharpCode.SharpCvsLib.Console {
                     new ProcessEventHandler(Writer.StopProcess);
                 serverConn.ResponseMessageEvents.UpdatedResponseMessageEvent += 
                     new MessageEventHandler(Writer.WriteLine);
+                serverConn.ResponseMessageEvents.ClearStaticDirectoryResponseMessageEvent += 
+                    new MessageEventHandler(Writer.WriteLine);
                 serverConn.ResponseMessageEvents.SetStaticDirectoryResponseMessageEvent += 
                     new MessageEventHandler(Writer.WriteLine);
                 serverConn.ResponseMessageEvents.ErrorResponseMessageEvent += 
