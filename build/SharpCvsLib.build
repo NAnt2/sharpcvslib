@@ -312,9 +312,9 @@
         
         <property name="args.copy-docs" value="${dir.doc.msdn}/*.gif ${sf.username}:${sf.location.nightly}/doc/api" />
         <exec program="${util.copy}" commandline="${args.copy-docs}"/>
--->        
+      
         <call target="upload-unit-test-results" />
-        
+-->          
     </target>
     
     <target name="upload-unit-test-results">

@@ -83,10 +83,12 @@
         </nunit2>
     </target>
     <target name="tests-to-html">
+<!--
         <nunit2report out="${dir.bin}/tests/index.html" failonerror="false">
             <fileset>
                 <includes name="${dir.bin}/tests/${name.top-level}.${name.project}.${name.tests}-sample.dll-results.xml" />
             </fileset>
         </nunit2report>
+-->
     </target>
 </project>
