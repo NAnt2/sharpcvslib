@@ -6,50 +6,6 @@
     <include buildfile="SharpCvsLib.local.xml" if="${file::exists('SharpCvsLib.local.xml')}"/>
     <include buildfile="SharpCvsLib.common.xml" />
     <!-- Targets -->
-    <target name="src.update" description="Updates the source from cvs.">
-       <!-- To run locally you must have your public key uploaded to sf.net -->
-       <property name="cvs.command" value="update -Pd" />
-       <echo message="Updating ${dir.base} using cvs command: ${cvs.command}." />
-
-        <cvs-update destination="${dir.base}" 
-                    cvsroot="${cvs.root}" 
-                    password="" 
-                    module="${cvs.module}"
-                    cvsrsh="ssh"
-                    overwritelocal="true"
-                    usesharpcvslib="false"
-                    verbose="true">
-            <fileset>
-                <include name="${dir.build}/build.number"/>
-                <include name="${dir.src}/SharpCvsLibAssemblyInfo.cs"/>
-            </fileset>
-        </cvs-update>        
-
-       <cvs-update  destination="${dir.base}"
-                    cvsroot="${cvs.root}"
-                    password=""
-                    module="${cvs.module}"
-                    cvsrsh="ssh"
-                    usesharpcvslib="false">
-        </cvs-update>            
-    </target>
-    
-    <target name="src.commit" description="Commits version changes back to cvs.">
-        <cvs    command="commit" 
-                destination="${dir.base}" 
-                cvsroot="${cvs.root}" 
-                module="${cvs.module}"
-                cvsrsh="ssh"
-                commandline="-m &quot;AUTOMATED: Incremented version.&quot;"
-                usesharpcvslib="false"
-                verbose="true">
-            <fileset basedir="${dir.base}">
-                <include name="build/build.number"/>
-                <include name="src/harpCvsLibAssemblyInfo.cs"/>
-            </fileset>
-        </cvs>        
-    </target>
-
     <target name="update.version" description="Generate the assembly info file for the project.  Pass in the version number.">
         <property name="assembly.version" value="${FileUtil::Read(dir.build + '\build.number')}"/>
         <!-- Gets the version number and places it in a property called build.version -->
@@ -289,7 +245,7 @@
         <delete dir="${dir.dist}/doc" />
     </target>
     
-    <target name="integration" depends="clean, src.update, dist">
+    <target name="integration" depends="clean, dist">
         <mkdir dir="${ccnet.log.dir}/${label-to-apply}"/>
         <zip zipfile="${ccnet.log.dir}/${label-to-apply}/${assembly.version}-src.zip">
             <fileset basedir="${dir.dist}/src">
