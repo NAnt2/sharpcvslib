@@ -33,6 +33,7 @@
 using System;
 using System.Globalization;
 using System.Text;
+using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Commands;
 using ICSharpCode.SharpCvsLib.Client;
@@ -49,7 +50,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         private WorkingDirectory currentWorkingDirectory;
         private CvsRoot cvsRoot;
         private string fileNames;
-        private string localDirectory;
         private string unparsedOptions;
         private readonly ILog LOGGER = 
             LogManager.GetLogger (typeof(RemoveCommand));
@@ -94,15 +94,17 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             ICSharpCode.SharpCvsLib.Commands.RemoveCommand removeCommand;
             this.ParseOptions(this.unparsedOptions);
             try {
-                if (localDirectory == null) {
-                    localDirectory = Environment.CurrentDirectory;
-                }
+                // Open the Repository file in the CVS directory
+                Manager manager = new Manager(Environment.CurrentDirectory);
+                Repository repository = manager.FetchRepository(Environment.CurrentDirectory); 
+                // If this fails error out and state the user
+                //    is not in a CVS repository directory tree.
                 currentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
-                    localDirectory, fileNames);
+                    Environment.CurrentDirectory, repository.FileContents);
                 // Create new RemoveCommand object
                 removeCommand = new ICSharpCode.SharpCvsLib.Commands.RemoveCommand(
-                                 this.currentWorkingDirectory, localDirectory, 
-                                 new ICSharpCode.SharpCvsLib.FileSystem.Entry( localDirectory, fileNames));
+                                 this.currentWorkingDirectory, Environment.CurrentDirectory, 
+                                 new ICSharpCode.SharpCvsLib.FileSystem.Entry( Environment.CurrentDirectory, fileNames));
             }
             catch (Exception e) {
                 LOGGER.Error (e);
@@ -117,7 +119,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// </summary>
         /// <param name="rmOptions">A string value that holds the command
         ///     line options the user has selected.</param>
-        private void ParseOptions (String rmOptions) {
+        /// <exception cref="NotImplementedException">If the command argument
+        ///     is not implemented currently.  TODO: Implement the argument.</exception>
+        private void ParseOptions (String rmOptions) 
+        {
             for (int i = 0; i < rmOptions.Length; i++) {
                 if (rmOptions[i]== '-' && rmOptions[i+1] == 'f') {
                     String msg = "The -f remove option is not  " +
