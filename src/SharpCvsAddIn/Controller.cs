@@ -2,6 +2,7 @@ using System;
 using System.Windows.Forms;
 using EnvDTE;
 using SharpCvsAddIn.UI;
+using System.IO;
 
 
 
@@ -23,6 +24,7 @@ namespace SharpCvsAddIn
 		private SolutionExplorer solutionExplorer_ = null;
 		private Events.ProjectFileEvents fileEvents_ = null;
 		private JobQueue jobs_ = null;
+
 
 		public Controller(EnvDTE._DTE dte, EnvDTE.AddIn addin,IErrorHandler errorHandler)
 		{
@@ -91,6 +93,45 @@ namespace SharpCvsAddIn
 			fileEvents_.RemoveHandlers();
 			this.SolutionExplorer.Cleanup();
 
+		}
+		/// <summary>
+		/// Used to store information about the cvs repository that
+		/// we are currently connected to
+		/// </summary>
+		public Persistance.Connection CurrentConnection
+		{ 
+			get
+			{
+				return model_.Storage.CurrentConnection;
+			}
+			set
+			{
+				model_.Storage.CurrentConnection = value;
+			}
+		}
+
+		public Persistance.Module CurrentModule
+		{
+			get
+			{
+				return model_.Storage.CurrentModule;
+			}
+			set
+			{
+				model_.Storage.CurrentModule = value;
+			}
+		}
+
+		public string CurrentTag
+		{
+			get
+			{
+				return model_.Storage.CurrentTag;
+			}
+			set
+			{
+				model_.Storage.CurrentTag = value;
+			}
 		}
 
 		public Model Model { get{ return model_; } }
@@ -189,12 +230,12 @@ namespace SharpCvsAddIn
 
 		public void SolutionOpened()
 		{
-			// TODO:  Add AddInController.SolutionOpened implementation
+			solutionOpen_ = true;
 		}
 
 		public void SolutionClosing()
 		{
-			// TODO:  Add AddInController.SolutionClosing implementation
+			solutionOpen_ = false;
 		}
 
 		public void StartOperation(string description)
@@ -215,6 +256,18 @@ namespace SharpCvsAddIn
 		public string GetLocalizedString( string resourceId )
 		{
 			return model_.ResourceManager.GetString( resourceId );
+		}
+
+		public bool SolutionInCVS
+		{
+			get
+			{
+				// if there is a CVS subdirectory the solution is under source control
+				string solutionPath = Path.GetDirectoryName(this.DTE.Solution.FileName);
+				string cvsPath = Path.Combine( solutionPath, "CVS" );
+				FileAttributes attr = File.GetAttributes( cvsPath );
+				return (int)attr != -1;
+			}
 		}
 
 		#endregion

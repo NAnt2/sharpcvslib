@@ -24,16 +24,16 @@ namespace SharpCvsAddIn.Jobs
 		private static readonly ILog log_ = LogManager.GetLogger(typeof(CvsCheckoutJob));
 
 
-		public CvsCheckoutJob( IController controller, string connectionString,
-			string moduleName, string solutionLocation, string password, string solutionPath, string tag )
+		public CvsCheckoutJob( IController controller )
 		{
 			controller_ = controller;
-			connectionString_ = connectionString;
-			moduleName_ = moduleName;
-			solutionLocation_ = solutionLocation;
-			password_ = password;
-			solutionPath_ = solutionPath;
-			tag_ = tag;
+			connectionString_ = controller.CurrentConnection.ConnectionString;
+			moduleName_ = controller.CurrentModule.Name;
+			solutionLocation_ = controller.CurrentConnection.WorkingDirectory;
+			password_ = controller.CurrentConnection.Password;
+			solutionPath_ = Path.Combine( controller.CurrentConnection.WorkingDirectory, controller.CurrentModule.Name);
+			// TODO - implement tags
+			//tag_ = tag;
 
 		}
 
@@ -131,13 +131,8 @@ namespace SharpCvsAddIn.Jobs
 
 					// ok, if we are this far, we checked out the solution from cvs, lets open it
 					controller_.OpenSolution(Path.Combine(this.solutionPath_, solutionName )); 
-					// save user actions
-					Module m = controller_.Model.Roots.CurrentRoot.AddModule( this.moduleName_ );
-					if( this.tag_ != string.Empty )
-					{
-						m.AddTag( this.tag_ );
-					}
-
+					// everything worked, write user changes to modules path etc 
+					// to persistant storage
 					controller_.Model.Save();
 				}
 			}

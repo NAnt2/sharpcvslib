@@ -5,6 +5,8 @@
 using System;
 using System.Windows.Forms;
 using EnvDTE;
+using System.Collections;
+using SharpCvsAddIn.Persistance;
 
 namespace SharpCvsAddIn.Commands
 {
@@ -26,7 +28,7 @@ namespace SharpCvsAddIn.Commands
 		/// </summary>
 		override public void Execute( IController cont, string parameters )
 		{
-			FormSetCvsConnection frm = new FormSetCvsConnection( cont, cont.Model.CurrentConnection );
+			FormSetCvsConnection frm = new FormSetCvsConnection( cont );
 
 			if( frm.ShowDialog(cont.HostWindow) == DialogResult.OK )
 			{
@@ -34,15 +36,19 @@ namespace SharpCvsAddIn.Commands
 				{
 					FormSetCvsConnection.Protocol p = (FormSetCvsConnection.Protocol)frm.protocolList.SelectedItem;
 
-					cont.Model.Roots.CurrentConnection = new ConnectionString(frm.workingDirTextBox.Text,
+					Persistance.Connection conn = new Persistance.Connection(
 						frm.userNameTextBox.Text,
 						frm.cvsHostTxtBox.Text,
-						int.Parse( frm.cvsPortTextBox.Text ),
+						int.Parse(frm.cvsPortTextBox.Text),
 						p != null ? p.Name : string.Empty,
 						frm.cvsRootTextBox.Text,
-						frm.cvsPasswordTxtBox.Text );
+						frm.cvsPasswordTxtBox.Text,
+						frm.workingDirTextBox.Text );
+
+					cont.CurrentConnection = conn;
 
 					cont.Model.Save();
+
 				}
 			}
 

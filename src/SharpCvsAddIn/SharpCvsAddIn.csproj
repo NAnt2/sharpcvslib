@@ -302,6 +302,26 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <File
+                    RelPath = "Jobs\CvsUpdateJob.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Persistance\Connection.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Persistance\Module.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Persistance\Storage.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
                 <Folder RelPath = "Resources\" />
                 <File
                     RelPath = "UI\SolutionExplorer.cs"

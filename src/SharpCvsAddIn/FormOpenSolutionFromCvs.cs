@@ -4,6 +4,7 @@ using System.Collections;
 using System.ComponentModel;
 using System.Windows.Forms;
 using System.Resources;
+using System.Diagnostics;
 
 using System.IO;
 
@@ -34,34 +35,51 @@ namespace SharpCvsAddIn
 		private string solutionMsg_ = string.Empty;
 		private IController cont_;
 
-		public FormOpenSolutionFromCvs(IController cont, string connectionString, string workingDir )
+		public string WorkingDirectory
+		{
+			get
+			{
+				return destPathTextBox.Text.Trim();
+			}
+		}
+		public FormOpenSolutionFromCvs(IController cont)
 		{
 			InitializeComponent();
 
+			// shouldn't be able to call this unless connection is set
+			Debug.Assert( cont.CurrentConnection != null );
+
+
 			cont_ = cont;
-			workingDir_ = workingDir;
+			workingDir_ = cont.CurrentConnection.WorkingDirectory;
 
-			this.Text = cont.Model.ResourceManager.GetString( "FORM_OPEN_SOLUTION_FROM_CVS_TITLE" );
+			this.Text = cont.GetLocalizedString( "FORM_OPEN_SOLUTION_FROM_CVS_TITLE" );
 			cvsConnectionStringLabel.Text = 
-				string.Format( "{0} - {1}", cont.Model.ResourceManager.GetString("FORM_CVS_CONNECTION_STRING"),
-				connectionString ) ;
-			cvsModuleLabel.Text = cont.Model.ResourceManager.GetString("FORM_CVS_MODULE");
-			slnPathLabel.Text = cont.Model.ResourceManager.GetString("FORM_SOLUTION_PATH");
-			destPathTextBox.Text = workingDir_;
-			okBtn.Text = cont.Model.ResourceManager.GetString("FORM_OK_BUTTON");
-			cancelBtn.Text = cont.Model.ResourceManager.GetString("FORM_CANCEL_BUTTON");
-			cvsTagLbl.Text = cont.Model.ResourceManager.GetString( "FORM_CVS_TAG" );
-			okBtn.Text = cont.Model.ResourceManager.GetString("FORM_OK_BUTTON");
-			cancelBtn.Text = cont.Model.ResourceManager.GetString("FORM_CANCEL_BUTTON");
+				string.Format( "{0} - {1}", cont.GetLocalizedString("FORM_CVS_CONNECTION_STRING"),
+				cont.CurrentConnection.ConnectionString ) ;
+			cvsModuleLabel.Text = cont.GetLocalizedString("FORM_CVS_MODULE");
+			slnPathLabel.Text = cont.GetLocalizedString("FORM_SOLUTION_PATH");
+			destPathTextBox.Text = cont.CurrentConnection.WorkingDirectory;
+			okBtn.Text = cont.GetLocalizedString("FORM_OK_BUTTON");
+			cancelBtn.Text = cont.GetLocalizedString("FORM_CANCEL_BUTTON");
+			cvsTagLbl.Text = cont.GetLocalizedString( "FORM_CVS_TAG" );
+			okBtn.Text = cont.GetLocalizedString("FORM_OK_BUTTON");
+			cancelBtn.Text = cont.GetLocalizedString("FORM_CANCEL_BUTTON");
 
-			solutionMsg_ = cont.Model.ResourceManager.GetString("FORM_SOLUTION_DIRECTORY");
+			solutionMsg_ = cont.GetLocalizedString("FORM_SOLUTION_DIRECTORY");
 
-			CvsHistory hist = cont.Model.CurrentHistory;
-			string[] modules = hist.ModuleNames;
-
-			if(modules  != null )
+			cvsModuleDropDown.Items.AddRange( cont.CurrentConnection.ModuleNames );	
+		
+			if( cont.CurrentModule != null )
 			{
-				cvsModuleDropDown.Items.AddRange( modules );
+				cvsModuleDropDown.SelectedItem = cont.CurrentModule.Name;
+
+				cvsTagDropDown.Items.AddRange( cont.CurrentModule.Tags );
+
+				if( cont.CurrentTag != string.Empty )
+				{
+					cvsTagDropDown.SelectedItem = cont.CurrentTag;
+				}
 			}
 
 
@@ -421,7 +439,7 @@ namespace SharpCvsAddIn
 
 			try
 			{
-				string destPath = Path.GetDirectoryName( destPathTextBox.Text );
+				string destPath = Path.GetDirectoryName( this.WorkingDirectory );
 			}
 			catch(ArgumentException)
 			{
@@ -429,6 +447,19 @@ namespace SharpCvsAddIn
 				destPathTextBox.Focus();
 				return;
 			}
+
+			// make sure that user has supplied a module, don't let
+			// them continue if they haven't
+			cvsModuleDropDown.Text = cvsModuleDropDown.Text.Trim();
+			if( cvsModuleDropDown.Text == string.Empty )
+			{
+				cont_.UIShell.ExclamationMessage(this, "MSGBOX_MISSING_MODULE" );
+				cvsModuleDropDown.Focus();
+				return;
+			}
+
+
+			cvsTagDropDown.Text = cvsTagDropDown.Text.Trim();
 
 
 			// everythings groovy, close the dialog
@@ -456,7 +487,7 @@ namespace SharpCvsAddIn
 			}
 			else
 			{
-				browser.SelectedPath = cont_.Model.CurrentConnection.WorkingDirectory;
+				browser.SelectedPath = cont_.CurrentConnection.WorkingDirectory;
 			}
 
 			browser.ShowNewFolderButton = true;			

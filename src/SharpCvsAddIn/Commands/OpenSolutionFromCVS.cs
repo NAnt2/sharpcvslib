@@ -13,6 +13,9 @@ using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Commands;
 
 using SharpCvsAddIn.Jobs;
+using SharpCvsAddIn.Persistance;
+
+using System.Diagnostics;
 
 
 namespace SharpCvsAddIn.Commands
@@ -27,7 +30,13 @@ namespace SharpCvsAddIn.Commands
 		/// </summary>
 		override public vsCommandStatus QueryStatus( IController cont )
 		{
-			return vsCommandStatus.vsCommandStatusSupported | vsCommandStatus.vsCommandStatusEnabled;
+			if( cont.CurrentConnection != null )
+			{
+				return vsCommandStatus.vsCommandStatusSupported | vsCommandStatus.vsCommandStatusEnabled;
+			}
+			
+			return vsCommandStatus.vsCommandStatusSupported;
+
 		}
 
 		private void OnCheckoutComplete( object sender, object jobData )
@@ -45,59 +54,45 @@ namespace SharpCvsAddIn.Commands
 			if( cont.DTE.ItemOperations.PromptToSave !=
 				vsPromptResult.vsPromptResultCancelled )
 			{
-				// it's possible not to have assigned a repository yet, if that is the case
-				// don't let the user open solution, prompt them instead
-				ConnectionString connectionString = cont.Model.CurrentConnection;
+				Debug.Assert( cont.CurrentConnection != null );
 
-				if( connectionString != null )
+				// get the password if the user hasn't already supplied it
+				if( cont.CurrentConnection.Password == string.Empty )
 				{
-					// get the password if the user hasn't already supplied it
-					if( connectionString.Password == string.Empty )
+					FormGetPassword passwordDlg = new FormGetPassword(cont);
+					if( DialogResult.OK == passwordDlg.ShowDialog( cont.HostWindow ) )
 					{
-						FormGetPassword passwordDlg = new FormGetPassword(cont);
-						if( DialogResult.OK == passwordDlg.ShowDialog( cont.HostWindow ) )
-						{
-							connectionString.Password = passwordDlg.passwordTextBox.Text;
-						}
-						else
-						{
-							// user canceled, bail
-							return;
-						}
+						cont.CurrentConnection.Password = passwordDlg.passwordTextBox.Text;
 					}
-
-					// got a password and a connection, lets get the module, and find out where
-					// the user wants to put the solution
-					FormOpenSolutionFromCvs openDlg = new FormOpenSolutionFromCvs( cont,
-						connectionString.ToString(), connectionString.WorkingDirectory );
-					if( DialogResult.OK == openDlg.ShowDialog(cont.HostWindow) )
+					else
 					{
-						using( new SafeCursor( Cursors.WaitCursor ) )
-						{
-							string slnLocation = openDlg.destPathTextBox.Text;
-							string moduleName = openDlg.cvsModuleDropDown.Text;
-							string tag = openDlg.cvsTagDropDown.Text;
-
-
-							CvsCheckoutJob job = new CvsCheckoutJob( cont, 
-								connectionString.ToString(),
-								moduleName, 
-								slnLocation,
-								connectionString.Password,
-								openDlg.SolutionPath,
-								tag );
-                            
-							// cvs operation will be handled in job queue thread, the remainder of solution 
-							// open operation will be done once job is done in OnCheckoutComplete
-							cont.Jobs.AddJob( job, new JobCompletionHandler( this.OnCheckoutComplete ) );
-						}
-						// everything is successful
+						// user canceled, bail
+						return;
 					}
 				}
-				else
+
+				// got a password and a connection, lets get the module, and find out where
+				// the user wants to put the solution
+				FormOpenSolutionFromCvs openDlg = new FormOpenSolutionFromCvs( cont );
+
+				if( DialogResult.OK == openDlg.ShowDialog(cont.HostWindow) )
 				{
-					cont.UIShell.ExclamationMessage( "MSGBOX_CVS_ROOT_MISSING" );
-				}
+					using( new SafeCursor( Cursors.WaitCursor ) )
+					{
+						cont.CurrentConnection.WorkingDirectory = openDlg.WorkingDirectory;
+						// update the current connection information with user choices						
+						cont.CurrentModule = new Persistance.Module( openDlg.cvsModuleDropDown.Text );
+                        cont.CurrentTag = openDlg.cvsTagDropDown.Text;
+
+						CvsCheckoutJob job = new CvsCheckoutJob( cont );
+                
+						// cvs operation will be handled in job queue thread, the remainder of solution 
+						// open operation will be done once job is done in OnCheckoutComplete
+						cont.Jobs.AddJob( job, new JobCompletionHandler( this.OnCheckoutComplete ) );
+					}
+					// everything is successful
+				}		
+
 			}
 
 		}

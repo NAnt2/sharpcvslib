@@ -64,3 +64,4 @@ MSGBOX_MISSING_SOLUTION_FILE=No solution file exists in the module that was chec
 MSGBOX_QUERY_LOAD_ADDIN=This solution is controlled by CVS. Do you want to use Sharp CVS Addin to interact with CVS?"
 MSGBOX_QUERY_WAITFORCLOSE=The CVS add-in still has some jobs that are not finished. Do you want to keep waiting until they are done?
 MSGBOX_EXCEPTION_CVS_CHECKOUT=An error occured during CVS checkout. Description = {0}
+MSGBOX_MISSING_MODULE=The CVS Module name is missing.

@@ -21,6 +21,19 @@ namespace SharpCvsAddIn
         /// </summary>
         EnvDTE._DTE DTE { get; }
 
+		/// <summary>
+		/// Gets or sets the current cvs repository
+		/// </summary>
+		Persistance.Connection CurrentConnection { get; set; }
+		/// <summary>
+		/// Gets or sets that last module that we accessed
+		/// </summary>
+		Persistance.Module CurrentModule { get; set; }
+		/// <summary>
+		/// Gets or sets the last tag or branch we used
+		/// </summary>
+		string CurrentTag { get; set; }
+
         /// <summary>
         /// The UI shell.
         /// </summary>
@@ -37,6 +50,11 @@ namespace SharpCvsAddIn
 		void OpenSolution( string solutionPath );
 		void SolutionCleanup();
 		void HandleSolutionOpenEvent();
+
+		/// <summary>
+		/// solution is under cvs source control
+		/// </summary>
+		bool SolutionInCVS {get;}
 
         /// <summary>
         /// The SolutionExplorer object.

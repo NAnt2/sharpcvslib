@@ -94,39 +94,31 @@ namespace SharpCvsAddIn
 			protocolList.Items.Add( new Protocol( "kserver", rm.GetString( "FORM_KERBOROS_DESC" ) ) );
 			protocolList.Items.Add( new Protocol( "sspi", rm.GetString("FORM_SSPI_DESC")));
 
-		}
-
-		/// <summary>
-		/// Calls base constructor and then sets interface elements
-		/// to display current connection string information
-		/// </summary>
-		/// <param name="currentConnection">Contains CVS connection 
-		/// string information.</param>
-		public FormSetCvsConnection( IController controller_, ConnectionString currentConnection )
-			:this(controller_)
-		{
-			if( currentConnection != null )
+			if( controller_.CurrentConnection != null )
 			{
-				userNameTextBox.Text = currentConnection.User;
-				cvsHostTxtBox.Text = currentConnection.Host;
-				cvsPortTextBox.Text = currentConnection.Port.ToString();
-				cvsRootTextBox.Text = currentConnection.Repository;
-				workingDirTextBox.Text = currentConnection.WorkingDirectory;
-				cvsPasswordTxtBox.Text = currentConnection.Password;
+				Persistance.Connection conn = controller_.CurrentConnection;
 
-				if( currentConnection.Protocol != string.Empty )
+				userNameTextBox.Text = conn.User;
+				cvsHostTxtBox.Text = conn.Host;
+				cvsPortTextBox.Text = conn.Port.ToString();
+				cvsRootTextBox.Text = conn.Repository;
+				workingDirTextBox.Text = conn.WorkingDirectory;
+				cvsPasswordTxtBox.Text = conn.Password;
+				if( conn.Protocol != string.Empty )
 				{
-					foreach( object o in protocolList.Items )
+					foreach( object protocol in protocolList.Items )
 					{
-						Protocol p = (Protocol)o;
-						if( p.Name == currentConnection.Protocol )
+						if( ((Protocol)protocol).Name == conn.Protocol )
 						{
-							protocolList.SelectedItem = o;
+							protocolList.SelectedItem = protocol;
+							break;
 						}
 					}
 				}
 			}
+
 		}
+
 
 		/// <summary>
 		/// Clean up any resources being used.
@@ -394,6 +386,8 @@ namespace SharpCvsAddIn
 				controller_.UIShell.ExclamationMessage( this, "MSGBOX_DIRECTORY_INVALID" );
 
 			}
+
+
 
 			allowClose_ = true;
 		

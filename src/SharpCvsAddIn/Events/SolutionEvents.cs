@@ -74,6 +74,7 @@ namespace SharpCvsAddIn.Events
 		private void events__AfterClosing()
 		{
 			controller_.SolutionCleanup();
+
 			log_.Debug("AfterClosing event");
 
 		}
@@ -81,21 +82,20 @@ namespace SharpCvsAddIn.Events
 		private void events__BeforeClosing()
 		{
 			log_.Debug("BeforeClosing event");
+			controller_.SolutionClosing();
 
 		}
 
 		private void events__Opened()
 		{
 			log_.Debug( "Solution opened event triggered" );
+			controller_.SolutionOpened();
 			// in cvs controlled solution we need to check to see if user 
 			// wants add in to manage solution so we pop up a dialog box
 			// to allow user to choose. If the solution was opened directly from cvs
 			// this step is not needed
-			string solutionPath = Path.GetDirectoryName(controller_.DTE.Solution.FileName);
-			string cvsPath = Path.Combine( solutionPath, "CVS" );
-			FileAttributes attr = File.GetAttributes( cvsPath );
 
-			if( (int)attr != -1 ) // check for existance
+			if( controller_.SolutionInCVS )
 			{
 				if( !controller_.AddinLoadedForSolution )
 				{
@@ -107,6 +107,7 @@ namespace SharpCvsAddIn.Events
 					{
 						return;
 					}
+
 				}
 
 				controller_.SolutionExplorer.Initialize();
