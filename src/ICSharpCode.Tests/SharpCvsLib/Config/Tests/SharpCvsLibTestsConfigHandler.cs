@@ -63,18 +63,13 @@ namespace ICSharpCode.SharpCvsLib.Config.Tests {
                              object configContext,
                              XmlNode section) {
             LOGGER.Debug ("Attempting to load configuration handler for tests.");
-            try {
-                XPathNavigator nav = section.CreateNavigator();
-                String typename = (String) nav.Evaluate("string(@type)");
-                Type type = Type.GetType(typename);
-                object theObject = this.GetConfigObject (type, 
-                section.SelectSingleNode ("//" + SharpCvsLibTestsConfig.SUB_SECTION));
-    
-                return theObject;
-                } catch (Exception e) {
-                    LOGGER.Error (e);
-                    throw e;
-                }
+            XPathNavigator nav = section.CreateNavigator();
+            String typename = (String) nav.Evaluate("string(@type)");
+            Type type = Type.GetType(typename);
+            object theObject = this.GetConfigObject (type, 
+            section.SelectSingleNode ("//" + SharpCvsLibTestsConfig.SUB_SECTION));
+
+            return theObject;
         }
 
         /// <summary>

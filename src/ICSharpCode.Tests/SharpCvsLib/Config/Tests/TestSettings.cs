@@ -66,6 +66,10 @@ namespace ICSharpCode.SharpCvsLib.Config.Tests {
                 this.config = 
                     (SharpCvsLibTestsConfig)ConfigurationSettings.GetConfig 
                         (SharpCvsLibTestsConfigHandler.APP_CONFIG_SECTION);
+                
+                if (null == this.config) {
+                    this.config = new SharpCvsLibTestsConfig ();
+                }
             } catch (Exception e) {
                 LOGGER.Error ("Unable to load config file, loading default settings.", e);
                 // The default values are initialized in the config file.

@@ -51,17 +51,17 @@ namespace ICSharpCode.SharpCvsLib.Config.Tests {
         /// </summary>
         public const String SUB_SECTION = "sharpcvslib-tests-config";
         
-        String localPath;
-        String cvsroot;
-        String module;
-        String validPassword;
-        String invalidPassword;
-        String targetFile;
-        String targetDirectory;
-        String overrideDirectory;
-        String tag1;
-        String tag2;
-
+        String localPath = TestConstants.LOCAL_PATH;
+        String cvsroot = TestConstants.CVSROOT;
+        String module = TestConstants.MODULE;
+        String validPassword = TestConstants.PASSWORD_VALID;
+        String invalidPassword = TestConstants.PASSWORD_INVALID;
+        String targetFile = TestConstants.TARGET_FILE;
+        String targetDirectory = TestConstants.TARGET_DIRECTORY;
+        String overrideDirectory = TestConstants.OVERRIDE_DIRECTORY;
+        String tag1 = TestConstants.Revision.TAG_1;
+        String tag2 = TestConstants.Revision.TAG_2;
+        
         /// <summary>
         /// The cvsroot of the repository to target.
         /// </summary>
