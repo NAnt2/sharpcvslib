@@ -41,6 +41,9 @@ using System.Text;
 
 namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
+    /// <summary>
+    /// Contains the usage message for the command line interface.
+    /// </summary>
     public class Usage {
     
         /// <summary>Private constructor so the class is never instantiated.</summary>
@@ -175,7 +178,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 StringBuilder msg = new StringBuilder ();
                 msg.Append ("CVS command synonyms are:\n");
                 // loop through commands for synonyms
-                foreach(Command command in commands.Command) {
+                foreach(Command command in commands.Commands) {
                     if (command.Nick1 != null) {
                         string syn_output = String.Format("        {0,-11}  {1} {2}",
                             command.First, command.Nick1, command.Nick2);

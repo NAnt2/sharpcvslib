@@ -50,6 +50,11 @@ namespace ICSharpCode.SharpCvsLib.Console {
         public ConsoleMain () {
         }
         
+        /// <summary>
+        /// Driver for console application.
+        /// 
+        /// TODO: Write a better description :-)
+        /// </summary>
         public void Execute (String[] args) {
             CommandLineParser parser = new CommandLineParser (args);
             

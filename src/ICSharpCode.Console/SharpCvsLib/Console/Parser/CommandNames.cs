@@ -45,7 +45,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     ///     command line variables that are needed for the library.</summary>
     public class CommandNames {
     
-        private Command [] command = 
+        private Command [] commands = 
 {new Command("add",      "ad",       "new"),
                 new Command("admin",    "adm",      "rcs"),
                 new Command("annotate", "ann",      null),
@@ -93,8 +93,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             } ;
         
         /// <summary>Holds a list of command objects.</summary>
-        public Command [] Command {
-            get {return this.command;}
+        public Command [] Commands {
+            get {return this.commands;}
         }
     
         /// <summary>Creates and instance of the commands object.  This object

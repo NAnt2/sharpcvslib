@@ -52,14 +52,28 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private string command;
         private string options;
 
+        /// <summary>
+        /// Value of the cvsroot to use as a string.  This will be passed
+        ///     into the CvsRoot object which will know how to parse it.
+        /// </summary>
         public String Cvsroot {
             get {return this.cvsroot;}
         }
         
+        /// <summary>
+        /// The text value of the command that will be executed.  This should be
+        ///     translated into one of the public API command objects.
+        /// </summary>
         public String Command {
             get {return this.command;}
         }
         
+        /// <summary>
+        /// Option to pass into the command. 
+        /// 
+        /// TODO: There may need to be an options collection to handle options,
+        ///     either that or handle them as an attribute of the individual commands...
+        /// </summary>
         public String Options {
             get {return this.options;}
         }

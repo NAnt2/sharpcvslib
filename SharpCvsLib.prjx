@@ -118,18 +118,18 @@
   <Configuration runwithwarnings="False" name="Debug">
     <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="True" win32Icon="" />
     <Execution commandlineparameters="" consolepause="True" />
-    <Output directory=".\build\bin\Debug" assembly="ICSharpCode.SharpCvsLib" executeBeforeBuild="" executeAfterBuild="" />
+    <Output directory=".\build\bin" assembly="ICSharpCode.SharpCvsLib" executeBeforeBuild="" executeAfterBuild="" />
   </Configuration>
   <Configurations active="Debug">
     <Configuration runwithwarnings="False" name="Debug">
       <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="True" win32Icon="" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory=".\build\bin\Debug" assembly="ICSharpCode.SharpCvsLib" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory=".\build\bin" assembly="ICSharpCode.SharpCvsLib" executeBeforeBuild="" executeAfterBuild="" />
     </Configuration>
     <Configuration runwithwarnings="False" name="Release">
       <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="2" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory=".\build\bin\Release" assembly="ICSharpCode.SharpCvsLib" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory=".\build\bin" assembly="ICSharpCode.SharpCvsLib" executeBeforeBuild="" executeAfterBuild="" />
     </Configuration>
   </Configurations>
 </Project>

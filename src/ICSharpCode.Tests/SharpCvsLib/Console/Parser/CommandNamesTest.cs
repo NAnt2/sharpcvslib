@@ -74,10 +74,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser
 			CommandNames commands  = new CommandNames();
 
 			// Check the first command object 
-			AssertCommandEquals (commands.Command[0], "add", "ad", "new");
+			AssertCommandEquals (commands.Commands[0], "add", "ad", "new");
 
 			// Check the last command object
-			AssertCommandEquals (commands.Command[commands.Command.GetLength(0) - 1], "watchers", null, null);
+			AssertCommandEquals (commands.Commands[commands.Commands.GetLength(0) - 1], "watchers", null, null);
 		}
 		private void AssertCommandEquals (Command com,
 			string prime, string nick1, string nick2) 

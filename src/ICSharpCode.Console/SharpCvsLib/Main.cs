@@ -39,7 +39,16 @@ using ICSharpCode.SharpCvsLib.Console;
 
 namespace ICSharpCode.SharpCvsLib {
 
+    /// <summary>
+    /// Provides the main entry point into the console application.  Calls the
+    ///     ConsoleMain delegate in order to limit/ break the connection to the 
+    ///     command line as much as possible.
+    /// </summary>
     public class MainClass {
+        
+        /// <summary>
+        ///  Static Main method.
+        /// </summary>
         public static void Main(String[] args) {
             ConsoleMain application = new ConsoleMain ();
             application.Execute (args);

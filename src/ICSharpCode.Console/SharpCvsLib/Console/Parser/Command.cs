@@ -47,14 +47,23 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private String nick1;
         private String nick2;
         
+        /// <summary>
+        /// Primary name for the command, the name to be used first.
+        /// </summary>
         public String First {
             get {return this.first;}
         }
         
+        /// <summary>
+        /// Nick/ synonym for the command.
+        /// </summary>
         public String Nick1 {
             get {return this.nick1;}
         }
         
+        /// <summary>
+        /// Nick/ synonym for the command
+        /// </summary>
         public String Nick2 {
             get {return this.nick2;}
         }

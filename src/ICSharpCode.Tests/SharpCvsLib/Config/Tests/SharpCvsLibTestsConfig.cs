@@ -170,6 +170,10 @@ namespace ICSharpCode.SharpCvsLib.Config.Tests {
             return formatter.ToString ();
         }
         
+        /// <summary>
+        /// Creates a new instance of the config object and initializes the 
+        ///      values to the project defaults.
+        /// </summary>
         public SharpCvsLibTestsConfig () {
             localPath = TestConstants.LOCAL_PATH;
             cvsroot = TestConstants.CVSROOT;
