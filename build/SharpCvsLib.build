@@ -187,7 +187,7 @@
         <call target="setup" />
         <call target="dist.clean" />
         <call target="build.all" failonerror="false" />
-<!--        <call target="run-tests-sample" failonerror="false" />-->
+        <call target="run-tests-sample" failonerror="false" />
         <mkdir dir="${dir.dist}/bin" />
         <mkdir dir="${dir.dist}/src" />    
         
@@ -281,6 +281,7 @@
     </target>
     
     <target name="build-release.sf" depends="build-release.common" description="Produces the sourceforge.net release build.">
+        <property name="dir.doc.msdn" value="${dir.dist}/src/doc/api/msdn" />
         <property name="args.copy-docs" value="${dir.doc.msdn}/*.html ${sf.username}:${sf.location.release}/api/msdn" />
         <exec program="${util.copy}" commandline="${args.copy-docs}"/>
         

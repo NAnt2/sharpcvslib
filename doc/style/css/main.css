@@ -1,0 +1,52 @@
+Body {
+    margin-top: 1%;
+    margin-left: 2%;
+    margin-right: 2%;
+    margin-bottom: 10%;
+    background-color: White;
+    color: black;
+    font-weight: bold;
+    background-image: url(http://sharpcvslib.sf.net/images/fish-3.jpg);
+    background-repeat: no-repeat;
+    background-position: center left;
+    height: 100%;
+    width: 100%;
+}
+
+.Title {
+    background-color: #FFFFCC;
+    color: Orange;
+    font-weight: bold;
+    font-size: 24pt;
+    text-align: center;
+}
+
+.SubTitle {
+    background-color:Ivory;
+    color: Orange;
+    font-weight: bold;
+    font-size: 14pt;
+    text-align: left;
+}
+
+.Content {
+    margin-right: 10%;
+    margin-left: 10%;
+}
+
+.Sponsor{background-color: #FFFFCC;margin-bottom:0;}
+.Code{color: Maroon;font-weight: bold;}
+.Warning{color: Red;font-weight: bold;}
+.Label{font-weight: bold;}
+.Notes{text-align: right;}
+.Author{text-align: right;font-size: small;font-weight: bold;color: Red;}
+
+.Navigation {
+    /*background-color: #FFFFCC;*/
+    width: 100%;
+    text-align: center;
+    word-spacing: 10px
+}
+a:hover{background-color: #ffcc00;}
+a:visited{color: Olive;}
+a:link{color:Silver;}
