@@ -192,7 +192,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                         endofOptions = ciOptions.IndexOf(" -", i, ciOptions.Length - i) - 2;
                     }
                     revision = ciOptions.Substring(i, endofOptions);
-                }
+					i = i + endofOptions;
+				}
                 if (ciOptions[i]== '-' && ciOptions[i+1] == 'F') {
                     i += 2;
                     // get filename to get message from
@@ -203,7 +204,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                         endofOptions = ciOptions.IndexOf(" -", i, ciOptions.Length - i) - 2;
                     }
                     logFile = ciOptions.Substring(i, endofOptions);
-                }
+					i = i + endofOptions;
+				}
                 if (ciOptions[i]== '-' && ciOptions[i+1] == 'm') {
                     i += 2;
                     // get message to attach to files 
@@ -214,7 +216,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                         endofOptions = ciOptions.IndexOf(" -", i, ciOptions.Length - i) - 2;
                     }
                     message = ciOptions.Substring(i, endofOptions);
-                }
+					i = i + endofOptions;
+				}
                 if (ciOptions[i]== '-' && ciOptions[i+1] == 'c') {
                     String msg = "The -c commit option is not  " +
                         "implemented.";
