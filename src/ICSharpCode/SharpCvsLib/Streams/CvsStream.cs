@@ -27,12 +27,18 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//        <author>Mike Krueger</author>
+//        <author>Clayton Harbour</author>
 #endregion
 
 using System;
 using System.IO;
 using System.Text;
 using System.Threading;
+
+using ICSharpCode.SharpCvsLib.Messages;
+using ICSharpCode.SharpCvsLib.Util;
 
 using log4net;
 
@@ -41,8 +47,22 @@ namespace ICSharpCode.SharpCvsLib.Streams {
     /// <summary>
     /// Class for handling streams to the cvs server.
     /// </summary>
-    public class CvsStream : Stream
-    {
+    public class CvsStream : Stream {
+        private static EncodedMessage requestMessage = new EncodedMessage ();
+        private static EncodedMessage responseMessage = new EncodedMessage ();
+        /// <summary>
+        /// Triggered when there is a message sent or written to the cvs stream.
+        /// </summary>
+        public EncodedMessage RequestMessage {
+            get {return requestMessage;}
+        }
+        /// <summary>
+        /// Occurs when there is a response recieved or read from the cvs stream.
+        /// </summary>
+        public EncodedMessage ResponseMessage {
+            get {return responseMessage;}
+        }
+        
         private readonly ILog LOGGER = LogManager.GetLogger (typeof (CvsStream));
         Stream baseStream;
         
@@ -58,8 +78,7 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         /// Cvs server stream object.
         /// </summary>
         /// <param name="baseStream"></param>
-        public CvsStream(Stream baseStream)
-        {
+        public CvsStream(Stream baseStream) {
             this.baseStream = baseStream;
         }
         
@@ -67,104 +86,92 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         /// I needed to implement the abstract member.
         /// </summary>
         public override bool CanRead {
-            get {
-                return baseStream.CanRead;
-            }
+            get {return baseStream.CanRead;}
         }
         
         /// <summary>
         /// I needed to implement the abstract member.
         /// </summary>
         public override bool CanSeek {
-            get {
-                return baseStream.CanSeek;
-            }
+            get {return baseStream.CanSeek;}
         }
         
         /// <summary>
         /// I needed to implement the abstract member.
         /// </summary>
         public override bool CanWrite {
-            get {
-                return baseStream.CanWrite;
-            }
+            get {return baseStream.CanWrite;}
         }
         
         /// <summary>
         /// I needed to implement the abstract member.
         /// </summary>
         public override long Length {
-            get {
-                return baseStream.Length;
-            }
+            get {return baseStream.Length;}
         }
         
         /// <summary>
         /// I needed to implement the abstract member.
         /// </summary>
         public override long Position {
-            get {
-                return baseStream.Position;
-            }
-            set {
-                baseStream.Position = value;
-            }
+            get {return baseStream.Position;}
+            set {baseStream.Position = value;}
         }
         
         /// <summary>
         /// Flushes the baseInputStream
         /// </summary>
-        public override void Flush()
-        {
+        public override void Flush() {
             baseStream.Flush();
         }
         
         /// <summary>
         /// I needed to implement the abstract member.
         /// </summary>
-        public override long Seek(long offset, SeekOrigin origin)
-        {
+        public override long Seek(long offset, SeekOrigin origin) {
             return baseStream.Seek(offset, origin);
         }
         
         /// <summary>
         /// I needed to implement the abstract member.
         /// </summary>
-        public override void SetLength(long val)
-        {
+        public override void SetLength(long val) {
             baseStream.SetLength(val);
         }
         
         /// <summary>
         /// Write the specified byte array to the stream.
         /// </summary>
-        /// <param name="array"></param>
-        public void Write(byte[] array)
-        {
+        /// <param name="array">A byte array to send to the cvs server.</param>
+        public void Write(byte[] array) {
             baseStream.Write(array, 0, array.Length);
+            RequestMessage.SendMessage (EncodingUtil.GetString(array, 0, array.Length));
         }
         
         /// <summary>
         /// I needed to implement the abstract member.
         /// </summary>
-        public override void Write(byte[] array, int offset, int count)
-        {
+        /// <param name="array">A byte array to send to the server.</param>
+        /// <param name="offset">A position in the byte array to start writing
+        ///     from.</param>
+        /// <param name="count">The number of bytes to write.</param>
+        public override void Write(byte[] array, int offset, int count) {
             baseStream.Write(array, offset, count);
+            RequestMessage.SendMessage (EncodingUtil.GetString (array, offset, count));
         }
         
         /// <summary>
         /// I needed to implement the abstract member.
         /// </summary>
-        public override void WriteByte(byte val)
-        {
+        public override void WriteByte(byte val) {
             baseStream.WriteByte(val);
+            RequestMessage.SendMessage(EncodingUtil.GetString(val));
         }
         
         /// <summary>
         /// Closes the base stream
         /// </summary>
-        public override void Close()
-        {
+        public override void Close() {
             baseStream.Close();
         }
     
@@ -174,36 +181,40 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         ///
         /// The byte is baseInputStream the lower 8 bits of the int.
         /// </summary>
-        public override int ReadByte()
-        {
-            return baseStream.ReadByte();
+        /// <returns>The byte.</returns>
+        public override int ReadByte() {
+            int val = baseStream.ReadByte();
+            ResponseMessage.SendMessage (EncodingUtil.GetString(val));
+            return val;
         }
         
         /// <summary>
         /// Decompresses data into the byte array
         /// </summary>
-        /// <param name ="b">
+        /// <param name ="array">
         /// the array to read and decompress data into
         /// </param>
-        /// <param name ="off">
+        /// <param name ="offset">
         /// the offset indicating where the data should be placed
         /// </param>
-        /// <param name ="len">
+        /// <param name ="length">
         /// the number of bytes to decompress
         /// </param>
-        public override int Read(byte[] b, int off, int len)
-        {
-            return baseStream.Read(b, off, len);
+        public override int Read(byte[] array, int offset, int length) {
+            int val = baseStream.Read(array, offset, length);
+            ResponseMessage.SendMessage (EncodingUtil.GetString (array, offset, length));
+            return val;
         }
 
         /// <summary>
         /// Read the stream from the cvs server.
         /// </summary>
-        /// <param name="b"></param>
-        /// <returns></returns>
-        public int Read(byte[] b)
-        {
-            return baseStream.Read(b, 0, b.Length);
+        /// <param name="array">A byte array that is being read from the server.</param>
+        /// <returns>The integer value of the byte array.</returns>
+        public int Read(byte[] array) {
+            int val = baseStream.Read(array, 0, array.Length);
+            ResponseMessage.SendMessage (EncodingUtil.GetString(array, 0, array.Length));
+            return val;
         }
  
         /// <summary>
@@ -211,8 +222,7 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         ///     character is reached.
         /// </summary>
         /// <returns></returns>
-        private string ReadLineBlock()
-        {
+        private string ReadLineBlock() {
             StringBuilder builder = new StringBuilder(1024);
             while (true) {
                 int i = ReadByte();
@@ -221,6 +231,7 @@ namespace ICSharpCode.SharpCvsLib.Streams {
                 }
                 builder.Append((char)i);
             }
+            ResponseMessage.SendMessage(builder.ToString());
             return builder.ToString();
         }
         
@@ -228,8 +239,7 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         /// Read from the stream until the end of the line.
         /// </summary>
         /// <returns></returns>
-        public string ReadLine()
-        {
+        public string ReadLine() {
             string line = "";
             int x = 0;
             while (line.Length == 0 && ++x < 10) {
@@ -238,6 +248,7 @@ namespace ICSharpCode.SharpCvsLib.Streams {
                     Thread.Sleep(10);
                 }
             }
+            ResponseMessage.SendMessage(line);
             return line;            
         }
         
@@ -246,8 +257,7 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         ///     character is reached.
         /// </summary>
         /// <returns></returns>
-        public string ReadToFirstWS()
-        {
+        public string ReadToFirstWS() {
             StringBuilder builder = new StringBuilder(1024);
             while (true) {
                 int i = ReadByte();
@@ -257,16 +267,18 @@ namespace ICSharpCode.SharpCvsLib.Streams {
                     break;
                 }
             }
+            ResponseMessage.SendMessage(builder);
             return builder.ToString();
         }
                 
         /// <summary>
         /// Read a block of data from the stream.
+        /// 
+        /// // TODO: Figure out what this would be used for.
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="size"></param>
-        public void ReadBlock(byte[] buffer, int size)
-        {
+        public void ReadBlock(byte[] buffer, int size) {
             for (int i = 0; i < size;) {
                 int back = Read(buffer, i, size - i);
                 i += back;
@@ -282,8 +294,11 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         /// <param name="dataStr"></param>
         public void SendString(string dataStr)
         {
+            // TODO: Check to see what encoding is used for a cvs server and
+            //        move this method to the EncodingUtil.
             byte[] buff = System.Text.Encoding.ASCII.GetBytes(dataStr);
             baseStream.Write(buff, 0, buff.Length);
+            RequestMessage.SendMessage (dataStr);
             Flush();
         }
     }

@@ -36,6 +36,7 @@ using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Config.Tests;
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Messages;
 
 using log4net;
 
@@ -54,6 +55,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
         private ILog LOGGER = LogManager.GetLogger (typeof (CVSServerConnectionTest));
         private TestSettings settings = new TestSettings ();
         
+        private int messageCounter;
+        
         /// <summary>
         ///     Constructor.
         /// </summary>
@@ -66,6 +69,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// </summary>
         [Test]
         public void MakeConnection_Good () {
+            messageCounter = 0;
             LOGGER.Debug ("Settings=[" + this.settings.Config + "]");
             System.Threading.Thread.Sleep (500);
             CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
@@ -77,7 +81,18 @@ namespace ICSharpCode.SharpCvsLib.Client {
             CVSServerConnection connection = new CVSServerConnection ();
             Assertion.AssertNotNull ("Should have a connection object.", connection);
             
+            connection.InputStream.RequestMessage.MessageEvent += 
+                new EncodedMessage.MessageHandler (this.WriteMessage);
+            connection.InputStream.ResponseMessage.MessageEvent += 
+                new EncodedMessage.MessageHandler (this.WriteMessage);
+                
             connection.Connect (working, this.settings.Config.ValidPassword);
+            Assertion.Assert (messageCounter > 0);
+        }
+        
+        private void WriteMessage (String message) {
+            messageCounter++;
+            LOGGER.Debug ("Delegated message: " + message);
         }
 
         /// <summary>

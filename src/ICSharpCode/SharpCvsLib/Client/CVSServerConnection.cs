@@ -55,12 +55,7 @@ using ICSharpCode.SharpCvsLib.Streams;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Client {
-	
-    /// <summary>
-    /// Message handling event.
-    /// </summary>
-	public delegate void MessageEventHandler(string message);    
-	
+
     /// <summary>
     /// Cvs server connection, handles connections to the cvs server.
     /// </summary>
@@ -80,8 +75,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
 		
 		private TcpClient tcpclient = null;
 		
-		private CvsStream inputstream  = null;
-		private CvsStream outputstream = null;
+		private CvsStream inputStream  = new CvsStream (new MemoryStream());
+		private CvsStream outputStream = new CvsStream (new MemoryStream());
 		
 		private WorkingDirectory repository;
 		
@@ -90,7 +85,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
 	    
 	    private const String PSERVER_AUTH_SUCCESS = "I LOVE YOU";
 	    private const String PSERVER_AUTH_FAIL = "I HATE YOU";
-	    
+
 	    /// <summary>
 	    ///     Initialize the cvs server connection.
 	    /// </summary>
@@ -117,7 +112,6 @@ namespace ICSharpCode.SharpCvsLib.Client {
 	            this.authSleep = DEFAULT_AUTH_SLEEP;
 	            
 	        }
-	        
 	    }
 		
         /// <summary>
@@ -149,36 +143,48 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// Cvs input stream writer
         /// </summary>
 		public CvsStream InputStream {
-			get {return inputstream;}
-			set {inputstream = value;}
+			get {return inputStream;}
+			set {inputStream = value;}
+		}
+		
+		/// <summary>
+		/// Wrapper for the request message delegate on the input stream.
+		/// </summary>
+		public EncodedMessage RequestMessage {
+		    get {return InputStream.RequestMessage;}
+		}
+		
+		/// <summary>
+		/// Wrapper for the response message delegate on the output 
+		///     stream.
+		/// </summary>
+		public EncodedMessage ResponseMessage {
+		    get {return OutputStream.ResponseMessage;}
 		}
 		
         /// <summary>
         /// Cvs output stream reader
         /// </summary>
 		public CvsStream OutputStream {
-			get {return outputstream;}
-			set {outputstream = value;}
+			get {return outputStream;}
+			set {outputStream = value;}
 		}
 		
         /// <summary>
         /// Message event.
         /// </summary>
-		public event MessageEventHandler MessageEvent;
+		public EncodedMessage MessageEvent = new EncodedMessage ();
 	    
         /// <summary>
         /// Send the message to the message event handler.
         /// </summary>
         /// <param name="message"></param>
-		public void SendMessage(string message)
-		{
+		public void SendMessage(string message) {
 		    System.Console.WriteLine (message);
 		    LOGGER.Info (message);
-			if (MessageEvent != null) {
-				MessageEvent(message);
-			}
+			MessageEvent.SendMessage(message);
 		}
-		
+
         /// <summary>
         /// Send the message to the message event handler.
         /// </summary>
@@ -210,7 +216,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
 			SortedList modules = new SortedList();
 			
 			while (true) {
-				string responseStr = inputstream.ReadToFirstWS();
+				string responseStr = inputStream.ReadToFirstWS();
 			    if (LOGGER.IsDebugEnabled)
 			    {
 				    LOGGER.Debug ("Response : " + responseStr);
@@ -228,11 +234,11 @@ namespace ICSharpCode.SharpCvsLib.Client {
 				
 				if (response == null) {
 					if (responseStr.EndsWith(" ")) {
-						inputstream.ReadLine();
+						inputStream.ReadLine();
 					}
 					break;
 				}
-				response.Process(inputstream, this);
+				response.Process(inputStream, this);
 				if (response.IsTerminating) {
 					break;
 				}
@@ -255,7 +261,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
 		        LOGGER.Debug (msg);
 		    }
 			
-			outputstream.SendString(request.RequestString);
+			outputStream.SendString(request.RequestString);
 			
 			if (request.DoesModifyConnection) {
 				request.ModifyConnection(this);
@@ -374,15 +380,16 @@ namespace ICSharpCode.SharpCvsLib.Client {
 			        //streamReader.ReadToEnd ();
 			        //streamWriter.WriteLine(password);
 
-                    inputstream = new CvsStream (streamReader.BaseStream);
-			        outputstream = new CvsStream (streamWriter.BaseStream);
+                    inputStream = new CvsStream (streamReader.BaseStream);
+			        outputStream = new CvsStream (streamWriter.BaseStream);
 					break;
 				case "pserver":
 			        tcpclient = new TcpClient ();
 			        tcpclient.SendTimeout = this.Timeout;
 			        
 				    tcpclient.Connect(repository.CvsRoot.Host, DEFAULT_PORT);
-					inputstream  = outputstream = new CvsStream(tcpclient.GetStream());
+					inputStream  = outputStream = new CvsStream(tcpclient.GetStream());
+
 			        if (LOGGER.IsDebugEnabled) {
 			            String msg = "Before submitting pserver connect request.  " +
 			                "repository.CvsRoot.CvsRepository=[" + repository.CvsRoot.CvsRepository + "]" +
@@ -401,14 +408,14 @@ namespace ICSharpCode.SharpCvsLib.Client {
 			            }
 			        }
 
-					inputstream.Flush();
+					inputStream.Flush();
 
                     string retStr;			        
 			        // sleep for awhile for slow servers
 			        System.Threading.Thread.Sleep (this.AuthSleep);
 			        
 			        try {
-    					retStr = inputstream.ReadLine();
+    					retStr = inputStream.ReadLine();
 			        }
 			        catch (IOException e) {
 			            String msg = "Failed to read line from server.  " +
