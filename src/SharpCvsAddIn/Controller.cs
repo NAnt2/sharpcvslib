@@ -16,7 +16,7 @@ namespace SharpCvsAddIn
 		private _DTE application_;
 		private IUIShell shell_;
 		private IErrorHandler errorHandler_;
-		private Model model_ = new Model();
+		private Model model_ = null; //new Model();
 		private OutputPaneWriter outputWriter_;
 		private bool solutionOpen_ = false;
 		private bool addInLoadedForSolution_ = false;
@@ -27,6 +27,7 @@ namespace SharpCvsAddIn
 		{
 			application_ = dte;
 			addIn_ = addin;
+			model_= new Model( addin.SatelliteDllPath );
 			shell_ = new UIShell( this );
 			solutionExplorer_ = new SolutionExplorer(this);
 			errorHandler_ = errorHandler;

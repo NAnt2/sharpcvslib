@@ -381,15 +381,9 @@ namespace SharpCvsAddIn
 
 		}
 
-		public Model()
+		public Model(string satelliteDllPath )
 		{
-			string codebase = this.GetType().Assembly.CodeBase;
-			Debug.WriteLine( codebase );
-			Uri uriPath = new Uri( codebase );
-			Debug.WriteLine( Path.GetDirectoryName(uriPath.LocalPath) );
-			assemblyPath_ = Path.GetDirectoryName(uriPath.LocalPath);
-			string langAssemblyPath = Path.Combine( assemblyPath_, Model.LanguageAssemblyName ); 
-			AssemblyName name = AssemblyName.GetAssemblyName( langAssemblyPath );
+			AssemblyName name = AssemblyName.GetAssemblyName( satelliteDllPath );
 			this.ResourceManager = new ResourceManager( Model.LanguageBaseResourceName, 	Assembly.Load( name ) );
 
 
