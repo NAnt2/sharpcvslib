@@ -67,38 +67,49 @@ namespace ICSharpCode.SharpCvsLib.Console {
         public void Execute (String[] args) {
             CommandLineParser parser = new CommandLineParser (args);
 
-            ICommand command = parser.Execute ();
-            // might need to move this up to the library, make working
-            //  directory a public property??  Not sure.
-            WorkingDirectory workingDirectory = parser.CurrentWorkingDirectory;
-
-            string password = "";
-
-            // Create CVSServerConnection object that has the ICommandConnection
-            CVSServerConnection serverConn = new CVSServerConnection();
-            try{
-                // try connecting with empty password for anonymous users
-                serverConn.Connect(workingDirectory, password);
+            ICommand command = null;
+            try {
+                command = parser.Execute ();
+            } catch (CommandLineParseException e) {
+                LOGGER.Debug (e);
+                System.Console.WriteLine(Usage.General);
+                return;
             }
-            catch (AuthenticationException eDefault){
-                LOGGER.Info("Authentication failed using empty password, trying .cvspass file.", eDefault);
+
+            if (null != command) {
+                // might need to move this up to the library, make working
+                //  directory a public property??  Not sure.
+                WorkingDirectory workingDirectory = parser.CurrentWorkingDirectory;
+
+                string password = "";
+
+                // Create CVSServerConnection object that has the ICommandConnection
+                CVSServerConnection serverConn = new CVSServerConnection();
                 try{
-                    //string scrambledpassword;
-                    // check to connect with password from .cvspass file
-                    // check for .cvspass file and get password
-                    //password = PasswordScrambler.Descramble(scrambledpassword);
+                    // try connecting with empty password for anonymous users
                     serverConn.Connect(workingDirectory, password);
                 }
-                catch (AuthenticationException eCvsPass){
-                    LOGGER.Info("Authentication failed using .cvspass file, prompting for password.", eCvsPass);
-                    // prompt user for password by using login command?
-                    LoginCommand login = new LoginCommand(workingDirectory.CvsRoot);
-                    serverConn.Connect(workingDirectory, login.Password);
+                catch (AuthenticationException eDefault){
+                    LOGGER.Info("Authentication failed using empty password, trying .cvspass file.", eDefault);
+                    try{
+                        //string scrambledpassword;
+                        // check to connect with password from .cvspass file
+                        // check for .cvspass file and get password
+                        //password = PasswordScrambler.Descramble(scrambledpassword);
+                        serverConn.Connect(workingDirectory, password);
+                    }
+                    catch (AuthenticationException eCvsPass){
+                        LOGGER.Info("Authentication failed using .cvspass file, prompting for password.", eCvsPass);
+                        // prompt user for password by using login command?
+                        //LoginCommand login = new LoginCommand(workingDirectory.CvsRoot);
+                        //serverConn.Connect(workingDirectory, login.Password);
+                        throw eCvsPass;
+                    }
                 }
+                // run the execute checkout command on cvs repository.
+                command.Execute(serverConn);
+                serverConn.Close();
             }
-            // run the execute checkout command on cvs repository.
-            command.Execute(serverConn);
-            serverConn.Close();
 
 /*  This code is duplicated and I was not sure what should be moved to the 
  *      CommandLineParser and what was already there.

@@ -134,6 +134,9 @@ public class CVSServerConnection : IConnection, IResponseServices, ICommandConne
             LOGGER.Error (e);
         }
 
+        if (null == config) {
+            config = new SharpCvsLibConfig ();
+        }
         LOGGER.Debug("Config=["  + config.ToString() + "]");
     }
 

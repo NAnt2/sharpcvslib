@@ -71,10 +71,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         [Test]
         public void MakeCheckoutCommandTest (){
             Directory.CreateDirectory (settings.Config.LocalPath);
-            //Environment.CurrentDirectory = settings.Config.LocalPath;
+            Environment.CurrentDirectory = settings.Config.LocalPath;
             
             String commandLine = 
-                "-d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib co sharpcvslib";
+               "-d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib co sharpcvslib";
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a CheckoutCommand object
             ConsoleMain consoleMain = new ConsoleMain ();

@@ -121,7 +121,18 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// </summary>
         /// <returns>A command object from the library which will be used to 
         ///     access the repsository.</returns>
+        /// <exception cref="CommandLineParseException">If there is a problem
+        ///     parsing the command line arguments (i.e. if invalid arguments
+        ///     are entered.</exception>
         public ICommand Execute () {
+            if (LOGGER.IsDebugEnabled) {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append("\n Command line arguments:");
+                foreach (String argument in this.arguments) {
+                    msg.Append("\n\t argument=[").Append(argument).Append("]");
+                }
+                LOGGER.Debug(msg);
+            }
             // TODO: Remove = null when all other code paths return a value,
             //      this was just put in so it would compile.
             ICommand command = null;
@@ -136,7 +147,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     LOGGER.Debug(msg);
                 }
                 if (arguments[i].IndexOf ("-d", 0, 2) >= 0) {
-                    cvsroot = arguments[i++].Substring (2);
+                    cvsroot = arguments[i].Substring (2);
+                    i++;
+                    if (arguments.Length < i) {
+                        throw new CommandLineParseException("Only specified a cvsroot, need to specify a command.");
+                    }
                 }
                 switch (arguments[i]) {
                     case "checkout":
@@ -151,34 +166,39 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                                 for ( int cnt=1; cnt < arguments[i].Length; cnt++ ){
                                     this.options = this.options + "-" + arguments[i][cnt] + " "; // No
                                 }
-                                i++;
                             }
                             else{
-                                this.options = this.options + arguments[i++];       // Yes
-                                this.options = this.options + arguments[i++] + " ";
+                                this.options = this.options + arguments[i];       // Yes
+                                this.options = this.options + arguments[i] + " ";
                             }
+                            i++;
                         }
                         if (arguments.Length > i){
                             // Safely grab the module, if not specified then
                             //  pass null into the repository...the cvs command
                             //  line for cvsnt/ cvs seems to bomb out when
                             //  it sends to the server
-                            this.repository = arguments[i++];
+                            this.repository = arguments[i];
                         } else {
                             this.repository = String.Empty;
                         }
-                        CheckoutCommand checkoutCommand = 
-                            new CheckoutCommand(cvsroot, repository, options);
-                        command = checkoutCommand.CreateCommand ();
-                        this.currentWorkingDirectory = 
-                            checkoutCommand.CurrentWorkingDirectory;
+                        try {
+                            CheckoutCommand checkoutCommand = 
+                                new CheckoutCommand(cvsroot, repository, options);
+                            command = checkoutCommand.CreateCommand ();
+                            this.currentWorkingDirectory = 
+                                checkoutCommand.CurrentWorkingDirectory;
+                        } catch (Exception e) {
+                            LOGGER.Error(e);
+                            throw new CommandLineParseException("Unable to create checkout command.", e);
+                        }
                         break;
                     case "login":
                         // login to server
-                        this.command = arguments[i++];
+                        this.command = arguments[i];
                         break;
                     case "passwd":
-                        this.command = arguments[i++];
+                        this.command = arguments[i];
                         break;
                     case "up":
                     case "upd":
@@ -186,22 +206,17 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         singleOptions = "ACPRbdfmp";
                         this.command = arguments[i++];
                             // get rest of arguments which is options on the update command.
-                        while (arguments[i].IndexOf("-", 0, 1) >= 0)
-                        {
+                        while (arguments[i].IndexOf("-", 0, 1) >= 0) {
                             // Get options with second parameters?
-                            if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0)
-                            {
-                                for ( int cnt=1; cnt < arguments[i].Length; cnt++ )
-                                {
+                            if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
+                                for ( int cnt=1; cnt < arguments[i].Length; cnt++ ) {
                                     this.options = this.options + "-" + arguments[i][cnt] + " "; // No
                                 }
-                                i++;
+                            } else {
+                                this.options = this.options + arguments[i];       // Yes
+                                this.options = this.options + arguments[i] + " ";
                             }
-                            else
-                            {
-                                this.options = this.options + arguments[i++];       // Yes
-                                this.options = this.options + arguments[i++] + " ";
-                            }
+                            i++;
                         }
                         if (arguments.Length > i)
                         {
@@ -217,20 +232,22 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         }
                         break;
                     case "--help":
-                        this.command = arguments[i++];
+                        System.Console.WriteLine(Usage.General);
                         break;
                     case "--help-options":
-                        this.command = arguments[i++];
+                        System.Console.WriteLine(Usage.Options);
                         break;
                     case "--help-commands":
-                        this.command = arguments[i++];
+                        System.Console.WriteLine(Usage.Commands);
                         break;
                     case "--help-synonyms":
-                        this.command = arguments[i++];
+                        System.Console.WriteLine(Usage.Synonyms);
                         break;
                     default:
-                        System.Console.WriteLine (Usage.General);
-                        throw new System.Exception ("not known");
+                        StringBuilder msg = new StringBuilder ();
+                        msg.Append("Unknown command entered.  ");
+                        msg.Append("command=[").Append(arguments[i]).Append("]");
+                        throw new CommandLineParseException(msg.ToString());
                     }
                 }
             return command;

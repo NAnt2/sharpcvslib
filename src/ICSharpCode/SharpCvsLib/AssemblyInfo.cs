@@ -27,12 +27,12 @@ using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("#Cvs Library")]
-[assembly: AssemblyDescription("GPL .Net cvs client implementation")]
+[assembly: AssemblyTitle("SharpCvsLib")]
+[assembly: AssemblyDescription(".Net cvs client implementation")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("#CvsLib")]
-[assembly: AssemblyCopyright("Mike Krueger 2001-2002, Clayton Harbour 2003")]
+[assembly: AssemblyCompany("http://sharpcvslib.sourceforge.net")]
+[assembly: AssemblyProduct("SharpCvsLib")]
+[assembly: AssemblyCopyright("Mike Krueger 2001-2002, SharpCvsLib Developers 2003")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
