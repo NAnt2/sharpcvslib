@@ -30,6 +30,7 @@
     <property name="dir.lib" value="${dir.base}/lib" />
     <property name="dir.lib.ext" value="${dir.lib}/ext" />
     <property name="dir.release" value="${dir.base}/release" />
+    <property name="dir.output" value="${dir.release}/${assembly.version}" />
     
     <property name="dir.doc.msdn" value="${dir.dist}/doc/api/msdn" />
     
@@ -89,7 +90,11 @@
             <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="build"/>
     </target>
 
-    <target name="netdoc" failonerror="true">
+    <target name="run-tests" depends="build.all">
+            <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="run-tests"/>
+    </target>
+
+    <target name="netdoc" failonerror="false">
         <property name="doc.exe" value="hhc.exe" />
         
         <property name="doc.show-missing-summaries" value="True" />
@@ -105,6 +110,7 @@
 
         <property name="doc.include-assembly-version" value="True" />
 
+        <if uptodatefile="doc.exe" comparefile="temp.cs">
         <ndoc>
             <assemblies basedir="${dir.build}">
                 <includes name="${name.top-level}.${name.lib}.dll"/>
@@ -138,10 +144,7 @@
                 </documenter>
             </documenters> 
         </ndoc>
-    </target>
-    
-    <target name="run-tests" depends="build.all">
-            <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="run-tests"/>
+        </if>
     </target>
     
     <target name="dist" depends="build.lib, build.test, build.console">
@@ -172,7 +175,6 @@
     
     <target name="build-release.common">
         <call target="dist" />
-        <property name="dir.output" value="${dir.release}/${assembly.version}" />
         
         <echo message="Building release:" />
         <echo message="-----------------" />
@@ -201,12 +203,22 @@
     
     <target name="build-release.sf">
         <property name="assembly.version" value="${assembly.version}" />
+        <property name="dir.output" value="${dir.release}/${assembly.version}" />
         <call target="build-release.common" />        
     </target>
     
     <target name="build-release.nightly">
         <tstamp property="assembly.version" pattern="yyyyMMdd-HHmm" verbose="true"/>    
+        <property name="dir.output" value="${dir.release}/${assembly.version}" />
         <call target="build-release.common" />
+
+        <property name="user.sf" value="drakmar@shell.sourceforge.net" />
+        <property name="dir.local" value="${dir.output}/" />
+        <property name="dir.sf" value="/home/groups/s/sh/sharpcvslib/htdocs/nightly-build" />
+
+        <property name="arg.line" value="-e 'ssh -1' -rCavz ${dir.local} ${user.sf}:${dir.sf}" />
+        <echo message="Rsync command line args: ${arg.line}" />
+        <exec program="rsync" commandline="${arg.line}" />
     </target>
     
     <target name="clean">
