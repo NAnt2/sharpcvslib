@@ -47,8 +47,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private Hashtable _files = new Hashtable();
         private Entries _cvsEntries = new Entries();
 
-        public ICollection Files {
-            get { return this._files.Values; }
+        public IList Files {
+            get { return new ArrayList(this._files.Values); }
         }
 
 		public FileParser(string[] args) {

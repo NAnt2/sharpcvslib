@@ -216,6 +216,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode.Tests\SharpCvsLib\Console\Parser\FileParserTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode.Tests\SharpCvsLib\Console\Parser\UsageTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

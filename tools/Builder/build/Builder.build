@@ -1,0 +1,21 @@
+<project name="Builder" default="Build">
+    <property name="ToolConfig" value="Debug" unless="${property::exists('ToolConfig')}"/>
+    <property name="BaseDir" value=".."/>
+    
+    <target name="Build">
+        <solution configuration="${ToolConfig}" solutionfile="../${project::get-name()}.sln" />
+    </target>
+    
+    <target name="Clean">
+        <delete dir="${BaseDir}/bin" if="${directory::exists(BaseDir + '/obj')}"/>
+        <delete dir="${BaseDir}/obj" if="${directory::exists(BaseDir + '/obj')}"/>
+        <delete>
+            <fileset basedir="${BaseDir}">
+                <include name="**/*.suo"/>
+                <include name="**/*.user"/>
+                <include name="**/obj"/>
+                <include name="**/bin"/>
+            </fileset>    
+        </delete>
+    </target>
+</project>
