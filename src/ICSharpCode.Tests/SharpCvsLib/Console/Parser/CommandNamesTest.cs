@@ -68,13 +68,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         public void MakeTest ()
         {
             // Test Creating a Command object
-            CommandNames commands  = new CommandNames();
+            SortedList commands  = CommandParserFactory.AllCommands;
 
             // Check the first command object
-            AssertCommandEquals (commands.Commands[0], "add", "ad", "new");
+            AssertCommandEquals ((Command)commands["add"], "add", "ad", "new");
 
             // Check the last command object
-            AssertCommandEquals (commands.Commands[commands.Commands.GetLength(0) - 1], "watchers", null, null);
+            AssertCommandEquals ((Command)commands["watchers"], "watchers", null, null);
         }
         private void AssertCommandEquals (Command com,
                                         string prime, string nick1, string nick2)
