@@ -21,6 +21,7 @@
     <!-- L I B R A R I E S -->
     <property name="name.top-level" value="ICSharpCode" />
     <property name="name.project" value="SharpCvsLib" />
+    <property name="name.addin" value="SharpCvsAddIn" />
     <property name="name.lib" value="${name.project}" />    
     <property name="name.console" value="Console" />
     <property name="name.console.exe" value="cvs" />
