@@ -194,7 +194,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
                         if (DateTime.MinValue == this.StartDate) {
                             this.StartDate = date;
-                        } else {
+                        } else if (this.StartDate > date) {
+                            this.EndDate = this.StartDate;
+                            this.StartDate = date;
+                        }
+                        else {
                             this.EndDate = date;
                         }
                         break;
