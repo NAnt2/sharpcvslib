@@ -53,11 +53,35 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         [Test]
         public void ValidCvsRootTest () {
             CvsRoot cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:/cvsroot/sharpcvslib");
-
             Assertion.AssertEquals("ext", cvsRoot.Protocol);
             Assertion.AssertEquals("gne", cvsRoot.User);
             Assertion.AssertEquals("cvs.sourceforge.net", cvsRoot.Host);
             Assertion.AssertEquals("/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
+
+            cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:2401:/cvsroot/sharpcvslib");
+            Assertion.AssertEquals("ext", cvsRoot.Protocol);
+            Assertion.AssertEquals("gne", cvsRoot.User);
+            Assertion.AssertEquals("cvs.sourceforge.net", cvsRoot.Host);
+            Assertion.AssertEquals("/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
+            Assertion.AssertEquals(2401, cvsRoot.Port);
+
+            cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:d:/cvsroot/sharpcvslib");
+            Assertion.AssertEquals("ext", cvsRoot.Protocol);
+            Assertion.AssertEquals("gne", cvsRoot.User);
+            Assertion.AssertEquals("cvs.sourceforge.net", cvsRoot.Host);
+            Assertion.AssertEquals("d:/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
+
+            cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:2401:d:/cvsroot/sharpcvslib");
+            Assertion.AssertEquals("ext", cvsRoot.Protocol);
+            Assertion.AssertEquals("gne", cvsRoot.User);
+            Assertion.AssertEquals(2401, cvsRoot.Port);
+            Assertion.AssertEquals("cvs.sourceforge.net", cvsRoot.Host);
+            Assertion.AssertEquals("d:/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
+
+            cvsRoot = new CvsRoot(":sspi:cvs.sourceforge.net:d:/cvsroot/sharpcvslib");
+            Assertion.AssertEquals("sspi", cvsRoot.Protocol);
+            Assertion.AssertEquals("cvs.sourceforge.net", cvsRoot.Host);
+            Assertion.AssertEquals("d:/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
         }
 
         /// <summary>
@@ -102,7 +126,8 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         [Test]
         [ExpectedException(typeof(CvsRootParseException))]
         public void MissingFirstColonTest () {
-            CvsRoot cvsRoot = new CvsRoot ("a:ext:gne@cvs.sourceforge.net:/cvsroot/sharpcvslib");
+            CvsRoot cvsRoot = new CvsRoot ("ext:gne@cvs.sourceforge.net:/cvsroot/sharpcvslib");
+            System.Console.WriteLine(cvsRoot);
         }
 
         /// <summary>
@@ -145,16 +170,6 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         [ExpectedException(typeof(CvsRootParseException))]
         public void NoColonTest () {
             CvsRoot cvsRoot = new CvsRoot ("-ext-gne@cvs.sourceforge.net-/cvsroot/sharpcvslib");
-        }
-
-        /// <summary>
-        /// Tests handling of no username, should be okay if the protocol is 
-        ///     not :ext, :ssh, or :pserver.
-        /// </summary>
-        [Test]
-        [ExpectedException(typeof(CvsRootParseException))]
-        public void NoUserTestException () {
-            CvsRoot cvsRoot = new CvsRoot (":ext:cvs.sourceforge.net:/cvsroot/sharpcvslib");
         }
 
         /// <summary>

@@ -86,11 +86,6 @@
                     Private = "False"
                 />
                 <Reference
-                    Name = "nunit.framework"
-                    AssemblyName = "nunit.framework"
-                    HintPath = "..\lib\ext\nunit.framework.dll"
-                />
-                <Reference
                     Name = "log4net"
                     AssemblyName = "log4net"
                     HintPath = "..\lib\ext\log4net.dll"
@@ -100,6 +95,11 @@
                     Name = "System.EnterpriseServices"
                     AssemblyName = "System.EnterpriseServices"
                     HintPath = "C:\WINNT\Microsoft.NET\Framework\v1.0.3705\System.EnterpriseServices.dll"
+                />
+                <Reference
+                    Name = "nunit.framework"
+                    AssemblyName = "nunit.framework"
+                    HintPath = "c:\progra~1\mailfr~1\testru~1\nunit.framework.dll"
                 />
             </References>
         </Build>
@@ -156,6 +156,11 @@
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Commands\ICommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Commands\ILogCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -501,6 +506,11 @@
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Requests\CommitRequest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Requests\DateRequest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

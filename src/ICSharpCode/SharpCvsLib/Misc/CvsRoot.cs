@@ -27,10 +27,13 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+// 
+//  <author>Clayton Harbour</author>
 #endregion
 
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using ICSharpCode.SharpCvsLib.Config;
 
@@ -38,226 +41,231 @@ using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Misc {
 
-/// <summary>
-/// Class to encapsulate the properties of the cvsroot for the
-///     repository you are communicating with.
-/// </summary>
-public class CvsRoot
-{
-    private readonly ILog LOGGER = LogManager.GetLogger(typeof(CvsRoot));
     /// <summary>
-    /// Identify the protocols that are currently supported.
+    /// Class to encapsulate the properties of the cvsroot for the
+    ///     repository you are communicating with.
     /// </summary>
-    private class HostProtocol {
+    public class CvsRoot
+    {
+        private readonly ILog LOGGER = LogManager.GetLogger(typeof(CvsRoot));
         /// <summary>
-        /// Password server protocol.
+        /// Identify the protocols that are currently supported.
         /// </summary>
-        public const String PSERVER = "pserver";
+        private class HostProtocol {
+            /// <summary>
+            /// Password server protocol.
+            /// </summary>
+            public const String PSERVER = "pserver";
+            /// <summary>
+            /// Ssh or secure socket handling server.  
+            /// </summary>
+            public const String SSH     = "ssh";
+            /// <summary>
+            /// External protocol, used for ssh protocol.
+            /// </summary>
+            public const String EXT     = "ext";
+        }
+        private string protocol         = String.Empty;
+        private string user             = String.Empty;
+        private string host             = String.Empty;
+        private int port                = SharpCvsLibConfig.DEFAULT_PORT;
+        private string cvsrepository    = String.Empty;
+
+        private const int PROTOCOL_INDEX = 1;
+
         /// <summary>
-        /// Ssh or secure socket handling server.  
+        /// The protocol to use when communicating with the server.  Currently supported
+        ///     and accepted values are:
+        ///     <ol>
+        ///         <li>pserver</li>
+        ///         <li>ssh</li>
+        ///         <li>ext</li>
+        ///     </ol>
         /// </summary>
-        public const String SSH     = "ssh";
+        public string Protocol {
+            get {return protocol;}
+            set {
+                AssertNotEmpty(value, "Protocol");
+                if (value.IndexOf(":") < 0) {
+                    throw new CvsRootParseException(
+                        String.Format("Protocol must contain a :."));
+                }
+                protocol = StripColan(value);}
+        }
+
         /// <summary>
-        /// External protocol, used for ssh protocol.
+        /// User name used to access the repository.
         /// </summary>
-        public const String EXT     = "ext";
-    }
-    private string protocol         = String.Empty;
-    private string user             = String.Empty;
-    private string host             = String.Empty;
-    private int port                = SharpCvsLibConfig.DEFAULT_PORT;
-    private string cvsrepository    = String.Empty;
-
-    private const int PROTOCOL_INDEX = 1;
-
-    /// <summary>
-    /// The protocol to use when communicating with the server.  Currently supported
-    ///     and accepted values are:
-    ///     <ol>
-    ///         <li>pserver</li>
-    ///         <li>ssh</li>
-    ///         <li>ext</li>
-    ///     </ol>
-    /// </summary>
-    public string Protocol {
-        get {return protocol;}
-        set {protocol = value;}
-    }
-
-    /// <summary>
-    /// User name used to access the repository.
-    /// </summary>
-    public string User {
-        get {return user;}
-        set {user = value;}
-    }
-
-    /// <summary>
-    /// Host running the repository.
-    /// </summary>
-    public string Host {
-        get {return host;}
-        set {host = value;}
-    }
-
-    /// <summary>
-    /// Module to use in command.
-    /// </summary>
-    public string CvsRepository {
-        get {return cvsrepository;}
-        set {cvsrepository = value;}
-    }
-
-    /// <summary>
-    /// The port to use to connect to the server.
-    /// </summary>
-    public int Port {
-        get {return port;}
-        set {this.port = value;}
-    }
-
-    /// <summary>
-    /// Constructor.  Parses a cvsroot variable passed in as
-    ///     a string into the different properties that make it
-    ///     up.  The cvsroot can consisit of the following components:
-    ///     
-    ///         1) protocol: such as the pserver, ssh and ext protocols
-    ///             NOTE: Currently unsupported, but valid cvs protocols include: sspi and ntserver
-    ///         2) username: the login user for the remote client.  This will be
-    ///             used to authenticate the user on the remote machine.
-    ///         3) server:  server that the repository sits on.
-    ///         4) path:    path to the repository on the server
-    ///             
-    /// </summary>
-    /// <param name="cvsRoot"></param>
-    /// <example>
-    ///     Cvsroot examples:
-    ///             1) :pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib
-    ///             
-    ///                 would be parsed as follows:
-    ///                     protocol    = pserver (password server protocol)
-    ///                     user        = anonymous
-    ///                     server      = cvs.sourceforge.net
-    ///                     port        = 2401 (default port)
-    ///                     path        = /cvsroot/sharpcvslib
-    ///                     
-    ///             2) :pserver:anonymous@cvs.sourceforge.net:80:/cvsroot/sharpcvslib
-    ///             
-    ///                 would be parsed as follows:
-    ///                     protocol    = pserver (password server protocol)
-    ///                     user        = anonymous
-    ///                     server      = cvs.sourceforge.net
-    ///                     port        = 80
-    ///                     path        = /cvsroot/sharpcvslib
-    ///             
-    ///     
-    /// </example>
-    /// <exception cref="CvsRootParseException">If the cvsroot does not
-    ///     translate to a valid cvsroot.</exception>
-    public CvsRoot(string cvsRoot) {
-        this.Parse (cvsRoot);
-        
-    }
-
-    /// <summary>
-    /// Parse the cvs root.  
-    /// </summary>
-    /// <param name="cvsRoot">The array of cvs root variables</param>
-    /// <exception cref="CvsRootParseException">A parse exception is thrown
-    ///     if the cvsroot is not in a format that is recognized.</exception>
-    private void Parse (String cvsRoot) {
-        if (null == cvsRoot) {
-            throw new CvsRootParseException ("Cvsroot was null.");
+        public string User {
+            get {return user;}
+            set {user = StripColan(value);}
         }
-        int s1 = cvsRoot.IndexOf(':', 1)  + 1;
-        if (cvsRoot[0] != ':') {
-            StringBuilder msg = new StringBuilder ();
-            msg.Append("cvsroot doesn't start with :");
-            msg.Append("\n\t cvsroot=[").Append(cvsRoot).Append("]");
-            throw new CvsRootParseException(msg.ToString());
-        }
-        if (s1 == 0) {
-            StringBuilder msg = new StringBuilder ();
-            msg.Append("Cvs root must contain at least protocol, server and repository path.");
-            msg.Append("\n\t cvsroot=[").Append(cvsRoot).Append("]");
-            throw new CvsRootParseException(msg.ToString());
-        }
-        protocol = cvsRoot.Substring(1, s1 - 2);
 
-        int s2 = 0;
-        if (this.HasUserVar(protocol)) {
-            if (cvsRoot.IndexOf('@') < 0) {
-                throw new CvsRootParseException("Must include user for " + protocol + " protocol");
+        /// <summary>
+        /// Host running the repository.
+        /// </summary>
+        public string Host {
+            get {return host;}
+            set {
+                AssertNotEmpty(value, "Host");
+                host = StripColan(value);}
+        }
+
+        private string UserHost {
+            set {
+                if (value.IndexOf("@") > -1) {
+                    string[] userHost = value.Split('@');
+                    this.User = userHost[0];
+                    this.Host = userHost[1];
+                } else {
+                    this.Host = value;
+                }
+
+                if (HasUserVar(this.Protocol)) {
+                    AssertNotEmpty(this.User, "User");
+                }
             }
-            s2 = cvsRoot.IndexOf('@', s1) + 1;
-            user = cvsRoot.Substring(s1, s2 - s1 - 1);
-        } else {
-            // if no user is given (preperation fo SSPI protocol) then
-            //  the last index s2 = s1.
-            s2 = s1;
-        }
-        if (s2 == 0) {
-            throw new CvsRootParseException("no username given");
         }
 
-        int s3 = cvsRoot.IndexOf(':', s2) + 1;
-        if (s3 == 0) {
-            throw new CvsRootParseException("no host given");
-        }
-        host          = cvsRoot.Substring(s2, s3 - s2 - 1);
-
-        int s4 = cvsRoot.IndexOf(':', s3) + 1;
-        if (s4 == 0) {
-            // default port is used
-            this.port = SharpCvsLibConfig.DEFAULT_PORT;
-            cvsrepository = cvsRoot.Substring(s3);
-        } else {
-            try {
-                this.port = 
-                    System.Convert.ToInt32(cvsRoot.Substring(s3, s4-s3 - 1));
-            } catch (FormatException e) {
-                LOGGER.Error(e);
-                this.port = SharpCvsLibConfig.DEFAULT_PORT;
+        private string StripColan(string value) {
+            if (value.IndexOf(":") > -1) {
+                value = value.Substring(1, value.Length - 1);
             }
-            cvsrepository = cvsRoot.Substring(s4);
+            return value;
         }
 
-        this.Validate();
-    }
+        /// <summary>
+        /// Module to use in command.
+        /// </summary>
+        public string CvsRepository {
+            get {return cvsrepository;}
+            set {
+                AssertNotEmpty(value, "Repository");
+                cvsrepository = StripColan(value);}
+        }
 
-    private bool HasUserVar (String[] vars) {
-        return this.HasUserVar(vars[PROTOCOL_INDEX]);
-    }
+        /// <summary>
+        /// The port to use to connect to the server.
+        /// </summary>
+        public int Port {
+            get {return port;}
+            set {this.port = value;}
+        }
 
-    private bool HasUserVar (String protocol) {
-        if (null == protocol) {
+        private string PortString {
+            set {
+                if (value != null || value != String.Empty) {
+                    try {
+                        this.Port = Convert.ToInt32(StripColan(value));
+                    } catch (FormatException) {
+                        LOGGER.Error(String.Format("Invalid number {0}, using default port.",
+                            value));
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Constructor.  Parses a cvsroot variable passed in as
+        ///     a string into the different properties that make it
+        ///     up.  The cvsroot can consisit of the following components:
+        ///     
+        ///         1) protocol: such as the pserver, ssh and ext protocols
+        ///             NOTE: Currently unsupported, but valid cvs protocols include: sspi and ntserver
+        ///         2) username: the login user for the remote client.  This will be
+        ///             used to authenticate the user on the remote machine.
+        ///         3) server:  server that the repository sits on.
+        ///         4) path:    path to the repository on the server
+        ///             
+        /// </summary>
+        /// <param name="cvsRoot"></param>
+        /// <example>
+        ///     Cvsroot examples:
+        ///             1) :pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib
+        ///             
+        ///                 would be parsed as follows:
+        ///                     protocol    = pserver (password server protocol)
+        ///                     user        = anonymous
+        ///                     server      = cvs.sourceforge.net
+        ///                     port        = 2401 (default port)
+        ///                     path        = /cvsroot/sharpcvslib
+        ///                     
+        ///             2) :pserver:anonymous@cvs.sourceforge.net:80:/cvsroot/sharpcvslib
+        ///             
+        ///                 would be parsed as follows:
+        ///                     protocol    = pserver (password server protocol)
+        ///                     user        = anonymous
+        ///                     server      = cvs.sourceforge.net
+        ///                     port        = 80
+        ///                     path        = /cvsroot/sharpcvslib
+        ///             
+        ///     
+        /// </example>
+        /// <exception cref="CvsRootParseException">If the cvsroot does not
+        ///     translate to a valid cvsroot.</exception>
+        public CvsRoot(string cvsRoot) {
+            this.Parse (cvsRoot);
+            
+        }
+
+        /// <summary>
+        /// Parse the cvs root.  
+        /// </summary>
+        /// <param name="cvsRoot">The array of cvs root variables</param>
+        /// <exception cref="CvsRootParseException">A parse exception is thrown
+        ///     if the cvsroot is not in a format that is recognized.</exception>
+        private void Parse (String cvsRoot) {
+            Regex regex = new Regex(@"(:ext|:pserver|:ssh|:local|:sspi)
+    ([:]{1,1}[\w*@]*[\w*]{1}[\.\-\w*]*)
+    ([:]*[\d]*)
+    ([:]{1,1}[A-Za-z:/|:/]+[\w*/])", RegexOptions.IgnorePatternWhitespace);
+
+            Match matches = regex.Match(cvsRoot);
+
+
+            LOGGER.Debug(String.Format("Matches count: {0}.", matches.Groups.Count));
+            if (matches.Groups.Count <= 0) {
+                throw new CvsRootParseException(String.Format(@"Bad cvsroot. 
+    Expected ( :protocol:[usename@]server[:port]:[C:]/path/to/repos ) 
+    Found ( {0} )",
+                    cvsRoot));
+            }
+            this.Protocol = matches.Groups[1].Value;
+            this.UserHost = matches.Groups[2].Value;
+            this.PortString = matches.Groups[3].Value;
+            this.CvsRepository = matches.Groups[4].Value;
+        }
+
+        private bool HasUserVar (String[] vars) {
+            return this.HasUserVar(vars[PROTOCOL_INDEX]);
+        }
+
+        private bool HasUserVar (String protocol) {
+            if (null == protocol) {
+                return false;
+            }
+            if (protocol.ToLower().Equals(HostProtocol.PSERVER) ||
+                protocol.ToLower().Equals(HostProtocol.SSH) ||
+                protocol.ToLower().Equals(HostProtocol.EXT)){
+                return true;
+            }
             return false;
         }
-        if (protocol.ToLower().Equals(HostProtocol.PSERVER) ||
-            protocol.ToLower().Equals(HostProtocol.SSH) ||
-            protocol.ToLower().Equals(HostProtocol.EXT)){
-            return true;
-        }
-        return false;
-    }
 
-    private void Validate () {
-        if (protocol.Length == 0 || 
-            (user.Length == 0 && this.HasUserVar(this.protocol)) || 
-            host.Length == 0 || 
-            cvsrepository.Length == 0 ||
-            this.port == 0) {
-            throw new CvsRootParseException("invalid cvsroot given=[" + this.ToString() + "]");
+        private void AssertNotEmpty(string value, string fieldName) {
+            if (null == value || String.Empty == value) {
+                throw new CvsRootParseException(
+                    String.Format("{0} must contain a value.", fieldName));
+            }
+        }
+
+        /// <summary>
+        /// Convert CvsRoot object to a human readable format.
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return ':' + protocol + ':' + user + '@' + host + ':' + cvsrepository;
         }
     }
-
-    /// <summary>
-    /// Convert CvsRoot object to a human readable format.
-    /// </summary>
-    /// <returns></returns>
-    public override string ToString()
-    {
-        return ':' + protocol + ':' + user + '@' + host + ':' + cvsrepository;
-    }
-}
 }
