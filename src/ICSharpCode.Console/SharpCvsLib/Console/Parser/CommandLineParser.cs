@@ -331,8 +331,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "init":
                         this.commandTxt = arguments[i];
                         try {
-                            ICSharpCode.SharpCvsLib.Console.Commands.InitCommand initCommand =
-                                new ICSharpCode.SharpCvsLib.Console.Commands.InitCommand(this.CvsRoot);
+                            InitCommandParser initCommand = new InitCommandParser(this.CvsRoot);
                             command = initCommand.CreateCommand ();
                             this.currentWorkingDirectory = initCommand.CurrentWorkingDirectory;
                         } catch (Exception e) {

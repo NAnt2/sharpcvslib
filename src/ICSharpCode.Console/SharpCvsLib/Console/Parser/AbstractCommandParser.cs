@@ -123,7 +123,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <summary>
         /// Indicate if the command is implemented or not.  
         /// </summary>
-        public virtual bool IsImplemented {
+        public virtual bool Implemented {
             get {return false;}
         }
 

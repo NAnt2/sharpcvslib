@@ -81,7 +81,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// 
         /// NOTE: This will eventually go away.
         /// </summary>
-        bool IsImplemented {get;}
+        bool Implemented {get;}
 
         /// <summary>
         /// Create the command object that will be used to act on the repository.

@@ -59,45 +59,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
         private string localDirectory;
 
-        /// <summary>
-        /// Create a new instance of the <see cref="XmlLogCommandParser"/>.
-        /// </summary>
-        /// <returns></returns>
-        public static ICommandParser GetInstance() {
-            return GetInstance(typeof(XmlLogCommandParser));
-        }
-
-        /// <summary>
-        /// Name of the command being parsed.
-        /// </summary>
-        public override string CommandName {
-            get {return "xml";}
-        }
-
-        /// <summary>
-        /// Description of the command.
-        /// </summary>
-        public override string CommandDescription {
-            get {return "Produces an xml formatted report on the history of the files";}
-        }
-
-        /// <summary>
-        /// Nicknames for the add command.
-        /// </summary>
-        public override ICollection Nicks {
-            get {
-                base.nicks.Clear();
-                return nicks;
-            }
-        }
-
-        /// <summary>
-        /// The add command is implemented in the library and commandline parser.
-        /// </summary>
-        public override bool IsImplemented {
-            get {return true;}
-        }
-
         private const string OPT_DATE = "-D";
         private const string OPT_DAYS = "-Ds";
         private const string OPT_OUTPUT_XML_FILENAME = "-oxml";
@@ -171,6 +132,45 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             //            System.Console.WriteLine(String.Format("Number of arguments: {0}.", args.Length));
             this.CvsRoot = cvsroot;
             this.ParseOptions();
+        }
+
+        /// <summary>
+        /// Create a new instance of the <see cref="XmlLogCommandParser"/>.
+        /// </summary>
+        /// <returns></returns>
+        public static ICommandParser GetInstance() {
+            return GetInstance(typeof(XmlLogCommandParser));
+        }
+
+        /// <summary>
+        /// Name of the command being parsed.
+        /// </summary>
+        public override string CommandName {
+            get {return "xml";}
+        }
+
+        /// <summary>
+        /// Description of the command.
+        /// </summary>
+        public override string CommandDescription {
+            get {return "Produces an xml formatted report on the history of the files";}
+        }
+
+        /// <summary>
+        /// Nicknames for the add command.
+        /// </summary>
+        public override ICollection Nicks {
+            get {
+                base.nicks.Clear();
+                return nicks;
+            }
+        }
+
+        /// <summary>
+        /// The add command is implemented in the library and commandline parser.
+        /// </summary>
+        public override bool Implemented {
+            get {return true;}
         }
 
         /// <summary>

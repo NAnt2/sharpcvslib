@@ -132,7 +132,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser{
         /// <summary>
         /// The checkout command is implemented in the library and commandline parser.
         /// </summary>
-        public override bool IsImplemented {
+        public override bool Implemented {
             get {return true;}
         }
 

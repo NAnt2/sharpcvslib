@@ -29,6 +29,7 @@
 // exception statement from your version.
 //
 //    <author>Steve Kenzell</author>
+//    <author>Clayton Harbour</author>
 #endregion
 using System;
 using System.Globalization;
@@ -40,29 +41,26 @@ using ICSharpCode.SharpCvsLib.Console.Parser;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Console.Commands {
+namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
     /// <summary>
     /// Initialize the cvs repository.
     /// </summary>
-    public class InitCommand {
-        private WorkingDirectory currentWorkingDirectory;
+    public class InitCommandParser : AbstractCommandParser {
         private CvsRoot cvsRoot;
-        private readonly ILog LOGGER = 
-            LogManager.GetLogger (typeof(InitCommand));
 
         /// <summary>
-        /// The current working directory.
+        /// Default constructor.
         /// </summary>
-        public WorkingDirectory CurrentWorkingDirectory {
-            get {return this.currentWorkingDirectory;}
+        public InitCommandParser () {
+
         }
 
         /// <summary>
         /// Initialize a cvs repository.
         /// </summary>
         /// <param name="cvsroot">User information</param>
-        public InitCommand(string cvsroot) : 
+        public InitCommandParser(string cvsroot) : 
             this(new CvsRoot(cvsroot)){
         }
 
@@ -70,8 +68,30 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// Initialize a cvs repository
         /// </summary>
         /// <param name="cvsroot">User Information</param>
-        public InitCommand(CvsRoot cvsroot) {
+        public InitCommandParser(CvsRoot cvsroot) {
             this.cvsRoot = cvsroot;
+        }
+
+        /// <summary>
+        /// Create a new instance of the <see cref="CheckoutCommandParser"/>.
+        /// </summary>
+        /// <returns></returns>
+        public static ICommandParser GetInstance() {
+            return GetInstance(typeof(InitCommandParser));
+        }
+
+        /// <summary>
+        /// Name of the command being parsed.
+        /// </summary>
+        public override string CommandName {
+            get {return "init";}
+        }
+
+        /// <summary>
+        /// Description of the command.
+        /// </summary>
+        public override string CommandDescription {
+            get {return "Create a CVS repository if it doesn't exist";}
         }
 
         /// <summary>
@@ -82,10 +102,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <exception cref="Exception">TODO: Make a more specific exception</exception>
         /// <exception cref="NotImplementedException">If the command argument
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
-        public ICommand CreateCommand () {
+        public override ICommand CreateCommand () {
             ICSharpCode.SharpCvsLib.Commands.InitCommand initCommand;
             try {
-                currentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
+                CurrentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
                     null, null);
                 // Create new InitCommand object
                 initCommand = new ICSharpCode.SharpCvsLib.Commands.InitCommand( this.cvsRoot );
@@ -95,6 +115,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 throw e;
             }
             return initCommand;
+        }
+
+        /// <summary>
+        /// Output the command usage and arguements.
+        /// </summary>
+        public override string Usage {
+            get {
+                string usage = 
+@"Usage: cvs init
+(Specify the --help global option for a list of other help options)";
+
+                return usage;
+            }
         }
     }
 }

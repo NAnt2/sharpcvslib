@@ -45,6 +45,8 @@ using ICSharpCode.SharpCvsLib.Commands;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 
+using log4net;
+
 namespace ICSharpCode.SharpCvsLib.Console.Parser {
 	/// <summary>
 	/// Summary description for CommandFactory.
@@ -67,6 +69,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private static SortedList allCommands;
         private static SortedList availableCommands;
 
+        private static readonly ILog LOGGER = LogManager.GetLogger(typeof(CommandParserFactory));
+
         /// <summary>
         /// Creates a new instance of the command parser.
         /// </summary>
@@ -82,14 +86,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             this.workingDirectory = workingDirectory;
         }
 
-        /// <summary>
-        /// Gets a list of available commands.  Available commands are cvs commands that are currently
-        /// implemented in #cvslib and have an associated command parser in the commandline client.
-        /// </summary>
-        public static SortedList AvailableCommands {
+        private static SortedList commandParsers;
+        private static SortedList CommandParsers {
             get {
-                if (null == availableCommands) {
-                    availableCommands = new SortedList();
+                if (null == commandParsers) {
+                    commandParsers = new SortedList();
+                }
+                if (commandParsers.Count == 0) {
                     Assembly cvsLibAssembly = Assembly.GetAssembly(typeof(Usage));
 
                     if (null == cvsLibAssembly) {
@@ -99,15 +102,34 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     Type[] types = cvsLibAssembly.GetTypes();
                     foreach(Type type in types) {
                         if (type.IsClass && type.GetInterface("ICommandParser") != null && !type.IsAbstract) {
-                            ICommandParser commandParser = (ICommandParser)Activator.CreateInstance(type);
-                            Command command = new Command(commandParser.CommandName, commandParser.CommandDescription, commandParser.Nicks);
-                            command.Implemented = true;
-
-                            availableCommands.Add(command.CommandName, command);
+                            try {
+                                ICommandParser commandParser = (ICommandParser)Activator.CreateInstance(type);
+                                commandParsers.Add(commandParser.CommandName, commandParser);
+                            } catch (System.MissingMethodException) {
+                                LOGGER.Warn(String.Format("Command {0} does not provide a parameterless constructor, skipping.",
+                                    type.FullName));
+                            }
                         }
                     }
                 }
+                return commandParsers;
+            }
+        }
 
+        /// <summary>
+        /// Gets a list of available commands.  Available commands are cvs commands that are currently
+        /// implemented in #cvslib and have an associated command parser in the commandline client.
+        /// </summary>
+        public static SortedList AvailableCommands {
+            get {
+                if (null == availableCommands) {
+                    availableCommands = new SortedList();
+                    foreach (ICommandParser commandParser in CommandParsers.Values) {
+                        Command command = new Command(commandParser.CommandName, commandParser.CommandDescription, commandParser.Nicks);
+                        command.Implemented = commandParser.Implemented;
+                        availableCommands.Add(command.CommandName, command);                        
+                    }
+                }
                 return availableCommands;
 
             }
@@ -208,30 +230,26 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <returns>A new instance of the specified command parser that implements the 
         /// <see cref="ICommandParser"/> interface.</returns>
         public ICommandParser GetCommandParser () {
-            ICommandParser parser = null;
-            switch (command) {
-                case "add":
-                case "ad":
-                case "new":
-                    parser = AddCommandParser.GetInstance();
-                    break;
-                case "checkout":
-                case "co":
-                case "get":
-                    parser = CheckoutCommandParser.GetInstance();
-                    break;
-                case "up":
-                case "upd":
-                case "update":
-                    parser = UpdateCommandParser.GetInstance();
-                    break;
-                case "xml":
-                    parser = XmlLogCommandParser.GetInstance();
-                    break;
-                default:
-                    throw new ArgumentException(
-                        String.Format("Unknown command: {0}.", this.command));
+            ICommandParser parser = (ICommandParser)CommandParsers[command];
+
+            if (null == parser) {
+                foreach (ICommandParser tp in AvailableCommands.Values) {
+                    foreach (string nick in tp.Nicks) { 
+                        if (nick.Equals(command)) {
+                            parser = tp;
+                        }
+                    }
+                    if (null != parser) {
+                        break;
+                    }
+                }
             }
+
+            if (null == parser) {
+                System.Console.WriteLine(String.Format("Command {0} not implemented.", command));
+                System.Environment.Exit(-1);
+            }
+
             parser.Args = this.args;
             parser.CvsRoot = this.cvsRoot;
             parser.CurrentWorkingDirectory = this.workingDirectory;
