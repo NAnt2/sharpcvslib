@@ -62,8 +62,8 @@
                 <exclude name="FileHandler/*.cs" />
                 <exclude name="FileSystem/ManagerTest.cs" />
                 
-                <exclude name="**/SspiProtocol.cs" unless="${file::exists(lib.sspi)}"/>
-                <exclude name="**/CvsTransport.cs" unless="${file::exists(lib.sspi)}"/>
+                <exclude name="../../${name.top-level}/${name.project}/**/SspiProtocol.cs" unless="${file::exists(lib.sspi)}"/>
+                <exclude name="../../${name.top-level}/${name.project}/**/CvsTransport.cs" unless="${file::exists(lib.sspi)}"/>
             </sources>
 
             <references>

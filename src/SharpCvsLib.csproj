@@ -541,7 +541,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode\SharpCvsLib\Remoting\Transport\CvsTransport\CvsTransport.cs"
+                    RelPath = "ICSharpCode\SharpCvsLib\Remoting\Transport\SharpCvsLibTransport\CvsTransport.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

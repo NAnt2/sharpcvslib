@@ -505,6 +505,7 @@
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
+                <Folder RelPath = "ICSharpCode\SharpCvsLib\Remoting\Transport\" />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Requests\AbstractRequest.cs"
                     SubType = "Code"

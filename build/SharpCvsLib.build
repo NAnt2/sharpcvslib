@@ -225,8 +225,8 @@
     <target name="dist">
         <call target="setup" />
         <call target="dist.clean" />
-        <call target="build.all" failonerror="false" />
-        <call target="run-tests-sample" failonerror="false" />
+        <call target="build.all" />
+        <call target="run-tests-sample" />
         
         <mkdir dir="${dir.dist}/bin" />
         <mkdir dir="${dir.dist}/bin/doc"/>
