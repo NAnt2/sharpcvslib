@@ -59,8 +59,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <summary>
         ///     Constructory for test case.
         /// </summary>
-        public RTagCommandTest ()
-        {
+        public RTagCommandTest () {
         }
 
         /// <summary>
@@ -72,9 +71,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             Directory.CreateDirectory( settings.Config.LocalPath);
             Environment.CurrentDirectory = settings.Config.LocalPath;
 
-            String commandLine = "-d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib rt sharpcvslib";
+            String commandLine = "-d" + settings.Config.Cvsroot + " rt " + settings.Config.Module;
             String [] commandLineArgs = commandLine.Split(' ');
-            // Test Creating a RTagCommand object
+            // Test Create the consoleMain to test the console RTagCommand
             ConsoleMain consoleMain = new ConsoleMain();
             consoleMain.Execute(commandLineArgs);
             Assertion.AssertNotNull ("Should have a command object.", consoleMain);
@@ -84,50 +83,52 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         ///
         /// </summary>
         [Test]
-        public void MinusrOptionRTagFilesBasedOnRevision (){
-            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-            String repository = "sharpcvslib";
-            String options = "-rv0_3_1 ";
-            // Test Creating a RTagCommand object
-            RTagCommand rtagCommand = new RTagCommand(root, repository, options);
-            Assertion.AssertNotNull ("Should have a command object.", rtagCommand);
-            //rtagCommand.Execute();
+        public void MinusrOptionRTagFilesBasedOnRevision () {
+            Directory.CreateDirectory( settings.Config.LocalPath);
+            Environment.CurrentDirectory = settings.Config.LocalPath;
+
+            String commandLine = "-d" + settings.Config.Cvsroot + " rt -r " + 
+                settings.Config.Tag1 + " " + settings.Config.Module;
+            String [] commandLineArgs = commandLine.Split(' ');
+            // Test Create the consoleMain to test the console RTagCommand
+            ConsoleMain consoleMain = new ConsoleMain();
+            consoleMain.Execute(commandLineArgs);
+            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
         }
         /// <summary>
         ///     RTag files to specified description
         ///     with the -m option
         /// </summary>
         [Test]
-        public void MinusmOptionRTagFileDescription (){
-            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-            String repository = "sharpcvslib";
-            String options = "-mnewdescription ";
-            // Test Creating a RTagCommand object
-            RTagCommand rtagCommand = new RTagCommand(root, repository, options);
-            Assertion.AssertNotNull ("Should have a command object.", rtagCommand);
-            //rtagCommand.Execute();
-            //Assertion.Assert(Directory.Exists("newlocation"));
+        public void MinusmOptionRTagFileDescription () {
+            Directory.CreateDirectory( settings.Config.LocalPath);
+            Environment.CurrentDirectory = settings.Config.LocalPath;
+
+            String commandLine = "-d" + settings.Config.Cvsroot + " rt -m newdescription " +
+                     settings.Config.Module;
+            String [] commandLineArgs = commandLine.Split(' ');
+            // Test Create the consoleMain to test the console RTagCommand
+            ConsoleMain consoleMain = new ConsoleMain();
+            consoleMain.Execute(commandLineArgs);
+            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
         }
         /// <summary>
         ///     RTag files no earlier than the specified Date 
         ///     with the -D option
         /// </summary>
         [Test]
-        public void MinusDOptionRTagByCertainDate (){
-            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-            String repository = "sharpcvslib";
-            String options = "-D01.28.03 ";
-            // Test Creating a RTagCommand object
-            RTagCommand rtagCommand = new RTagCommand(root, repository, options);
-            Assertion.AssertNotNull ("Should have a command object.", rtagCommand);
-            //rtagCommand.Execute();
-            // Find a file that should be prior to date specified 
-            //Assertion.Assert ("Should have found the rtag file.  file=[" +
-            //    checkFile + "]", File.Exists (checkFile));
+        public void MinusDOptionRTagByCertainDate () {
+            Directory.CreateDirectory( settings.Config.LocalPath);
+            Environment.CurrentDirectory = settings.Config.LocalPath;
 
-            // Find a file that should be after the date specified
-            //Assertion.Assert ("Should have not found the rtag file.  file=[" +
-            //    checkFile + "]", File.Exists (checkFile));
+            String commandLine = "-d" + settings.Config.Cvsroot + " rt -D " +
+                Path.Combine(settings.Config.LocalPath, settings.Config.TargetFile) +
+                " " + settings.Config.Module;
+            String [] commandLineArgs = commandLine.Split(' ');
+            // Test Create the consoleMain to test the console RTagCommand
+            ConsoleMain consoleMain = new ConsoleMain();
+            consoleMain.Execute(commandLineArgs);
+            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
         }
     }
 }
