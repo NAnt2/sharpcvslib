@@ -39,6 +39,7 @@
 using System;
 using System.Collections;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using ICSharpCode.SharpCvsLib.Commands;
 using ICSharpCode.SharpCvsLib.Misc;
@@ -65,6 +66,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private string repository;
         private string singleOptions;
         private string files;
+
+        private const string REGEX_LOG_LEVEL = @"[-]*log:[\s]*(debug|info|warn|error)";
 
         private const String ENV_CVS_ROOT = "CVS_ROOT";
 
@@ -117,6 +120,75 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             get {return this.repository;}
         }
 
+        /// <summary>
+        /// Return the commandline string collection as a single string.
+        /// </summary>
+        public string CommandLine {
+            get {
+                StringBuilder msg = new StringBuilder ();
+                foreach (string arg in this.arguments) {
+                    msg.Append(String.Format("{0} ", arg));
+                }
+                return msg.ToString();;
+
+            }
+        }
+
+        /// <summary>
+        /// Set the global logging level if the appropriate commandline switch is passed in.
+        /// </summary>
+        /// <param name="commandline"></param>
+        public void SetLogLevel (string commandline) {
+            Regex regex = new Regex(REGEX_LOG_LEVEL);
+            Match match = regex.Match(commandline);
+            if (match.Groups.Count > 0) {
+                string newLevelString = match.Groups[1].Value;
+                System.Console.WriteLine(String.Format("Changing logging level to {0}.", newLevelString));
+                log4net.Core.LevelMap map = log4net.LogManager.GetRepository().LevelMap;
+                log4net.Core.Level newLevel = map[newLevelString];
+                log4net.LogManager.GetRepository().Threshold = newLevel;
+            }
+            // hack to remove the logging level parameter so the rest of the parsing goes correctly
+            this.RemoveArg("log:");
+        }
+
+        /// <summary>
+        /// Hack to remove arguments that cannot be processed by the current command line parser
+        /// implementation.
+        /// </summary>
+        /// <param name="argRemove"></param>
+        private void RemoveArg (string argRemove) {
+            ArrayList newArguments = new ArrayList();
+            foreach (string arg in this.arguments) {
+                if (arg.IndexOf(argRemove) < 0) {
+                    newArguments.Add(arg);
+                }
+            }
+            this.arguments = (string[])newArguments.ToArray(typeof(string));
+        }
+
+        private string password;
+        /// <summary>
+        /// The password passed in on the commandline, or null if none.
+        /// </summary>
+        public string Password {
+            get {return this.password;}
+        }
+
+        private void SetPassword(string commandLine) {
+            string thePassword;
+            if (null != this.arguments && this.arguments.Length > 0) {
+                Regex regex = new Regex(LoginCommand.REGEX_PASSWORD);
+                Match match = regex.Match(commandLine);
+                string pwd = match.Groups[1].Value;
+                thePassword = pwd;
+            } else {
+                thePassword = String.Empty;
+            }
+            this.RemoveArg("pwd:");
+            this.password = thePassword;
+        }
+
         /// <summary>Create a new instance of the command line parser and
         ///     initialize the arguments object.</summary>
         /// <param name="args">A collection of strings that represent the command
@@ -126,6 +198,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
             // TODO: Remove this hack when add method to set options.
             this.options = String.Empty;
+
+            this.SetLogLevel(this.CommandLine);
+            this.SetPassword(this.CommandLine);
+
         }
 
         /// <summary>
@@ -162,6 +238,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 System.Console.WriteLine (Usage.General);
             }
 
+            Regex cvsRoot = new Regex(@"[-d]+[\s]*[\s]*" + CvsRoot.CVSROOT_REGEX);
+            Match match = cvsRoot.Match(this.CommandLine);
+
+            if (match.Groups.Count > 0) {
+                this.cvsRoot = new CvsRoot(this.CommandLine);
+                startIndex = 1;
+/*
             if (arguments[0].IndexOf ("-d", 0, 2) >= 0) {
                 String tempRoot = arguments[0].Substring (2);
                 this.cvsRoot = new CvsRoot (tempRoot);
@@ -169,6 +252,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     throw new CommandLineParseException("Only specified a cvsroot, need to specify a command.");
                 }
                 startIndex = 1;
+*/
             } else {
                 try {
                     // Get the cvsroot from the Root file in the CVS directory
@@ -347,6 +431,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         try {
                             LoginCommand loginCommand = 
                                 new LoginCommand(this.CvsRoot, this.currentWorkingDirectory);
+                            loginCommand.Args = arguments;
                             this.currentWorkingDirectory.CvsRoot = this.CvsRoot;
                             command = loginCommand;
                         } 

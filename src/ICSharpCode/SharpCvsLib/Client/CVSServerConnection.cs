@@ -347,6 +347,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// <param name="password"></param>
         public void Authentication(string password) {
             this.StartTime = DateTime.Now;
+            LOGGER.Warn(String.Format("Trying to authenticate with cvsroot ( {0} ) and password ( {1} ).",
+                repository.CvsRoot.ToString(), password));
             switch (repository.CvsRoot.Protocol) {
                 case "ext": {
                     HandleExtAuthentication ();

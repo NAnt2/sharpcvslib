@@ -190,7 +190,7 @@ namespace ICSharpCode.SharpCvsLib.Console {
                 //  directory a public property??  Not sure.
                 WorkingDirectory workingDirectory = parser.CurrentWorkingDirectory;
 
-                string password = "";
+                string password = parser.Password;
 
                 // Create CVSServerConnection object that has the ICommandConnection
                 CVSServerConnection serverConn = new CVSServerConnection(workingDirectory);
@@ -214,6 +214,8 @@ namespace ICSharpCode.SharpCvsLib.Console {
                             // check to connect with password from .cvspass file
                             // check for .cvspass file and get password
                             //password = PasswordScrambler.Descramble(scrambledpassword);
+                            LoginCommand loginCommand = new LoginCommand(workingDirectory.CvsRoot);
+                            password = loginCommand.GetPassword();
                             serverConn.Connect(workingDirectory, password);
                         }
                         catch (AuthenticationException eCvsPass){

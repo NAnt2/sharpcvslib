@@ -34,6 +34,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 
 using ICSharpCode.SharpCvsLib.Client;
@@ -57,8 +58,34 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         private const string ENV_CVS_PASSFILE = "CVS_PASSFILE";
         private const string ENV_CVS_HOME = "CVS_HOME";
         private const string CVS_PASSFILE = ".cvspass";
-        private const string CVS_PASS_REGEX = @"[\w]*" + CvsRoot.CVSROOT_REGEX + @"[\s]([^\r\n]*)";
+        private const string REGEX_CVS_PASSFILE = @"[\w]*" + CvsRoot.CVSROOT_REGEX + @"[\s]([^\r\n]*)";
+        /// <summary>Regular expression to parse out the password prompt from the commandline</summary>
+        public const string REGEX_PASSWORD = @"[-]*pwd:([\w]*)";
         private readonly ILog LOGGER = LogManager.GetLogger(typeof(LoginCommand));
+
+        private const string OPT_PASSWORD = "pwd";
+        private string[] args;
+
+        /// <summary>
+        /// Commandline arguments.
+        /// </summary>
+        public string[] Args {
+            get {return this.args;}
+            set {this.args = value;}
+        }
+
+        /// <summary>
+        /// Get the command line arguments as a string.
+        /// </summary>
+        public string CommandLine {
+            get {
+                StringBuilder msg = new StringBuilder ();
+                foreach (string arg in this.args) {
+                    msg.Append(String.Format("{0} ", arg));
+                }
+                return msg.ToString();
+            }
+        }
 
         /// <summary>
         /// The text value of the password that will be used to login.  This should be
@@ -73,7 +100,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// </summary>
         public string Password {
             get {return this.password;}
-            set {this.password = PasswordScrambler.Scramble(value);}
+            set {this.password = value;}
         }
 
         /// <summary>
@@ -108,7 +135,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// Process the login command with cvs library API calls.
         /// </summary>
         public void Execute (ICommandConnection connection){
-            string password = this.GetPassword();
+            this.password = this.GetPassword();
         }
 
         /// <summary>
@@ -116,28 +143,36 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// </summary>
         /// <returns></returns>
         public string GetPassword () {
-            string [] passFileLocations = { 
-                 System.Environment.GetEnvironmentVariable(ENV_HOME),
-                    System.Environment.GetEnvironmentVariable(ENV_CVS_HOME),
-                    Path.GetPathRoot(Environment.CurrentDirectory)};
-
             string thePassword = null;
-            foreach (string passFilePath in passFileLocations) {
-                LOGGER.Debug(String.Format("Looking for passfile: {0}", passFilePath));
-                thePassword = this.ReadPassword(passFilePath);
-                if (null != thePassword) {
-                    return thePassword;
+            if (null != this.args && this.args.Length > 0) {
+                Regex regex = new Regex(REGEX_PASSWORD);
+                Match match = regex.Match(this.CommandLine);
+                string pwd = match.Groups[0].Value;
+                LOGGER.Debug(String.Format("password: {0}", pwd));
+                thePassword = pwd;
+            } else {
+                string [] passFileLocations = { 
+                                                  System.Environment.GetEnvironmentVariable(ENV_HOME),
+                                                  System.Environment.GetEnvironmentVariable(ENV_CVS_HOME),
+                                                  Path.GetPathRoot(Environment.CurrentDirectory)};
+
+                foreach (string passFilePath in passFileLocations) {
+                    LOGGER.Debug(String.Format("Looking for passfile: {0}", passFilePath));
+                    thePassword = this.ReadPassword(passFilePath);
+                    if (null != thePassword && String.Empty != thePassword) {
+                        return PasswordScrambler.Descramble(thePassword);
+                    }
                 }
-            }
 
-            if (thePassword == null) {
-                System.Console.WriteLine(String.Format("Logging in to {0}", this.CvsRoot));
-                System.Console.Write(String.Format("CVS password: "));
-                thePassword = System.Console.ReadLine();
+                if (thePassword == null) {
+                    System.Console.WriteLine(String.Format("Logging in to {0}", this.CvsRoot));
+                    System.Console.Write(String.Format("CVS password: "));
+                    thePassword = System.Console.ReadLine();
 
-                password = PasswordScrambler.Scramble(password);
+                    password = PasswordScrambler.Scramble(password);
 
-                this.WritePassword(password);
+                    this.WritePassword(password);
+                }
             }
 
             return thePassword;
@@ -160,7 +195,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
 
             LOGGER.Debug(String.Format("PassLine: {0}.", passLine));
 
-            Regex regex = new Regex(CVS_PASS_REGEX, 
+            Regex regex = new Regex(REGEX_CVS_PASSFILE, 
                 RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
             MatchCollection matches = regex.Matches(passLine);
 
@@ -204,10 +239,16 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 Environment.Exit(-1);
             }
             LOGGER.Debug(String.Format("Using passfile: {0}.", passwordFile.FullName));
-            StreamWriter writer = passwordFile.AppendText();
-            writer.WriteLine(String.Format("{0} {1}", 
-                this.CvsRoot, thePassword));
-            writer.Close();
+            try {
+                using (StreamWriter writer = passwordFile.AppendText()) {
+                    writer.WriteLine(String.Format("{0} {1}", 
+                        this.CvsRoot, thePassword));
+                    writer.Close();
+                }
+            } catch (IOException e) {
+                LOGGER.Warn(String.Format("Unable to write password to file: {0}.", 
+                    passwordFile.FullName), e);
+            }
 
         }
 
