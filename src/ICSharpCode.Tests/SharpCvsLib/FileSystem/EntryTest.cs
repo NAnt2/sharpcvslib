@@ -172,7 +172,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void TestParseRfc1123Entry () {
-            Entry entry = new Entry (this.settings.Config.LocalPath, CHECKOUT_ENTRY_2);
+            Entry entry = new Entry (new FileInfo(this.settings.Config.LocalPath), CHECKOUT_ENTRY_2);
 
             Assert.AreEqual (this.settings.Config.LocalPath, entry.Path);
             Assert.AreEqual (Path.Combine(this.settings.Config.LocalPath, CHECKOUT_ENTRY_2_FILENAME), 
@@ -208,7 +208,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void TestParseFullCheckoutEntry () {
-            Entry entry = new Entry (this.settings.Config.LocalPath, CHECKOUT_ENTRY_3);
+            Entry entry = new Entry (new FileInfo(this.settings.Config.LocalPath), CHECKOUT_ENTRY_3);
 
             Assert.IsTrue (entry.Name.Equals ("ICSharpCode.SharpZipLib.dll"));
             Assert.IsTrue (entry.FullPath.Equals (

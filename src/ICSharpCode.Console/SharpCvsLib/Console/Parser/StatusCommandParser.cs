@@ -52,8 +52,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     /// </summary>
     public class StatusCommandParser : AbstractCommandParser {
         private string fileNames;
-        private string revision;
-        private DateTime date;
         private string unparsedOptions;
 
         /// <summary>
