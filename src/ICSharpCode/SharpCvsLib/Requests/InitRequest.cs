@@ -54,11 +54,11 @@ namespace ICSharpCode.SharpCvsLib.Requests {
 		}
 		
         /// <summary>
-        /// <code>false</code>, a response is not expected.
+        /// <code>true</code>, a response is expected.
         /// </summary>
 		public override bool IsResponseExpected {
 			get {
-				return false;
+				return true; // This was false but protocol documentation says it should be true
 			}
 		}
 	}
