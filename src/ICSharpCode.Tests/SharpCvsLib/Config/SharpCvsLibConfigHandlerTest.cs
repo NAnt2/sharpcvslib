@@ -69,13 +69,13 @@ namespace ICSharpCode.SharpCvsLib.Config {
 
             xmlDoc.Load (CONFIG_FILE);
 
-            SharpCvsLibConfig config = 
+            SharpCvsLibConfig config = null;
+            config = 
                 (SharpCvsLibConfig)configHandler.Create 
                     (xmlDoc.SelectSingleNode ("configuration"), 
                     null, 
                     xmlDoc.SelectSingleNode ("//" + 
                                              SharpCvsLibConfigHandler.APP_CONFIG_SECTION));
-
             this.CheckValues (config);
         }
 

@@ -46,7 +46,7 @@ namespace ICSharpCode.SharpCvsLib {
         ///     Cvs root to use for test cases.
         /// </summary>
         public const String CVSROOT = 
-            ":pserver:anonymous@linux.sporadicism.com:/home/cvs/src";
+            ":pserver:anonymous@goliath.sporadicism.com:/cvsroot/sharpcvslib-test";
         /// <summary>
         ///     Project/ module to use.
         /// </summary>

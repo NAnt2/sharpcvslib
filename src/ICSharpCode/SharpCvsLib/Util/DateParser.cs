@@ -47,7 +47,7 @@ namespace ICSharpCode.SharpCvsLib.Util {
         ///     Date format for the <code>RFC1123</code> specification.
         /// </summary>	    
 	    public const String RFC1123 = 
-	        "dd/MMM/yyyy HH':'mm:ss '-0000'";
+	        "dd MMM yyyy HH':'mm':'ss '-0000'";
         /// <summary>
         ///     The date format used by cvsnt.
         /// </summary>

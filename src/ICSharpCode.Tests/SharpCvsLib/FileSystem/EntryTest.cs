@@ -157,8 +157,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Assertion.Assert (entry.Name.Equals ("EntryTest.cs"));
             Assertion.Assert (entry.Revision.Equals ("1.1"));
             // TODO: check what format the date should come back in
-            Assertion.Assert (entry.Date, entry.Date.Equals ("Fri Jan 03 04:07:36"));
-//            Assertion.Assert (entry.Date, entry.Date.Equals ("03 Jan 2003 04:07:36 -0000"));
+            //Assertion.Assert (entry.Date, entry.Date.Equals ("Fri Jan 03 04:07:36"));
+            Assertion.Assert (entry.Date, entry.Date.Equals ("03 Jan 2003 04:07:36 -0000"));
             Assertion.Assert (entry.Conflict == null);
             Assertion.Assert (entry.Options.Equals (""));
             Assertion.Assert (entry.Tag.Equals (""));
