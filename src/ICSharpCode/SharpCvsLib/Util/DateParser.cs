@@ -52,7 +52,8 @@ namespace ICSharpCode.SharpCvsLib.Util {
         ///     The date format used by cvsnt.
         /// </summary>
 	    public const String CVSNT1 =
-	        "ddd MMM dd HH':'mm':'ss yyyy";
+	        "ddd MMM d HH':'mm':'ss yyyy";    // single 'd' to support both single & double digit dates
+//	        "ddd MMM dd HH':'mm':'ss yyyy";
 //	        "ddd MMM dd HH:mm:ss yyyy";	    
         /// <summary>
         ///     Date format for the <code>RFC1123</code> specification.
@@ -138,9 +139,12 @@ namespace ICSharpCode.SharpCvsLib.Util {
         }
         
         private static DateTime ParseCvsNT1 (String date) {
+            // These dates sometimes contain space padded 'day of month' rather than 
+            // zero padded which results in a double space.  Hence the AllowWhiteSpaces.
 			return DateTime.ParseExact(date, 
 			                                CVSNT1,
-			                                DateTimeFormatInfo.InvariantInfo);
+			                                DateTimeFormatInfo.InvariantInfo,
+			                                DateTimeStyles.AllowWhiteSpaces);
         }
         
         private static DateTime ParseCvsNT2 (String date) {

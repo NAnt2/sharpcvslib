@@ -63,6 +63,21 @@ namespace ICSharpCode.SharpCvsLib.Util {
             AssertDateEquals (date2, 2003, 09, 14, 1, 05, 51);
             DateTime date3 = DateParser.ParseCvsDate ("03 Jan 2003 04:07:36 -0000");
             AssertDateEquals (date3, 2003, 1, 3, 4, 7, 36);
+            
+            // These dates are in the format found in real Entries file  
+            DateTime date4 = DateParser.ParseCvsDate ("Thu Jun 12 06:14:16 2003");
+            AssertDateEquals (date4, 2003, 6, 12, 6, 14, 16);
+            // Following format found in an Entry file using Tortoise as cvs client
+            // This is known to cause a problem for revision 1.3 of DateParser
+            DateTime date5 = DateParser.ParseCvsDate ("Thu Jun  5 06:14:16 2003");
+            AssertDateEquals (date5, 2003, 6, 5, 6, 14, 16);
+            
+            // These two entries were not found, but are obvious alternative
+            // formats for date5
+            DateTime date6 = DateParser.ParseCvsDate ("Thu Jun 5 06:14:16 2003");
+            AssertDateEquals (date6, 2003, 6, 5, 6, 14, 16);
+            DateTime date7 = DateParser.ParseCvsDate ("Thu Jun 05 06:14:16 2003");
+            AssertDateEquals (date7, 2003, 6, 5, 6, 14, 16);
         }
         
         /// <summary>
