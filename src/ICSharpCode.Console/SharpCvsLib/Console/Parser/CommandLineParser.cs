@@ -391,8 +391,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             this.files = String.Empty;
                         }
                         try {
-                            ICSharpCode.SharpCvsLib.Console.Commands.RemoveCommand removeCommand = 
-                                new ICSharpCode.SharpCvsLib.Console.Commands.RemoveCommand(this.CvsRoot, files, options);
+                            RemoveCommandParser removeCommand = 
+                                new RemoveCommandParser(this.CvsRoot, files, options);
                             command = removeCommand.CreateCommand ();
                             this.currentWorkingDirectory = 
                                 removeCommand.CurrentWorkingDirectory;

@@ -29,8 +29,11 @@
 // exception statement from your version.
 //
 //    <author>Steve Kenzell</author>
+//    <author>Clayton Harbour</author>
 #endregion
+
 using System;
+using System.Collections;
 using System.Globalization;
 using System.Text;
 using System.IO;
@@ -42,32 +45,30 @@ using ICSharpCode.SharpCvsLib.Console.Parser;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Console.Commands {
+namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
     /// <summary>
     /// Remove file(s) in the cvs repository.
     /// </summary>
-    public class RemoveCommand {
-        private WorkingDirectory currentWorkingDirectory;
+    public class RemoveCommandParser : AbstractCommandParser {
         private CvsRoot cvsRoot;
         private string fileNames;
         private string unparsedOptions;
-        private readonly ILog LOGGER = 
-            LogManager.GetLogger (typeof(RemoveCommand));
 
         /// <summary>
-        /// The current working directory.
+        /// Default constructor.
         /// </summary>
-        public WorkingDirectory CurrentWorkingDirectory {
-            get {return this.currentWorkingDirectory;}
+        public RemoveCommandParser() {
+
         }
+
         /// <summary>
         /// Remove file(s) from a cvs repository.
         /// </summary>
         /// <param name="cvsroot">User information</param>
         /// <param name="fileNames">Files to remove</param>
         /// <param name="rmOptions">Options</param>
-        public RemoveCommand(string cvsroot, string fileNames, string rmOptions) : 
+        public RemoveCommandParser(string cvsroot, string fileNames, string rmOptions) : 
             this(new CvsRoot(cvsroot), fileNames, rmOptions){
         }
 
@@ -77,10 +78,53 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <param name="cvsroot">User Information</param>
         /// <param name="fileNames">Files to remove</param>
         /// <param name="rmOptions">Options</param>
-        public RemoveCommand(CvsRoot cvsroot, string fileNames, string rmOptions) {
+        public RemoveCommandParser(CvsRoot cvsroot, string fileNames, string rmOptions) {
             this.cvsRoot = cvsroot;
             this.fileNames = fileNames;
             this.unparsedOptions = rmOptions;
+        }
+
+        /// <summary>
+        /// Create a new instance of the <see cref="UpdateCommandParser"/>.
+        /// </summary>
+        /// <returns></returns>
+        public static ICommandParser GetInstance() {
+            return GetInstance(typeof(AddCommandParser));
+        }
+
+        /// <summary>
+        /// Name of the command being parsed.
+        /// </summary>
+        public override string CommandName {
+            get {return "remove";}
+        }
+
+        /// <summary>
+        /// Description of the command.
+        /// </summary>
+        public override string CommandDescription {
+            get {return "Remove an entry from the repository";}
+        }
+
+        /// <summary>
+        /// Nicknames for the add command.
+        /// </summary>
+        public override ICollection Nicks {
+            get {
+                if (nicks.Count == 0) {
+                    nicks.Add("rm");
+                    nicks.Add("delete");
+                }
+
+                return nicks;
+            }
+        }
+
+        /// <summary>
+        /// The add command is implemented in the library and commandline parser.
+        /// </summary>
+        public override bool Implemented {
+            get {return true;}
         }
 
         /// <summary>
@@ -91,7 +135,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <exception cref="Exception">TODO: Make a more specific exception</exception>
         /// <exception cref="NotImplementedException">If the command argument
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
-        public ICommand CreateCommand () {
+        public override ICommand CreateCommand () {
             ICSharpCode.SharpCvsLib.Commands.RemoveCommand removeCommand;
             this.ParseOptions(this.unparsedOptions);
             try {
@@ -103,11 +147,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 removeEntry = manager.FetchEntry(currentDirectory, fileNames );
                 // If this fails error out and state the user
                 //    is not in a CVS repository directory tree.
-                currentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
+                CurrentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
                     currentDirectory, repository.FileContents);
                 // Create new RemoveCommand object
                 removeCommand = new ICSharpCode.SharpCvsLib.Commands.RemoveCommand(
-                                 this.currentWorkingDirectory, currentDirectory, 
+                                 this.CurrentWorkingDirectory, currentDirectory, 
                                  new ICSharpCode.SharpCvsLib.FileSystem.Entry( currentDirectory, removeEntry.FileContents));
             }
             catch (Exception e) {
@@ -143,6 +187,22 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                         "implemented.";
                     throw new NotImplementedException (msg);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Output the command usage and arguements.
+        /// </summary>
+        public override string Usage {
+            get {
+                string usage = 
+@"Usage: cvs remove [-flR] [files...]
+        -f      Delete the file before removing it.
+        -l      Process this directory only (not recursive).
+        -R      Process directories recursively.
+(Specify the --help global option for a list of other help options)";
+
+                return usage;
             }
         }
     }

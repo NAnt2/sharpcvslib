@@ -128,8 +128,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             get {return true;}
         }
 
-
-
         /// <summary>
         /// Create the command object that will be used to act on the repository.
         /// </summary>
