@@ -50,3 +50,23 @@ Body {
 a:hover{background-color: #ffcc00;}
 a:visited{color: Olive;}
 a:link{color:Silver;}
+
+.new-news-hook {
+    color:red;
+}
+
+.new-news {
+    font-weight:bold;
+    font-style:italic;
+    font-size: large;
+}
+
+.old-news-hook {
+    color:orange;
+}
+
+.old-news {
+    font-weight:bold;
+    font-style:italic;
+    font-size:small;
+}
