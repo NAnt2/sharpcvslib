@@ -227,16 +227,22 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <returns>Returns <code>true</code> if the path does NOT contain a CVS
         ///     folder; otherwise returns <code>false</code></returns>
         private static bool ContainsCVS(String fullPath) {
-            if (!fullPath.EndsWith(Path.DirectorySeparatorChar.ToString())) {
-                fullPath += Path.DirectorySeparatorChar;
+//            if (!fullPath.EndsWith(Path.DirectorySeparatorChar.ToString())) {
+//                fullPath += Path.DirectorySeparatorChar;
+//            }
+
+            if (fullPath.ToUpper().EndsWith(Path.DirectorySeparatorChar + CVS.ToUpper())) {
+                return true;
+            } else {
+                System.Console.WriteLine("ends with: " + fullPath.ToUpper());
             }
             foreach (string fileType in System.Enum.GetNames(typeof(Factory.FileType))) {
                 string cvsDir = string.Format("{0}{1}{2}{3}",
                     Path.DirectorySeparatorChar, CVS, Path.DirectorySeparatorChar, fileType);
-
-                int lastCvsDir = fullPath.ToUpper().IndexOf(cvsDir.ToUpper());
-                int lastFile = fullPath.Length - cvsDir.Length - 1;
-                if (lastCvsDir == lastFile) {
+                if (fullPath.ToUpper().EndsWith(cvsDir.ToUpper())) {
+//                int lastCvsDir = fullPath.ToUpper().IndexOf(cvsDir.ToUpper());
+//                int lastFile = fullPath.Length - cvsDir.Length - 1;
+//                if (lastCvsDir == lastFile) {
                     return true;
                 }
             }

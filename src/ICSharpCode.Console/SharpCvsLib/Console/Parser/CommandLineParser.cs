@@ -263,13 +263,16 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 System.Console.WriteLine (Usage.General);
             }
 
-            Regex cvsRoot = new Regex(@"[-d]+[:\s]*" + CvsRoot.CVSROOT_REGEX);
-            Match match = cvsRoot.Match(this.CommandLine);
-
-            if (match.Groups.Count > 0 && CvsRoot.IsValid(this.CommandLine)) {
-                this.cvsRoot = new CvsRoot(this.CommandLine);
+            if (arguments.Length > 0 && 
+                (arguments[0] == "-d")) {
+                this.cvsRoot = new CvsRoot(this.arguments[1]);
+                startIndex = 2;                
+            } else if (arguments.Length > 0 && 
+                (arguments[0].Length > 2) && 
+                arguments[0].Substring(0, 2) == "-d") {
+                this.cvsRoot = new CvsRoot(this.arguments[0].Substring(2).Trim());
                 startIndex = 1;
-            } 
+            }
 
             for (int i = startIndex; i < arguments.Length; i++) {
                 if (LOGGER.IsDebugEnabled) {

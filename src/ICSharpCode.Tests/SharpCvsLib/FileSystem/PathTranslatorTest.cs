@@ -132,10 +132,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             workingDirectory = new WorkingDirectory (cvsRoot, LOCAL_ROOT_DIR1, REPOS_NAME1);
             pathTranslator = new PathTranslator (workingDirectory, REPOS_FILE_PATH1);
 
-            LOGGER.Debug ("pathTranslator=[" + pathTranslator.ToString () + "]");
             Assert.AreEqual("/cvsroot/sharpcvslib", pathTranslator.CvsRoot.CvsRepository,
                             pathTranslator.CvsRoot.CvsRepository);
-            Assert.AreEqual ("src/ICSharpCode/SharpCvsLib/FileSystem/", pathTranslator.RelativePath);
+
+            // BREAKING CHANGE ****
+            Assert.AreEqual ("sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/PathTranslator.cs", pathTranslator.RelativePath);
             Assert.AreEqual ("PathTranslator.cs", pathTranslator.Filename);
             String expectedLocalPath =
                 PathTranslator.ConvertToOSSpecificPath (Path.Combine (LOCAL_DIR1, "src/ICSharpCode/SharpCvsLib/FileSystem/"));
@@ -159,11 +160,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             Assert.AreEqual ("/cvsroot/sharpcvslib", pathTranslator.CvsRoot.CvsRepository,
                             pathTranslator.CvsRoot.CvsRepository);
-            Assert.AreEqual (pathTranslator.RelativePath, "src/ICSharpCode/SharpCvsLib/FileSystem/", pathTranslator.RelativePath);
-            Assert.AreEqual (Path.DirectorySeparatorChar.ToString(), pathTranslator.Filename);
+            Assert.AreEqual ("sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/", pathTranslator.RelativePath, pathTranslator.RelativePath);
+            Assert.AreEqual ("dev-src", pathTranslator.Filename);
             String expectedLocalPath =
                 PathTranslator.ConvertToOSSpecificPath (Path.Combine (LOCAL_DIR1, "src/ICSharpCode/SharpCvsLib/FileSystem/"));
-            Assert.AreEqual (pathTranslator.LocalPath, expectedLocalPath, pathTranslator.LocalPath);
+            Assert.AreEqual (expectedLocalPath, pathTranslator.LocalPath, pathTranslator.LocalPath);
             Assert.AreEqual (expectedLocalPath, pathTranslator.LocalPathAndFilename);
             Assert.IsTrue (pathTranslator.IsDirectory == true);
         }
@@ -202,10 +203,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Assert.IsTrue(PathTranslator.IsCvsDir ("c:\\temp\\CVS"));
             Assert.IsTrue(PathTranslator.IsCvsDir ("c:\\temp\\cvs"));
             Assert.IsTrue(PathTranslator.IsCvsDir ("c:\\temp\\cVs"));
-            Assert.IsTrue(PathTranslator.IsCvsDir ("c:\\temp\\cVs\\Crap"));
+            // this is actually valid CDH: 2004/11/01
+            Assert.IsTrue(!PathTranslator.IsCvsDir ("c:\\temp\\cVs\\Crap"));
             Assert.IsTrue(!PathTranslator.IsCvsDir ("c:\\temp\\testCvs\\"));
             Assert.IsTrue(!PathTranslator.IsCvsDir ("c:\\temp\\CVSFile"));
-            Assert.IsTrue(PathTranslator.IsCvsDir(
+            // this is actually valid CDH: 2004/11/01
+            Assert.IsTrue(!PathTranslator.IsCvsDir(
                 "C:\\Documents and Settings\\Administrator\\Local Settings\\Temp\\sharpcvslib-tests\\sharpcvslib-test-repository\\conf\\CVS\\conf"));
             Assert.IsTrue(PathTranslator.IsCvsDir(
                 "C:\\DOCUME~1\\ADMINI~1\\LOCALS~1\\Temp\\sharpcvslib-tests\\sharpcvslib-test-repository\\test\\CVS"));

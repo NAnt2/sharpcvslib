@@ -15,9 +15,9 @@ using log4net.Config;
 
 [assembly: ComVisibleAttribute(false)]
 [assembly: CLSCompliantAttribute(true)]
-[assembly: AssemblyVersionAttribute("0.36.4527.8520")]
+[assembly: AssemblyVersionAttribute("0.36.4601.7938")]
 [assembly: AssemblyTitleAttribute("Concurrent Versions System (sharpCVS) (client)")]
-[assembly: AssemblyDescriptionAttribute("win32; net-1.1; 2004/10/27 11:40:05")]
+[assembly: AssemblyDescriptionAttribute("win32; net-1.1; 2004/11/01 10:03:04")]
 [assembly: AssemblyCopyrightAttribute("Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004\r\n\r\nCVS may be copied onl" +
 "y under the terms of the GNU General Public License,\r\na copy of which can be fou" +
 "nd with the CVS distribution kit.")]

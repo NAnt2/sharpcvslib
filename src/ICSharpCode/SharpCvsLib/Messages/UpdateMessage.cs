@@ -91,8 +91,16 @@ public class UpdateMessage : IMessage {
         /// </summary>
         public String Message {
             get {
-                return String.Format("{0} {1}/{2}{3}",
-                    ACTION, this.Module, this.Repository, this.Filename);
+                System.Console.WriteLine(string.Format("Filename: {0}", this.Filename));
+                System.Console.WriteLine(string.Format("Repository: {0}", this.Repository));
+                System.Console.WriteLine(string.Format("Module: {0}", this.Module));
+                string tempRepos = this.Repository;
+                if (tempRepos.Length >= 0 &&
+                    tempRepos.EndsWith("/")) {
+                    tempRepos = tempRepos.Substring(0, tempRepos.Length - 1);
+                }
+                return String.Format("{0} {1}/{2}/{3}",
+                    ACTION, this.Module, tempRepos, this.Filename);
             }
         }
     }

@@ -57,6 +57,53 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// <param name="workingDirectory"></param>
         public CheckoutModuleCommand(WorkingDirectory workingDirectory) {
             this.workingDirectory    = workingDirectory;
+
+            this.Revision = this.workingDirectory.Revision;
+            this.OverrideDirectory = this.workingDirectory.OverrideDirectory;
+            if (this.workingDirectory.HasDate) {
+                this.Date = this.workingDirectory.Date;
+            }
+            this.Module = this.workingDirectory.ModuleName;
+        }
+
+        private string _revision;
+        public string Revision {
+            get {return this._revision;}
+            set {this._revision = value;}
+        }
+
+        private string _overrideDirectory;
+        public string OverrideDirectory {
+            get {return this._overrideDirectory;}
+            set {this._overrideDirectory = value;}
+        }
+
+        private bool _hasDate = false;
+        private DateTime _date;
+        public DateTime Date {
+            get {return this._date;}
+            set {
+                this._hasDate = true;
+                this._date = value;
+            }
+        }
+
+        protected string DateAsString {
+            get {
+                string dateAsString = "";
+                string dateFormat = "dd MMM yyyy";
+
+                if (this._hasDate) {
+                    dateAsString = this._date.ToString(dateFormat);
+                }
+                return dateAsString;
+            }
+        }
+
+        private string _module;
+        public string Module {
+            get {return this._module;}
+            set {this._module = value;}
         }
 
         /// <summary>
@@ -67,7 +114,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             workingDirectory.Clear();
 
             //connection.SubmitRequest(new CaseRequest());
-            connection.SubmitRequest(new ArgumentRequest(workingDirectory.ModuleName));
+            connection.SubmitRequest(new ArgumentRequest(this.Module));
 
             connection.SubmitRequest(new DirectoryRequest(".",
                                     workingDirectory.CvsRoot.CvsRepository +
@@ -78,26 +125,26 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             connection.SubmitRequest(
                 new ArgumentRequest(ArgumentRequest.Options.MODULE_NAME));
 
-            if (workingDirectory.HasRevision) {
+            if (null != this.Revision) {
                 connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.REVISION));
-                connection.SubmitRequest(new ArgumentRequest(workingDirectory.Revision));
+                connection.SubmitRequest(new ArgumentRequest(this.Revision));
             }
-            if (workingDirectory.HasDate) {
+            if (this._hasDate) {
                 connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.DATE));
-                connection.SubmitRequest(new ArgumentRequest(workingDirectory.GetDateAsString()));
+                connection.SubmitRequest(new ArgumentRequest(this.DateAsString));
             }
-            if (workingDirectory.HasOverrideDirectory) {
+            if (null != this.OverrideDirectory) {
                 connection.SubmitRequest (
                     new ArgumentRequest (ArgumentRequest.Options.OVERRIDE_DIRECTORY));
                 connection.SubmitRequest (
-                    new ArgumentRequest (workingDirectory.OverrideDirectory));
+                    new ArgumentRequest (this.OverrideDirectory));
             }
 
-            connection.SubmitRequest(new ArgumentRequest(workingDirectory.ModuleName));
+            connection.SubmitRequest(new ArgumentRequest(this.Module));
 
             connection.SubmitRequest(new DirectoryRequest(".",
                                     workingDirectory.CvsRoot.CvsRepository +
-                                    "/" + workingDirectory.ModuleName));
+                                    "/" + this.Module));
 
             connection.SubmitRequest(new CheckoutRequest());
             Manager manager = new Manager (connection.Repository.WorkingPath);

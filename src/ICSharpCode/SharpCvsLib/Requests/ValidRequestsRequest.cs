@@ -26,28 +26,27 @@
 #endregion
 
 namespace ICSharpCode.SharpCvsLib.Requests {
-
-/// <summary>
-/// Response expected: yes. Ask the server to send back a Valid-requests response.
-/// </summary>
-public class ValidRequestsRequest : AbstractRequest
-{
     /// <summary>
-    /// The valid request string
+    /// Response expected: yes. Ask the server to send back a Valid-requests response.
     /// </summary>
-    public override string RequestString {
-        get {
-            return "valid-requests\n";
+    public class ValidRequestsRequest : AbstractRequest
+    {
+        /// <summary>
+        /// The valid request string
+        /// </summary>
+        public override string RequestString {
+            get {
+                return "valid-requests\n";
+            }
+        }
+
+        /// <summary>
+        /// Indicator specifying if the response is respected.
+        /// </summary>
+        public override bool IsResponseExpected {
+            get {
+                return true;
+            }
         }
     }
-
-    /// <summary>
-    /// Indicator specifying if the response is respected.
-    /// </summary>
-    public override bool IsResponseExpected {
-        get {
-            return true;
-        }
-    }
-}
 }
