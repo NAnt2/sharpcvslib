@@ -236,6 +236,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Exceptions\CvsFileNotFoundException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Exceptions\CvsRootParseException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -346,27 +351,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode\SharpCvsLib\FileSystem\CvsFileNotFoundException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpCvsLib\FileSystem\DuplicateEntryException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "ICSharpCode\SharpCvsLib\FileSystem\Entries.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\FileSystem\Entry.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpCvsLib\FileSystem\EntryParseException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -387,11 +377,6 @@
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\FileSystem\ICvsFile.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpCvsLib\FileSystem\InvalidPathException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -422,11 +407,6 @@
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\FileSystem\Tag.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpCvsLib\FileSystem\UnsupportedFileTypeException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -506,31 +486,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode\SharpCvsLib\Options\AbstractOptions.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpCvsLib\Options\AvailableOptions.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpCvsLib\Options\CheckoutOptions.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpCvsLib\Options\Option.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpCvsLib\Options\UnsupportedOptionException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Protocols\AbstractProtocol.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -542,6 +497,11 @@
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Protocols\IProtocol.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Protocols\ProtocolFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

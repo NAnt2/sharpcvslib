@@ -26,6 +26,7 @@ Global
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{4B8B1DB1-32B9-4254-912D-B7FDC4A70C5B}.Debug.ActiveCfg = Debug|.NET
+		{4B8B1DB1-32B9-4254-912D-B7FDC4A70C5B}.Debug.Build.0 = Debug|.NET
 		{4B8B1DB1-32B9-4254-912D-B7FDC4A70C5B}.Release.ActiveCfg = Release|.NET
 		{4B8B1DB1-32B9-4254-912D-B7FDC4A70C5B}.Release.Build.0 = Release|.NET
 		{A76B2D4F-C424-410B-A6F1-7831B5E38E7D}.Debug.ActiveCfg = Debug|Win32

@@ -40,6 +40,7 @@ using System.IO;
 using log4net;
 
 using ICSharpCode.SharpCvsLib.Attributes;
+using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Util;
 

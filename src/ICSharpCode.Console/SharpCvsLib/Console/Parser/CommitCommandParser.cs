@@ -36,6 +36,8 @@ using System.Globalization;
 using System.Collections;
 using System.IO;
 using System.Text;
+
+using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Commands;

@@ -106,10 +106,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             get {
                 if (null == this._repository) {
                     try {
-                        Root root = Root.Load(
+                        ICSharpCode.SharpCvsLib.FileSystem.Repository repos =
+                            ICSharpCode.SharpCvsLib.FileSystem.Repository.Load(
                             new DirectoryInfo(
                             Path.Combine(this.CurrentDir.FullName, "CVS")));
-                        this.cvsRoot = new CvsRoot(root.FileContents);
+                        this._repository = repos;
                     } catch (Exception e) {
                         ConsoleMain.ExitProgram("Not a valid cvs folder.", e);
                     }
@@ -126,11 +127,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             get {
                 if (null == this.cvsRoot) {
                     try {
-                        this._repository = 
-                            Repository.Load(
+                        Root root = Root.Load(
                             new DirectoryInfo(
-                            Path.Combine(this.CurrentDir.FullName, 
-                            "CVS")));
+                            Path.Combine(this.CurrentDir.FullName, "CVS")));
+                        this.cvsRoot = new CvsRoot(root.FileContents);
                     } catch (Exception e) {
                         ConsoleMain.ExitProgram("Not a valid cvs folder.", e);
                     }

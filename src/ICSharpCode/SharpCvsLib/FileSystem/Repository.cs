@@ -39,6 +39,7 @@ using System.Globalization;
 using log4net;
 
 using ICSharpCode.SharpCvsLib.Attributes;
+using ICSharpCode.SharpCvsLib.Exceptions;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>

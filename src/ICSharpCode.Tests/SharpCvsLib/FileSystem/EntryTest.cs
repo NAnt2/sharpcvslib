@@ -32,6 +32,7 @@ using System;
 using System.Collections;
 using System.IO;
 
+using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib.Tests;
 using ICSharpCode.SharpCvsLib.Tests.Config;
 
