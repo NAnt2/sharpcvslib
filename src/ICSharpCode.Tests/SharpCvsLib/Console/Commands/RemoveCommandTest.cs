@@ -59,8 +59,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <summary>
         ///     Constructory for test case.
         /// </summary>
-        public RemoveCommandTest ()
-        {
+        public RemoveCommandTest () {
         }
 
         /// <summary>
@@ -75,62 +74,12 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             // commit file second
             // remove file third
             // commit removed file
-            String commandLine = "-d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib up sharpcvslib";
+            String commandLine = "-d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib rm fileremove.txt";
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a RemoveCommand object
             ConsoleMain consoleMain = new ConsoleMain();
             consoleMain.Execute(commandLineArgs);
             Assertion.AssertNotNull ("Should have a command object.", consoleMain);
-        }
-        /// <summary>
-        ///     Remove files with the -l option.
-        ///
-        /// </summary>
-        [Test]
-        public void MinuslOptionRemoveFiles (){
-            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-            String repository = "sharpcvslib";
-            String options = "-l";
-            // Test Creating a RemoveCommand object
-            UpdateCommand updateCommand = new UpdateCommand(root, repository, options);
-            Assertion.AssertNotNull ("Should have a command object.", updateCommand);
-            //updateCommand.Execute();
-        }
-        /// <summary>
-        ///     Remove files 
-        ///     with the -R option
-        /// </summary>
-        [Test]
-        public void MinusROptionRemoveFile (){
-            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-            String repository = "sharpcvslib";
-            String options = "-dnewlocation ";
-            // Test Creating a UpdateCommand object
-            UpdateCommand updateCommand = new UpdateCommand(root, repository, options);
-            Assertion.AssertNotNull ("Should have a command object.", updateCommand);
-            //updateCommand.Execute();
-            //Assertion.Assert(Directory.Exists("newlocation"));
-        }
-        /// <summary>
-        ///     Remove files 
-        ///     with the -f option
-        /// </summary>
-        [Test]
-        public void MinusfOptionRemove (){
-            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-            String repository = "sharpcvslib";
-            String options = "-f ";
-            // Test Creating a RemoveCommand object
-            UpdateCommand updateCommand = new UpdateCommand(root, repository, options);
-            Assertion.AssertNotNull ("Should have a command object.", updateCommand);
-            //updateCommand.Execute();
-            // Find a file that should exist 
-            //Assertion.Assert ("Should have found the check file.  file=[" +
-            //    checkFile + "]", File.Exists (checkFile));
-
-            // Find a file that should not exist
-            //Assertion.Assert ("Should have found the check file.  file=[" +
-            //    checkFile + "]", File.Exists (checkFile));
         }
     }
 }
