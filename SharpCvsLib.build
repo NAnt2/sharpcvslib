@@ -146,7 +146,7 @@
     </target>
     
     <target name="run-tests" depends="build.all">
-            <nant buildfile="${name.project}.build" target="run-tests-${nant.settings.currentframework}"/>
+            <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="run-tests-${nant.settings.currentframework}"/>
     </target>
     <target name="dist" depends="build.lib, build.test, build.console, run-tests">
         <property name="dist.src" value="${dist.dir}/${assembly.version}/src" />
