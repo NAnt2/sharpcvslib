@@ -57,7 +57,7 @@ public class MessageResponse : IResponse
         string message = cvsStream.ReadToEndOfLine();
         terminating = message.Trim().ToUpper() == "OK";
         // Fire message event to the client app
-        services.SendMessage("M " + message);
+        services.SendMessage("cvs server: M " + message);
         String msg = "cvs server: M " + message;
         LOGGER.Debug (msg);
     }

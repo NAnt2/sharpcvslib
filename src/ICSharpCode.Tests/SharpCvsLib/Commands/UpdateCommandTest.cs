@@ -103,15 +103,18 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         public void UpdateTest () {
             this.Checkout ();
             File.Delete (checkFile);
+            LOGGER.Debug("After deleted checkFile=[" + checkFile + "]");
 
             Assertion.Assert ("File should be gone now.  file=[" + checkFile + "]", !File.Exists (checkFile));
+            LOGGER.Debug("Before update all files recursively.");
             this.UpdateAllRecursive (rootDir);
+            LOGGER.Debug("After update all files recursively.");
             Assertion.Assert ("Should have found the file.  file=[" +
                             checkFile + "]", File.Exists (checkFile));
 
-            ICvsFile[] entries =
-                this.manager.Fetch(rootDir, Factory.FileType.Entries);
-            int found = 0;
+            String moduleDir = Path.Combine(rootDir, this.settings.Module);
+            Entries entries =
+                this.manager.FetchEntries(moduleDir + Path.DirectorySeparatorChar.ToString());
 
             String[] files =
                 Directory.GetFiles (rootDir);
@@ -121,21 +124,15 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             int total = files.Length + directories.Length - 1;
             Assertion.Assert ("Count of directories and files should be equal to " +
                             "the entries in the CVS/Entries file.  They are not.  " +
-                            "entriesCount=[" + entries.Length + "]" +
+                            "entriesCount=[" + entries.Count + "]" +
                             "files=[" + files.Length + "]" +
                             "directories=[" + directories.Length + "]" +
                             "total=[" + total + "]",
-                            entries.Length == total);
-            foreach (ICvsFile cvsEntry in entries) {
-                Entry entry = (Entry)cvsEntry;
+                            entries.Count == total);
+            LOGGER.Debug("Before checking all file names.");
 
-                System.Console.WriteLine ("entry=[" + entry + "]");
-                if (entry.Name.Equals (this.settings.Config.TargetFile)) {
-                    found++;
-                }
-            }
-
-            Assertion.Assert ("Build file should have a cvs entry.", found == 1);
+            Assertion.Assert("Target file=[" + this.settings.TargetFile + "] should have a cvs entry.",
+                entries.Contains(Path.Combine(moduleDir, this.settings.TargetFile)));
 
             // Had some problems with an extra module directory appearing under
             //    the main working folder.

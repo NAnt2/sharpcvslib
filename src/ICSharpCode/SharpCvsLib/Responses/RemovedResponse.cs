@@ -69,7 +69,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// Return true if this response cancels the transaction
         /// </summary>
         public bool IsTerminating {
-            get {return false;}
+            get {return true;}
         }
     }
 }

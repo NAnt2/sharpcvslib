@@ -139,8 +139,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                 
                 foreach (DictionaryEntry dicEntry  in folder.Entries) {
                     Entry entry = (Entry)dicEntry.Value;
-                    // Only submit the entry information if the entry is not
-                    // a directory.
+                    // directory entry modifications are not tracked in cvs,
+                    //  once a directory is created it cannot be removed
                     if (!entry.IsDirectory) {
                         DateTime old = entry.TimeStamp;
                         entry.TimeStamp = entry.TimeStamp;
