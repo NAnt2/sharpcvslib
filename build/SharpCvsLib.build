@@ -3,65 +3,7 @@
         http://sharpcvslib.sourceforge.net
 -->
 <project name="${name.top-level}-${name.project}" default="run-tests-sample">
-    <!-- TODO: Create a NAnt task to get this using the working dir, etc. -->
-    <property name="cvs.branch" value="Release_0_35_branch" />
-    
-    <property name="util.copy" value="pscp" />
-    <property name="name.developer" value="drakmar" />
-    <property name="sf.username" value="${name.developer}@shell.sourceforge.net" />
-    <property name="sf.location.nightly" value="/home/groups/s/sh/sharpcvslib/htdocs/nightly-build/${cvs.branch}" />
-    <property name="sf.location.release" value="/home/groups/s/sh/sharpcvslib/htdocs" />
-
-
-    <!-- Names of the files generated -->
-    <property name="name.top-level" value="ICSharpCode" />
-    <property name="name.project" value="SharpCvsLib" />
-    <property name="name.lib" value="${name.project}" />    
-    <property name="name.console" value="Console" />
-    <property name="name.console.exe" value="cvs" />
-    <property name="name.tests" value="Tests" />
-    
-    <!-- Version information -->
-    <property name="assembly.start-date" value="2001-01-01" />  <!-- This is a guess at the start date, it is used to generate the current version number. -->
-    <property name="assembly.copyright.text" value="Mike Krueger 2001-2002, SharpCvsLib Developers 2003" />
-    <property name="assembly.copyright.href" value="http://sharpcvslib.sourceforge.net/license.html" />
-    <property name="assembly.description" value="Cvs client library written in c#" />
-    <property name="assembly.company" value="SharpCvsLib" />
-    
-    <!-- Compiler information/ settings -->
-    <property name="compile.warnaserror" value="true" />
-    <property name="compile.debug" value="true" />
-    <property name="compile.unsafe" value="/unsafe-" />
-    <property name="compile.checked" value="/checked-" />
-    <property name="compile.define" value="DEBUG;TRACE" />
-    
-    <!-- Directory structure -->
-    <property name="dir.base" value="${nant.project.basedir}/.." />
-    <property name="dir.bin" value="${dir.base}/bin" /> 
-    <property name="dir.build" value="${dir.base}/build" />
-    <property name="dir.conf" value="${dir.base}/conf" />
-    <property name="dir.dist" value="${dir.base}/dist" />
-    <property name="dir.doc" value="${dir.base}/doc" />
-    <property name="dir.external-build" value="${dir.base}/.externalToolBuilders" />
-    <property name="dir.src" value="${dir.base}/src" />
-    <property name="dir.lib" value="${dir.base}/lib" />
-    <property name="dir.lib.ext" value="${dir.lib}/ext" />
-    <property name="dir.release" value="${dir.base}/release" />
-    <property name="dir.tools" value="${dir.base}/tools"/>
-    
-    <property name="dir.doc.msdn" value="${dir.dist}/doc/api/msdn" />
-    <property name="license" value="license.html" />
-    
-    <!-- Referenced lib and lib/ext dll files -->
-    <property name="lib.log4net" value="log4net.dll" />
-    <property name="lib.nunit" value="nunit.framework.dll" />    
-    <property name="lib.zip" value="ICSharpCode.SharpZipLib.dll" />
-
-    <!-- Documentation variables -->
-    <property name="doc.title" value="${name.project}" />
-    <property name="doc.copyright.text" value="${assembly.copyright.text}" />
-    <property name="doc.copyright.href" value="${assembly.copyright.href}" />
-
+    <include buildfile="SharpCvsLib.common.xml" />
     <!-- Targets -->
     <target name="src.update" description="Updates the source from cvs.">
        <!-- To run locally you must have your public key uploaded to sf.net -->
@@ -243,31 +185,32 @@
     
     <target name="dist">
         <call target="setup" />
-<!--        <call target="dist.clean" />
+        <call target="dist.clean" />
         <call target="build.all" failonerror="false" />
-        <call target="run-tests-sample" failonerror="false" />
+<!--        <call target="run-tests-sample" failonerror="false" />-->
         <mkdir dir="${dir.dist}/bin" />
         <mkdir dir="${dir.dist}/src" />    
         
+        <!-- Generate the net doc and send it to the dist folder -->
         <call target="netdoc" />
--->        
-        <copy todir="${dir.dist}/bin">
-            <fileset basedir="${dir.bin}">
-                <includes name="**/**.dll"/>
-                <includes name="**/**.exe"/>
-                <includes name="**/**.config"/>
-            </fileset>
-        </copy>
-        
+        <!-- Package the existing html docs and put them in the doc folder too
+            this will be used for both the source and binary release -->
         <copy todir="${dir.dist}/doc">
             <fileset basedir="${dir.doc}">
                 <includes name="**/*"/>
             </fileset>
         </copy>
-        <echo message="Copying documents from website: ${dir.base}/../www" />
-        <copy todir="${dir.dist}/doc">
-            <fileset basedir="${dir.base}/../www">
-                <includes name="**/*" />
+        <!-- Copy the binary and config files from the bin directory -->
+        <copy todir="${dir.dist}/bin">
+            <fileset basedir="${dir.base}">
+                <includes name="${dir.bin}/*.dll"/>
+                <includes name="${dir.bin}/*.exe"/>
+                <includes name="${dir.bin}/*.config"/>
+            </fileset>
+        </copy>
+        <copy todir="${dir.dist}/bin">
+            <fileset basedir="${dir.dist}">
+                <includes name="doc**"/>
             </fileset>
         </copy>
         
@@ -277,10 +220,10 @@
                 <includes name="${dir.bin}**" />
                 <includes name="${dir.build}**" />
                 <includes name="${dir.conf}**" />
-                <includes name="${dir.doc}**" />
                 <includes name="${dir.lib}**" />
                 <includes name="${dir.src}**" />
                 <includes name="${dir.tools}/nant/win32**" />
+                <includes name="${dir.tools}/nant/linux**" />
                 
                 <includes name="*.build" />
                 <includes name="*.bat" />                
@@ -294,12 +237,19 @@
                 
                 <includes name="*.project" />
                 
+                <excludes name="${dir.doc}**" />
                 <excludes name="**/*.log.*" />
                 <excludes name="**/*.log" />
                 <excludes name="**/obj**" />
             </fileset>
         </copy>
-        
+        <copy todir="${dir.dist}/src">
+            <fileset basedir="${dir.dist}">
+                <includes name="doc**"/>
+            </fileset>
+        </copy>
+
+        <delete dir="${dir.dist}/doc" />
     </target>
     
     <target name="build-release.common">
@@ -319,14 +269,12 @@
         <zip zipfile="${dir.output}/${name.lib}-${assembly.version}-bin.zip">
             <fileset basedir="${dir.dist}">
                 <includes name="bin/**/**.*" />
-                <includes name="doc/**/**.chm" />
             </fileset>
         </zip>
         
         <zip zipfile="${dir.output}/${name.lib}-${assembly.version}-src.zip">
             <fileset basedir="${dir.dist}">
                 <includes name="src/**/**.*" />
-                <includes name="doc/**/**.chm" />
             </fileset>
         </zip>
 

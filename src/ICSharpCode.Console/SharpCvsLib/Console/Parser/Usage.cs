@@ -46,6 +46,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 /// Contains the usage message for the command line interface.
 /// </summary>
 public class Usage {
+	private static String copyrightInfo;
+	private static String companyInfo;
+	private static String description;
 
     /// <summary>Private constructor so the class is never instantiated.</summary>
     private Usage () {
@@ -202,23 +205,51 @@ Thanks for using the command line tool.";
         String version = a.GetName().Version.ToString();
         return version;
     }
+
+	private static String GetCopyrightInfo () {
+		if (null == copyrightInfo) {
+			copyrightInfo = ((System.Reflection.AssemblyCopyrightAttribute)
+				System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyCopyrightAttribute), false)[0]).Copyright; 
+		}
+		return copyrightInfo;
+
+	}
+
+	private static String GetDescription () {
+		if (null == description) {
+			description = ((System.Reflection.AssemblyDescriptionAttribute)
+				System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyDescriptionAttribute), false)[0]).Description; 
+		}
+		return description;
+	}
+
+	private static String GetCompanyInfo () {
+		if (null == companyInfo) {
+			companyInfo = ((System.Reflection.AssemblyCompanyAttribute)
+				System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyCompanyAttribute), false)[0]).Company; 
+		}
+		return companyInfo;
+	}
     
     /// <summary>Gets a string that contains information about the program and version.</summary>
     public static String Version {
         get{
 		
 		String programInfo = @"
-Concurrent Versions System (CVS) {0} (client)
- 
-Copyright (c) 2001-2004 Mike Krueger, Clayton Harbour, 
-			Gerald Evans, Steve Kenzell and other authors.
- 
-CVS may be copied only under the terms of the GNU General Public License,
-a copy of which can be found with the CVS distribution kit.
- 
-Specify the --help option for further information about CVS";
+Concurrent Versions System (sharpCVS) {0} (client)
+  Build  : {3}
+  Runtime: {5}; {4}
 
-            return String.Format (programInfo, currentVersion);
+Copyright (c) {2}
+
+Specify the --help option for further information about CVS
+
+see {1} for more information on SharpCvsLib";
+			object[] args = {GetVersion(), GetCompanyInfo(),
+								GetCopyrightInfo(), 
+							  GetDescription(), Environment.OSVersion.Version.ToString(), 
+								Environment.OSVersion.Platform.ToString()};
+            return String.Format (programInfo, args);
         }
     }    
 
