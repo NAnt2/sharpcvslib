@@ -124,22 +124,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\CommitCommand.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\InitCommand.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\LoginCommand.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\RemoveCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -179,17 +164,27 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\CommandNames.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\CommandParserFactory.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\CommitCommandParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\ICommandParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\InitCommandParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\RemoveCommandParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
