@@ -50,10 +50,14 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// Regular expression for matching a cvsroot.
         /// </summary>
         public const string CVSROOT_REGEX = 
-            @":(ext|pserver|ssh|local|sspi)
-:([\w*]*[[@]*[\w*]*[\.\w*]*]*)
-[:]*([\d*]*)
-:([A-Za-z:/|/]+[\w*/-]*)";
+//            @":(ext|pserver|ssh|local|sspi)
+//:([\w*]*[[@]*[\w*]*[\.\w*]*]*)
+//[:]*([\d*]*)
+//:([A-Za-z:/|/]+[\w*/-]*)";
+              @":(ext|pserver|ssh|local|sspi)
+              :((?:[\w]*@)?[\w]+(?:\.[\w]+)*)
+              :?((?:[\d]*)?)
+              :((?:(?:[A-Za-z]:/)|/).*)";
 
         private readonly ILog LOGGER = LogManager.GetLogger(typeof(CvsRoot));
         /// <summary>
@@ -229,7 +233,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 
 
             LOGGER.Debug(String.Format("Matches count: {0}.", matches.Groups.Count));
-            if (matches.Groups.Count <= 0) {
+            if (!matches.Success) {
                 throw new CvsRootParseException(String.Format(@"Bad cvsroot. 
     Expected ( :protocol:[usename@]server[:port]:[C:]/path/to/repos ) 
     Found ( {0} )",

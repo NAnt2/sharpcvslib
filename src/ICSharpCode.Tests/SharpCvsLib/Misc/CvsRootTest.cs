@@ -85,6 +85,24 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         }
 
         /// <summary>
+        ///     Tests creation of a valid CvsRoot with various valid repository names
+        /// </summary>
+        [Test]
+        public void ValidRepositoryNames () {
+            CvsRoot cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:/cvsroot/sharpcvslib-test");
+            Assert.AreEqual("ext", cvsRoot.Protocol);
+            Assert.AreEqual("gne", cvsRoot.User);
+            Assert.AreEqual("cvs.sourceforge.net", cvsRoot.Host);
+            Assert.AreEqual("/cvsroot/sharpcvslib-test", cvsRoot.CvsRepository);
+
+            cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:/cvsroot/sharpcvslib.test");
+            Assert.AreEqual("ext", cvsRoot.Protocol);
+            Assert.AreEqual("gne", cvsRoot.User);
+            Assert.AreEqual("cvs.sourceforge.net", cvsRoot.Host);
+            Assert.AreEqual("/cvsroot/sharpcvslib.test", cvsRoot.CvsRepository);
+       }
+
+        /// <summary>
         ///     Tests handling of missing protocol.
         /// </summary>
         [Test]
@@ -180,6 +198,42 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         public void NoUserTestNoException () {
             CvsRoot localProtocol = new CvsRoot (":local:cvs.sourceforge.net:/cvsroot/sharpcvslib");
             CvsRoot sspiProtocol = new CvsRoot (":sspi:cvs.sourceforge.net:/cvsroot/sharpcvslib");
+        }
+
+        /// <summary>
+        ///     Tests handling of multiple colons.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(CvsRootParseException))]
+        public void MultiColonsTest () {
+            CvsRoot cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:::::::/cvsroot/sharpcvslib");
+        }
+ 
+        /// <summary>
+        ///     Tests handling of multiple dots.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(CvsRootParseException))]
+        public void MultiDotsTest () {
+            CvsRoot cvsRoot = new CvsRoot (":ext:gne@.....:/cvsroot/sharpcvslib");
+        }
+ 
+        /// <summary>
+        ///     Tests invalid address.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(CvsRootParseException))]
+        public void InvalidAddressTest () {
+            CvsRoot cvsRoot = new CvsRoot (":ext:gne[cvs.sourceforge.net:/cvsroot/sharpcvslib");
+        }
+  
+        /// <summary>
+        ///     Tests handling of multiple @'s.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(CvsRootParseException))]
+        public void MultiAtsTest () {
+            CvsRoot cvsRoot = new CvsRoot (":ext:gne@@@@@@cvs.sourceforge.net:/cvsroot/sharpcvslib");
         }
     }
 }
