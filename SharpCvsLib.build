@@ -7,7 +7,7 @@
     <property name="build.dir" value="bin" /> 
     
     <property name="assembly.name" value="ICSharpCode.SharpCvsLib" />    
-    <property name="assembly.version" value="0.3" />   
+    <property name="assembly.version" value="0.3.1" />   
     
     <target name="Debug" depends="SharpCvsLib.Debug" />
     <target name="Release" depends="SharpCvsLib.Release" />
