@@ -44,6 +44,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         private readonly ILog LOGGER = LogManager.GetLogger(typeof (AbstractCvsFile));
         private String fullPath;
         private String fileContents;
+        private String localCvsFullPath;
 
         /// <summary>
         /// Return the path to the file that this cvs object is controlling.  In
@@ -60,6 +61,18 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
                 tempPath = System.IO.Path.GetDirectoryName(tempPath);   
                 return this.GetPathWithDirectorySeperatorChar(tempPath);
             }
+        }
+
+        /// <summary>
+        /// The full path to the local cvs management file.
+        /// </summary>
+        /// <example>
+        ///     <code>/src/sharpcvslib/CVS/Entries</code>
+        ///     <code>c:/src/sharpcvslib/CVS/Entries</code>
+        /// </example>
+        public String LocalCvsFileFullPath {
+            get {return this.localCvsFullPath;}
+            set {this.localCvsFullPath = value;}
         }
 
         private String GetPathWithDirectorySeperatorChar(String path) {
@@ -110,6 +123,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
             this.fullPath = fullPath;
 
             this.Parse(fileContents);
+            //this.DeriveCvsFullPath();
 
             if (LOGGER.IsDebugEnabled) {
                 LOGGER.Debug("Created new entry=[" + this + "]");
@@ -125,5 +139,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         /// </summary>
         /// <param name="line"></param>
         public abstract void Parse(String line);
+
+        /// <summary>
+        /// Derive the cvs filename and path for the storage file.
+        /// </summary>
+        /// <returns>The cvs filename and path.</returns>
+        protected abstract String DeriveCvsFullPath();
 	}
 }

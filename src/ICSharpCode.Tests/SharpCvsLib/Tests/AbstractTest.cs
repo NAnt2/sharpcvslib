@@ -88,7 +88,7 @@ namespace ICSharpCode.SharpCvsLib.Tests {
         /// </summary>
         [TearDown]
         public void TearDown() {
-            this.CleanTempDirectory();            
+//            this.CleanTempDirectory();            
         }
 
         /// <summary>

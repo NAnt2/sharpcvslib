@@ -53,6 +53,27 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         String Filename {get;}
 
+/*
+        /// <summary>
+        /// The full path to the cvs management file.  In the case of a Root or
+        ///     Repository file this is the path below the directory being managed.
+        ///     In the case of Entries files this can be in the path below if
+        ///     the entry being managed is a file, or in the Entries file above
+        ///     if the file being managed is a directory.
+        /// </summary>
+        /// <example>
+        /// <p>For a Repository file managing the sharpcvslib module folder in 
+        ///     the following path:
+        ///     <code>c:/dev/src/sharpcvslib/</code>
+        ///     the Repository file would go in the sub directory or:
+        ///     <code>c:/dev/src/sharpcvslib/CVS/Repository</code>
+        /// </p>
+        /// <p>In the case of an Entries file the cvs management folder can 
+        ///     appear in one of two places depending on whether the Entry is
+        ///     a directory or a file.</p>
+        /// </example>
+        //String CvsFullPath {get;}
+*/
         /// <summary>
         /// Get the path to the directory above the cvs file.  In most cases
         ///     this will be the same as full path, with the exception that an 

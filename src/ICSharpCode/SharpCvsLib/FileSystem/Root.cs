@@ -115,5 +115,15 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             get {return false;}
         }
 
+        /// <summary>
+        /// Returns the full path to the CVS\Root folder on the local filesystem
+        ///     that this object represents.
+        /// </summary>
+        /// <returns>The full path to the CVS\Root file that this object
+        ///     represents.</returns>
+        protected override String DeriveCvsFullPath () {
+            throw new NotImplementedException("This will eventually return the full path to the repository.");
+        }
+
     }
 }

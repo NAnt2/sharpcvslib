@@ -123,8 +123,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             e.Date = services.NextFileDate;
             services.NextFileDate = null;
 
-            manager.Add(e);
-            manager.SetFileTimeStamp (localPathAndFilename, e.TimeStamp, e.IsUtcTimeStamp);
+            manager.AddEntry(e);
+            manager.SetFileTimeStamp (e.FullPath, e.TimeStamp, e.IsUtcTimeStamp);
 
             UpdateMessage message = new UpdateMessage ();
             message.Module = services.Repository.WorkingDirectoryName;

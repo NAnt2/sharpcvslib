@@ -517,5 +517,15 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public bool HasTag {
             get {return null == this.Tag;}
         }
+
+        /// <summary>
+        /// Returns the full path to the CVS\Entries folder that this entry is 
+        ///     managed by.
+        /// </summary>
+        /// <returns>The full path to the CVS\Entries folder that this entry
+        ///     is managed by.</returns>
+        protected override String DeriveCvsFullPath () {
+            throw new NotImplementedException("This will eventually return the full path to the repository.");
+        }
     }
 }

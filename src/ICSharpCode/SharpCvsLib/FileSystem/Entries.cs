@@ -92,6 +92,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         }
 
         /// <summary>
+        /// Return the collection of values for the dictionary.
+        /// </summary>
+        public ICollection Values {
+            get {return this.Dictionary.Values;}
+        }
+
+        /// <summary>
         /// Render the entries collection as a human readable string.
         /// </summary>
         /// <returns></returns>
