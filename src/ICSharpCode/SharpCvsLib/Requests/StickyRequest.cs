@@ -56,7 +56,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
 		/// </summary>
 		public override string RequestString {
 			get {
-				return "Sticky" + tag + "\n";
+				return "Sticky " + tag + "\n";
 			}
 		}
 		

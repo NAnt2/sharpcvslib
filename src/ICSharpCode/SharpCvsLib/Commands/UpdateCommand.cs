@@ -121,6 +121,14 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		        (Folder[])workingdirectory.FoldersToUpdate.Clone ();
 			foreach (Folder folder in _foldersToUpdate) {
 			    this.SetDirectory (connection, folder);
+			    
+			    // TODO: Move this somewhere else when I get the fileset
+			    //    system working.  This just grabs the tag file at the
+			    //    root folder.
+			    Tag tag = this.FetchTag (connection);
+			    if (null != tag) {
+			        connection.SubmitRequest (new StickyRequest (tag.FileContents));
+			    }
 			    foreach (Entry entry  in folder.Entries) {
     				if (!entry.IsDirectory) {
 //    					String path = workingdirectory.CvsRoot.CvsRepository + 
@@ -163,11 +171,14 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 			}
 
 		}
-		
+
+
 		private void SetDirectory (CVSServerConnection connection, 
 		                           Folder folder) {
-            String absoluteDir = connection.Repository.CvsRoot.CvsRepository + "/" +
-                                 folder.Repos.FileContents;
+            String absoluteDir = 
+                connection.Repository.CvsRoot.CvsRepository + "/" +
+                        folder.Repos.FileContents;
+            
     		try {
     			connection.SubmitRequest(new DirectoryRequest(".",
     			                                              absoluteDir));
@@ -177,6 +188,16 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     		        "path=[" + folder.Repos.FileContents + "]";
                 LOGGER.Error (e);
     		}
+		}
+		
+		private Tag FetchTag (CVSServerConnection connection) {
+		    Manager manager = new Manager ();
+		    
+		    try {
+    		    return manager.FetchTag (connection.Repository.WorkingDirectoryName);
+		    } catch (FileNotFoundException) {
+		        return null;
+		    }
 		}
 		
 		private void FetchFile (CVSServerConnection connection,

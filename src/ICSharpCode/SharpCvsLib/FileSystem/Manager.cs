@@ -475,18 +475,23 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///    or to the cvs directory.</param>
         /// <param name="fileType">The type of cvs file to fetch.</param>
         /// <returns>A single <see cref="ICvsFile">Cvs file</see></returns>
+        /// <exception cref="FileNotFoundException">If an entries file cannot
+        ///     be found.</exception>
         public ICvsFile FetchSingle (String path, Factory.FileType fileType) {
             ICvsFile [] entries = this.Fetch (path, fileType);
             
+            StringBuilder msg = new StringBuilder ();
+            msg.Append ("path=[").Append (path).Append ("]");
+            msg.Append ("fileType=[").Append (fileType).Append ("]");
+
             if (entries.Length == 0) {
-                String msg = "File not found.  " +
-                    "path=[" + path + "]";
-                throw new Exception (msg);
+                msg.Append ("File not found.  ");
+                throw new FileNotFoundException (msg.ToString ());
             }
             if (entries.Length > 1) {
-                String msg = "Expecting maximum of 1 entry, found=[" + 
-                    entries.Length + "]";
-                throw new Exception (msg);
+                msg.Append ("Expecting maximum of 1 entry.");
+                msg.Append ("found=[").Append (entries.Length).Append ("]");
+                throw new Exception (msg.ToString ());
             }
             
             return entries[0];
@@ -501,6 +506,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <param name="fileType">The type of cvs file to fetch.</param>
         /// <param name="filename">The name of the specific entry to search for.</param>
         /// <returns>A single <see cref="ICvsFile">Cvs file</see></returns>
+        /// <exception cref="FileNotFoundException">If the cvs file cannot be found.</exception>
         public ICvsFile FetchSingle (String path, Factory.FileType fileType, String filename) {
             ICvsFile [] entries = this.Fetch (path, fileType);
 
@@ -510,10 +516,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 }
             }
 
-            String msg = "File not found.  " +
-                "path=[" + path + "]";
-            throw new FileNotFoundException (msg);
-            
+            StringBuilder msg = new StringBuilder ();
+            msg.Append ("File not found.  ");
+            msg.Append ("path=[").Append (path).Append ("]");
+            msg.Append ("fileType=[").Append (fileType).Append ("]");
+            throw new FileNotFoundException (msg.ToString ());
         }
         
         /// <summary>
@@ -607,21 +614,39 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
         
         /// <summary>
-        ///     Load the cvs entry from the file.  Each cvs entry contains all
-        ///         of the information that is needed to update the individual 
-        ///         file from the cvs repository.  
+        ///     Populate the tag file (if any) found in the given directory.
         /// </summary>
-        public Entry LoadEntry (String directory, String filename) {
-            Entry entry = 
-                (Entry)this.FetchSingle (directory, Factory.FileType.Entries, filename);
-            
+        /// <param name="directory">The directory containing the cvs folder, 
+        ///     CVS will be appended to this directory.</param>
+        /// <returns>The tag file object that holds the contents of the tag
+        ///     in the given directory (if any).</returns>
+        /// <exception cref="FileNotFoundException">If the file cannot be found.</exception>
+        public Tag FetchTag (String directory) {
             try {
-                Tag tag = (Tag)this.FetchSingle (directory, Factory.FileType.Tag);
+                return
+                    (Tag)this.FetchSingle (directory, Factory.FileType.Tag);
             } catch (FileNotFoundException e) {
                 StringBuilder msg = new StringBuilder ();
                 msg.Append ("No tag information found for file.");
                 msg.Append ("Path=[").Append (directory).Append ("]");
                 LOGGER.Debug (msg, e);
+                throw e;
+            }
+        }
+        
+        /// <summary>
+        ///     Load the cvs entry from the file.  Each cvs entry contains all
+        ///         of the information that is needed to update the individual 
+        ///         file from the cvs repository.  
+        /// </summary>
+        public Entry FetchEntry (String directory, String filename) {
+            Entry entry = 
+                (Entry)this.FetchSingle (directory, Factory.FileType.Entries, filename);
+            
+            try {
+                
+            } catch (FileNotFoundException) {
+                // No tag information found for this file.
             }
             Repository repository = 
                 (Repository)this.FetchSingle (directory, Factory.FileType.Repository);
@@ -645,7 +670,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             ArrayList entries = new ArrayList ();
             
             foreach (String file in files) {
-                Entry entry = this.LoadEntry (Path.GetDirectoryName (directory), 
+                Entry entry = this.FetchEntry (Path.GetDirectoryName (directory), 
                                               Path.GetFileName (file));
                 if (LOGGER.IsDebugEnabled) {
                     StringBuilder msg = new StringBuilder ();

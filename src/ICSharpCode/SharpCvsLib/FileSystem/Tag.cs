@@ -87,7 +87,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         public Tag (String path, String fileContents) {
             this.path = path;
-            this.fileContents = fileContents;
+            
+            String replace_T_with_N = "N" + fileContents.Substring (1);
+            this.fileContents = replace_T_with_N;
         }
         
 		/// <summary>

@@ -52,6 +52,9 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		private ILog LOGGER = 
 			LogManager.GetLogger (typeof(CheckoutModuleCommandTest));
 	    
+	    String rootDir;
+	    String checkFile;
+	    
 	    private Manager manager;	    
 		/// <summary>
 		/// Constructor for customer db test.
@@ -65,33 +68,46 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// </summary>
 		[SetUp]
 		public void SetUp () {
-		    this.manager = new Manager ();
-		    CheckoutModuleCommandTest checkout =
-		        new CheckoutModuleCommandTest ();
-		    checkout.CheckoutTest ();
-		}
-		
+		    this.Checkout ();
+		    this.rootDir = 
+		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
+		    this.checkFile = 
+		        Path.Combine (rootDir, TestConstants.TARGET_FILE);
+        }
+
+        /// <summary>Wrapper for the checkout command test checkout method.</summary>        
+        private void Checkout () {
+            this.Checkout (null);
+        }
+        
+        /// <summary>Wrapper for the checkout command test checkout method.</summary>
+        private void Checkout (String revision) {
+            this.manager = new Manager ();
+            CheckoutModuleCommandTest checkout =
+                new CheckoutModuleCommandTest ();
+            checkout.Checkout (revision, null);            
+        }
+
 		/// <summary>
 		///     Remove the local path directory that we were testing with.
 		/// </summary>
 		[TearDown]
-		public void TearDown () {
-		    if (Directory.Exists(TestConstants.LOCAL_PATH)) {
-    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
-		    }
-		}
-		
+        public void TearDown () {
+            this.CleanUp ();
+        }
+
+        private void CleanUp () {
+            if (Directory.Exists(TestConstants.LOCAL_PATH)) {
+                Directory.Delete (TestConstants.LOCAL_PATH, true);
+            }            
+        }
+
 		/// <summary>
 		///     Test that the update command brings the check file back
 		///         down after it is deleted.
 		/// </summary>
 		[Test]
-		public void UpdateTest () {
-		    string rootDir = 
-		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
-		    string checkFile = 
-		        Path.Combine (rootDir, TestConstants.TARGET_FILE);
-		    
+		public void UpdateTest () {		    
 		    File.Delete (checkFile);
 		    
 		    Assertion.Assert ("File should be gone now.  file=[" + checkFile + "]", !File.Exists (checkFile));
@@ -159,6 +175,19 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             
             command.Execute (connection);
             connection.Close ();  
-		}		
+		}
+
+        /// <summary>
+        ///     Test that a directory checked out as a revision is updated
+        ///         successfully.
+        /// </summary>
+        [Test]
+        public void UpdateRevisionTest () {
+            this.CleanUp ();
+            this.Checkout (TestConstants.Revision.TAG_1);
+            this.UpdateAllRecursive (this.rootDir);
+            
+            CheckoutModuleCommandTest.AssertFileContentsEqualString (this.checkFile, TestConstants.Revision.CONTENT_1);
+        }
 	}
 }

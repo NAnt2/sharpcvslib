@@ -53,7 +53,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     /// </summary>
     [TestFixture]
     public class CheckoutModuleCommandTest  {
-        string cvsPath;
+        string rootDir;
         string checkFile;
         
         Manager manager;
@@ -72,10 +72,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         [SetUp]
         public void SetUp () { 
-            this.cvsPath =
+            this.rootDir =
                 Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
             this.checkFile =
-                Path.Combine (cvsPath, TestConstants.TARGET_FILE);
+                Path.Combine (rootDir, TestConstants.TARGET_FILE);
             this.manager = new Manager (); 
         }
         
@@ -84,7 +84,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         [TearDown]
         public void TearDown () {
-//            this.CleanTempDirectory ();
+            this.CleanTempDirectory ();
         }
 
         
@@ -99,7 +99,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                               checkFile + "]", File.Exists (checkFile));
             
             ICvsFile[] entries = 
-                manager.Fetch (cvsPath, Factory.FileType.Entries);
+                manager.Fetch (rootDir, Factory.FileType.Entries);
             int foundFileEntry = 0; 
             int foundDirectoryEntry = 0;
             
@@ -157,7 +157,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                               checkFile + "]", File.Exists (checkFile));
             
             ICvsFile[] entries = 
-                manager.Fetch (cvsPath, Factory.FileType.Entries);
+                manager.Fetch (rootDir, Factory.FileType.Entries);
             int foundFileEntry = 0; 
             int foundDirectoryEntry = 0;
             
@@ -185,7 +185,15 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
                               !Directory.Exists (tagFile)); 
             
-            StreamReader reader = new StreamReader (checkFile);
+            AssertFileContentsEqualString (checkFile, expectedContent);
+        }
+
+        /// <summary>
+        ///     Assert that the expected file contents match the contents actually
+        ///         in the given file.
+        /// </summary>        
+        public static void AssertFileContentsEqualString (String filename, String expectedContent) {
+            StreamReader reader = new StreamReader (filename);
             String actualContent = reader.ReadToEnd ();
             
             // Note the read to end method appends a carriage return (^M)/ line feed (^F)
@@ -194,7 +202,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             reader.Close ();
             Assertion.AssertEquals ("Files should be equal.", 
                                     expectedContent,
-                                    actualContent);
+                                    actualContent);            
         }
 
         
@@ -204,17 +212,17 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         [Test]
         public void CheckoutOverrideDirectoryTest () {
-            this.cvsPath =
+            this.rootDir =
                 Path.Combine (TestConstants.LOCAL_PATH, TestConstants.OVERRIDE_DIRECTORY);
             this.checkFile =
-                Path.Combine (cvsPath, TestConstants.TARGET_FILE);
+                Path.Combine (rootDir, TestConstants.TARGET_FILE);
 
             this.Checkout (null, TestConstants.OVERRIDE_DIRECTORY);
             Assertion.Assert ("Should have found the check file.  file=[" + 
                               checkFile + "]", File.Exists (checkFile));
             
             ICvsFile[] entries = 
-                manager.Fetch (cvsPath, Factory.FileType.Entries);
+                manager.Fetch (rootDir, Factory.FileType.Entries);
             int foundFileEntry = 0; 
             int foundDirectoryEntry = 0;
             
@@ -257,7 +265,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         ///     Perform a checkout command using the values in the
         ///         <code>TestConstants</code> class.
         /// </summary>
-        private void Checkout () {
+        public void Checkout () {
             this.Checkout (null);
         }
 
@@ -275,7 +283,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         ///     checkout the repository to.  If <code>null</code>
         ///     is specified then the directory is not overridden
         ///     and the module name is used.</param>
-        private void Checkout (String revision, String overrideDirectory) {
+        public void Checkout (String revision, String overrideDirectory) {
             CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
             WorkingDirectory working = 
                 new WorkingDirectory (root, 
@@ -314,7 +322,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         ///     to checkout from the repository.  If <code>null</code> 
         ///     is specified then the default revision, usually the 
         ///     <code>HEAD</code> is checked out.</param>
-        private void Checkout (String revision) {
+        public void Checkout (String revision) {
             this.Checkout (revision, null);
         }
         

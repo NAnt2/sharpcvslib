@@ -84,9 +84,10 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		public string WorkingDirectoryName {
 			get {
 			    if (this.HasOverrideDirectory) {
-			        return this.OverrideDirectory;
+			        return Path.Combine (this.LocalDirectory, this.OverrideDirectory);
+			    } else {
+				    return Path.Combine (this.LocalDirectory, this.repositoryname);
 			    }
-				return repositoryname;
 			}
 			set {
 				repositoryname = value;
@@ -114,18 +115,11 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <summary>
         /// The local directory to use for sources.
         /// </summary>
-		public string LocalDirectory {
-			get {
-			    if (this.HasOverrideDirectory) {
-			        return this.OverrideDirectory;
-			    }
-				return localdirectory;
-			}
-			set {
-				localdirectory = value;
-			}
-		}
-		
+        public string LocalDirectory {
+            get {return this.localdirectory;}
+            set {localdirectory = value;}
+        }
+
         /// <summary>
         /// Object encapsulating information to connect to a cvs server.
         /// </summary>
