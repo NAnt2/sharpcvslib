@@ -56,6 +56,7 @@ namespace ICSharpCode.SharpCvsLib.Console {
         private ILog LOGGER = LogManager.GetLogger (typeof (MainTest));
         private TestSettings settings = new TestSettings ();
 
+        private const int DEFAULT_WAIT_TIME = 100;
         private String buildDir;
         /// <summary>
         ///     Constructory for test case.
@@ -86,10 +87,9 @@ namespace ICSharpCode.SharpCvsLib.Console {
             // Run the process
             Process cvsProcess = new Process();
             cvsProcess.StartInfo = cvsProcessInfo;
-            cvsProcess.WaitForInputIdle(10);
             cvsProcess.Start();
             string output = cvsProcess.StandardOutput.ReadToEnd();
-            cvsProcess.WaitForExit();
+            cvsProcess.WaitForExit(DEFAULT_WAIT_TIME);
 
             // Check the results of process output
             Assertion.AssertEquals (Usage.General + "\r\n", output);
@@ -113,10 +113,9 @@ namespace ICSharpCode.SharpCvsLib.Console {
             // Run the process
             Process cvsProcess = new Process();
             cvsProcess.StartInfo = cvsProcessInfo;
-            cvsProcess.WaitForInputIdle(10);
             cvsProcess.Start();
             string output = cvsProcess.StandardOutput.ReadToEnd();
-            cvsProcess.WaitForExit();
+            cvsProcess.WaitForExit(DEFAULT_WAIT_TIME);
 
             // Check the results of process output
             Assertion.AssertEquals (Usage.Options + "\r\n", output);
@@ -141,10 +140,9 @@ namespace ICSharpCode.SharpCvsLib.Console {
             // Run the process
             Process cvsProcess = new Process();
             cvsProcess.StartInfo = cvsProcessInfo;
-            cvsProcess.WaitForInputIdle(10);
             cvsProcess.Start();
             string output = cvsProcess.StandardOutput.ReadToEnd();
-            cvsProcess.WaitForExit();
+            cvsProcess.WaitForExit(DEFAULT_WAIT_TIME);
 
             // Check the results of process output
             Assertion.AssertEquals (Usage.Commands + "\r\n", output);
@@ -168,10 +166,9 @@ namespace ICSharpCode.SharpCvsLib.Console {
             // Run the process
             Process cvsProcess = new Process();
             cvsProcess.StartInfo = cvsProcessInfo;
-            cvsProcess.WaitForInputIdle(10);
             cvsProcess.Start();
             string output = cvsProcess.StandardOutput.ReadToEnd();
-            cvsProcess.WaitForExit();
+            cvsProcess.WaitForExit(DEFAULT_WAIT_TIME);
 
             // Check the results of process output
             Assertion.AssertEquals (Usage.Synonyms + "\r\n", output);
@@ -195,10 +192,9 @@ namespace ICSharpCode.SharpCvsLib.Console {
             // Run the process
             Process cvsProcess = new Process();
             cvsProcess.StartInfo = cvsProcessInfo;
-            cvsProcess.WaitForInputIdle(10);
             cvsProcess.Start();
             string output = cvsProcess.StandardOutput.ReadToEnd();
-            cvsProcess.WaitForExit();
+            cvsProcess.WaitForExit(DEFAULT_WAIT_TIME);
 
             // Check the results of process output
             Assertion.AssertEquals (Usage.General + "\r\n", output);
@@ -222,10 +218,9 @@ namespace ICSharpCode.SharpCvsLib.Console {
             // Run the process
             Process cvsProcess = new Process();
             cvsProcess.StartInfo = cvsProcessInfo;
-            cvsProcess.WaitForInputIdle(10);
             cvsProcess.Start();
             string output = cvsProcess.StandardOutput.ReadToEnd();
-            cvsProcess.WaitForExit();
+            cvsProcess.WaitForExit(DEFAULT_WAIT_TIME);
 
             // Check the results of process output
             Assertion.AssertEquals (Usage.General + "\r\n", output);
