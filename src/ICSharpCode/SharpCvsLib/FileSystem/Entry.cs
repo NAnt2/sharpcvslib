@@ -295,7 +295,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </example>
         [Obsolete ("Use 'Entry (FileInfo, string)' instead.")]
         public Entry (string cvsPath, string fileContents) : 
-            base (new FileInfo(System.IO.Path.Combine(cvsPath, "CVS")), fileContents) {
+            base (new FileInfo(
+            System.IO.Path.Combine(
+                System.IO.Path.Combine(cvsPath, "CVS")
+            , Entry.FILE_NAME)), fileContents) {
  
         }
 

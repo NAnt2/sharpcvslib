@@ -74,8 +74,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// Test entry filename 2.
         /// </summary>
         public const String CHECKOUT_ENTRY_2_FILENAME = "EntryTest.cs";
+//        private const String NORMALISED_ENTRY_2 =
+//            "/EntryTest.cs/1.1/Fri Jan 3 04:07:36 2003//";
+        // added another space between month and day because tortoisecvs was indicating
+        //  files that were not modified were in fact modified.
         private const String NORMALISED_ENTRY_2 =
-            "/EntryTest.cs/1.1/Fri Jan 3 04:07:36 2003//";
+            "/EntryTest.cs/1.1/Fri Jan  3 04:07:36 2003//";
+
         private const String NORMALISED_ENTRY_2_FILENAME = "EntryTest.cs";
         /// <summary>
         ///     Test entry 3: Checkout file with conflict, binary flag and tag.
@@ -168,20 +173,21 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void TestParseRfc1123Entry () {
             Entry entry = new Entry (this.settings.Config.LocalPath, CHECKOUT_ENTRY_2);
 
-            Assert.IsTrue (entry.Path.Equals (this.settings.Config.LocalPath));
-            Assert.IsTrue (entry.FullPath.Equals (
-                Path.Combine(this.settings.Config.LocalPath, CHECKOUT_ENTRY_2_FILENAME)));
-            Assert.IsTrue (entry.FullPath.Equals (Path.Combine(this.settings.Config.LocalPath, entry.Name)));
-            Assert.IsTrue (entry.Filename.Equals (ENTRY_FILE_NAME));
+            Assert.AreEqual (this.settings.Config.LocalPath, entry.Path);
+            Assert.AreEqual (Path.Combine(this.settings.Config.LocalPath, CHECKOUT_ENTRY_2_FILENAME), 
+                entry.FullPath);
+            Assert.AreEqual (Path.Combine(this.settings.Config.LocalPath, entry.Name),
+                entry.FullPath);
+            Assert.AreEqual (ENTRY_FILE_NAME, entry.Filename);
 
-            Assert.IsTrue (entry.Name.Equals ("EntryTest.cs"));
-            Assert.IsTrue (entry.Revision.Equals ("1.1"));
+            Assert.AreEqual ("EntryTest.cs", entry.Name);
+            Assert.AreEqual ("1.1", entry.Revision);
             // TODO: check what format the date should come back in
             //Assert.IsTrue (entry.Date, entry.Date.Equals ("Fri Jan 03 04:07:36"));
-            Assert.IsTrue (entry.Date.Equals ("03 Jan 2003 04:07:36 -0000"));
-            Assert.IsTrue (entry.Conflict == null);
-            Assert.IsTrue (entry.Options.Equals (""));
-            Assert.IsTrue (entry.Tag.Equals (""));
+            Assert.AreEqual ("03 Jan 2003 04:07:36 -0000", entry.Date);
+            Assert.AreEqual (null, entry.Conflict);
+            Assert.AreEqual ("", entry.Options);
+            Assert.AreEqual ("", entry.Tag);
 
             Assert.AreEqual (3, entry.TimeStamp.Day);
             Assert.AreEqual (1, entry.TimeStamp.Month);
@@ -193,7 +199,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Assert.AreEqual (entry.IsBinaryFile, false);
             Assert.AreEqual (entry.IsDirectory, false);
 
-            Assert.IsTrue (entry.FileContents.Equals (NORMALISED_ENTRY_2));
+            Assert.AreEqual (NORMALISED_ENTRY_2, entry.FileContents);
         }
 
         /// <summary>
@@ -228,7 +234,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         [Test]
         public void TestParseDirEntry () {
             Entry entry = new Entry (this.settings.Config.LocalPath, DIR_ENTRY);
-            Assert.AreEqual(Path.Combine(this.settings.Config.LocalPath, DIR_ENTRY_DIRNAME) + Path.DirectorySeparatorChar,
+            Assert.AreEqual(Path.Combine(this.settings.Config.LocalPath, DIR_ENTRY_DIRNAME),
                 entry.FullPath);
             Assert.IsTrue (entry.IsDirectory == true);
 
