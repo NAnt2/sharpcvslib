@@ -230,6 +230,21 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\ICSharpCode\SharpCvsLib\Extension\ChangeLogReport\CvsChangeLog.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\ICSharpCode\SharpCvsLib\Extension\ChangeLogReport\FileRevision.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\ICSharpCode\SharpCvsLib\Extension\ChangeLogReport\LogEntry.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src\ICSharpCode\SharpCvsLib\FileHandler\CompressedFileHandler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -242,7 +242,8 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <returns><code>true</code> if a local working directory has been
         ///     specified; <code>false</code> otherwise.</returns>
         public bool HasOverrideDirectory {
-            get {return !(null == this.OverrideDirectory);}
+            get {return !(null == this.OverrideDirectory) && 
+                     !(String.Empty == this.OverrideDirectory);}
         }
 
         /// <summary>
