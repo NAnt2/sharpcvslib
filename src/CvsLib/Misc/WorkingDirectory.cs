@@ -143,14 +143,22 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <summary>
         /// Public constructor.
         /// </summary>
-        /// <param name="cvsroot"></param>
-        /// <param name="localdirectory"></param>
-        /// <param name="repositoryname"></param>
-		public WorkingDirectory(CvsRoot cvsroot, string localdirectory,  string repositoryname)
+        /// <param name="cvsroot">The cvs root string, contains information 
+        ///     about the connection and path on the cvs server.</param>
+        /// <param name="localdirectory">The local base directory to check the 
+        ///     module out in.</param>
+        /// <param name="repositoryname">The name of the repository.  This is
+        ///     appended to the base localdirectory to check the sources out into.</param>
+		public WorkingDirectory(    CvsRoot cvsroot, 
+		                            string localdirectory,  
+		                            string repositoryname)
 		{
 			this.repositoryname = repositoryname;
 			this.cvsroot        = cvsroot;
-			this.localdirectory = localdirectory;
+			this.localdirectory = 
+			    localdirectory + 
+			    Path.DirectorySeparatorChar + 
+			    repositoryname;
 		}
 		
         /// <summary>
@@ -194,54 +202,43 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <returns></returns>
 		public string ToLocalPath(string directory)
 		{
-		    string theLocalPath;
+		    string _localBasePath = this.localdirectory;
+		    string _localModulePath = this.ModuleName;
 		    
-		    string relativeServerPath = 
-		        directory.Substring (cvsroot.CvsRepository.Length);
+		    string _serverWithModuleName = 
+		        directory.Substring (this.cvsroot.CvsRepository.Length);
+		    string _serverModulePath = this.ModuleName;
 		    
+		    string _serverBasePath =
+		        _serverWithModuleName.Replace (_serverModulePath + "/", "");
+	    
+		    string localPathAndFileName = 
+		        _localBasePath + Path.DirectorySeparatorChar +
+		        _localModulePath + _serverBasePath;
+		    
+		    localPathAndFileName = 
+		        localPathAndFileName.Replace ('/', Path.DirectorySeparatorChar);
 		    if (LOGGER.IsDebugEnabled) {
-		        String msg = "found relativeServerPath=[" + relativeServerPath + "]";
+                String msg = "Converting server path and filename to local path and filename.  " +
+                    "_localBasePath=[" + _localBasePath + "]" +
+                    "_localModulePath=[" + _localModulePath + "]" +
+                    "_serverBasePath=[" + _serverBasePath + "]" +
+                    "_serverModulePath=[" + _serverModulePath + "]" +
+                    "localPathAndFileName=[" + localPathAndFileName + "]";
 		        LOGGER.Debug (msg);
 		    }
-		    if (this.IsRoot (relativeServerPath)) {
-		        theLocalPath = 
-		            localdirectory + 
-		            Path.DirectorySeparatorChar + 
-		            this.RemoveModuleName (relativeServerPath);
-		    }
-		    else {
-		        theLocalPath = 
-		            localdirectory + 
-		            relativeServerPath.Replace ('/', 
-		                                        Path.DirectorySeparatorChar);
-		    }
-		    
-			return theLocalPath;
-		    //  TODO: Remove this when the change works.
-		    // localdirectory + directory.Substring(cvsroot.CvsRepository.Length).Replace("/", "\\");
+		        
+			return localPathAndFileName;
 		}
-		
-		private string RemoveModuleName (String serverPathAndFile) {
-		    return serverPathAndFile.Replace ("/" + this.ModuleName + "/", "");
-		}
-		
-		private bool IsRoot (String serverPathAndFile) {
-		    string removeModuleName =
-		        this.RemoveModuleName (serverPathAndFile);
-		    if (removeModuleName.IndexOf ('/') > 0) {
-		        return false;
-		    }
-		    
-		    return true;
-		}
-		
+				
 		private void CreateFilesIn(string path, string repository, ArrayList entries)
 		{
 			if (!Directory.Exists(path + CVS)) {
 				Directory.CreateDirectory(path + CVS);
 			}
 			
-			StreamWriter sw = new StreamWriter(path + REPOSITORY, false, Encoding.ASCII);
+			StreamWriter sw = 
+			    new StreamWriter(path + REPOSITORY, false, Encoding.ASCII);
 			sw.Write(repository.Substring(cvsroot.CvsRepository.Length + 1));
 			sw.Close();
 			
@@ -356,7 +353,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <summary>
         /// Add all files in the specified directory.
         /// </summary>
-        /// <param name="directory"></param>
+        /// <param name="directory">The directory to search in.</param>
 		public void AddAllFiles(string directory)
 		{
 			string[] directories = Directory.GetDirectories(directory);
@@ -422,6 +419,11 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </summary>
 		public void CreateCVSFiles()
 		{
+		    if (LOGGER.IsDebugEnabled) {
+		        String msg = "Creating cvs files.  " +
+		            "workingDirectory=[" + this + "]";
+		        LOGGER.Debug (msg);
+		    }
 			Hashtable created = new Hashtable();
 			foreach (DictionaryEntry entry in folders) {
 				Folder folder = (Folder)entry.Value;
@@ -439,12 +441,20 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 					r = r.Substring(0, r.LastIndexOf('/'));
 					if (r.Length > cvsroot.CvsRepository.Length) {
 						string localdir = ToLocalPath(r);
+					    if (LOGGER.IsDebugEnabled) {
+					        String msg = "Creating cvs files in " +
+					            "local path=[" + localdir + "]" + 
+					            "r=[" + r + "]";
+					        LOGGER.Debug (msg);
+					    }
+					    
 						if (created[localdir] == null) {
 							CreateFilesIn(localdir, r, null);
 							created[localdir] = true;
 						}
-					} else 
+					} else {
 						break;
+					}
 				}
 			}
 		}

@@ -34,7 +34,14 @@ using System;
 namespace ICSharpCode.SharpCvsLib.Responses { 
 	
     /// <summary>
-    /// Handler for the set static directory cvs server response.
+    /// "Set-static-directory pathname \n"
+    /// 
+    ///     This instructs the client to set the Entries.Static flag, 
+    ///     which it should then send back to the server in a 
+    ///     Static-directory request whenever the directory is operated on. 
+    ///     Pathname ends in a slash; its purpose is to specify a directory, 
+    ///     not a file within a directory.
+    /// 
     /// </summary>
 	public class SetStaticDirectoryResponse : IResponse
 	{

@@ -84,6 +84,7 @@
     <File name=".\lib\ICSharpCode.SharpZipLib.dll" subtype="Code" buildaction="Nothing" dependson="" data="" />
     <File name=".\lib\ext" subtype="Directory" buildaction="Compile" dependson="" data="" />
     <File name=".\lib\log4net.dll" subtype="Code" buildaction="Nothing" dependson="" data="" />
+    <File name=".\src\CvsLib\Misc\CvsFileManager.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto=".\lib\log4net.dll" />

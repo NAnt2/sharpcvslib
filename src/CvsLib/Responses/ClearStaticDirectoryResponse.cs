@@ -31,13 +31,27 @@
 
 using System;
 
+using log4net;
+
 namespace ICSharpCode.SharpCvsLib.Responses { 
 	
     /// <summary>
     /// Handle a clear static directory response.
+    /// 
+    /// from: http://www.loria.fr/~molli/cvs/doc/cvsclient_5.html
+    ///    Clear-static-directory pathname \n
+    /// 
+    /// This instructs the client to un-set the Entries.Static flag, 
+    /// which it should then send back to the server in a Static-directory 
+    /// request whenever the directory is operated on. pathname ends in a 
+    /// slash; its purpose is to specify a directory, not a file within a 
+    /// directory.
+    /// 
     /// </summary>
 	public class ClearStaticDirectoryResponse : IResponse
 	{
+	    private readonly ILog LOGGER = 
+	        LogManager.GetLogger (typeof (ClearStaticDirectoryResponse));
         /// <summary>
         /// Process a clear static directory response.
         /// </summary>
@@ -47,6 +61,10 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	    {
             string localPath      = cvsStream.ReadLine();
             string repositoryPath = cvsStream.ReadLine();
+	        if (LOGGER.IsDebugEnabled) {
+	            String msg = "localPath=[" + localPath + "]" +
+	                "repositoryPath=[" + repositoryPath + "]";
+	        }
 	    	// TODO : make something useful with this request
 	    }
 	    

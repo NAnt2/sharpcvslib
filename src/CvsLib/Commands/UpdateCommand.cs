@@ -105,7 +105,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// <param name="connection"></param>
 		public void Execute(CVSServerConnection connection)
 		{
-		    this.workingdirectory.ReadAllExistingEntries ();		    
 		    if (LOGGER.IsDebugEnabled) {
 		        String msg = "In execute, looking for working folders.  " +
 		            "count of working folders=[" + 

@@ -77,7 +77,9 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                             "/" + workingdirectory.ModuleName));
 		    
 			connection.SubmitRequest(new CheckoutRequest());
-			workingdirectory.CreateCVSFiles();
+			//workingdirectory.CreateCVSFiles();
+		    CvsFileManager manager = new CvsFileManager ();
+		    manager.AddDirectoryEntries (this.workingdirectory.LocalDirectory);
 		}
 	}
 }
