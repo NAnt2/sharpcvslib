@@ -3,11 +3,15 @@
 -->
 <project name="ICSharpCode.SharpCvsLib" default="Debug">
 
-    <property name="assembly.name" value="ICSharpCode.SharpCvsLib" />
+    <property name="lib.name" value="ICSharpCode.SharpCvsLib" />    
     <property name="assembly.version" value="0.3.4.1" />  
     <property name="warnaserror" value="true" />
     
-    <property name="nant.settings.currentframework" value = "net-1.0"/>
+    <property name="console.name" value="scvs" />
+    <property name="tests.name" value="ICSharpCode.SharpCvsLib.Tests" />
+    
+<!--    <property name="nant.settings.currentframework" value = "net-1.0"/>-->
+    <property name="nant.settings.currentframework" value = "mono-1.0"/>
 
     <property name="build.dir" value="build/bin" /> 
     <property name="conf.dir" value="conf" />
@@ -17,7 +21,10 @@
     <property name="lib.ext.dir" value="${lib.dir}/ext" />
 
     <property name="log4net" value="log4net.dll" />
-    <property name="nunit" value="nunit.framework.dll" />
+<!--
+    <property name="nunit" value="NUnit.Framework-mono.dll" />    
+-->
+    <property name="nunit" value="nunit.framework.dll" />    
     <property name="ziplib" value="ICSharpCode.SharpZipLib.dll" />
         
     <target name="Debug" depends="SharpCvsLib.Debug" />
@@ -60,7 +67,7 @@
         <property name="dist.src" value="${dist.dir}/${assembly.version}/src" />
         
         <mkdir dir="${dist.src}" />    
-        <copy todir="${dist.src}/${assembly.name}">
+        <copy todir="${dist.src}/${lib.name}">
             <fileset basedir=".">
                 <includes name="**/**.*" />
                 <excludes name="*.suo" />
@@ -70,7 +77,7 @@
                 <excludes name="**/build**" />
             </fileset>
         </copy>
-        <zip zipfile="${dist.dir}/${assembly.version}/${assembly.name}-${assembly.version}-src.zip">
+        <zip zipfile="${dist.dir}/${assembly.version}/${lib.name}-${assembly.version}-src.zip">
             <fileset basedir="${dist.src}">
                 <includes name="**/**.*" />
             </fileset>
@@ -98,7 +105,7 @@
         <echo message="${build.dir}" />
         <ndoc>
             <assemblies basedir="${build.dir}">
-                <includes name="${assembly.name}.dll"/>
+                <includes name="${lib.name}.dll"/>
             </assemblies>
             <documenters>
                 <documenter name="MSDN">
@@ -163,14 +170,14 @@
         
         <mkdir dir="${dist.bin}" />
         <echo message="${build.dir}" />
-        <copy todir="${dist.bin}/${assembly.name}">
+        <copy todir="${dist.bin}/${lib.name}">
             <fileset basedir="${build.dir}">
                 <includes name="**/**.dll"/>
                 <includes name="**/**.config"/>
             </fileset>
         </copy>
         
-        <zip zipfile="${dist.dir}/${assembly.version}/${assembly.name}-${assembly.version}-bin.zip">
+        <zip zipfile="${dist.dir}/${assembly.version}/${lib.name}-${assembly.version}-bin.zip">
             <fileset basedir="${dist.bin}">
                 <includes name="**/**.*" />
             </fileset>
@@ -200,7 +207,7 @@
                 <excludes name="*.csproj.user" />
             </fileset>
         </copy>
-        <zip zipfile="${version.dir}/${assembly.name}-${assembly.version}.zip">
+        <zip zipfile="${version.dir}/${lib.name}-${assembly.version}.zip">
             <fileset basedir="${files.dir}">
                 <includes name="**/**.*" />
             </fileset>
@@ -210,28 +217,29 @@
     <target name="SharpCvsLib.Debug">
         <property name="project.name" value="SharpCvsLib" />
         <property name="build.dir" value="${build.dir}/Debug" />
-        <property name="output" value="${build.dir}/${assembly.name}.dll" />
+        <property name="output" value="${build.dir}/${lib.name}.dll" />
         <property name="debug" value="true" />
         <property name="unsafe" value="/unsafe-" />
         <property name="checked" value="/checked-" />
         <property name="define" value="DEBUG;TRACE" />
-        <property name="doc" value="${build.dir}/{assembly.name}.xml" />
+        <property name="doc" value="${build.dir}/{lib.name}.xml" />
 
-        <property name="output.tests" value="${build.dir}/${assembly.name}.Tests.dll" />
+        <property name="output.tests" value="${build.dir}/${lib.name}.Tests.dll" />
 
         <call target="SharpCvsLib" />
+        <call target="SharpCvsLib.Console" />
         <call target="SharpCvsLib.Tests" />
     </target>
     
     <target name="SharpCvsLib.Release">
         <property name="project.name" value="SharpCvsLib" />
         <property name="build.dir" value="${build.dir}/Release" />
-        <property name="output" value="${build.dir}/${assembly.name}.dll" />
+        <property name="output" value="${build.dir}/${lib.name}.dll" />
         <property name="debug" value="false" />
         <property name="unsafe" value="/unsafe-" />
         <property name="checked" value="/checked-" />
         <property name="define" value="TRACE" />
-        <property name="doc" value="${build.dir}/${assembly.name}.xml" />
+        <property name="doc" value="${build.dir}/${lib.name}.xml" />
                 
         <call target="SharpCvsLib" />
     </target>
@@ -239,17 +247,16 @@
     <target name="SharpCvsLib" depends="setup">
         <csc    target="library" 
                 warnaserror="${warnaserror}" 
-                output="${output}" 
+                output="${build.dir}/${lib.name}.dll" 
                 debug="${debug}" 
                 define="${define}" 
-                doc="${doc}">
+                doc="${build.dir}/${lib.name}.xml">
                 
             <arg value="${unsafe}" />
             <arg value="${checked}" />
             
             <sources basedir="${src.dir}">
-                <includes name="**/*.cs" />
-                <excludes name="ICSharpCode.Tests/**/*.cs" />
+                <includes name="ICSharpCode/**/*.cs" />
             </sources>
             
             <references>
@@ -264,17 +271,46 @@
     </target>
 
     <target name="SharpCvsLib.Tests" depends="SharpCvsLib, setup.tests">
+        <echo message="Target: ${build.dir}/${tests.name}.dll" />
+        
         <csc    target="library" 
                 warnaserror="${warnaserror}"
-                output="${output.tests}" 
+                output="${build.dir}/${tests.name}.dll" 
                 debug="${debug}" 
                 define="${define}" 
-                doc="${doc}">
+                doc="${build.dir}/${tests.name}.xml">
             <arg value="${unsafe}" />
             <arg value="${checked}" />
             <sources basedir="${src.dir}">
-                <includes name="**/*.cs" />
-                <excludes name="ICSharpCode/**/*.cs" />
+                <includes name="ICSharpCode.Tests/**/*.cs" />
+            </sources>
+            <references>
+                <includes name="System.Web.dll" />
+                <includes name="System.Web.Services.dll" />
+                <includes name="System.dll" />            
+                <includes name="${lib.dir}/${ziplib}" />
+                <includes name="${lib.ext.dir}/${log4net}" />
+                <includes name="${lib.ext.dir}/${nunit}" />
+                <includes name="${build.dir}/${lib.name}.dll" />
+            </references>
+        </csc>
+
+        <nunit2>
+            <test assemblyname="${build.dir}/${tests.name}.dll"/>
+        </nunit2>
+    </target>
+    
+    <target name="SharpCvsLib.Console" depends="SharpCvsLib, setup.tests">
+        <csc    target="exe" 
+                warnaserror="${warnaserror}"
+                output="${build.dir}/${console.name}.exe" 
+                debug="${debug}" 
+                define="${define}" 
+                doc="${build.dir}/${console.name}.xml">
+            <arg value="${unsafe}" />
+            <arg value="${checked}" />
+            <sources basedir="${src.dir}">
+                <includes name="ICSharpCode.Console/**/*.cs" />
             </sources>
             <references>
                 <includes name="System.Web.dll" />
@@ -287,16 +323,14 @@
             </references>
         </csc>
         
-        <nunit2>
-            <test assemblyname="${output.tests}"/>
-        </nunit2>
     </target>
+
     
     <target name="DebugClean">
         <property name="build.dir" value="${build.dir}/Debug" />
         <call target="Clean" />
-        <delete file="${build.dir}/${assembly.name}.Tests.dll" failonerror="false" />
-        <delete file="${build.dir}/${assembly.name}.Tests.dll" failonerror="false" />
+        <delete file="${build.dir}/${lib.name}.Tests.dll" failonerror="false" />
+        <delete file="${build.dir}/${lib.name}.Tests.dll" failonerror="false" />
     </target>
     
     <target name="ReleaseClean">
@@ -305,7 +339,7 @@
     </target>
     
     <target name="Clean">
-        <delete file="${build.dir}/${assembly.name}.dll" failonerror="false" />
-        <delete file="${build.dir}/${assembly.name}.pdb" failonerror="false" />
+        <delete file="${build.dir}/${lib.name}.dll" failonerror="false" />
+        <delete file="${build.dir}/${lib.name}.pdb" failonerror="false" />
     </target>
 </project>
