@@ -1,1 +1,1 @@
-..\tools\nant\win32\bin\nant.exe %1 %2 %3 %4 %5 %6 %7 %8 %9
+..\tools\nant\win32\bin\nant.exe %1 %2 %3 %4 %5 %6 %7 %8 %9 >sharpcvslib-build.out 2>&1

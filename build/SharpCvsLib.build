@@ -2,7 +2,7 @@
     Build file for the SharpCvsLib project:
         http://sharpcvslib.sourceforge.net
 -->
-<project name="${name.top-level}-${name.project}" default="run-tests-sample">
+<project name="Sharpcvslib" default="run-tests-sample">
     <include buildfile="SharpCvsLib.common.xml" />
     <!-- Targets -->
     <target name="src.update" description="Updates the source from cvs.">
