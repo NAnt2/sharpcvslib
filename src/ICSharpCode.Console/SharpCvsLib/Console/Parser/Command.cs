@@ -1,4 +1,3 @@
-// project created on 18/07/2003 at 6:10 PM
 #region "Copyright"
 //
 // Copyright (C) 2003 Steve Kenzell
@@ -29,22 +28,55 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    <credit>Credit to Dick Grune, Vrije Universiteit, Amsterdam, for writing
+//    the shell-script CVS system that this is based on.  In addition credit
+//    to Brian Berliner and Jeff Polk for their work on the cvsnt port of
+//    this work. </credit>
 //    <author>Steve Kenzell</author>
 //    <author>Clayton Harbour</author>
 #endregion
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Console;
+namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
-namespace ICSharpCode.SharpCvsLib {
-
-    public class MainClass {
-        public static void Main(String[] args) {
-            ConsoleMain application = new ConsoleMain ();
-            application.Execute (args);
+    /// <summary>Encapsulates the properties for a command.</summary>
+    public class Command {
+    
+        private String first;
+        private String nick1;
+        private String nick2;
+        
+        public String First {
+            get {return this.first;}
         }
         
-    }    
-    
+        public String Nick1 {
+            get {return this.nick1;}
+        }
+        
+        public String Nick2 {
+            get {return this.nick2;}
+        }
+        
+        /// <summary>Create a new command.</summary>
+        /// <param name="first">Primary command name.</param>
+        /// <param name="nick1">First alternate name for the command.</param>
+        /// <param name="nick2">Second alternate name for the command.</param>
+        // TODO: Looks like they were using c# function pointers here, figure out if this is important or if we can cut them out.
+		// A call to the command will be needed when requesting help on the specific command.
+		// The -H option calls the command
+		public Command (string first, string nick1, string nick2) 
+		{  //  int f1, uint v1) 
+            this.first = first;
+            this.nick1 = nick1;
+            this.nick2 = nick2;
+            
+            //  func = f1;
+            //  attr = v1;
+
+        }
+            
+    }
+
 }

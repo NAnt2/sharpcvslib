@@ -134,7 +134,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
                 // The method chosen here is to look for all classes that
                 // implement IResponse
                 if (t.IsClass && t.GetInterface("IResponse") != null) {
-                    Console.WriteLine(t.Name);
+                    System.Console.WriteLine(t.Name);
                     responseClasses++;
                 }
             }

@@ -1,4 +1,3 @@
-// project created on 18/07/2003 at 6:10 PM
 #region "Copyright"
 //
 // Copyright (C) 2003 Steve Kenzell
@@ -29,22 +28,34 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    <credit>Credit to Dick Grune, Vrije Universiteit, Amsterdam, for writing
+//    the shell-script CVS system that this is based on.  In addition credit
+//    to Brian Berliner and Jeff Polk for their work on the cvsnt port of
+//    this work. </credit>
 //    <author>Steve Kenzell</author>
 //    <author>Clayton Harbour</author>
 #endregion
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Console;
+using ICSharpCode.SharpCvsLib.Console.Parser;
 
-namespace ICSharpCode.SharpCvsLib {
+namespace ICSharpCode.SharpCvsLib.Console {
 
-    public class MainClass {
-        public static void Main(String[] args) {
-            ConsoleMain application = new ConsoleMain ();
-            application.Execute (args);
+    /// <summary>The main driver/ entry point into the program.</summary>
+    public class ConsoleMain {
+
+        /// <summary>Constructor.
+        ///     TODO: Fill in more of a usage/ explanation.</summary>
+        public ConsoleMain () {
         }
         
-    }    
-    
+        public void Execute (String[] args) {
+            CommandLineParser parser = new CommandLineParser (args);
+            
+            parser.Execute ();
+        
+        }
+    }
+
 }

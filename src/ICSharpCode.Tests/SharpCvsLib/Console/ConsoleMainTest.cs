@@ -1,4 +1,3 @@
-// project created on 18/07/2003 at 6:10 PM
 #region "Copyright"
 //
 // Copyright (C) 2003 Steve Kenzell
@@ -32,19 +31,65 @@
 //    <author>Steve Kenzell</author>
 //    <author>Clayton Harbour</author>
 #endregion
-
 using System;
+using System.Collections;
+using System.IO;
+using System.Diagnostics;
 
-using ICSharpCode.SharpCvsLib.Console;
+using ICSharpCode.SharpCvsLib;
+using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.Misc;
 
-namespace ICSharpCode.SharpCvsLib {
+using ICSharpCode.SharpCvsLib.Config.Tests;
+using ICSharpCode.SharpCvsLib.Console.Parser;
 
-    public class MainClass {
-        public static void Main(String[] args) {
-            ConsoleMain application = new ConsoleMain ();
-            application.Execute (args);
-        }
+using log4net;
+using NUnit.Framework;
+
+namespace ICSharpCode.SharpCvsLib.Console.Parser
+{
+
+	/// <summary>
+	///     Test the command line args parameters for valid ones 
+	///         and test invalid ones.
+	/// </summary>
+	[TestFixture]
+	public class ConsoleMainTest 
+	{
+		/// <summary>
+		///     Constructory for test case.
+		/// </summary>
+		public ConsoleMainTest () 
+		{ 
+		}
         
-    }    
-    
+		/// <summary>
+		///     Create a ConsoleMain object and run execute with --help.
+		///       
+		/// </summary>
+		[Test]
+		public void MakeMainTest () 
+		{
+			// Test Creating a ConsoleMain object
+			ConsoleMain newMain = new ConsoleMain();
+			String[] args = {"--help"};
+
+			// Execute the Execute method
+			newMain.Execute(args);
+		}
+		/// <summary>
+		///     Create a ConsoleMain object and run execute with --help-commands.
+		///       
+		/// </summary>
+		[Test]
+		public void HelpCommandTest () 
+		{
+			// Test Creating a ConsoleMain object
+			ConsoleMain newMain = new ConsoleMain();
+			String[] args = {"--help-commands"};
+
+			// Execute the Execute method
+			newMain.Execute(args);
+		}
+	}
 }

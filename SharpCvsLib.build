@@ -48,12 +48,6 @@
                     password="" />
     </target>
 
-    <!--     ************************************************************************
-                FIXME: Having security issues with the 1-1 framework, is this just
-                    my machine??!    
-        ************************************************************************ 
-        <property name="nant.settings.currentframework" value = "net-1.0"/>-->
-
     <target name="setup">
         <mkdir dir="${dir.build}" />
         <copy todir="${dir.build}">

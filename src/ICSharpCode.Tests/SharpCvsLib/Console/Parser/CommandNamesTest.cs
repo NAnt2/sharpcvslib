@@ -1,4 +1,3 @@
-// project created on 18/07/2003 at 6:10 PM
 #region "Copyright"
 //
 // Copyright (C) 2003 Steve Kenzell
@@ -32,19 +31,60 @@
 //    <author>Steve Kenzell</author>
 //    <author>Clayton Harbour</author>
 #endregion
-
 using System;
+using System.Collections;
+using System.IO;
+using System.Diagnostics;
 
-using ICSharpCode.SharpCvsLib.Console;
+using ICSharpCode.SharpCvsLib;
+using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.Misc;
 
-namespace ICSharpCode.SharpCvsLib {
+using ICSharpCode.SharpCvsLib.Config.Tests;
+using ICSharpCode.SharpCvsLib.Console.Parser;
 
-    public class MainClass {
-        public static void Main(String[] args) {
-            ConsoleMain application = new ConsoleMain ();
-            application.Execute (args);
-        }
+using log4net;
+using NUnit.Framework;
+
+namespace ICSharpCode.SharpCvsLib.Console.Parser
+{
+
+	/// <summary>
+	///     Test that the commandNames object is created successfully 
+	///       
+	/// </summary>
+	[TestFixture]
+	public class CommandNamesTest 
+	{
+		/// <summary>
+		///     Constructory for test case.
+		/// </summary>
+		public CommandNamesTest () 
+		{ 
+		}
         
-    }    
-    
+		/// <summary>
+		///     Create a CommandNames object.
+		///       
+		/// </summary>
+		[Test]
+		public void MakeTest () 
+		{
+			// Test Creating a Command object
+			CommandNames commands  = new CommandNames();
+
+			// Check the first command object 
+			AssertCommandEquals (commands.Command[0], "add", "ad", "new");
+
+			// Check the last command object
+			AssertCommandEquals (commands.Command[commands.Command.GetLength(0) - 1], "watchers", null, null);
+		}
+		private void AssertCommandEquals (Command com,
+			string prime, string nick1, string nick2) 
+		{
+			Assertion.AssertEquals (prime, com.First);
+			Assertion.AssertEquals (nick1, com.Nick1);
+			Assertion.AssertEquals (nick2, com.Nick2);
+		}
+	}
 }

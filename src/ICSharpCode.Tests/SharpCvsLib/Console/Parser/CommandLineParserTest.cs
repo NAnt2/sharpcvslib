@@ -1,4 +1,3 @@
-// project created on 18/07/2003 at 6:10 PM
 #region "Copyright"
 //
 // Copyright (C) 2003 Steve Kenzell
@@ -32,19 +31,49 @@
 //    <author>Steve Kenzell</author>
 //    <author>Clayton Harbour</author>
 #endregion
-
 using System;
+using System.Collections;
+using System.IO;
+using System.Diagnostics;
 
-using ICSharpCode.SharpCvsLib.Console;
+using ICSharpCode.SharpCvsLib;
+using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.Misc;
 
-namespace ICSharpCode.SharpCvsLib {
+using ICSharpCode.SharpCvsLib.Config.Tests;
+using ICSharpCode.SharpCvsLib.Console.Parser;
 
-    public class MainClass {
-        public static void Main(String[] args) {
-            ConsoleMain application = new ConsoleMain ();
-            application.Execute (args);
-        }
+using log4net;
+using NUnit.Framework;
+
+namespace ICSharpCode.SharpCvsLib.Console.Parser
+{
+
+	/// <summary>
+	///     Test the command line args parameters for valid ones 
+	///         and test invalid ones.
+	/// </summary>
+	[TestFixture]
+	public class CommandLineParserTest 
+	{
+		/// <summary>
+		///     Constructory for test case.
+		/// </summary>
+		public CommandLineParserTest () 
+		{ 
+		}
         
-    }    
-    
+		/// <summary>
+		///     Create a CommandLineParser object.
+		///       
+		/// </summary>
+		[Test]
+		public void MakeCommandParserTest () 
+		{
+			String[] args = {"--help"};
+			// Test Creating a CommandLineParser object
+			CommandLineParser newCommandLineParser = new CommandLineParser( args);
+			newCommandLineParser.Execute();
+		}
+	}
 }

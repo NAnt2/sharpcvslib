@@ -16,6 +16,8 @@
             <sources>
                 <includes name="**/*.cs" />
                 <includes name="../../${name.top-level}/${name.project}/**.cs" />
+                <includes name="../../${name.top-level}.${name.console}/${name.project}/**.cs" />
+                <excludes name="../../${name.top-level}.${name.console}/${name.project}/AssemblyInfo.cs" />
             </sources>
 
             <references>
