@@ -1,43 +1,51 @@
 <!--
-    Build file for the 
+    Build file for the SharpCvsLib project:
+		http://sharpcvslib.sourceforge.net
 -->
-<project name="ICSharpCode.SharpCvsLib" default="debug">
+<project name="${name.top-level}-${name.project}" default="build.all">
 
-    <property name="lib.name" value="ICSharpCode.SharpCvsLib" />    
+	<!-- Names of the files generated -->
+	<property name="name.top-level" value="ICSharpCode" />
+	<property name="name.project" value="SharpCvsLib" />
+    <property name="name.lib" value="${name.project}" />    
+    <property name="name.console" value="Console" />
+    <property name="name.console.exe" value="cvs" />
+    <property name="name.tests" value="Tests" />
+    
+	<!-- Version information -->
     <property name="assembly.version" value="0.3.4.2" />  
-    <property name="warnaserror" value="true" />
     
-    <property name="console.name" value="scvs" />
-    <property name="tests.name" value="ICSharpCode.SharpCvsLib.Tests" />
-
-<!-- Comment out net-1.0 framework and uncomment mono framework to run on mono -->    
-    <property name="nant.settings.currentframework" value = "net-1.0"/>
-<!--    <property name="nant.settings.currentframework" value = "mono-1.0"/>  -->
-
-    <property name="build.dir" value="build/bin" /> 
-    <property name="conf.dir" value="conf" />
-    <property name="dist.dir" value="dist" />
-    <property name="src.dir" value="src" />
-    <property name="lib.dir" value="lib" />
-    <property name="lib.ext.dir" value="${lib.dir}/ext" />
-
-    <property name="log4net" value="log4net.dll" />
-    <property name="nunit" value="nunit.framework.dll" />    
-    <property name="ziplib" value="ICSharpCode.SharpZipLib.dll" />
-
-    <target name="debug" depends="SharpCvsLib.Debug" />
-    <target name="debug-with-update" depends="update.src, SharpCvsLib.Debug" />
-    <target name="Release" depends="SharpCvsLib.Release" />
+    <!-- Compiler information/ settings -->
+    <property name="compile.warnaserror" value="true" />
+	<property name="compile.debug" value="true" />
+	<property name="compile.unsafe" value="/unsafe-" />
+	<property name="compile.checked" value="/checked-" />
+	<property name="compile.define" value="DEBUG;TRACE" />
     
-        <property name="debug" value="true" />
-        <property name="unsafe" value="/unsafe-" />
-        <property name="checked" value="/checked-" />
-        <property name="define" value="DEBUG;TRACE" />
+<!-- Comment out net-1.0 framework and uncomment mono framework to run on mono 
+    <property name="nant.settings.currentframework" value = "net-1.0"/>-->    
+    <property name="nant.settings.currentframework" value = "mono-1.0-linux"/>  
+
+	<!-- Directory structure -->
+	<property name="dir.base" value="/home/claytonharbour/eclipse/v2.1/workspace/SharpCvsLib" />
+    <property name="dir.build" value="${dir.base}/build/bin" /> 
+    <property name="dir.conf" value="${dir.base}/conf" />
+    <property name="dir.dist" value="${dir.base}/dist" />
+    <property name="dir.src" value="${dir.base}/src" />
+    <property name="dir.lib" value="${dir.base}/lib" />
+    <property name="dir.lib.ext" value="${dir.lib}/ext" />
+	<property name="dir.sf-release.base" value="h:/dev/sf.net/sharpcvslib" />
+
+	<!-- Referenced lib and lib/ext dll files -->
+    <property name="lib.log4net" value="log4net.dll" />
+    <property name="lib.nunit" value="nunit.framework.dll" />    
+    <property name="lib.zip" value="ICSharpCode.SharpZipLib.dll" />
 
     <!-- Documentation variables -->
-    <property name="copyright-text" value="Mike Krueger 2001-2002, Clayton Harbour 2003" />
+    <property name="copyright-text" value="Mike Krueger 2001-2002, SharpCvsLib Developers" />
     <property name="copyright-href" value="http://www.gnu.org/copyleft/lesser.html#TOC1" />
-    
+
+	<!-- Targets -->
     <target name="update.src" description="Updates the source from cvs.">
        <cvs-update  module="sharcvslib" 
                     cvsroot=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/nant"
@@ -46,56 +54,44 @@
     </target>
 
     <target name="setup">
-        <mkdir dir="${build.dir}" />
-        <copy todir="${build.dir}">
-            <fileset basedir="${lib.dir}">
-                <includes name="${ziplib}" />
+        <mkdir dir="${dir.build}" />
+        <copy todir="${dir.build}">
+            <fileset basedir="${dir.lib}">
+                <includes name="${lib.zip}" />
             </fileset>
         </copy>        
-        <copy todir="${build.dir}">
-            <fileset basedir="${lib.ext.dir}">
-                <includes name="${log4net}" />
+        <copy todir="${dir.build}">
+            <fileset basedir="${dir.lib.ext}">
+                <includes name="${lib.log4net}" />
+                <includes name="${lib.nunit}" />
             </fileset>
         </copy>
-        <copy todir="${build.dir}">
-            <fileset basedir="${conf.dir}">
+        <copy todir="${dir.build}">
+            <fileset basedir="${dir.conf}">
                 <includes name="*.config" />
             </fileset>
         </copy>
     </target>
-
-    <target name="setup.tests">
-        <mkdir dir="${build.dir}" />
-        <copy todir="${build.dir}">
-            <fileset basedir="${lib.ext.dir}">
-                    <includes name="${nunit}" />
-                    <includes name="${log4net}" />
-            </fileset>
-        </copy>        
+    
+    <target name="build.all">
+    	<call target="build.console" />
+    	<call target="build.lib" />
+    	<call target="build.test" />
     </target>
-        
-    <target name="dist.src">
-        <property name="dist.src" value="${dist.dir}/${assembly.version}/src" />
-        
-        <mkdir dir="${dist.src}" />    
-        <copy todir="${dist.src}/${lib.name}">
-            <fileset basedir=".">
-                <includes name="**/**.*" />
-                <excludes name="*.suo" />
-                <excludes name="*.csproj.user" />
-                <excludes name="**/obj**" />
-                <excludes name="**/dist**" />
-                <excludes name="**/build**" />
-            </fileset>
-        </copy>
-        <zip zipfile="${dist.dir}/${assembly.version}/${lib.name}-${assembly.version}-src.zip">
-            <fileset basedir="${dist.src}">
-                <includes name="**/**.*" />
-            </fileset>
-        </zip>
+
+    <target name="build.lib" depends="setup">
+            <nant buildfile="${dir.src}/${name.top-level}/${name.project}/${name.project}.build" target="build-${nant.settings.currentframework}"/>
+    </target>
+
+    <target name="build.console" depends="setup">
+            <nant buildfile="${dir.src}/${name.top-level}.${name.console}/${name.console}.build" target="build-${nant.settings.currentframework}"/>
     </target>
     
-    <target name="gen-doc" failonerror="true">
+    <target name="build.test" depends="setup">
+            <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="build-${nant.settings.currentframework}"/>
+    </target>
+
+    <target name="netdoc" failonerror="true">
         <property name="Title" value="#Cvslib" />
         <property name="ShowMissingSummaries" value="True" />
         <property name="OutputDirectory" value="${dist.dir}/${assembly.version}/doc/api" />
@@ -113,9 +109,9 @@
 
         <property name="IncludeAssemblyVersion" value="False" />
 
-        <echo message="${build.dir}" />
+        <echo message="${dir.build}" />
         <ndoc>
-            <assemblies basedir="${build.dir}">
+            <assemblies basedir="${dir.build}">
                 <includes name="${lib.name}.dll"/>
             </assemblies>
             <documenters>
@@ -145,210 +141,76 @@
                     <property name="DefaulTOC" value="" />
                     <property name="ShowVisualBasic" value="True" />
                 </documenter>
-<!--                <documenter name="JavaDoc">
-                    <property name="Title" value="${Title}" />
-                    <property name="OutputDirectory" value="${OutputDirectory}/JavaDoc" />
-
-                    <property name="ShowMissingSummaries" value="${ShowMissingSummaries}" />
-                    <property name="ShowMissingRemarks" value="${ShowMissingRemarks}" />
-                    <property name="ShowMissingParams" value="${ShowMissingParams}" />
-                    <property name="ShowMissingReturns" value="${ShowMissingReturns}" />
-                    <property name="ShowMissingValues" value="${ShowMissingValues}" />
-
-                    <property name="DocumentInternals" value="${DocumentInternals}" />
-                    <property name="DocumentProtected" value="${DocumentProtected}" />
-                    <property name="DocumentPrivates" value="${DocumentPrivates}" />
-                    <property name="DocumentEmptyNamespaces" value="${DocumentEmptyNamespaces}" />
-
-                    <property name="IncludeAssemblyVersion" value="${IncludeAssemblyVersion}" />
-                    <property name="CopyrightText" value="${copyright-text}" />
-                    <property name="CopyrightHref" value="${copyright-href}" />
-
-                    <property name="SkipNamespacesWithoutSummaries" value="False" />
-                    <property name="AutoPropertyBackerSummaries" value="False" />
-                    <property name="AutoDocumentConstructors" value="True" />
-                    <property name="DocumentAttributes" value="False" />
-                    <property name="DocumentedAttributes" value="" />
-                </documenter>
--->
             </documenters> 
         </ndoc>
     </target>
     
-    <target name="dist.bin">
+    <target name="run-tests" depends="build.all">
+            <nant buildfile="${name.project}.build" target="run-tests-${nant.settings.currentframework}"/>
+    </target>
+    <target name="dist" depends="build.lib, build.test, build.console, run-tests">
+        <property name="dist.src" value="${dist.dir}/${assembly.version}/src" />
         <property name="dist.bin" value="${dist.dir}/${assembly.version}/bin" />
         
         <mkdir dir="${dist.bin}" />
-        <echo message="${build.dir}" />
+        <mkdir dir="${dist.src}" />    
+        <call target="netdoc" />
+        
         <copy todir="${dist.bin}/${lib.name}">
-            <fileset basedir="${build.dir}">
+            <fileset basedir="${dir.build}">
                 <includes name="**/**.dll"/>
                 <includes name="**/**.config"/>
             </fileset>
         </copy>
-        
         <zip zipfile="${dist.dir}/${assembly.version}/${lib.name}-${assembly.version}-bin.zip">
             <fileset basedir="${dist.bin}">
                 <includes name="**/**.*" />
             </fileset>
         </zip>
-    </target>
-    
-    <target name="dist" depends="SharpCvsLib.Release">
-        <call target="dist.src" />
-        <call target="dist.bin" />
         
-        <call target="gen-doc" />
+        <copy todir="${dist.src}/${lib.name}">
+            <fileset basedir=".">
+                <includes name="**/**.*" />
+                <excludes name="*.suo" />
+                <excludes name="*.csproj.user" />
+                <excludes name="**/obj**" />
+                <excludes name="**/dist**" />
+                <excludes name="**/build**" />
+            </fileset>
+        </copy>
+        
+        <zip zipfile="${dist.dir}/${assembly.version}/${lib.name}-${assembly.version}-src.zip">
+            <fileset basedir="${dist.src}">
+                <includes name="**/**.*" />
+            </fileset>
+        </zip>
     </target>
-
     
     <target name="sf-release">
-        <property name="export.dir" value="h:/dev/sf.net/sharpcvslib" />
-        <property name="version.dir" value="${export.dir}/${assembly.version}" />
-        <property name="files.dir" value="${version.dir}/files" />
+        <property name="dir.export" value="${dir.sf-release.base}" />
+        <property name="dir.version" value="${dir.version}/${assembly.version}" />
+        <property name="dir.filesdir" value="${dir.version}/files" />
         
-        <mkdir dir="${version.dir}" />
-        <mkdir dir="${files.dir}" />
+        <mkdir dir="${dir.version}" />
+        <mkdir dir="${dir.files}" />
         
-        <copy todir="${files.dir}">
+        <copy todir="${dir.files}">
             <fileset basedir=".">
                 <includes name="**/**.*" />
                 <excludes name="*.suo" />
                 <excludes name="*.csproj.user" />
             </fileset>
         </copy>
-        <zip zipfile="${version.dir}/${lib.name}-${assembly.version}.zip">
-            <fileset basedir="${files.dir}">
+        <zip zipfile="${dir.version}/${name.lib}-${assembly.version}.zip">
+            <fileset basedir="${dir.files}">
                 <includes name="**/**.*" />
             </fileset>
         </zip>
     </target>
     
-    <target name="SharpCvsLib.Debug">
-        <property name="project.name" value="SharpCvsLib" />
-        <property name="build.dir" value="${build.dir}/Debug" />
-        <property name="output" value="${build.dir}/${lib.name}.dll" />
-        <property name="debug" value="true" />
-        <property name="unsafe" value="/unsafe-" />
-        <property name="checked" value="/checked-" />
-        <property name="define" value="DEBUG;TRACE" />
-        <property name="doc" value="${build.dir}/{lib.name}.xml" />
-
-        <property name="output.tests" value="${build.dir}/${lib.name}.Tests.dll" />
-
-        <call target="SharpCvsLib" />
-        <call target="SharpCvsLib.Console" />
-        <call target="SharpCvsLib.Tests" />
-    </target>
-    
-    <target name="SharpCvsLib.Release">
-        <property name="project.name" value="SharpCvsLib" />
-        <property name="build.dir" value="${build.dir}/Release" />
-        <property name="output" value="${build.dir}/${lib.name}.dll" />
-        <property name="debug" value="false" />
-        <property name="unsafe" value="/unsafe-" />
-        <property name="checked" value="/checked-" />
-        <property name="define" value="TRACE" />
-        <property name="doc" value="${build.dir}/${lib.name}.xml" />
-                
-        <call target="SharpCvsLib" />
-    </target>
-    
-    <target name="SharpCvsLib" depends="setup">
-        <csc    target="library" 
-                warnaserror="${warnaserror}" 
-                output="${build.dir}/${lib.name}.dll" 
-                debug="${debug}" 
-                define="${define}" 
-                doc="${build.dir}/${lib.name}.xml">
-                
-            <arg value="${unsafe}" />
-            <arg value="${checked}" />
-            
-            <sources basedir="${src.dir}">
-                <includes name="ICSharpCode/**/*.cs" />
-            </sources>
-            
-            <references>
-                <includes name="System.dll" />            
-                <includes name="${lib.dir}/${ziplib}" />
-                <includes name="${lib.ext.dir}/${log4net}" />
-            </references>
-            
-        </csc>
-    </target>
-
-    <target name="SharpCvsLib.Tests" depends="SharpCvsLib, setup.tests">
-        <echo message="Target: ${build.dir}/${tests.name}.dll" />
-        
-        <csc    target="library" 
-                warnaserror="${warnaserror}"
-                output="${build.dir}/${tests.name}.dll" 
-                debug="${debug}" 
-                define="${define}" 
-                doc="${build.dir}/${tests.name}.xml">
-            <arg value="${unsafe}" />
-            <arg value="${checked}" />
-            <sources basedir="${src.dir}">
-<!-- // TODO: Change to internalize helpers (accessor) -->
-                <includes name="ICSharpCode/**/*.cs" />
-                <includes name="ICSharpCode.Tests/**/*.cs" />
-            </sources>
-            <references>
-                <includes name="System.dll" />            
-                <includes name="${lib.dir}/${ziplib}" />
-                <includes name="${lib.ext.dir}/${log4net}" />
-                <includes name="${lib.ext.dir}/${nunit}" />
-<!-- // TODO: Change to internalize helpers (accessor) -->
-<!--                <includes name="${build.dir}/${lib.name}.dll" />-->
-            </references>
-        </csc>
-    </target>
-
-    <target name="run-tests" depends="SharpCvsLib.Tests">
-        <nunit2>
-            <test assemblyname="${build.dir}/${tests.name}.dll"/>
-        </nunit2>
-    </target>
-    
-    <target name="SharpCvsLib.Console" depends="SharpCvsLib, setup.tests">
-        <csc    target="exe" 
-                warnaserror="${warnaserror}"
-                output="${build.dir}/${console.name}.exe" 
-                debug="${debug}" 
-                define="${define}" 
-                doc="${build.dir}/${console.name}.xml">
-            <arg value="${unsafe}" />
-            <arg value="${checked}" />
-            <sources basedir="${src.dir}">
-                <includes name="ICSharpCode.Console/**/*.cs" />
-            </sources>
-            <references>
-                <includes name="System.dll" />            
-                <includes name="${lib.dir}/${ziplib}" />
-                <includes name="${lib.ext.dir}/${log4net}" />
-                <includes name="${lib.ext.dir}/${nunit}" />
-                <includes name="${output}" />
-            </references>
-        </csc>
-        
-    </target>
-
-    
-    <target name="DebugClean">
-        <property name="build.dir" value="${build.dir}/Debug" />
+    <target name="clean">
+        <property name="dir.build" value="${dir.build}" />
         <call target="Clean" />
-        <delete file="${build.dir}/${lib.name}.Tests.dll" failonerror="false" />
-        <delete file="${build.dir}/${lib.name}.Tests.dll" failonerror="false" />
-    </target>
-    
-    <target name="ReleaseClean">
-        <property name="build.dir" value="${build.dir}/Release" />
-        <call target="Clean" />
-    </target>
-    
-    <target name="Clean">
-        <delete file="${build.dir}/${lib.name}.dll" failonerror="false" />
-        <delete file="${build.dir}/${lib.name}.pdb" failonerror="false" />
+        <delete file="${dir.build}/**.*" failonerror="false" />
     </target>
 </project>
