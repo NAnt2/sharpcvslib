@@ -1,1 +1,0 @@
-tools\nant\win32\bin\nant.exe -buildfile:build\SharpCvsLib.build %1 %2 %3 %4 %5 %6 %7 %8 %9
