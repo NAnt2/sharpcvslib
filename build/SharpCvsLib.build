@@ -64,47 +64,39 @@
                     password="" />
     </target>
     
-    <target name="generate.assembly-info" description="Generate the assembly info file for the project.  Pass in the version number.">
-        <echo message="Generating assembly info for version ${assembly.version}" />
-        <asminfo output="${dir.src}/SharpCvsLibAssemblyInfo.cs" language="CSharp" failonerror="false">
-            <imports>
-                <import name="System" />
-                <import name="System.Reflection" />
-                <import name="System.EnterpriseServices" />
-                <import name="System.Runtime.InteropServices" />
-            </imports>
-            <attributes>
-                <attribute type="ComVisibleAttribute" value="false" />
-                <attribute type="CLSCompliantAttribute" value="true" />
-                <attribute type="AssemblyVersionAttribute" value="${assembly.version}" />
-                <attribute type="AssemblyTitleAttribute" value="${name.project}" />
-                <attribute type="AssemblyDescriptionAttribute" value="${assembly.description}" />
-                <attribute type="AssemblyCopyrightAttribute" value="${assembly.copyright.text}" />
-                <attribute type="ApplicationNameAttribute" value="${name.project}" />
-            </attributes>
-            <references>
-                <includes name="System.EnterpriseServices.dll" />
-            </references>
-        </asminfo>    
+    <target name="update.version" description="Generate the assembly info file for the project.  Pass in the version number.">
+        <!-- Gets the version number and places it in a property called build.version -->
+        <ifnot propertyexists="assembly.version">
+            <version    buildtype="monthday" 
+                        path="build.number" 
+                        revisiontype="automatic" 
+                        startDate="${assembly.start-date}"
+                        prefix="assembly." />
+            <property name="assembly.version" value="${assembly.version}" />
+            <echo message="Generating assembly info for version ${assembly.version}" />
+            <asminfo output="${dir.src}/SharpCvsLibAssemblyInfo.cs" language="CSharp" failonerror="false">
+                <imports>
+                    <import name="System" />
+                    <import name="System.Reflection" />
+                    <import name="System.EnterpriseServices" />
+                    <import name="System.Runtime.InteropServices" />
+                </imports>
+                <attributes>
+                    <attribute type="ComVisibleAttribute" value="false" />
+                    <attribute type="CLSCompliantAttribute" value="true" />
+                    <attribute type="AssemblyVersionAttribute" value="${assembly.version}" />
+                    <attribute type="AssemblyTitleAttribute" value="${name.project}" />
+                    <attribute type="AssemblyDescriptionAttribute" value="${assembly.description}" />
+                    <attribute type="AssemblyCopyrightAttribute" value="${assembly.copyright.text}" />
+                    <attribute type="ApplicationNameAttribute" value="${name.project}" />
+                </attributes>
+                <references>
+                    <includes name="System.EnterpriseServices.dll" />
+                </references>
+            </asminfo>    
+        </ifnot>    
     </target>
     
-    <target name="get.version" description="Gets the current version number from the build.number file without incrementing.">
-        <version    builtype="noincrement"
-                    path="build.number"
-                    revisiontype="automatic"
-                    startDate="${assembly.start-date}"
-                    prefix="assembly." />
-    </target>
-    <target name="update.version" description="Generates the version number for the assembly.">
-        <!-- Gets the version number and places it in a property called build.version -->
-        <version    buildtype="monthday" 
-                    path="build.number" 
-                    revisiontype="automatic" 
-                    startDate="${assembly.start-date}"
-                    prefix="assembly." />
-        <property name="assembly.version" value="${assembly.version}" />
-    </target>
-
     <target name="setup">
         <mkdir dir="${dir.bin}" />
         <copy todir="${dir.bin}">
@@ -131,11 +123,8 @@
             </fileset>
         </copy>
         
-        <call target="get.version" />
+        <call target="update.version" />
         <echo message="Building assembly version ${assembly.version}" />
-        <call target="generate.assembly-info">
-            <property name="assembly.version" value="${assembly.version}" />
-        </call>
     </target>
        
     <target name="build.all" description="Build all sources by calling all targets in project build files.">
@@ -340,7 +329,6 @@
         
         <call target="upload-unit-test-results" />
         
-        <call target="update.version" />
     </target>
     
     <target name="upload-unit-test-results">
