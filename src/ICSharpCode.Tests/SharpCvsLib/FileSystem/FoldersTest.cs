@@ -47,7 +47,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///     cvs server.
     /// </summary>
     [TestFixture]
-    public class FolderTest {
+    public class FoldersTest {
         /// <summary>
         /// Perform setup operations.
         /// </summary>
