@@ -193,7 +193,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     LOGGER.Debug(msg);
                 }
                 LOGGER.Debug("Before we grab the arguments.");
-                switch (arguments[i]) {
+                switch (arguments[i].Trim()) {
                     case "add":
                     case "ad":
                     case "new":
@@ -287,10 +287,16 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         this.commandTxt = arguments[i];
                         i++;
                         // get rest of arguments which is options on the checkout command.
-                        while (arguments.Length > i && arguments[i].IndexOf("-", 0, 1) >= 0){
-                            LOGGER.Debug("Parsing arguments.  Argument[" + i + "]=[" + arguments[i]);
+                        while (arguments.Length > i && arguments[i].Trim().IndexOf("-") == 0){
+                            if (LOGGER.IsDebugEnabled) {
+                                StringBuilder debugMsg = new StringBuilder ();
+                                debugMsg.Append(Environment.NewLine).Append("Parsing arguments.");
+                                debugMsg.Append(Environment.NewLine).Append("Argument[").Append(i).Append("]")
+                                    .Append("=[").Append(arguments[i]).Append("]");
+                                LOGGER.Debug(debugMsg);
+                            }
                             // Get options with second parameters?
-                            if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0){
+                            if (arguments[i].Trim().IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0){
                                 for ( int cnt=1; cnt < arguments[i].Length; cnt++ ){
                                     this.options = this.options + "-" + arguments[i][cnt] + " "; // No
                                 }
