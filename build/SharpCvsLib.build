@@ -289,6 +289,7 @@
     </target>
     
     <target name="integration" depends="src.update, dist">
+        <mkdir dir="${ccnet.log.dir}/${label-to-apply}"/>
         <zip zipfile="${ccnet.log.dir}/${label-to-apply}/${assembly.version}-src.zip">
             <fileset basedir="${dir.dist}/src">
                 <include name="**" />
