@@ -50,12 +50,8 @@ namespace ICSharpCode.SharpCvsLib {
         /// Base stream object.
         /// </summary>
 		public Stream BaseStream {
-			get {
-				return baseStream;
-			}
-			set {
-				baseStream = value;
-			}
+			get {return baseStream;}
+			set {baseStream = value;}
 		}
 		
         /// <summary>

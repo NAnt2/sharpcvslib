@@ -97,9 +97,34 @@ namespace ICSharpCode.SharpCvsLib.Client {
                                   "should not be reached.", true == false);
             } catch (Exception) {
                 Assertion.Assert ("Connection failed, this is a good thing.", true == true);
-            } 
+            }   
+        }
+        
+        /// <summary>
+        ///     Test that a connection is made using the ext
+        ///     method (ssh).
+        /// </summary>
+        [Test]
+        public void MakeConnectionSSH () {
+            CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
+            root.Protocol = "ext";
+            root.User = "some_other_user";
+            WorkingDirectory working = 
+                new WorkingDirectory (root, 
+                                        TestConstants.LOCAL_PATH, 
+                                        TestConstants.MODULE);
+
+            CVSServerConnection connection = new CVSServerConnection ();
+            Assertion.AssertNotNull ("Should have a connection object.", connection);
             
-        }        
+            try {
+                connection.Connect (working, TestConstants.PASSWORD_VALID);
+                Assertion.Assert ("Connection should have failed and this code " +
+                                  "should not be reached.", true == false);
+            } catch (Exception) {
+                Assertion.Assert ("Connection failed, this is a good thing.", true == true);
+            }               
+        }
         
     }
 }

@@ -28,8 +28,8 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
-//                Clayton Harbour
+//    <author>Mike Krueger</author>
+//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
@@ -312,11 +312,18 @@ namespace ICSharpCode.SharpCvsLib.Client {
 		{
 			switch (repository.CvsRoot.Protocol) {
 				case "ext":
+                    StringBuilder processArgs = new StringBuilder ();
+					processArgs.Append ("-l ").Append (repository.CvsRoot.User);
+                    //processArgs.Append (" -A "); // Allow authentication forward.
+			        //processArgs.Append (" -N "); //do not execute a shell
+			        //processArgs.Append (" -n "); //redirect input from /dev/null
+				    //processArgs.Append (" -v ");  // verbose
+				    processArgs.Append (" -q ");  // verbose
+					processArgs.Append (" ").Append (repository.CvsRoot.Host);
+					processArgs.Append (" \"cvs server\"");
+			        
 					try {
-						StringBuilder processArgs = new StringBuilder ();
-						processArgs.Append ("-l ").Append (repository.CvsRoot.User);
-						processArgs.Append (" ").Append (repository.CvsRoot.Host);
-						processArgs.Append (" \"cvs server\"");
+
 						ProcessStartInfo startInfo = 
 						    new ProcessStartInfo(shell, processArgs.ToString ());
 					    if (LOGGER.IsDebugEnabled)
@@ -330,11 +337,9 @@ namespace ICSharpCode.SharpCvsLib.Client {
 						startInfo.RedirectStandardInput  = true;
 						startInfo.RedirectStandardOutput = true;
 						startInfo.UseShellExecute        = false;
-						BufferedStream errstream = new BufferedStream(p.StandardError.BaseStream);
-						inputstream  = new CvsStream(new BufferedStream(p.StandardOutput.BaseStream));
-						outputstream = new CvsStream(new BufferedStream(p.StandardInput.BaseStream));
 
 						p = new Process();
+                        
 						p.StartInfo = startInfo;
 						p.Exited += new EventHandler(ExitShellEvent);
 						p.Start();
@@ -342,8 +347,20 @@ namespace ICSharpCode.SharpCvsLib.Client {
 					    if (LOGGER.IsDebugEnabled) {
     						LOGGER.Debug(e);
 					    }
-						throw new ExecuteShellException(shell);
+						throw new ExecuteShellException(shell + processArgs.ToString ());
 					}
+					BufferedStream errstream = new BufferedStream(p.StandardError.BaseStream);
+					//inputstream  = new CvsStream(new BufferedStream(p.StandardOutput.BaseStream));
+					//outputstream = new CvsStream(new BufferedStream(p.StandardInput.BaseStream));
+					StreamWriter streamWriter  = p.StandardInput;
+					StreamReader streamReader = p.StandardOutput;
+			        
+			        //streamWriter.AutoFlush = true;
+			        //streamReader.ReadToEnd ();
+			        //streamWriter.WriteLine(password);
+
+                    inputstream = new CvsStream (streamReader.BaseStream);
+			        outputstream = new CvsStream (streamWriter.BaseStream);
 					break;
 				case "pserver":
 			        tcpclient = new TcpClient ();
