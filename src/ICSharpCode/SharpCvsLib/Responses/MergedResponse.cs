@@ -35,6 +35,7 @@ using System;
 using System.IO;
 using System.Text;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
@@ -59,6 +60,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     ///     around forever, thus letting the user clean it up as desired. But another 
     ///     answer, such as until the next commit, might be preferable.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class MergedResponse : AbstractResponse {
         private readonly ILog LOGGER = LogManager.GetLogger(typeof (MergedResponse));
         /// <summary>

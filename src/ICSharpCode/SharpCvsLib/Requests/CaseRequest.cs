@@ -25,41 +25,44 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.Requests {
 
-/// <summary>
-/// Response expected: no.
-/// Tell the server that filenames should be matched in a case-insensitive fashion.
-/// Note that this is not the primary mechanism for achieving case-insensitivity;
-/// for the most part the client keeps track of the case which the server wants to use
-/// and takes care to always use that case regardless of what the user specifies.
-/// For example the filenames given in Entry and Modified requests for the same file must
-/// match in case regardless of whether the Case request is sent. The latter mechanism is
-/// more general (it could also be used for 8.3 filenames, VMS filenames with more than one `.',
-/// and any other situation in which there is a predictable mapping between filenames in
-/// the working directory and filenames in the protocol), but there are some situations it
-/// cannot handle (ignore patterns, or situations where the user specifies a filename and the
-/// client does not know about that file).
-/// </summary>
-public class CaseRequest : AbstractRequest
-{
     /// <summary>
-    /// Specify to the cvs server that the file match
-    ///     should not be case sensitive.
+    /// Response expected: no.
+    /// Tell the server that filenames should be matched in a case-insensitive fashion.
+    /// Note that this is not the primary mechanism for achieving case-insensitivity;
+    /// for the most part the client keeps track of the case which the server wants to use
+    /// and takes care to always use that case regardless of what the user specifies.
+    /// For example the filenames given in Entry and Modified requests for the same file must
+    /// match in case regardless of whether the Case request is sent. The latter mechanism is
+    /// more general (it could also be used for 8.3 filenames, VMS filenames with more than one `.',
+    /// and any other situation in which there is a predictable mapping between filenames in
+    /// the working directory and filenames in the protocol), but there are some situations it
+    /// cannot handle (ignore patterns, or situations where the user specifies a filename and the
+    /// client does not know about that file).
     /// </summary>
-    public override string RequestString {
-        get {
-            return "Case\n";
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+    public class CaseRequest : AbstractRequest {
+        /// <summary>
+        /// Specify to the cvs server that the file match
+        ///     should not be case sensitive.
+        /// </summary>
+        public override string RequestString {
+            get {
+                return "Case\n";
+            }
         }
-    }
 
-    /// <summary>
-    /// <code>false</code>, a response is not expected.
-    /// </summary>
-    public override bool IsResponseExpected {
-        get {
-            return false;
+        /// <summary>
+        /// <code>false</code>, a response is not expected.
+        /// </summary>
+        public override bool IsResponseExpected {
+            get {
+                return false;
+            }
         }
     }
-}
 }

@@ -28,7 +28,6 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Clayton Harbour
 #endregion
 
 using System;
@@ -39,6 +38,7 @@ using System.Text;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Util;
 
@@ -47,7 +47,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///     Used to parse out the important parts of the orgainization path
     ///         response from the cvs server.
     /// </summary>
-    // TODO: Change to internalize helpers (accessor)
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class PathTranslator {
         /// <summary>
         /// The name of the cvs management folder.

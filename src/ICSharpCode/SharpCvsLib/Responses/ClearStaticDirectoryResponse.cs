@@ -35,6 +35,7 @@
 using System;
 using System.Text;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
@@ -56,6 +57,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// directory.
     ///
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class ClearStaticDirectoryResponse : AbstractResponse {
         private readonly ILog LOGGER =
             LogManager.GetLogger (typeof (ClearStaticDirectoryResponse));

@@ -28,11 +28,11 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //  
-//  <author>Mike Krueger</author>
-//  <author>Clayton Harbour</author>
 #endregion
 
 using System;
+
+using ICSharpCode.SharpCvsLib.Attributes;
 
 namespace ICSharpCode.SharpCvsLib.Exceptions{
 
@@ -41,13 +41,13 @@ namespace ICSharpCode.SharpCvsLib.Exceptions{
     ///     credentials specified do not match those required to
     ///     gain access to the files on the cvs server.
     /// </summary>
-    public class AuthenticationException : Exception
-    {
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    public class AuthenticationException : Exception {
         /// <summary>
         /// Default Constructor.
         /// </summary>
-        public AuthenticationException()
-        {
+        public AuthenticationException() {
         }
 
         /// <summary>

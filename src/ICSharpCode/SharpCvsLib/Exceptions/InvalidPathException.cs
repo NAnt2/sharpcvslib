@@ -1,5 +1,5 @@
-#region "Copyright"
-// Copyright (C) 2003-2004 Clayton Harbour
+#region Copyright
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,50 +27,49 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-// <author>Clayton Harbour</author>
 #endregion
 
 using System;
 
-namespace ICSharpCode.SharpCvsLib.Options {
-	/// <summary>
-	/// Summary description for AbstractOption.
-	/// </summary>
-	public class Option {
+using ICSharpCode.SharpCvsLib.Attributes;
 
-        private string name;
-        private string optionValue;
+namespace ICSharpCode.SharpCvsLib.Exceptions {
+    /// <summary>
+    /// This exception is thrown if there is an attempt to write to a path that is
+    ///     outside of the working path.
+    /// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    public class InvalidPathException : Exception {
 
         /// <summary>
-        /// The name of the option parameter.
+        /// Occurs if there is an attempt to write to a path that is outside of the working
+        ///     path.
         /// </summary>
-        public string Name {
-            get {return this.name;}
-            set {this.name = value;}
+        public InvalidPathException () {
+
         }
 
         /// <summary>
-        /// The value of the option parameter if applicable.
+        /// Occurs if there is an attempt to write to a path that is outside of the working
+        ///     path.
         /// </summary>
-        public string Value {
-            get {return this.optionValue;}
-            set {this.optionValue = value;}
+        /// <param name="message">Additional information to pass on in the
+        ///     exception.</param>
+        public InvalidPathException (String message) : base (message) {
         }
 
         /// <summary>
-        /// Constructor for the option object.
+        /// Occurs if there is an attempt to write to a path that is outside of the working
+        ///     path.
         /// </summary>
-        public Option(string name) {
-            this.name = name;
-            this.optionValue = null;
+        /// <param name="message">A message that will be helpful for someone
+        ///     resolving the issue with the library.</param>
+        /// <param name="e">An exception that has caused this error, or has
+        ///     led to this error.</param>
+        public InvalidPathException (String message, Exception e) : base (message, e) {
+
         }
 
-        /// <summary>
-        /// Constructor for the option object.
-        /// </summary>
-		public Option(string name, string optionValue) {
-            this.name = name;
-            this.optionValue = optionValue;
-		}
-	}
+    }
+
 }

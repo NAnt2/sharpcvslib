@@ -27,7 +27,6 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
@@ -36,6 +35,8 @@ using System.IO;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.FileSystem
 {
 	/// <summary>
@@ -43,6 +44,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
 	///     entries.  The key to the collection is the path to the file that the
 	///     cvs entry represents on the file system.
 	/// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
 	public class Entries : DictionaryBase {
 
         private ILog LOGGER = LogManager.GetLogger (typeof (Entries));

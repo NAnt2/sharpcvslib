@@ -40,11 +40,12 @@ using ICSharpCode.SharpCvsLib.Streams;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Protocols
-{
+using ICSharpCode.SharpCvsLib.Attributes;
+namespace ICSharpCode.SharpCvsLib.Protocols {
 	/// <summary>
 	/// Handle connect and authentication for the pserver protocol.
 	/// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
 	public abstract class AbstractProtocol : IProtocol {
         /// <summary>
         /// Event that fires when a connection is made to the cvs server.

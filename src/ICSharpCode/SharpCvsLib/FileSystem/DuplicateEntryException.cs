@@ -27,17 +27,20 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Clayton Harbour
 #endregion
 
 using System;
+
+using ICSharpCode.SharpCvsLib.Attributes;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
     ///     This exception is thrown if there is no entry matching the specifed
     ///         criteria.
     /// </summary>
-    public class DuplicateEntryException : Exception {
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    [Obsolete ("Use ICSharpCode.SharpCvsLib.Exceptions.DuplicateEntryException.")]
+    public class DuplicateEntryException : ICSharpCode.SharpCvsLib.Exceptions.DuplicateEntryException {
 
         /// <summary>
         /// Occurs if a duplicate entry has found it's way into the Entries file.

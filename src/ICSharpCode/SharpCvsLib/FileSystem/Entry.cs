@@ -28,10 +28,6 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <authors>
-//        <author>Mike Krueger</author>
-//        <author>Clayton Harbour</author>
-//    </authors>
 #endregion
 
 using System;
@@ -42,14 +38,16 @@ using System.Text;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Util;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
     /// Rcs entry.
     /// </summary>
-    public class Entry : AbstractCvsFile, ICvsFile
-    {
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    public class Entry : AbstractCvsFile, ICvsFile {
         private static ILog LOGGER = LogManager.GetLogger (typeof (Entry));
 
         /// <summary>

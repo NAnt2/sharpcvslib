@@ -25,6 +25,7 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
 namespace ICSharpCode.SharpCvsLib.Requests {
     /// <summary>
     /// Response expected: no.
@@ -35,6 +36,8 @@ namespace ICSharpCode.SharpCvsLib.Requests {
     /// files need to be included. This can also be sent without Entry, if there
     /// is no entry for the file.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class ModifiedRequest : AbstractRequest {
         private string file;
 

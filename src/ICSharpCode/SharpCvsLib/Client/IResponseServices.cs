@@ -28,12 +28,11 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger,
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
 using System;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileHandler;
 using ICSharpCode.SharpCvsLib.FileSystem;
@@ -45,6 +44,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
     /// <summary>
     /// Response services interface.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public interface IResponseServices {
         /// <summary>
         /// Occurs when a message is sent to the cvs server.

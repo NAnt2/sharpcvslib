@@ -1,5 +1,5 @@
 #region "Copyright"
-// Copyright (C) Clayton Harbour
+// Copyright (C) 2004 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -48,6 +48,7 @@ using DocsVision.Security;
 using DocsVision.Runtime.Remoting.Transport;
 
 namespace ICSharpCode.SharpCvsLib.Remoting.Transport.SharpCvsLibTransport {
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2004-2005")]
 	public class CvsTransport : ITransport, IAsyncTransport {
 		private Socket _socket;
 		private string _url;

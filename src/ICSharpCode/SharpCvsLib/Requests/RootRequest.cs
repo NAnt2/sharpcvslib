@@ -25,47 +25,50 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
 namespace ICSharpCode.SharpCvsLib.Requests {
 
-/// <summary>
-/// Response expected: no. Tell the server which CVSROOT to use.
-/// Note that pathname is a local directory and not a fully qualified
-/// CVSROOT variable. pathname must already exist; if creating a new root,
-/// use the init request, not Root. pathname does not include the hostname
-/// of the server, how to access the server, etc.; by the time the CVS
-/// protocol is in use, connection, authentication, etc., are already taken care of.
-/// The Root request must be sent only once, and it must be sent before any requests
-/// other than Valid-responses, valid-requests, UseUnchanged, or init.
-/// </summary>
-public class RootRequest : AbstractRequest
-{
-    private string cvsroot;
-
     /// <summary>
-    /// Constructor.
+    /// Response expected: no. Tell the server which CVSROOT to use.
+    /// Note that pathname is a local directory and not a fully qualified
+    /// CVSROOT variable. pathname must already exist; if creating a new root,
+    /// use the init request, not Root. pathname does not include the hostname
+    /// of the server, how to access the server, etc.; by the time the CVS
+    /// protocol is in use, connection, authentication, etc., are already taken care of.
+    /// The Root request must be sent only once, and it must be sent before any requests
+    /// other than Valid-responses, valid-requests, UseUnchanged, or init.
     /// </summary>
-    /// <param name="cvsroot">The cvsroot to use.</param>
-    public RootRequest(string cvsroot)
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+    public class RootRequest : AbstractRequest
     {
-        this.cvsroot = cvsroot;
-    }
+        private string cvsroot;
 
-    /// <summary>
-    /// Specify which cvsroot the server should use.
-    /// </summary>
-    public override string RequestString {
-        get {
-            return "Root " + cvsroot + "\n";
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="cvsroot">The cvsroot to use.</param>
+        public RootRequest(string cvsroot)
+        {
+            this.cvsroot = cvsroot;
+        }
+
+        /// <summary>
+        /// Specify which cvsroot the server should use.
+        /// </summary>
+        public override string RequestString {
+            get {
+                return "Root " + cvsroot + "\n";
+            }
+        }
+
+        /// <summary>
+        /// <code>false</code>, a response is not expected.
+        /// </summary>
+        public override bool IsResponseExpected {
+            get {
+                return false;
+            }
         }
     }
-
-    /// <summary>
-    /// <code>false</code>, a response is not expected.
-    /// </summary>
-    public override bool IsResponseExpected {
-        get {
-            return false;
-        }
-    }
-}
 }

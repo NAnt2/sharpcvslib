@@ -27,6 +27,7 @@
 //  <author>Clayton Harbour</author>
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
 namespace ICSharpCode.SharpCvsLib.Requests {
     /// <summary>
     /// Response expected: yes.
@@ -51,6 +52,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
     /// (Specify the --help global option for a list of other help options)
     ///
     /// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2004-2005")]
     public class RLogRequest : AbstractRequest
     {
         /// <summary>

@@ -34,6 +34,8 @@ using System;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.Misc {
 
     /// <summary>
@@ -48,6 +50,8 @@ namespace ICSharpCode.SharpCvsLib.Misc {
     /// descramble() uses SCRM[0] to determine which method of unscrambling
     /// to use.  If it does not recognize the method, it throws an exception.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class PasswordScrambler
     {
         private static readonly ILog LOGGER =

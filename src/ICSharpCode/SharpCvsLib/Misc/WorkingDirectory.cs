@@ -39,6 +39,7 @@ using System.IO;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Util;
 
@@ -49,6 +50,8 @@ namespace ICSharpCode.SharpCvsLib.Misc {
     ///     object required to connect to the server.  The only thing you
     ///     have to add for this is the password.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class WorkingDirectory {
         private Manager manager;
         private readonly ILog LOGGER =

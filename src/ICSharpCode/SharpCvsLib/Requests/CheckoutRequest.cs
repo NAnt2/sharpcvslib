@@ -25,6 +25,8 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.Requests {
 
     /// <summary>
@@ -35,8 +37,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
     /// sending the co request, and then seeing what directory names the server sends back in
     /// its responses, and (2) the expand-modules request.
     /// </summary>
-    public class CheckoutRequest : AbstractRequest
-    {
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+    public class CheckoutRequest : AbstractRequest {
         /// <summary>
         /// Send request to checkout files from the server.
         /// </summary>

@@ -1,6 +1,5 @@
-#region "Copyright"
-// ErrorMessageResponse.cs
-// Copyright (C) 2001 Mike Krueger
+#region Copyright
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,54 +26,51 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    Author:     Clayton Harbour
 #endregion
 
 using System;
 
 using ICSharpCode.SharpCvsLib.Attributes;
-using ICSharpCode.SharpCvsLib.Client;
-using ICSharpCode.SharpCvsLib.Streams;
 
-using log4net;
-
-namespace ICSharpCode.SharpCvsLib.Responses {
+namespace ICSharpCode.SharpCvsLib.Exceptions {
     /// <summary>
-    /// Handles an error message response.
+    ///     This exception is thrown if there is no entry matching the specifed
+    ///         criteria.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class ErrorMessageResponse : AbstractResponse {
-        private readonly ILog LOGGER =
-            LogManager.GetLogger (typeof (ErrorMessageResponse));
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    public class DuplicateEntryException : Exception {
 
-        public static bool ListingFiles;
         /// <summary>
-        /// Process an error message response.
+        /// Occurs if a duplicate entry has found it's way into the Entries file.
+        ///     This is an indication that something has corrupted the cvs repository.
         /// </summary>
-        public override void Process() {
-            string message = this.ReadLine();
-            if (message.Equals("Listing modules on server") || ListResponse.IsHandling) {
-                if (!ListResponse.IsHandling) {
-                    ListResponse.IsHandling = true;
-                }
-                ListResponse response = new ListResponse();
-                response.DelegateMessage = message;
-                response.Process((CvsStream)null, this.Services);
-            } else {
-                // Fire message event to the client app
-                Services.SendMessage("E " + message);
-                String msg = "cvs server: E " + message;
-                LOGGER.Debug (msg);
+        public DuplicateEntryException () {
 
-                Services.ResponseMessageEvents.SendResponseMessage(msg, this.GetType());
-            }
         }
 
         /// <summary>
-        /// Return true if this response cancels the transaction
+        /// Occurs if a duplicate entry has found it's way into the Entries file.
+        ///     This is an indication that something has corrupted the cvs repository.
         /// </summary>
-        public override bool IsTerminating {
-            get {return false;}
+        /// <param name="message">Additional information to pass on in the
+        ///     exception.</param>
+        public DuplicateEntryException (String message) : base (message) {
         }
+
+        /// <summary>
+        /// Occurs if a duplicate entry has found it's way into the Entries file.
+        ///     This is an indication that something has corrupted the cvs repository.
+        /// </summary>
+        /// <param name="message">A message that will be helpful for someone
+        ///     resolving the issue with the library.</param>
+        /// <param name="e">An exception that has caused this error, or has
+        ///     led to this error.</param>
+        public DuplicateEntryException (String message, Exception e) : base (message, e) {
+
+        }
+
     }
+
 }

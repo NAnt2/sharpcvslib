@@ -27,12 +27,11 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Gerald Evans</author>
-//
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Extension.LogReporter
-{
+using ICSharpCode.SharpCvsLib.Attributes;
+
+namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
 	using System;
 	using System.Collections;
 	
@@ -44,8 +43,9 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter
 	/// 	created by - gne
 	/// 	created on - 04/09/2004 12:16:13
 	/// </remarks>
-	public class LogSymbolicNames : IEnumerable
-	{
+    [Author("Gerald Evans", "gne@users.sourceforge.net", "2004")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+	public class LogSymbolicNames : IEnumerable {
 	    private ArrayList symbolicNames = new ArrayList();
 		
 		/// <summary>

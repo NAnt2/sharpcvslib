@@ -28,6 +28,7 @@
 //                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.FileSystem;
 
 namespace ICSharpCode.SharpCvsLib.Requests {
@@ -48,8 +49,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
     /// same file, Entry must be sent first. For a given file, one can send Modified,
     /// Is-modified, or Unchanged, but not more than one of these three.
     /// </summary>
-    public class EntryRequest : AbstractRequest
-    {
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+    public class EntryRequest : AbstractRequest {
         private Entry entry;
 
         /// <summary>

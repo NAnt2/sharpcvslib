@@ -38,6 +38,8 @@ using System.Globalization;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
     ///     Value object for the <code>Tag</code> cvs file.  The root file
@@ -52,6 +54,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///
     ///     eg)     :pserver:anonymous@linux.sporadicism.com:/home/cvs/src/
     /// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class Tag : AbstractCvsFile, ICvsFile {
 
         /// <summary>

@@ -30,36 +30,39 @@
 #endregion
 
 using System.IO;
+
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Streams;
 
 namespace ICSharpCode.SharpCvsLib.Client {
 
-/// <summary>
-/// Connection interface.
-/// </summary>
-public interface IConnection
-{
     /// <summary>
-    /// Cvs input stream.
+    /// Connection interface.
     /// </summary>
-    CvsStream InputStream {
-        get;
-        set;
-    }
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    public interface IConnection {
+        /// <summary>
+        /// Cvs input stream.
+        /// </summary>
+        CvsStream InputStream {
+            get;
+            set;
+        }
 
-    /// <summary>
-    /// Cvs output stream.
-    /// </summary>
-    CvsStream OutputStream {
-        get;
-        set;
-    }
+        /// <summary>
+        /// Cvs output stream.
+        /// </summary>
+        CvsStream OutputStream {
+            get;
+            set;
+        }
 
-    /// <summary>
-    /// Submit the request to the cvs server.
-    /// </summary>
-    /// <param name="request"></param>
-    void SubmitRequest(IRequest request);
-}
+        /// <summary>
+        /// Submit the request to the cvs server.
+        /// </summary>
+        /// <param name="request"></param>
+        void SubmitRequest(IRequest request);
+    }
 }

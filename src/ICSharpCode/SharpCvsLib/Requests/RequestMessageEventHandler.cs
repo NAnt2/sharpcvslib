@@ -25,11 +25,14 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
 namespace ICSharpCode.SharpCvsLib.Requests {
 
-/// <summary>
-///     Initialize a new request message event handler delegate.
-/// </summary>
-public delegate void RequestMessageEventHandler (object sender,
-        RequestMessageEventArgs e);
-}
+    /// <summary>
+    ///     Initialize a new request message event handler delegate.
+    /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+    public delegate void RequestMessageEventHandler (object sender,
+            RequestMessageEventArgs e);
+    }

@@ -1,6 +1,5 @@
-#region "Copyright"
-// ErrorMessageResponse.cs
-// Copyright (C) 2001 Mike Krueger
+#region Copyright
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,54 +26,50 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
 #endregion
 
 using System;
 
 using ICSharpCode.SharpCvsLib.Attributes;
-using ICSharpCode.SharpCvsLib.Client;
-using ICSharpCode.SharpCvsLib.Streams;
 
-using log4net;
-
-namespace ICSharpCode.SharpCvsLib.Responses {
+namespace ICSharpCode.SharpCvsLib.Exceptions {
     /// <summary>
-    /// Handles an error message response.
+    /// An unsupported file type exception occurs if a file name of file type that
+    ///     is not currently known about or not implemented.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class ErrorMessageResponse : AbstractResponse {
-        private readonly ILog LOGGER =
-            LogManager.GetLogger (typeof (ErrorMessageResponse));
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    public class UnsupportedFileTypeException : Exception {
 
-        public static bool ListingFiles;
         /// <summary>
-        /// Process an error message response.
+        /// An unsupported file type exception occurs if a file name of file type that
+        ///     is not currently known about or not implemented.
         /// </summary>
-        public override void Process() {
-            string message = this.ReadLine();
-            if (message.Equals("Listing modules on server") || ListResponse.IsHandling) {
-                if (!ListResponse.IsHandling) {
-                    ListResponse.IsHandling = true;
-                }
-                ListResponse response = new ListResponse();
-                response.DelegateMessage = message;
-                response.Process((CvsStream)null, this.Services);
-            } else {
-                // Fire message event to the client app
-                Services.SendMessage("E " + message);
-                String msg = "cvs server: E " + message;
-                LOGGER.Debug (msg);
+        public UnsupportedFileTypeException () {
 
-                Services.ResponseMessageEvents.SendResponseMessage(msg, this.GetType());
-            }
         }
 
         /// <summary>
-        /// Return true if this response cancels the transaction
+        /// An unsupported file type exception occurs if a file name of file type that
+        ///     is not currently known about or not implemented.
         /// </summary>
-        public override bool IsTerminating {
-            get {return false;}
+        /// <param name="message">Additional information to pass on in the
+        ///     exception.</param>
+        public UnsupportedFileTypeException (String message) : base (message) {
         }
+
+        /// <summary>
+        /// An unsupported file type exception occurs if a file name of file type that
+        ///     is not currently known about or not implemented.
+        /// </summary>
+        /// <param name="message">A message that will be helpful for someone
+        ///     resolving the issue with the library.</param>
+        /// <param name="e">An exception that has caused this error, or has
+        ///     led to this error.</param>
+        public UnsupportedFileTypeException (String message, Exception e) : 
+            base (message, e) {
+        }
+
     }
+
 }

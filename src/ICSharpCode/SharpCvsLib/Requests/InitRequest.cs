@@ -25,41 +25,45 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.Requests {
 
-/// <summary>
-/// Response expected: no.
-/// Creates a directory on the server.
-/// </summary>
-public class InitRequest : AbstractRequest
-{
-    private string repository;
-
     /// <summary>
-    /// Constructor.
+    /// Response expected: no.
+    /// Creates a directory on the server.
     /// </summary>
-    /// <param name="repository">The name of the repository to initialize.</param>
-    public InitRequest(string repository)
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+    public class InitRequest : AbstractRequest
     {
-        this.repository = repository;
-    }
+        private string repository;
 
-    /// <summary>
-    /// Request to initialize a new repository.
-    /// </summary>
-    public override string RequestString {
-        get {
-            return "init " + repository + "\n";
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="repository">The name of the repository to initialize.</param>
+        public InitRequest(string repository)
+        {
+            this.repository = repository;
+        }
+
+        /// <summary>
+        /// Request to initialize a new repository.
+        /// </summary>
+        public override string RequestString {
+            get {
+                return "init " + repository + "\n";
+            }
+        }
+
+        /// <summary>
+        /// <code>true</code>, a response is expected.
+        /// </summary>
+        public override bool IsResponseExpected {
+            get {
+                return true; // This was false but protocol documentation says it should be true
+            }
         }
     }
-
-    /// <summary>
-    /// <code>true</code>, a response is expected.
-    /// </summary>
-    public override bool IsResponseExpected {
-        get {
-            return true; // This was false but protocol documentation says it should be true
-        }
-    }
-}
 }

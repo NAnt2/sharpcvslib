@@ -28,7 +28,6 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
@@ -36,47 +35,49 @@ using System.Text;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.Messages {
-
-/// <summary>
-/// Class to handle messaging events.
-/// </summary>
-public class EncodedMessage {
-    private ILog LOGGER = LogManager.GetLogger (typeof (EncodedMessage));
     /// <summary>
-    /// A message handler that operates as an interface for a messaging event.
+    /// Class to handle messaging events.
     /// </summary>
-    /// <param name="message">A message to send to the implementing class.</param>
-    public delegate void MessageHandler(string message);
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    public class EncodedMessage {
+        private ILog LOGGER = LogManager.GetLogger (typeof (EncodedMessage));
+        /// <summary>
+        /// A message handler that operates as an interface for a messaging event.
+        /// </summary>
+        /// <param name="message">A message to send to the implementing class.</param>
+        public delegate void MessageHandler(string message);
 
-    /// <summary>
-    /// The message event handler that is used to channel messages to the
-    ///     delegate and implementing classes.
-    /// </summary>
-    public event MessageHandler MessageEvent;
+        /// <summary>
+        /// The message event handler that is used to channel messages to the
+        ///     delegate and implementing classes.
+        /// </summary>
+        public event MessageHandler MessageEvent;
 
-    /// <summary>
-    /// Send a message to the delegate.
-    /// </summary>
-    /// <param name="message">The message to send to the delegate.</param>
-    public void SendMessage (String message) {
-        if (null != MessageEvent && 
-            null != message && 
-            message.Length != 0) {
-            MessageEvent(message);
+        /// <summary>
+        /// Send a message to the delegate.
+        /// </summary>
+        /// <param name="message">The message to send to the delegate.</param>
+        public void SendMessage (String message) {
+            if (null != MessageEvent && 
+                null != message && 
+                message.Length != 0) {
+                MessageEvent(message);
+            }
+        }
+
+        /// <summary>
+        /// Send a message to the delegate.
+        /// </summary>
+        /// <param name="message">A message to send to the delegate.</param>
+        public void SendMessage (StringBuilder message) {
+            if (null != MessageEvent && 
+                null != message) {
+                this.SendMessage (message.ToString ());
+            }
         }
     }
-
-    /// <summary>
-    /// Send a message to the delegate.
-    /// </summary>
-    /// <param name="message">A message to send to the delegate.</param>
-    public void SendMessage (StringBuilder message) {
-        if (null != MessageEvent && 
-            null != message) {
-            this.SendMessage (message.ToString ());
-        }
-    }
-}
 
 }

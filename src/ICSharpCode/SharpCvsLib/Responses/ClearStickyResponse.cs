@@ -36,6 +36,7 @@ using System;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
@@ -46,6 +47,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// <summary>
     /// Handle a clear sticky tag response.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class ClearStickyResponse : AbstractResponse {
         private readonly ILog LOGGER =
             LogManager.GetLogger (typeof (ClearStickyResponse));

@@ -27,8 +27,6 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author: Clayton Harbour
-//     claytonharbour@sporadicism.com
 #endregion
 
 using System;
@@ -38,6 +36,8 @@ using System.Globalization;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
     ///     Interface for all cvs files.  Allows the file system manager to store
@@ -46,6 +46,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///             <code>Repository</code>
     ///             <code>Root</code>
     /// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public interface ICvsFile {
         /// <summary>
         ///     The name of the file.  This will be a constant for each

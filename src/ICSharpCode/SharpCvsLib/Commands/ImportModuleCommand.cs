@@ -28,14 +28,13 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Mike Krueger</author>
-//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
 using System.Collections;
 using System.IO;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
@@ -48,8 +47,9 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     /// <summary>
     /// Import a module into the cvs repository
     /// </summary>
-    public class ImportModuleCommand : ICommand
-    {
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    public class ImportModuleCommand : ICommand {
         private WorkingDirectory workingdirectory;
         private string  logmessage;
         private string  vendor  = "vendor";

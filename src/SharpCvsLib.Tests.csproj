@@ -226,12 +226,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Exceptions\CvsRootParseException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Exceptions\EntryNotFoundException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Exceptions\ExecuteShellException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Exceptions\UnsupportedProtocolException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -962,6 +972,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\StatusCommandParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\UpdateCommandParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -1148,6 +1163,11 @@
                 />
                 <File
                     RelPath = "ICSharpCode.Tests\SharpCvsLib\FileSystem\FileComparator.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Tests\SharpCvsLib\FileSystem\FoldersTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

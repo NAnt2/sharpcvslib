@@ -28,7 +28,6 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
@@ -37,15 +36,24 @@ using System.IO;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.FileSystem
-{
+using ICSharpCode.SharpCvsLib.Attributes;
+
+namespace ICSharpCode.SharpCvsLib.FileSystem {
 	/// <summary>
 	/// Populates a folder or collection of folders given one file, a directory,
 	///     a collection of files or a collection of directories.
 	/// </summary>
-	public class Folders : DictionaryBase
-	{
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+	public class Folders : DictionaryBase {
         private ILog LOGGER = LogManager.GetLogger (typeof (Folders));
+
+        /// <summary>
+        /// Return the collection of values for the dictionary.
+        /// </summary>
+        public ICollection Values {
+            get {return this.Dictionary.Values;}
+        }
+
         /// <summary>
         /// Create an instance of the folder manager.
         /// </summary>
@@ -107,6 +115,19 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         }
 
         /// <summary>
+        /// Recursively fill the folder object from the base directory.
+        /// </summary>
+        /// <param name="dir">Directory to start recursing through.</param>
+        public void Fill(DirectoryInfo dir) {
+            if (Folder.IsManaged(dir)) {
+                this.Add(new Folder(dir));
+            }
+            foreach (DirectoryInfo subDir in dir.GetDirectories()) {
+                this.Fill(subDir);
+            }
+        }
+
+        /// <summary>
         /// Return a human readable string that represents the folders contained
         ///     in this dictionary object.
         /// </summary>
@@ -122,11 +143,5 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
             return formatter.ToString();
         }
 
-        /// <summary>
-        /// Return the collection of values for the dictionary.
-        /// </summary>
-        public ICollection Values {
-            get {return this.Dictionary.Values;}
-        }
 	}
 }

@@ -28,13 +28,13 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//  <author>Clayton Harbour (claytonharbour@sporadicism.com)</author>
 #endregion
 
 using System;
 using System.Collections;
 using System.IO;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
@@ -49,8 +49,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     /// 
     /// <warn>NOTE: Only works on cvsnt servers.</warn>
     /// </summary>
-    public class ListCommand : ICommand
-    {
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    public class ListCommand : ICommand {
         private class Option {
             public const string DATE = "-D";
             public const string ENTRY_FORMAT = "-e";

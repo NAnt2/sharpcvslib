@@ -27,12 +27,11 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Gerald Evans</author>
-//
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Extension.LogReporter
-{
+using ICSharpCode.SharpCvsLib.Attributes;
+
+namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
 	using System;
 	using System.Collections;
     using ICSharpCode.SharpCvsLib.Misc;
@@ -44,8 +43,9 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter
 	/// 	created by - gne
 	/// 	created on - 28/02/2004 15:36:56
 	/// </remarks>
-	public class LogFile : IEnumerable
-	{
+    [Author("Gerald Evans", "gne@users.sourceforge.net", "2004")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+	public class LogFile : IEnumerable {
         private CvsRoot cvsRoot;
 	    private string repositoryFnm;
 		/// <summary>

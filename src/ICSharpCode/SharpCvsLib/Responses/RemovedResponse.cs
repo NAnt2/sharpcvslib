@@ -32,6 +32,7 @@
 
 using System;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
@@ -44,6 +45,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// <summary>
     /// Handle a checked in response.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class RemovedResponse : AbstractResponse {
         private readonly ILog LOGGER = LogManager.GetLogger(typeof (RemovedResponse));
         /// <summary>

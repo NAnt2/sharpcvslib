@@ -30,6 +30,8 @@
 
 using System;
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.Requests {
 	/// <summary>
 	/// 
@@ -56,6 +58,8 @@ namespace ICSharpCode.SharpCvsLib.Requests {
     ///     Modified.
     ///     
 	/// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class IsModifiedRequest : AbstractRequest {
 
         private string file;

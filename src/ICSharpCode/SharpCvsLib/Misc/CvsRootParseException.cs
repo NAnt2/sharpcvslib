@@ -34,11 +34,14 @@
 
 using System;
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.Misc {
 	/// <summary>
 	/// An invalid cvsroot exception is thrown if the client attempts to send in
 	///     a root that is not understood by the server.  
 	/// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
 	[Obsolete ("Use ICSharpCode.SharpCvsLib.Exceptions.CvsRootParseException.")]
 	public class CvsRootParseException : ICSharpCode.SharpCvsLib.Exceptions.CvsRootParseException{
         /// <summary>

@@ -25,36 +25,39 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
 namespace ICSharpCode.SharpCvsLib.Requests {
 
-/// <summary>
-/// Response expected: no.
-/// Tell the server what responses the client will accept. request-list is a space
-/// separated list of tokens.
-/// </summary>
-public class ValidResponsesRequest : AbstractRequest
-{
     /// <summary>
-    /// List of valid request responses.
+    /// Response expected: no.
+    /// Tell the server what responses the client will accept. request-list is a space
+    /// separated list of tokens.
     /// </summary>
-    public override string RequestString {
-        get {
-// TODO: These are the responses we would like to support (at some time in the future)
-//            return "Valid-responses ok error Valid-requests Checked-in New-entry Checksum Copy-file Updated Created Update-existing Merged Patched Rcs-diff Mode Mod-time Removed Remove-entry Set-static-directory Clear-static-directory Set-sticky Clear-sticky Template Set-checkin-prog Set-update-prog Notified Module-expansion Wrapper-rcsOption M Mbinary E F MT\n";
-// However we have to come clean and admit that currently we only support the following responses
-// TODO: We have to claim Merged and Removed are supported or some cvs servers refuse to talk to us!
-            // I have stubbed out Merged, Removed and New-entry responses.  The Merged response should also have Copy-file response implemented to create a local pre-merge copy of merged responses but currently it does not.
-            return "Valid-responses ok error Valid-requests Checked-in New-entry Updated Created Merged Mod-time Removed Set-static-directory Clear-static-directory Set-sticky Clear-sticky Module-expansion M E MT\n";
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+    public class ValidResponsesRequest : AbstractRequest
+    {
+        /// <summary>
+        /// List of valid request responses.
+        /// </summary>
+        public override string RequestString {
+            get {
+    // TODO: These are the responses we would like to support (at some time in the future)
+    //            return "Valid-responses ok error Valid-requests Checked-in New-entry Checksum Copy-file Updated Created Update-existing Merged Patched Rcs-diff Mode Mod-time Removed Remove-entry Set-static-directory Clear-static-directory Set-sticky Clear-sticky Template Set-checkin-prog Set-update-prog Notified Module-expansion Wrapper-rcsOption M Mbinary E F MT\n";
+    // However we have to come clean and admit that currently we only support the following responses
+    // TODO: We have to claim Merged and Removed are supported or some cvs servers refuse to talk to us!
+                // I have stubbed out Merged, Removed and New-entry responses.  The Merged response should also have Copy-file response implemented to create a local pre-merge copy of merged responses but currently it does not.
+                return "Valid-responses ok error Valid-requests Checked-in New-entry Updated Created Merged Mod-time Removed Set-static-directory Clear-static-directory Set-sticky Clear-sticky Module-expansion M E MT\n";
+            }
         }
-    }
 
-    /// <summary>
-    /// Determine if a response is expected from this request
-    /// </summary>
-    public override bool IsResponseExpected {
-        get {
-            return false;
+        /// <summary>
+        /// Determine if a response is expected from this request
+        /// </summary>
+        public override bool IsResponseExpected {
+            get {
+                return false;
+            }
         }
     }
-}
 }

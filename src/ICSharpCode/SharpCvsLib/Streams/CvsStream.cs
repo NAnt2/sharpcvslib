@@ -43,11 +43,15 @@ using ICSharpCode.SharpCvsLib.Util;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.Streams {
 
     /// <summary>
     /// Class for handling streams to the cvs server.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class CvsStream : Stream {
         private static EncodedMessage requestMessage = new EncodedMessage ();
         private static EncodedMessage responseMessage = new EncodedMessage ();

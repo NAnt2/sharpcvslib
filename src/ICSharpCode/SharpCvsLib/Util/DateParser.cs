@@ -36,117 +36,120 @@ using System;
 using System.Globalization;
 
 using log4net;
+using ICSharpCode.SharpCvsLib.Attributes;
 
 namespace ICSharpCode.SharpCvsLib.Util {
-/// <summary>
-///     Utility class to parse a string value into a date.
-/// </summary>
-public class DateParser {
-
     /// <summary>
-    ///     Date format for the <code>RFC1123</code> specification.
+    ///     Utility class to parse a string value into a date.
     /// </summary>
-    public const String RFC1123 =
-        "dd MMM yyyy HH':'mm':'ss '-0000'";
-    /// <summary>
-    ///     The date format used by cvsnt.
-    /// </summary>
-    public const String CVSNT1 =
-        "ddd MMM  d HH':'mm':'ss yyyy";    // single 'd' to support both single & double digit dates
-    //	        "ddd MMM dd HH':'mm':'ss yyyy";
-    //	        "ddd MMM dd HH:mm:ss yyyy";
-    public const String CVS_SINGLE_DAY =
-        "ddd MMM  d HH':'mm':'ss yyyy";    // single 'd' to support both single & double digit dates
-    public const String CVS_DOUBLE_DAY =
-        "ddd MMM dd HH':'mm':'ss yyyy";    // single 'd' to support both single & double digit dates
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+    public class DateParser {
+
+        /// <summary>
+        ///     Date format for the <code>RFC1123</code> specification.
+        /// </summary>
+        public const String RFC1123 =
+            "dd MMM yyyy HH':'mm':'ss '-0000'";
+        /// <summary>
+        ///     The date format used by cvsnt.
+        /// </summary>
+        public const String CVSNT1 =
+            "ddd MMM  d HH':'mm':'ss yyyy";    // single 'd' to support both single & double digit dates
+        //	        "ddd MMM dd HH':'mm':'ss yyyy";
+        //	        "ddd MMM dd HH:mm:ss yyyy";
+        public const String CVS_SINGLE_DAY =
+            "ddd MMM  d HH':'mm':'ss yyyy";    // single 'd' to support both single & double digit dates
+        public const String CVS_DOUBLE_DAY =
+            "ddd MMM dd HH':'mm':'ss yyyy";    // single 'd' to support both single & double digit dates
 
 
 
-    /// <summary>
-    ///     Private constructor because all accessor methods are going to
-    ///         be static public.
-    /// </summary>
-    private DateParser () {
-    }
+        /// <summary>
+        ///     Private constructor because all accessor methods are going to
+        ///         be static public.
+        /// </summary>
+        private DateParser () {
+        }
 
-    /// <summary>
-    ///     Parse the date string using a number of different potential
-    ///         cvs date formats.
-    /// </summary>
-    public static DateTime ParseCvsDate (String date) {
-        DateTime dateTime = DateTime.Now;
+        /// <summary>
+        ///     Parse the date string using a number of different potential
+        ///         cvs date formats.
+        /// </summary>
+        public static DateTime ParseCvsDate (String date) {
+            DateTime dateTime = DateTime.Now;
 
-        if (date != null && date.Length > 0)  {
-            try {
-                dateTime = DateParser.ParseRFC1123 (date);
-            } catch (FormatException) {
+            if (date != null && date.Length > 0)  {
                 try {
-                    dateTime = DateParser.ParseRFC1123WithZero (date);
+                    dateTime = DateParser.ParseRFC1123 (date);
                 } catch (FormatException) {
                     try {
-                        dateTime = DateParser.ParseCvsNT1 (date);
+                        dateTime = DateParser.ParseRFC1123WithZero (date);
                     } catch (FormatException) {
                         try {
-                            dateTime = DateTime.Parse (date);
+                            dateTime = DateParser.ParseCvsNT1 (date);
                         } catch (FormatException) {
-                            dateTime = DateTime.Now;
+                            try {
+                                dateTime = DateTime.Parse (date);
+                            } catch (FormatException) {
+                                dateTime = DateTime.Now;
+                            }
                         }
                     }
                 }
             }
+
+            return dateTime;
         }
 
-        return dateTime;
-    }
-
-    /// <summary>
-    ///     Create a cvs date string given the date time.
-    /// </summary>
-    /// <param name="date">The date to convert to a string.</param>
-    /// <returns>The date as a cvs formatted date string.</returns>
-    public static String GetCvsDateString (DateTime date) {
-        string dateString;
-        if (date.Day < 10) {
-            dateString = date.ToString(DateParser.CVS_SINGLE_DAY,
-                DateTimeFormatInfo.InvariantInfo);
-        } else {
-            dateString = date.ToString(DateParser.CVS_DOUBLE_DAY,
-                DateTimeFormatInfo.InvariantInfo);
+        /// <summary>
+        ///     Create a cvs date string given the date time.
+        /// </summary>
+        /// <param name="date">The date to convert to a string.</param>
+        /// <returns>The date as a cvs formatted date string.</returns>
+        public static String GetCvsDateString (DateTime date) {
+            string dateString;
+            if (date.Day < 10) {
+                dateString = date.ToString(DateParser.CVS_SINGLE_DAY,
+                    DateTimeFormatInfo.InvariantInfo);
+            } else {
+                dateString = date.ToString(DateParser.CVS_DOUBLE_DAY,
+                    DateTimeFormatInfo.InvariantInfo);
+            }
+            return dateString;
         }
-        return dateString;
+
+        /// <summary>
+        ///     Apply the correct UTC offset to the given time.  This is done
+        ///         to correct a bug in the .net framework.
+        /// </summary>
+        /// <param name="timeStamp">The timestamp to be corrected.</param>
+        /// <returns>The corrected timestamp for the file.</returns>
+        public static DateTime GetCorrectedTimeStamp (DateTime timeStamp) {
+            return timeStamp.Add (System.TimeZone.CurrentTimeZone.GetUtcOffset (timeStamp));
+        }
+
+
+        private static DateTime ParseRFC1123 (String date) {
+            return DateTime.ParseExact(date,
+                                    RFC1123,
+                                    DateTimeFormatInfo.InvariantInfo);
+        }
+
+        private static DateTime ParseRFC1123WithZero (String date) {
+            return DateTime.ParseExact("0" + date,
+                                    RFC1123,
+                                    DateTimeFormatInfo.InvariantInfo);
+        }
+
+        private static DateTime ParseCvsNT1 (String date) {
+            // These dates sometimes contain space padded 'day of month' rather than
+            // zero padded which results in a double space.  Hence the AllowWhiteSpaces.
+            return DateTime.ParseExact(date,
+                                    CVSNT1,
+                                    DateTimeFormatInfo.InvariantInfo,
+                                    DateTimeStyles.AllowWhiteSpaces);
+        }
+
     }
-
-    /// <summary>
-    ///     Apply the correct UTC offset to the given time.  This is done
-    ///         to correct a bug in the .net framework.
-    /// </summary>
-    /// <param name="timeStamp">The timestamp to be corrected.</param>
-    /// <returns>The corrected timestamp for the file.</returns>
-    public static DateTime GetCorrectedTimeStamp (DateTime timeStamp) {
-        return timeStamp.Add (System.TimeZone.CurrentTimeZone.GetUtcOffset (timeStamp));
-    }
-
-
-    private static DateTime ParseRFC1123 (String date) {
-        return DateTime.ParseExact(date,
-                                   RFC1123,
-                                   DateTimeFormatInfo.InvariantInfo);
-    }
-
-    private static DateTime ParseRFC1123WithZero (String date) {
-        return DateTime.ParseExact("0" + date,
-                                   RFC1123,
-                                   DateTimeFormatInfo.InvariantInfo);
-    }
-
-    private static DateTime ParseCvsNT1 (String date) {
-        // These dates sometimes contain space padded 'day of month' rather than
-        // zero padded which results in a double space.  Hence the AllowWhiteSpaces.
-        return DateTime.ParseExact(date,
-                                   CVSNT1,
-                                   DateTimeFormatInfo.InvariantInfo,
-                                   DateTimeStyles.AllowWhiteSpaces);
-    }
-
-}
 }

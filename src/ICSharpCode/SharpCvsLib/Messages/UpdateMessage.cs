@@ -27,8 +27,6 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author        Clayton Harbour
-//
 #endregion
 
 using System;
@@ -36,13 +34,15 @@ using System.Text;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.Messages {
 
-/// <summary>
-///     Used to handle a cvs server message.
-/// </summary>
-public class UpdateMessage : IMessage {
-
+    /// <summary>
+    ///     Used to handle a cvs server message.
+    /// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    public class UpdateMessage : IMessage {
         /// <summary>
         ///     Specify that this action is an update to the cvs file.
         /// </summary>

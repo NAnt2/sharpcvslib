@@ -29,6 +29,7 @@
 // exception statement from your version.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
@@ -37,6 +38,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// <summary>
     /// Response interface.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public interface IResponse
     {
         /// <summary>

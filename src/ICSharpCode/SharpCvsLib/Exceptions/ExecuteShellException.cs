@@ -31,6 +31,8 @@
 
 using System;
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.Exceptions {
 
     /// <summary>
@@ -38,8 +40,9 @@ namespace ICSharpCode.SharpCvsLib.Exceptions {
     ///     connections.  The shell exception occurs when there is a problem
     ///     using this binary.
     /// </summary>
-    public class ExecuteShellException : Exception
-    {
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+    public class ExecuteShellException : Exception {
         private string shell;
 
         /// <summary>

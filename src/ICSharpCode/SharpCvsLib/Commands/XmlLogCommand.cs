@@ -28,8 +28,6 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger,
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
 using System;
@@ -38,6 +36,7 @@ using System.IO;
 using System.Text;
 using System.Xml.Xsl;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
@@ -52,8 +51,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     /// The XmlLogCommand produces an xml representation of the changes that have occurred in the 
     /// cvs repository.
     /// </summary>
-    public class XmlLogCommand : ICommand
-    {
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    public class XmlLogCommand : ICommand {
         private ILog LOGGER =
             LogManager.GetLogger (typeof (XmlLogCommand));
         

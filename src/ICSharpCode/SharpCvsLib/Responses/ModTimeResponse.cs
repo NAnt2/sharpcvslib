@@ -29,6 +29,7 @@
 // exception statement from your version.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
@@ -37,6 +38,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// Handles a response from the server containing the modified
     ///     time.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class ModTimeResponse : AbstractResponse {
         /// <summary>
         /// Process the server response.

@@ -32,6 +32,7 @@
 
 using System;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
@@ -46,6 +47,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     ///     Additional data: New Entries line, \n. Like Checked-in, but the file is 
     ///     not up to date.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class NewEntryResponse : AbstractResponse {
         private readonly ILog LOGGER = LogManager.GetLogger(typeof (NewEntryResponse));
         /// <summary>

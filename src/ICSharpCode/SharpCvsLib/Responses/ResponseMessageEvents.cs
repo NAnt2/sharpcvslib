@@ -34,12 +34,15 @@
 using System;
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Messages;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
 	/// <summary>
 	/// Encapsulates the messages that can be triggered by a cvs server response.
 	/// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
 	public class ResponseMessageEvents {
         private readonly ILog LOGGER = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         /// <summary>

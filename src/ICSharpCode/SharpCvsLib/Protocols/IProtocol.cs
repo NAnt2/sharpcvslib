@@ -33,15 +33,16 @@
 
 using System;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Messages;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Streams;
 
-namespace ICSharpCode.SharpCvsLib.Protocols
-{
+namespace ICSharpCode.SharpCvsLib.Protocols {
 	/// <summary>
 	/// Handle connect and authentication for the pserver protocol.
 	/// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2004-2005")]
 	public interface IProtocol {
 
         /// <summary>

@@ -25,48 +25,49 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
 namespace ICSharpCode.SharpCvsLib.Requests {
 
-/// <summary>
-/// Zip the file contents before sending them to the server.
-/// </summary>
-public class GzipFileContents : AbstractRequest
-{
-    private int level;
-
     /// <summary>
-    /// Constructor.  Default zip level is 9.
+    /// Zip the file contents before sending them to the server.
     /// </summary>
-public GzipFileContents() : this(9)
-    {
-    }
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+    public class GzipFileContents : AbstractRequest {
+        private int level;
 
-    /// <summary>
-    /// Constructor taking the zip level to apply to the file
-    ///     before sending.
-    /// </summary>
-    /// <param name="level"></param>
-    public GzipFileContents(int level)
-    {
-        this.level = level;
-    }
+        /// <summary>
+        /// Constructor.  Default zip level is 9.
+        /// </summary>
+        public GzipFileContents() : this(9) {
+        }
 
-    /// <summary>
-    /// Request the contents be zipped before transmitting.
-    /// </summary>
-    public override string RequestString {
-        get {
-            return "gzip-file-contents " + level + "\n";
+        /// <summary>
+        /// Constructor taking the zip level to apply to the file
+        ///     before sending.
+        /// </summary>
+        /// <param name="level"></param>
+        public GzipFileContents(int level)
+        {
+            this.level = level;
+        }
+
+        /// <summary>
+        /// Request the contents be zipped before transmitting.
+        /// </summary>
+        public override string RequestString {
+            get {
+                return "gzip-file-contents " + level + "\n";
+            }
+        }
+
+        /// <summary>
+        /// <code>false</code>, a response is not expected.
+        /// </summary>
+        public override bool IsResponseExpected {
+            get {
+                return false;
+            }
         }
     }
-
-    /// <summary>
-    /// <code>false</code>, a response is not expected.
-    /// </summary>
-    public override bool IsResponseExpected {
-        get {
-            return false;
-        }
-    }
-}
 }

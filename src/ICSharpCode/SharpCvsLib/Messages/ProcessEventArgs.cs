@@ -27,16 +27,17 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Clayton Harbour</author>
-//
 #endregion
 
 using System;
+
+using ICSharpCode.SharpCvsLib.Attributes;
 
 namespace ICSharpCode.SharpCvsLib.Messages {
 	/// <summary>
 	/// Message event arguments.
 	/// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
 	public class ProcessEventArgs : EventArgs {
         private DateTime date;
 

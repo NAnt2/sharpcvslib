@@ -27,9 +27,6 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
-//
-//    Author:     Mike Krueger,
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
 using System;
@@ -37,6 +34,7 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
@@ -48,8 +46,9 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     /// <summary>
     /// Commit command
     /// </summary>
-    public class CommitCommand2 : ICommand
-    {
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    public class CommitCommand2 : ICommand {
         private readonly ILog LOGGER = LogManager.GetLogger (typeof (CommitCommand2));
         private WorkingDirectory workingdirectory;
         private string  logmessage;

@@ -1,5 +1,5 @@
 #region "Copyright"
-// Copyright (C) 2004 Gerald Evans
+// Copyright (C) 2004-2005 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -26,65 +26,34 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
-//
 #endregion
+
+using System;
 
 using ICSharpCode.SharpCvsLib.Attributes;
 
-namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
-	using System;
-	using System.Collections;
-	
-	
+namespace ICSharpCode.SharpCvsLib.Exceptions {
 	/// <summary>
-	/// This is the root of the LogReport object model
+	/// The unknown response exception is thrown when the cvs server returns 
+	///     a response that the client does not know how to handle.
 	/// </summary>
-	/// <remarks>
-	/// 	created by - gne
-	/// 	created on - 28/02/2004 15:25:05
-	/// </remarks>
-    [Author("Gerald Evans", "gne@users.sourceforge.net", "2004")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-	public class LogReport : IEnumerable {
-	    
-	    private ArrayList files = new ArrayList();
-		
-		/// <summary>
-		/// Default constructor - initializes all fields to default values
-		/// </summary>
-		public LogReport()
-		{
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+	public class UnsupportedResponseException : Exception{
+        /// <summary>
+        /// Indicate that an unknown response has been returned from the repository.
+        /// </summary>
+        /// <param name="msg">A useful message that will help a developer debug
+        ///     the problem that has occurred.</param>
+		public UnsupportedResponseException(String msg) : base (msg) {
 		}
-		
-		/// <summary>
-		/// Adds a LogFile to the LogReport
-		/// Only called when the LogReport is being constructed
-		/// </summary>
-		internal void AddFile(LogFile file)
-		{
-		    files.Add(file);
-		}
-		
-		/// <summary>
-		/// Gets an enumerator to enumerate over the files in the LogReport
-		/// </summary>
-		public IEnumerator GetEnumerator()
-		{
-		    return files.GetEnumerator();
-		}
-		
-		/// <summary>
-		/// The number of files in the LogReport
-		/// </summary>
-		public int Count {
-		    get { return files.Count; }
-		}
-		
-		/// <summary>
-		/// Indexer to the files in the LogReport
-		/// </summary>
-		public LogFile this[int index] {
-		    get { return (LogFile)files[index]; }
-		}
+
+        /// <summary>
+        /// Indicate that an unknown response has been returned from the repository.        /// </summary>
+        /// <param name="msg">A useful message that will help a developer debug
+        ///     the problem that has occurred.</param>
+        /// <param name="e"></param>
+        public UnsupportedResponseException (String msg, Exception e) : base (msg, e) {
+
+        }
 	}
 }

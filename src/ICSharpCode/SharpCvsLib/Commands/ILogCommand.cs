@@ -27,18 +27,19 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
-//
-//  <author>Clayton Harbour  {claytonharbour@sporadicism.com}</author>
 #endregion
 
 using System;
 using System.Collections;
+
+using ICSharpCode.SharpCvsLib.Attributes;
 
 namespace ICSharpCode.SharpCvsLib.Commands {
 
     /// <summary>
     /// Interface for the log and rlog commands.
     /// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public interface ILogCommand : ICommand {
         /// <summary>
         /// The date arguments for the log command.

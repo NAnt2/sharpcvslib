@@ -27,9 +27,6 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
-//
-//    <author>Mike Krueger</author>
-//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
@@ -42,6 +39,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Config;
 using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib.Misc;
@@ -61,6 +59,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
     /// <summary>
     /// Cvs server connection, handles connections to the cvs server.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class CVSServerConnection : 
         IConnection, IResponseServices, ICommandConnection {
 

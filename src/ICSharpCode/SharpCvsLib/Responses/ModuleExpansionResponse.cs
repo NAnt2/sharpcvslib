@@ -33,6 +33,7 @@ using System;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
@@ -47,6 +48,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     ///         file contains the `-d' option, it will be the directory specified 
     ///         with `-d', not the name of the module).
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class ModuleExpansionResponse : AbstractResponse {
         private readonly ILog LOGGER =
             LogManager.GetLogger (typeof (ModuleExpansionResponse));

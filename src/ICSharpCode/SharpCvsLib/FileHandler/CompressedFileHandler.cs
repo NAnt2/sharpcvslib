@@ -33,6 +33,7 @@ using System;
 using System.IO;
 using System.Text;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Config;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpCvsLib.Streams;
@@ -41,6 +42,8 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
     /// <summary>
     /// Implements a compressed file handler
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class CompressedFileHandler   /* WARNING : untested class :)*/
         : UncompressedFileHandler  {
 

@@ -38,6 +38,8 @@ using System.Globalization;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
     /// Information about the repository file.  This file is used to identify
@@ -45,6 +47,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///     repository.  Combined with the entry from the cvs entries file
     ///     this provides the relative path to the file on the cvs server.
     /// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class Repository : AbstractCvsFile, ICvsFile {
         private ILog LOGGER = LogManager.GetLogger (typeof (Repository));
         private String moduleName;

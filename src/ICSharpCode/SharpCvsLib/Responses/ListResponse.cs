@@ -31,6 +31,7 @@
 
 using System;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
@@ -40,6 +41,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// <summary>
     /// Handle a list files response from the cvs server.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class ListResponse : AbstractResponse {
         private static bool isHandling = false;
         /// <summary>

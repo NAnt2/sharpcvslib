@@ -25,12 +25,16 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.Requests {
 
     /// <summary>
     /// Request to import a module.
     ///     TODO: Add nice documentation like the other requests.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class ImportRequest : AbstractRequest
     {
         /// <summary>

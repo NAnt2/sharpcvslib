@@ -27,17 +27,20 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Clayton Harbour
 #endregion
 
 using System;
+
+using ICSharpCode.SharpCvsLib.Attributes;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
     /// An unsupported file type exception occurs if a file name of file type that
     ///     is not currently known about or not implemented.
     /// </summary>
-    public class UnsupportedFileTypeException : Exception {
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    [Obsolete("Use ICSharpCode.SharpCvsLib.FileSystem.UnsupportedFileTypeException")]
+    public class UnsupportedFileTypeException : ICSharpCode.SharpCvsLib.Exceptions.UnsupportedFileTypeException {
 
         /// <summary>
         /// An unsupported file type exception occurs if a file name of file type that

@@ -1,5 +1,5 @@
 #region "Copyright"
-// Copyright (C) 2004 Mike Krueger, Clayton Harbour
+// Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -44,11 +44,12 @@ using ICSharpCode.SharpCvsLib.Streams;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Protocols
-{
+namespace ICSharpCode.SharpCvsLib.Protocols {
 	/// <summary>
 	/// Handle connect and authentication for the pserver protocol.
 	/// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
 	[Protocol("ext")]
 	public class ExtProtocol : AbstractProtocol {
         private const string VERSION_ONE = "-1";

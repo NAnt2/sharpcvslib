@@ -1,6 +1,5 @@
 #region "Copyright"
-// ErrorMessageResponse.cs
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2005 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,54 +26,58 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
-#endregion
+//
+#endregion "Copyright"
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-using ICSharpCode.SharpCvsLib.Client;
-using ICSharpCode.SharpCvsLib.Streams;
-
-using log4net;
-
-namespace ICSharpCode.SharpCvsLib.Responses {
-    /// <summary>
-    /// Handles an error message response.
-    /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+namespace ICSharpCode.SharpCvsLib.Attributes {
+	/// <summary>
+	/// Summary description for ProtocolAttribute.
+	/// </summary>
+	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Assembly | 
+         AttributeTargets.Interface | AttributeTargets.Delegate, 
+         AllowMultiple=true,Inherited=false)] 
     [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class ErrorMessageResponse : AbstractResponse {
-        private readonly ILog LOGGER =
-            LogManager.GetLogger (typeof (ErrorMessageResponse));
+	public class AuthorAttribute : System.Attribute {
+        private string _name;
+        private string _email;
+        private string _year;
 
-        public static bool ListingFiles;
         /// <summary>
-        /// Process an error message response.
+        /// Name of the author.
         /// </summary>
-        public override void Process() {
-            string message = this.ReadLine();
-            if (message.Equals("Listing modules on server") || ListResponse.IsHandling) {
-                if (!ListResponse.IsHandling) {
-                    ListResponse.IsHandling = true;
-                }
-                ListResponse response = new ListResponse();
-                response.DelegateMessage = message;
-                response.Process((CvsStream)null, this.Services);
-            } else {
-                // Fire message event to the client app
-                Services.SendMessage("E " + message);
-                String msg = "cvs server: E " + message;
-                LOGGER.Debug (msg);
-
-                Services.ResponseMessageEvents.SendResponseMessage(msg, this.GetType());
-            }
+        public string Name {
+            get { return this._name; }
+            set { this._name = value; }
         }
 
         /// <summary>
-        /// Return true if this response cancels the transaction
+        /// Email address of the author.
         /// </summary>
-        public override bool IsTerminating {
-            get {return false;}
+        public string Email {
+            get { return this._email; } 
+            set { this._email = value; }
         }
-    }
+
+        /// <summary>
+        /// The year or year string (i.e. 2004-2005) that the author did 
+        /// work on the source.
+        /// </summary>
+        public string Year {
+            get { return this._year; }
+            set { this._year = value; }
+        }
+
+        /// <summary>
+        /// Creat a new instance of the <see cref="AuthorAttribute"/>.
+        /// </summary>
+        /// <param name="name">The name of the author.</param>
+        /// <param name="email">Email to contact the author.</param>
+		public AuthorAttribute(string name, string email, string year) {
+            this._name = name;
+            this._email = email;
+            this._year = year;
+		}
+	}
 }

@@ -1,5 +1,5 @@
 #region "Copyright"
-// Copyright (C) 2004 Mike Krueger, Clayton Harbour
+// Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,9 +27,6 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//  <author>Mike Krueger</author>
-//  <author>Clayton Harbour</author>
-//
 #endregion
 
 using System;
@@ -55,6 +52,8 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
 	/// <summary>
 	/// Handle connect and authentication for the pserver protocol.
 	/// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2004-2005")]
 	[Protocol("pserver")]
 	public class PServerProtocol : AbstractProtocol {
         private readonly ILog LOGGER =

@@ -27,17 +27,20 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Clayton Harbour
 #endregion
 
 using System;
+
+using ICSharpCode.SharpCvsLib.Attributes;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
     /// This exception is thrown if there is an attempt to write to a path that is
     ///     outside of the working path.
     /// </summary>
-    public class InvalidPathException : Exception {
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    [Obsolete ("Use ICSharpCode.SharpCvsLib.Exceptions.InvalidPathException.")]
+    public class InvalidPathException : ICSharpCode.SharpCvsLib.Exceptions.InvalidPathException {
 
         /// <summary>
         /// Occurs if there is an attempt to write to a path that is outside of the working

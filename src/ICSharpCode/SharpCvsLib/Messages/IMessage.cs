@@ -27,40 +27,40 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Clayton Harbour</author>
-//
 #endregion
 
 using System;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 namespace ICSharpCode.SharpCvsLib.Messages {
 
-/// <summary>
-///     Interface for handling message related to the cvs client/ server
-///         protocol.  Used to output useful server messages usually to
-///         some sort of interactive client.
-/// </summary>
-public interface IMessage {
-
     /// <summary>
-    ///     The cvs module being manipulated.
+    ///     Interface for handling message related to the cvs client/ server
+    ///         protocol.  Used to output useful server messages usually to
+    ///         some sort of interactive client.
     /// </summary>
-    String Module {get;set;}
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    public interface IMessage {
 
-    /// <summary>
-    ///     Repository information.
-    /// </summary>
-    String Repository {get;set;}
+        /// <summary>
+        ///     The cvs module being manipulated.
+        /// </summary>
+        String Module {get;set;}
 
-    /// <summary>
-    ///     The name of the file being manipulated.
-    /// </summary>
-    String Filename {get;set;}
+        /// <summary>
+        ///     Repository information.
+        /// </summary>
+        String Repository {get;set;}
 
-    /// <summary>
-    ///     Message to send to the user.
-    /// </summary>
-    String Message {get;}
+        /// <summary>
+        ///     The name of the file being manipulated.
+        /// </summary>
+        String Filename {get;set;}
 
-}
+        /// <summary>
+        ///     Message to send to the user.
+        /// </summary>
+        String Message {get;}
+
+    }
 }

@@ -28,13 +28,13 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 // 
-//  <author>Clayton Harbour</author>
 #endregion
 
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Config;
 
 using log4net;
@@ -45,6 +45,8 @@ namespace ICSharpCode.SharpCvsLib.Misc {
     /// Class to encapsulate the properties of the cvsroot for the
     ///     repository you are communicating with.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class CvsRoot {
         /// <summary>
         /// Regular expression for matching a cvsroot.

@@ -27,6 +27,8 @@
 
 using System;
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.Requests {
 
     /// <summary>
@@ -34,6 +36,8 @@ namespace ICSharpCode.SharpCvsLib.Requests {
     /// Save argument for use in a subsequent command. Arguments accumulate until
     /// an argument-using command is given, at which point they are forgotten.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class ArgumentRequest : AbstractRequest {
         private string arg;
 

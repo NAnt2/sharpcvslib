@@ -23,6 +23,7 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Util;
 
@@ -31,6 +32,8 @@ namespace ICSharpCode.SharpCvsLib.Requests {
     /// To be implemented by server requests.  Requests are used
     ///     by commands to communicate with the cvs server.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public abstract class AbstractRequest : IRequest {
         /// <summary>
         /// The string to send to the server.

@@ -28,17 +28,18 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Clayton Harbour</author>
-//
 #endregion
 
 using System;
+
+using ICSharpCode.SharpCvsLib.Attributes;
 
 namespace ICSharpCode.SharpCvsLib.Exceptions {
 	/// <summary>
 	/// An invalid cvsroot exception is thrown if the client attempts to send in
 	///     a root that is not understood by the server.  
 	/// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
 	public class CvsRootParseException : Exception{
         /// <summary>
         /// Indicate that an invalid cvsroot has been passed into the library.

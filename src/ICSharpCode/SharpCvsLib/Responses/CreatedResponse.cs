@@ -36,6 +36,7 @@ using System;
 using System.IO;
 using System.Text;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
@@ -64,6 +65,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     ///             For example, the client is case-insensitive and the names
     ///             differ only in case.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class CreatedResponse : AbstractResponse {
         private readonly ILog LOGGER =
             LogManager.GetLogger (typeof (CreatedResponse));

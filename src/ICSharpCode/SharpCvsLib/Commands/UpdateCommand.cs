@@ -28,14 +28,13 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger,
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
 using System;
 using System.Collections;
 using System.IO;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
@@ -49,8 +48,9 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     /// Command to refresh the working folder with the current sources
     ///     from the repository.
     /// </summary>
-    public class UpdateCommand2 : ICommand
-    {
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    public class UpdateCommand2 : ICommand {
         private readonly ILog LOGGER =
             LogManager.GetLogger (typeof (UpdateCommand2));
 

@@ -23,40 +23,43 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 
 namespace ICSharpCode.SharpCvsLib.Requests {
 
-/// <summary>
-/// Interface for handling requests to the cvs server.
-/// </summary>
-public interface IRequest
-{
     /// <summary>
-    /// Request string
+    /// Interface for handling requests to the cvs server.
     /// </summary>
-    string RequestString {
-        get;
-    }
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+    public interface IRequest
+    {
+        /// <summary>
+        /// Request string
+        /// </summary>
+        string RequestString {
+            get;
+        }
 
-    /// <summary>
-    /// Indicator specifying if the response is expected or not.
-    /// </summary>
-    bool IsResponseExpected {
-        get;
-    }
+        /// <summary>
+        /// Indicator specifying if the response is expected or not.
+        /// </summary>
+        bool IsResponseExpected {
+            get;
+        }
 
-    /// <summary>
-    /// Indicator specifying if the response modifies the connection.
-    /// </summary>
-    bool DoesModifyConnection {
-        get;
-    }
+        /// <summary>
+        /// Indicator specifying if the response modifies the connection.
+        /// </summary>
+        bool DoesModifyConnection {
+            get;
+        }
 
-    /// <summary>
-    /// Modify the connection
-    /// </summary>
-    /// <param name="connection"></param>
-    void ModifyConnection(IConnection connection);
-}
+        /// <summary>
+        /// Modify the connection
+        /// </summary>
+        /// <param name="connection"></param>
+        void ModifyConnection(IConnection connection);
+    }
 }

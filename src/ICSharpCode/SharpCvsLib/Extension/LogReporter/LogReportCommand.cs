@@ -27,8 +27,6 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Gerald Evans</author>
-//
 #endregion
 
 using System;
@@ -40,6 +38,7 @@ using System.Xml;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Commands;
 using ICSharpCode.SharpCvsLib.Exceptions;
@@ -72,8 +71,9 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
     ///	   }
     ///
     /// </summary>
-    public class LogReportCommand
-    {
+    [Author("Gerald Evans", "gne@users.sourceforge.net", "2004")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+    public class LogReportCommand {
         private ILog LOGGER = LogManager.GetLogger (typeof (LogReportCommand));
 
     	private CvsRoot cvsRoot;

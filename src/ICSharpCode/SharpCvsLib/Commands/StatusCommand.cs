@@ -35,6 +35,7 @@
 using System;
 using System.IO;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Messages;
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Responses;
@@ -46,9 +47,11 @@ using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Commands {
     /// <summary>
-    /// Status command.
-    ///     TODO: Figure out what this is used for.
+    /// The status command is used to determine the local file version and the repsoitory 
+    /// file version for the file or files specified.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2002")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class StatusCommand : ICommand {
         private WorkingDirectory _workingdirectory;
         private string directory;

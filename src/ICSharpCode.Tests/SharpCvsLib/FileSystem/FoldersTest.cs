@@ -1,5 +1,6 @@
 #region "Copyright"
-// Copyright (C) 2003 Clayton Harbour
+// FolderTest.cs
+// Copyright (C) 2005 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,21 +29,37 @@
 // exception statement from your version.
 //
 //    <author>Clayton Harbour</author>
+//
 #endregion
 
 using System;
 using System.Collections;
 
-using log4net;
+using ICSharpCode.SharpCvsLib.FileSystem;
 
-namespace ICSharpCode.SharpCvsLib.Options
-{
-	/// <summary>
-	/// The entries collection holds a collection of objects that represent cvs
-	///     entries.  The key to the collection is the path to the file that the
-	///     cvs entry represents on the file system.
-	/// </summary>
-	public class AvailableOptions : AbstractOptions {
-        private ILog LOGGER = LogManager.GetLogger (typeof (AvailableOptions));
+using NUnit.Framework;
+
+namespace ICSharpCode.SharpCvsLib.FileSystem {
+
+    /// <summary>
+    /// Represents a list of entries in the repository or
+    ///     in simple terms a folder or directory on the
+    ///     cvs server.
+    /// </summary>
+    [TestFixture]
+    public class FolderTest {
+        /// <summary>
+        /// Perform setup operations.
+        /// </summary>
+        [SetUp]
+        public void SetUp () {
+        }
+
+        /// <summary>Perform tear down operations.</summary>
+        [TearDown]
+        public void TearDown () {
+
+        }
+
     }
 }

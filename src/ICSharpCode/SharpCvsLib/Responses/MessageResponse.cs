@@ -31,6 +31,7 @@
 
 using System;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
@@ -41,6 +42,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// <summary>
     /// Message response.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class MessageResponse : AbstractResponse {
         private bool terminating;
         private readonly ILog LOGGER =

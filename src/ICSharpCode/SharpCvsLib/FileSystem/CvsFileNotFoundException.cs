@@ -27,10 +27,11 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
+
+using ICSharpCode.SharpCvsLib.Attributes;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
@@ -38,6 +39,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///     cannot be found inthe given path.  The full path to the file being
     ///     searched for should be provided.
     /// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
+    [Obsolete("Use ICSharpCode.SharpCvsLib.Exceptions.CvsFileNotFoundException.")]
     public class CvsFileNotFoundException : Exception {
 
         /// <summary>

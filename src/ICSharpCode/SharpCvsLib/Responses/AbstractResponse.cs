@@ -35,6 +35,7 @@ using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
@@ -42,6 +43,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	/// <summary>
 	/// Provides common implementation and methods for the response objects.
 	/// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2004-2005")]
 	public abstract class AbstractResponse : IResponse {
         private StringBuilder msg = new StringBuilder();
         private CvsStream stream;

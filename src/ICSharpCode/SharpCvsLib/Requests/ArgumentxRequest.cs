@@ -25,40 +25,43 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.Requests {
 
-/// <summary>
-/// Response expected: no. Append \n followed by text to the current argument being saved
-/// </summary>
-public class ArgumentxRequest : AbstractRequest
-{
-    private string arg;
-
     /// <summary>
-    /// TODO: Figure out what this is for.
+    /// Response expected: no. Append \n followed by text to the current argument being saved
     /// </summary>
-    /// <param name="arg"></param>
-    public ArgumentxRequest(string arg)
-    {
-        this.arg = arg;
-    }
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+    public class ArgumentxRequest : AbstractRequest {
+        private string arg;
 
-    /// <summary>
-    /// TODO: Figure out what this is for.
-    /// </summary>
-    public override string RequestString {
-        get {
-            return "Argumentx " + arg + "\n";
+        /// <summary>
+        /// TODO: Figure out what this is for.
+        /// </summary>
+        /// <param name="arg"></param>
+        public ArgumentxRequest(string arg)
+        {
+            this.arg = arg;
+        }
+
+        /// <summary>
+        /// TODO: Figure out what this is for.
+        /// </summary>
+        public override string RequestString {
+            get {
+                return "Argumentx " + arg + "\n";
+            }
+        }
+
+        /// <summary>
+        /// <code>false</code>, response is not expected.
+        /// </summary>
+        public override bool IsResponseExpected {
+            get {
+                return false;
+            }
         }
     }
-
-    /// <summary>
-    /// <code>false</code>, response is not expected.
-    /// </summary>
-    public override bool IsResponseExpected {
-        get {
-            return false;
-        }
-    }
-}
 }

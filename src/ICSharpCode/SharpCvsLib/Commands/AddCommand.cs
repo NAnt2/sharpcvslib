@@ -16,19 +16,24 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
-// As a special exception, if you link this library with other files to
-// produce an executable, this library does not by itself cause the
-// resulting executable to be covered by the GNU General Public License.
-// This exception does not however invalidate any other reasons why the
-// executable file might be covered by the GNU General Public License.
-//
-//      <author>Clayton Harbour</author>
+// As a special exception, the copyright holders of this library give you
+// permission to link this library with independent modules to produce an
+// executable, regardless of the license terms of these independent
+// modules, and to copy and distribute the resulting executable under
+// terms of your choice, provided that you also meet, for each linked
+// independent module, the terms and conditions of the license of that
+// module.  An independent module is a module which is not derived from
+// or based on this library.  If you modify this library, you may extend
+// this exception to your version of the library, but you are not
+// obligated to do so.  If you do not wish to do so, delete this
+// exception statement from your version.
 #endregion
 
 using System;
 using System.Collections;
 using System.IO;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
@@ -36,8 +41,7 @@ using ICSharpCode.SharpCvsLib.FileSystem;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Commands
-{
+namespace ICSharpCode.SharpCvsLib.Commands {
 	/// <summary>
 	/// 
 	/// copied from: http://developer.apple.com/darwin/tools/cvs/cederquist/cvs_60.html
@@ -66,6 +70,7 @@ namespace ICSharpCode.SharpCvsLib.Commands
     ///
     ///    When you add a file it is added only on the branch which you are working on (see section 5 Branching and merging). You can later merge the additions to another branch if you want (see section 5.9 Merging can add or remove files). 
 	/// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
 	public class AddCommand : ICommand {
         private WorkingDirectory workingDirectory;
 

@@ -39,11 +39,14 @@ using ICSharpCode.SharpCvsLib.Streams;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.FileHandler {
+using ICSharpCode.SharpCvsLib.Attributes;
 
+namespace ICSharpCode.SharpCvsLib.FileHandler {
     /// <summary>
     /// Implements the uncompressed file handler
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class UncompressedFileHandler : IFileHandler {
         private SharpCvsLibConfig settings = SharpCvsLibConfig.GetInstance();
 

@@ -27,8 +27,6 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Gerald Evans</author>
-//
 #endregion
 
 using System;
@@ -38,6 +36,7 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Commands;
 using ICSharpCode.SharpCvsLib.Exceptions;
@@ -68,8 +67,9 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
     ///    // or cvsChangeLog.Run(stdioFile, password)
     ///
     /// </summary>
-    public class CvsChangeLog
-    {
+    [Author("Gerald Evans", "gne@users.sourceforge.net", "2003")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+    public class CvsChangeLog {
         // Name mapping set by caller    
         private StringDictionary nameMap = new StringDictionary();   
 

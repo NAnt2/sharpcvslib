@@ -31,6 +31,7 @@
 
 using System;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Messages;
 using ICSharpCode.SharpCvsLib.FileSystem;
@@ -50,6 +51,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     ///    a date, or something else for future expansion. The remainder of
     ///    tagspec contains the actual tag or date.
     /// </summary>
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class SetStickyResponse : AbstractResponse {
 
         private ILog LOGGER =

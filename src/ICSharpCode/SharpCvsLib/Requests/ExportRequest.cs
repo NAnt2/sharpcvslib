@@ -25,30 +25,33 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.Requests {
 
-/// <summary>
-/// Request that the server export the module.
-///     TODO: Add cvs documentation for this as well.
-/// </summary>
-public class ExportRequest : AbstractRequest
-{
     /// <summary>
-    /// Request to export the cvs module.
+    /// Request that the server export the module.
+    ///     TODO: Add cvs documentation for this as well.
     /// </summary>
-    public override string RequestString {
-        get {
-            return "export\n";
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+    public class ExportRequest : AbstractRequest {
+        /// <summary>
+        /// Request to export the cvs module.
+        /// </summary>
+        public override string RequestString {
+            get {
+                return "export\n";
+            }
         }
-    }
 
-    /// <summary>
-    /// <code>true</code>, response is expected.
-    /// </summary>
-    public override bool IsResponseExpected {
-        get {
-            return true;
+        /// <summary>
+        /// <code>true</code>, response is expected.
+        /// </summary>
+        public override bool IsResponseExpected {
+            get {
+                return true;
+            }
         }
     }
-}
 }

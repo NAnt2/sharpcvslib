@@ -27,8 +27,6 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Gerald Evans</author>
-//
 #endregion
 
 using System;
@@ -36,11 +34,15 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Xml;
 
+using ICSharpCode.SharpCvsLib.Attributes;
+
 namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
     /// <summary>
     /// Represents a single cvs checkin which may consist of
     /// multiple files.  
     /// </summary>
+    [Author("Gerald Evans", "gne@users.sourceforge.net", "2003")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class LogEntry : IComparable {
         DateTime date;
         string author;

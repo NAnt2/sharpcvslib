@@ -34,6 +34,7 @@
 using System;
 using System.Text;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Config;
 
 using log4net;
@@ -50,6 +51,7 @@ namespace ICSharpCode.SharpCvsLib.Logs {
     /// A failure at any level causes the program to attempt to log to another
     ///     level.
     /// </summary>
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class RequestLog {
         private SharpCvsLibConfig settings;
         private readonly ILog LOGGER = LogManager.GetLogger (typeof (RequestLog));

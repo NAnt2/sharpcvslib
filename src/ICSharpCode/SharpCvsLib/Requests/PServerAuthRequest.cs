@@ -28,6 +28,7 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 
 using log4net;
@@ -38,8 +39,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
     /// this isn't an official request, this is the authorization for the
     /// pserver protocol.
     /// </summary>
-    public class PServerAuthRequest : AbstractRequest
-    {
+    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
+    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
+    public class PServerAuthRequest : AbstractRequest {
         private const String VAR_HOME = "HOME";
         private const String CVSPASS = ".cvspass";
         private string cvsroot;
