@@ -520,7 +520,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         /// <param name="cvsFile">The full path to the file or directory.</param>
         /// <returns>The path to the cvs directory.</returns>
-        internal String GetCvsDir (ICvsFile cvsFile) {
+        public String GetCvsDir (ICvsFile cvsFile) {
             String path = cvsFile.ParentDir.FullName;
 
             if (cvsFile is Entry) {

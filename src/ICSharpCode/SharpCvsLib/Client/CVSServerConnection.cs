@@ -54,6 +54,7 @@ using ICSharpCode.SharpCvsLib.Protocols;
 
 using log4net;
 
+[assembly: log4net.Config.XmlConfigurator(Watch=true)]
 namespace ICSharpCode.SharpCvsLib.Client {
 
     /// <summary>

@@ -53,6 +53,7 @@ using ICSharpCode.SharpCvsLib.Messages;
 using log4net;
 using log4net.Config;
 
+[assembly: log4net.Config.XmlConfigurator(Watch=true)]
 namespace ICSharpCode.SharpCvsLib.Console {
 
     /// <summary>The main driver/ entry point into the program.</summary>
@@ -278,7 +279,7 @@ namespace ICSharpCode.SharpCvsLib.Console {
         private string GetPassword(CommandLineParser parser, WorkingDirectory workingDir) {
             string pwd = null;
             if (null != parser && null != parser.Password &&
-				parser.Password.Length != 0) {
+                parser.Password.Length != 0) {
                 pwd = parser.Password;
             } else {
                 LoginCommand loginCommand = new LoginCommand(workingDir.CvsRoot);

@@ -128,7 +128,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
 		/// Adds a LogRevision to the LogFile
 		/// Only called when the LogReport is being constructed
 		/// </summary>
-		internal void AddRevision(LogRevision revision)
+		public void AddRevision(LogRevision revision)
 		{
 		    revisions.Add(revision);
 		}

@@ -60,7 +60,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
 		/// Adds a LogFile to the LogReport
 		/// Only called when the LogReport is being constructed
 		/// </summary>
-		internal void AddFile(LogFile file)
+		public void AddFile(LogFile file)
 		{
 		    files.Add(file);
 		}

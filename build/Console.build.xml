@@ -25,6 +25,7 @@
             <sources basedir="${dir.src}/${name.top-level}.${name.console}/${name.project}">
                 <include name="Main.cs" />
                 <include name="AssemblyHelper.cs"/>
+                <include name="${dir.src}/SharpCvsLibAssemblyInfo.cs"/>
             </sources>
 
             <references>
@@ -53,6 +54,8 @@
             
             <sources basedir="${dir.src}/${name.top-level}.${name.console}/${name.project}">
                 <include name="**/*.cs" />
+                <include name="${dir.src}/SharpCvsLibAssemblyInfo.cs"/>
+                
                 <exclude name="Main.cs"/>
                 <exclude name="AssemblyInfo.cs"/>
             </sources>

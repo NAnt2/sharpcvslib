@@ -49,7 +49,7 @@
 
 
     <!-- V E R S I O N  I N F O R M A T I O N -->
-    <property name="BuildType" value="debug"/>
+    <property name="BuildType" value="Release"/>
     <property name="assembly.start-date" value="2001-01-01" />  <!-- This is a guess at the start date, it is used to generate the current version number. -->
     <property name="assembly.title" value="Concurrent Versions System (sharpCVS) (client)" />
     <property name="assembly.copyright.text" value="Mike Krueger 2001-2002, SharpCvsLib Developers 2003-${current.year}
@@ -63,7 +63,7 @@ a copy of which can be found with the CVS distribution kit." />
     
     <!-- C O M P I L E R  S E T T I N G S -->
     <property name="compile.warnaserror" value="false" />
-    <property name="compile.debug" value="true" />
+    <property name="compile.debug" value="false" />
     <property name="compile.unsafe" value="/unsafe-" />
     <property name="compile.checked" value="/checked-" />
     <property name="compile.define" value="DEBUG;TRACE" />

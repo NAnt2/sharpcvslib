@@ -67,7 +67,6 @@
                     <import name="System" />
                     <import name="System.Reflection" />
                     <import name="System.Runtime.InteropServices" />
-                    <import name="log4net.Config" />
                 </imports>
                 <attributes>
                     <attribute type="ComVisibleAttribute" value="false" />
@@ -77,7 +76,6 @@
                     <attribute type="AssemblyDescriptionAttribute" value="${assembly.description}" />
                     <attribute type="AssemblyCopyrightAttribute" value="${assembly.copyright.text}" />
                     <attribute type="AssemblyCompanyAttribute" value="${assembly.company}" />
-                    <attribute type="log4net.Config.XmlConfigurator" value="Watch=true" asis="true" />
                 </attributes>
                 <references>
                     <include name="log4net.dll" />
