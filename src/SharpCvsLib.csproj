@@ -160,6 +160,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Commands\ILogCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Commands\ImportModuleCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -181,6 +186,11 @@
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Commands\RetreiveFilelistCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Commands\RLogCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -500,6 +510,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Requests\DateRequest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Requests\DiffRequest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -596,6 +611,11 @@
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Requests\RequestMessageEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Requests\RLogRequest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

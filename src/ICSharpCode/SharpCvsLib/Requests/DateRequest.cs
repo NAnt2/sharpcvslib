@@ -1,6 +1,6 @@
 #region "Copyright"
 // ArgumentRequest.cs
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2004 Clayton Harbour
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
 //
@@ -23,9 +23,12 @@
 // resulting executable to be covered by the GNU General Public License.
 // This exception does not however invalidate any other reasons why the
 // executable file might be covered by the GNU General Public License.
+//
+//  <author>Clayton Harbour</author>
 #endregion
 
 using System;
+using System.Text;
 
 namespace ICSharpCode.SharpCvsLib.Requests {
 
@@ -34,41 +37,54 @@ namespace ICSharpCode.SharpCvsLib.Requests {
     /// Save argument for use in a subsequent command. Arguments accumulate until
     /// an argument-using command is given, at which point they are forgotten.
     /// </summary>
-    public class ArgumentRequest : AbstractRequest {
-        private string arg;
+    public class DateRequest : AbstractRequest
+    {
+        private DateTime startDate;
+        private DateTime endDate;
+
+        private bool isEndDateIncluded;
+        /// <summary>
+        /// <code>true</code> if the end date should be included in the request, otherwise
+        /// <code>false</code>.
+        /// </summary>
+        public bool IsEndDateIncluded {
+            get {return this.isEndDateIncluded;}
+            set {this.isEndDateIncluded = value;}
+        }
 
         /// <summary>The options that are available as
         /// arguments to the cvs server.</summary>
-        public class Options {
-            /// <summary>The cvs command used to specify a specific revision
-            ///     is requested.</summary>
-            public const String REVISION = "-r";
-
+        private class Options {
             /// <summary>The cvs argument used to specify a revision
             ///     by date.</summary>
-            public const String DATE = "-D";
-
-            /// <summary>Cvs command to specify that the name of a cvs
-            /// module is comming.</summary>
-            public const String MODULE_NAME = "-N";
-
-            /// <summary>Cvs argument to specify that the local directory
-            /// will be different than the module directory.</summary>
-            public const String OVERRIDE_DIRECTORY = "-d";
-
-            /// <summary>
-            /// Send in a dash request.
-            /// TODO: Figure out what the dash request actually does.
-            /// </summary>
-            public const String DASH = "--";
+            public const String LOG_DATE = "-d";
         }
 
         /// <summary>
-        /// An argument to use with the cvs command.
+        /// Create a new instance of the rlog/ log date request.
         /// </summary>
-        /// <param name="arg">The argument to send to the server.</param>
-        public ArgumentRequest(string arg) {
-            this.arg = arg;
+        /// <param name="startDate"></param>
+        public DateRequest(DateTime startDate) : this(startDate, DateTime.Now, true) {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        public DateRequest(DateTime startDate, DateTime endDate) : this(startDate, endDate, true) {
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <param name="isEndDateIncluded"></param>
+        public DateRequest(DateTime startDate, DateTime endDate, bool isEndDateIncluded) {
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.isEndDateIncluded = true;
         }
 
         /// <summary>
@@ -76,7 +92,17 @@ namespace ICSharpCode.SharpCvsLib.Requests {
         /// </summary>
         public override string RequestString {
             get {
-                return "Argument " + arg + "\n";
+                StringBuilder msg = new StringBuilder ();
+                msg.Append(Options.LOG_DATE);
+                msg.Append(Util.DateParser.GetCvsDateString(startDate));
+                
+                msg.Append("<");
+                if (this.IsEndDateIncluded) {
+                    msg.Append("=");
+                }
+                msg.Append(Util.DateParser.GetCvsDateString(endDate));
+                msg.Append("\n");
+                return msg.ToString();
             }
         }
 

@@ -49,7 +49,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 /// Log command.
 ///     TODO: Figure out what this is for.
 /// </summary>
-public class LogCommand : ICommand
+public class LogCommand : ICommand, ILogCommand
 {
     private ILog LOGGER =
         LogManager.GetLogger (typeof (LogCommand));
@@ -64,6 +64,13 @@ public class LogCommand : ICommand
     private bool headerAndDescOnly = false;
     private bool headerOnly        = false;
     private bool noTags            = false;
+
+    /// <summary>
+    /// The date arguments for the log command.
+    /// </summary>
+    public ICollection DateArgs {
+        get {return this.dateArgs;}
+    }
 
     /// <summary>
     /// The default branch to use for the module.

@@ -118,9 +118,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// <param name="workingDirectory">Directory on the local file system that represents a 
         /// working "sandbox" of the remote cvs repository.</param>
         /// <param name="module">Module to report on.</param>
-        public XmlLogCommand(WorkingDirectory workingDirectory, string module)
-        {
-            this.cvsChangeLog = new CvsChangeLog(workingDirectory.LocalDirectory, module);
+        public XmlLogCommand(WorkingDirectory workingDirectory, string module) {
+            this.cvsChangeLog = new CvsChangeLog(workingDirectory, module);
         }
 
         private ICommandConnection connection;

@@ -41,110 +41,83 @@ using ICSharpCode.SharpCvsLib.Requests;
 
 namespace ICSharpCode.SharpCvsLib.Commands {
 	/// <summary>
-	/// Recursively tags a given module.
-	/// </summary>
-	public class RLogCommand : ICommand {
+	/// Recursively create a log of each file in the given module.
+    /// 
+    /// Usage: cvs rlog [-lRhtNbT] [-r[revisions]] [-d dates] [-s states]
+    ///     [-w[logins]] [files...]
+    ///     -l      Local directory only, no recursion.
+    ///     -R      Only print name of RCS file.
+    ///     -h      Only print header.
+    ///     -t      Only print header and descriptive text.
+    ///     -T      Use local time not GMT.
+    ///     -S      Supress header information when no revisions are selected.
+    ///     -N      Do not list tags.
+    ///     -b      Only list revisions on the default branch.
+    ///     -r[revisions]   Specify revision(s)s to list.
+    ///         rev1:rev2   Between rev1 and rev2, including rev1 and rev2.
+    ///         rev1::rev2  Between rev1 and rev2, excluding rev1 and rev2.
+    ///         rev1:::rev2 Between rev1 and rev2, excluding rev1.
+    ///         rev:        rev and following revisions on the same branch.
+    ///         rev::       After rev on the same branch.
+    ///         :rev        rev and previous revisions on the same branch.
+    ///         ::rev       Before rev on the same branch.
+    ///         rev         Just rev.
+    ///         branch      All revisions on the branch.
+    ///         branch.     The last revision on the branch.
+    ///     -d dates        Specify dates (D1&lt;D2 for range, D for latest before).
+    ///     -s states       Only list revisions with specified states.
+    ///     -w[logins]      Only list revisions checked in by specified logins.
+    ///
+    /// </summary>
+	public class RLogCommand : LogCommand, ILogCommand {
         private WorkingDirectory workingDirectory;
 
-        private ILog LOGGER = LogManager.GetLogger (typeof (RTagCommand));
+        private ILog LOGGER = LogManager.GetLogger (typeof (RLogCommand));
 
-        private class Options {
-            public const String CLEAR_TAG = "-a";
-            public const String CREATE_BRANCH = "-b";
-            public const String DELETE_TAG = "-d";
-        }
 
         /// <summary>
-        /// Perform an rtag against the repository.  The rtag command has a number
-        ///     of request options that may be specified.  These are translated into
-        ///     boolean values where possible to calling classes.  A summary of 
-        ///     available command options is listed below and is listed in the private
-        ///     options classes.
-        ///    
-        ///         -D date
-        ///             Tag the most recent revision no later than date. 
-        ///         -f
-        ///             Only useful with the `-D date' or `-r tag' flags. 
-        ///             If no matching revision is found, use the most recent 
-        ///             revision (instead of ignoring the file). 
-        ///         -F
-        ///             Overwrite an existing tag of the same name on a different 
-        ///             revision. 
-        ///         -l
-        ///             Local; run only in current working directory. 
-        ///         -n
-        ///             Do not run any tag program that was specified with the `-t' 
-        ///             flag inside the `modules' file. (see section The modules 
-        ///             file). 
-        ///         -R
-        ///             Tag directories recursively. This is on by default. 
-        ///         -r tag
-        ///             Only tag those files that contain tag. This can be used to 
-        ///             rename a tag: tag only the files identified by the old tag, 
-        ///             then delete the old tag, leaving the new tag on exactly the 
-        ///             same files as the old tag. 
-        ///
-        ///         In addition to the above common options, these options are 
-        ///         available:
-        ///
-        ///         -a
-        ///             Use the `-a' option to have rtag look in the `Attic' 
-        ///             (see section The attic) for removed files that contain the 
-        ///             specified tag. The tag is removed from these files, which 
-        ///             makes it convenient to re-use a symbolic tag as development 
-        ///             continues (and files get removed from the up-coming 
-        ///             distribution). 
-        ///         -b
-        ///             Make the tag a branch tag. See section Branching and merging. 
-        ///         -d
-        ///             Delete the tag instead of creating it. In general, tags 
-        ///             (often the symbolic names of software distributions) should 
-        ///             not be removed, but the `-d' option is available as a means 
-        ///             to remove completely obsolete symbolic names if necessary 
-        ///             (as might be the case for an Alpha release, or if you 
-        ///             mistagged a module).  
-        ///             
+        /// 
         /// </summary>
-        /// <param name="workingDirectory">The working directory which contains
-        ///     the repository information.</param>
-		public RLogCommand(WorkingDirectory workingDirectory) {
+        /// <param name="workingDirectory"></param>
+        /// <param name="module"></param>
+		public RLogCommand(WorkingDirectory workingDirectory, string module) : base(workingDirectory, null, null) {
             this.workingDirectory = workingDirectory;
 		}
-
-        private bool deleteTag = false;
-        /// <summary>
-        /// <code>true</code> if the given tag should be deleted; defaults to 
-        ///     <code>false</code>.
-        /// </summary>
-        public bool DeleteTag {
-            get {return this.deleteTag;}
-            set {this.deleteTag = value;}
-        }
-
-        private String tagName;
-        /// <summary>
-        /// The name of the tag.
-        /// </summary>
-        public String TagName {
-            get {return this.tagName;}
-            set {this.tagName = value;}
-        }
 
         /// <summary>
         /// Execute checkout module command.
         /// </summary>
         /// <param name="connection">Server connection</param>
-        public void Execute(ICommandConnection connection) {
-            connection.SubmitRequest(new CaseRequest());
+        public new void Execute(ICommandConnection connection) {
+            string relativeDirectory = this.workingDirectory.ModuleName;
 
-            if (this.deleteTag) {
-                connection.SubmitRequest(new ArgumentRequest(Options.DELETE_TAG));
+            // Note: don't use Path.Combine() as the separator must be "/"
+            string repositoryDir = workingDirectory.CvsRoot.CvsRepository + "/" + relativeDirectory;
+            connection.SubmitRequest(new DirectoryRequest(relativeDirectory, repositoryDir));
+
+            if (DefaultBranch) {
+                connection.SubmitRequest(new ArgumentRequest("-b"));
+            }
+            if (HeaderAndDescOnly) {
+                connection.SubmitRequest(new ArgumentRequest("-t"));
+            }
+            if (HeaderOnly) {
+                connection.SubmitRequest(new ArgumentRequest("-h"));
+            }
+            if (NoTags) {
+                connection.SubmitRequest(new ArgumentRequest("-N"));
+            }
+        
+            // add any date arguments
+            foreach (object o in DateArgs) {
+                string dateArg = (string)o;
+                connection.SubmitRequest(new ArgumentRequest("-d"));
+                connection.SubmitRequest(new ArgumentRequest(dateArg));
             }
 
-            connection.SubmitRequest(new ArgumentRequest(TagName));
             connection.SubmitRequest(new ArgumentRequest(workingDirectory.ModuleName));
 
-            connection.SubmitRequest(new RTagRequest());
+            connection.SubmitRequest(new RLogRequest());
         }
 
 	}

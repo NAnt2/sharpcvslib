@@ -196,7 +196,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
         public LogReport Run(ICommandConnection connection)
         {
            // read Root and Repository from local directory
-            if (null == cvsRoot) {
+            if (null == this.cvsRoot) {
                 Manager manager = new Manager(localDirectory);
                 Root root = (Root)manager.FetchSingle (localDirectory,
                     Factory.FileType.Root);
@@ -214,12 +214,16 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
                     repository.FileContents);
             }
         
+            ILogCommand command;
             // Recursively add all cvs folders/files under the localDirectory
-            if (Directory.Exists(localDirectory)) {
+            if (Directory.Exists(workingDirectory.WorkingPath)) {
                 workingDirectory.FoldersToUpdate = FetchFiles(localDirectory);
+                command = 
+                    new LogCommand(workingDirectory, this.workingDirectory.ModuleName, null);
+            } else {
+                command = 
+                    new RLogCommand(workingDirectory, this.workingDirectory.ModuleName);
             }
-            
-            LogCommand command = new LogCommand(workingDirectory, this.workingDirectory.ModuleName, null);
     
             // add any date restrictions        
             if (hasStartDate && hasEndDate) {
@@ -324,16 +328,13 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
                 
                 if (message.StartsWith(revisionEndPrefix)) {
                     // seperator between file and revision or between revisions
-                    if (logState == LogState.WANT_FILE_HEADER_START)
-                    {
+                    if (logState == LogState.WANT_FILE_HEADER_START) {
                         // ignore this (shouldn't happen)
                     }
-                    else if (logState == LogState.WANT_FILE_HEADER || logState == LogState.WANT_FILE_DESCRIPTION)
-                    {
+                    else if (logState == LogState.WANT_FILE_HEADER || logState == LogState.WANT_FILE_DESCRIPTION) {
                         // this is the seperator between te file header and the first revision
                     }
-                    else
-                    {
+                    else {
                         // seperator between revisions
                         curLogFile.AddRevision(curLogRevision);
                     }
@@ -342,17 +343,14 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
                 }
                 else if (message.StartsWith(fileEndPrefix)) {
                     // seperator between files
-                    if (logState == LogState.WANT_FILE_HEADER_START)
-                    {
+                    if (logState == LogState.WANT_FILE_HEADER_START) {
                         // ignore this (shouldn't happen)
                     }
-                    else if (logState == LogState.WANT_FILE_HEADER || logState == LogState.WANT_FILE_DESCRIPTION)
-                    {
+                    else if (logState == LogState.WANT_FILE_HEADER || logState == LogState.WANT_FILE_DESCRIPTION) {
                         // file with no revisions
                         curLogReport.AddFile(curLogFile);
                     }
-                    else
-                    {
+                    else {
                         // first add the revision
                         curLogFile.AddRevision(curLogRevision);
                         curLogRevision = new LogRevision();
@@ -362,51 +360,50 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
                     curLogFile = new LogFile();
                     logState = LogState.WANT_FILE_HEADER_START;    
                 }
-                else
-                {
+                else {
                     switch (logState) {
-                    case LogState.WANT_FILE_HEADER_START:        // drop into WANT_FILE_HEADER
-                    case LogState.WANT_FILE_HEADER:
-                        if (message.StartsWith(repositoryFnmPrefix)) {
-                            // file line is of form 'RCS file: <filename>'
-                            curLogFile.RepositoryFnm = message.Substring(repositoryFnmPrefix.Length);
-                            logState = LogState.WANT_FILE_HEADER;
-                        }
-                        else if (message.StartsWith(workingFnmPrefix)) {
-                            // file line is of form 'Working file: <filename>'
-                            curLogFile.WorkingFnm = message.Substring(workingFnmPrefix.Length);
-                            logState = LogState.WANT_FILE_HEADER;
-                        }
-                        else if (message.StartsWith(descriptionPrefix)) {
-                            // description line is of form 'description:'
-                            // and is then optionally followed by a multi-line description
-                            logState = LogState.WANT_FILE_DESCRIPTION;
-                        }
-                        break;
-                                    
-                    case LogState.WANT_FILE_DESCRIPTION:
-                        // append description line to the description
-                        if (curLogFile.Description.Length > 0) {
-                            curLogFile.Description += Environment.NewLine;
-                        }
-                        curLogFile.Description += message;
-                        break;
-                        
-                    case LogState.WANT_REVISION:
-                        if (message.StartsWith(revisionPrefix) && curLogRevision.Revision.Length == 0) {
-                            curLogRevision.Revision = message.Substring(revisionPrefix.Length);
-                        } else if (message.StartsWith(datePrefix) && curLogRevision.Author.Length == 0) {
-                            ExtractDateAndAuthor(message);
-                        } else if (message.StartsWith(branchesPrefix) && curLogRevision.Branches.Length == 0) {
-                            curLogRevision.Branches = message.Substring(branchesPrefix.Length);
-                        } else {
-                            // assume this is part of the comment
-                            if (curLogRevision.Comment.Length > 0) {
-                                curLogRevision.Comment += Environment.NewLine;
+                        case LogState.WANT_FILE_HEADER_START:        // drop into WANT_FILE_HEADER
+                        case LogState.WANT_FILE_HEADER:
+                            if (message.StartsWith(repositoryFnmPrefix)) {
+                                // file line is of form 'RCS file: <filename>'
+                                curLogFile.RepositoryFnm = message.Substring(repositoryFnmPrefix.Length);
+                                logState = LogState.WANT_FILE_HEADER;
                             }
-                            curLogRevision.Comment += message;
-                        }
-                        break;
+                            else if (message.StartsWith(workingFnmPrefix)) {
+                                // file line is of form 'Working file: <filename>'
+                                curLogFile.WorkingFnm = message.Substring(workingFnmPrefix.Length);
+                                logState = LogState.WANT_FILE_HEADER;
+                            }
+                            else if (message.StartsWith(descriptionPrefix)) {
+                                // description line is of form 'description:'
+                                // and is then optionally followed by a multi-line description
+                                logState = LogState.WANT_FILE_DESCRIPTION;
+                            }
+                            break;
+                                    
+                        case LogState.WANT_FILE_DESCRIPTION:
+                            // append description line to the description
+                            if (curLogFile.Description.Length > 0) {
+                                curLogFile.Description += Environment.NewLine;
+                            }
+                            curLogFile.Description += message;
+                            break;
+                        
+                        case LogState.WANT_REVISION:
+                            if (message.StartsWith(revisionPrefix) && curLogRevision.Revision.Length == 0) {
+                                curLogRevision.Revision = message.Substring(revisionPrefix.Length);
+                            } else if (message.StartsWith(datePrefix) && curLogRevision.Author.Length == 0) {
+                                ExtractDateAndAuthor(message);
+                            } else if (message.StartsWith(branchesPrefix) && curLogRevision.Branches.Length == 0) {
+                                curLogRevision.Branches = message.Substring(branchesPrefix.Length);
+                            } else {
+                                // assume this is part of the comment
+                                if (curLogRevision.Comment.Length > 0) {
+                                    curLogRevision.Comment += Environment.NewLine;
+                                }
+                                curLogRevision.Comment += message;
+                            }
+                            break;
                     }
                 }
             }

@@ -185,6 +185,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Commands\RLogCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Commands\RTagCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
