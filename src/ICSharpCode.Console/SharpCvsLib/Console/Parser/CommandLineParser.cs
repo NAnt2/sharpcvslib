@@ -530,6 +530,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         return true;
                     case "--help-synonyms":
                         System.Console.WriteLine(Usage.Synonyms);
+			return true;
+		    case "--version":
+		        System.Console.WriteLine(Usage.Version);
                         return true;
                 }
                 if (arguments[i].IndexOf("--") > -1) {
