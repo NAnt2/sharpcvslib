@@ -47,183 +47,188 @@ using log4net;
 using NUnit.Framework;
 
 namespace ICSharpCode.SharpCvsLib.Console {
-
-/// <summary>
-///     Test the command line args parameters for valid ones
-///         and test invalid ones.
-/// </summary>
-[TestFixture]
-public class MainTest {
-    private ILog LOGGER = LogManager.GetLogger (typeof (MainTest));
-    private TestSettings settings = new TestSettings ();
-
-    private String buildDir;
     /// <summary>
-    ///     Constructory for test case.
+    ///     Test the command line args parameters for valid ones
+    ///         and test invalid ones.
     /// </summary>
-    public MainTest () {
-        buildDir = System.AppDomain.CurrentDomain.BaseDirectory;
+    [TestFixture]
+    public class MainTest {
+        private ILog LOGGER = LogManager.GetLogger (typeof (MainTest));
+        private TestSettings settings = new TestSettings ();
+
+        private String buildDir;
+        /// <summary>
+        ///     Constructory for test case.
+        /// </summary>
+        public MainTest () {
+            buildDir = System.AppDomain.CurrentDomain.BaseDirectory;
+        }
+
+        /// <summary>
+        ///     Ensure valid help parameter processing.
+        ///
+        /// </summary>
+        [Test]
+        public void GenericHelpTest ()
+        {
+            // Get Executable name
+            String filename = Path.Combine (buildDir, "cvs.exe");
+
+            LOGGER.Debug ("buildDir=[" + buildDir + "]");
+            LOGGER.Debug ("filename=[" + filename + "]");
+
+            // Create new process
+            ProcessStartInfo cvsProcessInfo = new ProcessStartInfo(filename, "--help");
+            cvsProcessInfo.UseShellExecute = false;
+            cvsProcessInfo.RedirectStandardOutput = true;
+            cvsProcessInfo.CreateNoWindow = true;
+
+            // Run the process
+            Process cvsProcess = new Process();
+            cvsProcess.StartInfo = cvsProcessInfo;
+            cvsProcess.WaitForInputIdle(10);
+            cvsProcess.Start();
+            string output = cvsProcess.StandardOutput.ReadToEnd();
+            cvsProcess.WaitForExit();
+
+            // Check the results of process output
+            Assertion.AssertEquals (Usage.General + "\r\n", output);
+        }
+        /// <summary>
+        ///     Ensure valid option help parameter processing.
+        ///
+        /// </summary>
+        [Test]
+        public void OptionHelpTest ()
+        {
+            // Get Executable name
+            String filename = Path.Combine (buildDir, "cvs.exe");
+            // Add Help option parameter to executable name
+            // Create new process
+            ProcessStartInfo cvsProcessInfo = new ProcessStartInfo(filename, "--help-options");
+            cvsProcessInfo.UseShellExecute = false;
+            cvsProcessInfo.RedirectStandardOutput = true;
+            cvsProcessInfo.CreateNoWindow = true;
+
+            // Run the process
+            Process cvsProcess = new Process();
+            cvsProcess.StartInfo = cvsProcessInfo;
+            cvsProcess.WaitForInputIdle(10);
+            cvsProcess.Start();
+            string output = cvsProcess.StandardOutput.ReadToEnd();
+            cvsProcess.WaitForExit();
+
+            // Check the results of process output
+            Assertion.AssertEquals (Usage.Options + "\r\n", output);
+
+        }		/// <summary>
+        ///     Ensure valid commands help parameter processing.
+        ///
+        /// </summary>
+        [Test]
+        public void CommandsHelpTest ()
+        {
+            // Test Commands help parameter
+            // Get Executable name
+            String filename = Path.Combine (buildDir, "cvs.exe");
+
+            // Create new process
+            ProcessStartInfo cvsProcessInfo = new ProcessStartInfo(filename, "--help-commands");
+            cvsProcessInfo.UseShellExecute = false;
+            cvsProcessInfo.RedirectStandardOutput = true;
+            cvsProcessInfo.CreateNoWindow = true;
+
+            // Run the process
+            Process cvsProcess = new Process();
+            cvsProcess.StartInfo = cvsProcessInfo;
+            cvsProcess.WaitForInputIdle(10);
+            cvsProcess.Start();
+            string output = cvsProcess.StandardOutput.ReadToEnd();
+            cvsProcess.WaitForExit();
+
+            // Check the results of process output
+            Assertion.AssertEquals (Usage.Commands + "\r\n", output);
+        }
+        /// <summary>
+        ///     Ensure valid synonyms help parameter processing.
+        ///
+        /// </summary>
+        [Test]
+        public void SynonymsHelpTest ()
+        {
+            // Get Executable name
+            String filename = Path.Combine (buildDir, "cvs.exe");
+
+            // Create new process
+            ProcessStartInfo cvsProcessInfo = new ProcessStartInfo(filename, "--help-synonyms");
+            cvsProcessInfo.UseShellExecute = false;
+            cvsProcessInfo.RedirectStandardOutput = true;
+            cvsProcessInfo.CreateNoWindow = true;
+
+            // Run the process
+            Process cvsProcess = new Process();
+            cvsProcess.StartInfo = cvsProcessInfo;
+            cvsProcess.WaitForInputIdle(10);
+            cvsProcess.Start();
+            string output = cvsProcess.StandardOutput.ReadToEnd();
+            cvsProcess.WaitForExit();
+
+            // Check the results of process output
+            Assertion.AssertEquals (Usage.Synonyms + "\r\n", output);
+        }
+        /// <summary>
+        ///     Ensure invalid help parameter processing.
+        ///
+        /// </summary>
+        [Test]
+        public void BadHelpTest ()
+        {
+            // Get Executable name
+            String filename = Path.Combine (buildDir, "cvs.exe");
+
+            // Create new process
+            ProcessStartInfo cvsProcessInfo = new ProcessStartInfo(filename, "--help-bad");
+            cvsProcessInfo.UseShellExecute = false;
+            cvsProcessInfo.RedirectStandardOutput = true;
+            cvsProcessInfo.CreateNoWindow = true;
+
+            // Run the process
+            Process cvsProcess = new Process();
+            cvsProcess.StartInfo = cvsProcessInfo;
+            cvsProcess.WaitForInputIdle(10);
+            cvsProcess.Start();
+            string output = cvsProcess.StandardOutput.ReadToEnd();
+            cvsProcess.WaitForExit();
+
+            // Check the results of process output
+            Assertion.AssertEquals (Usage.General + "\r\n", output);
+        }
+        /// <summary>
+        ///     Ensure no parameters processing.
+        ///
+        /// </summary>
+        [Test]
+        public void NoParamTest ()
+        {
+            // Get Executable name
+            String filename = Path.Combine (buildDir, "cvs.exe");
+
+            // Create new process
+            ProcessStartInfo cvsProcessInfo = new ProcessStartInfo(filename);
+            cvsProcessInfo.UseShellExecute = false;
+            cvsProcessInfo.RedirectStandardOutput = true;
+            cvsProcessInfo.CreateNoWindow = true;
+
+            // Run the process
+            Process cvsProcess = new Process();
+            cvsProcess.StartInfo = cvsProcessInfo;
+            cvsProcess.WaitForInputIdle(10);
+            cvsProcess.Start();
+            string output = cvsProcess.StandardOutput.ReadToEnd();
+            cvsProcess.WaitForExit();
+
+            // Check the results of process output
+            Assertion.AssertEquals (Usage.General + "\r\n", output);
+        }
     }
-
-    /// <summary>
-    ///     Ensure valid help parameter processing.
-    ///
-    /// </summary>
-    [Test]
-    public void GenericHelpTest ()
-    {
-        // Get Executable name
-        String filename = Path.Combine (buildDir, "cvs.exe");
-
-        LOGGER.Debug ("buildDir=[" + buildDir + "]");
-        LOGGER.Debug ("filename=[" + filename + "]");
-
-        // Create new process
-        ProcessStartInfo cvsProcessInfo = new ProcessStartInfo(filename, "--help");
-        cvsProcessInfo.UseShellExecute = false;
-        cvsProcessInfo.RedirectStandardOutput = true;
-        cvsProcessInfo.CreateNoWindow = true;
-
-        // Run the process
-        Process cvsProcess = new Process();
-        cvsProcess.StartInfo = cvsProcessInfo;
-        cvsProcess.Start();
-        string output = cvsProcess.StandardOutput.ReadToEnd();
-        cvsProcess.WaitForExit();
-
-        // Check the results of process output
-        Assertion.AssertEquals (Usage.General + "\r\n", output);
-    }
-    /// <summary>
-    ///     Ensure valid option help parameter processing.
-    ///
-    /// </summary>
-    [Test]
-    public void OptionHelpTest ()
-    {
-        // Get Executable name
-        String filename = Path.Combine (buildDir, "cvs.exe");
-        // Add Help option parameter to executable name
-        // Create new process
-        ProcessStartInfo cvsProcessInfo = new ProcessStartInfo(filename, "--help-options");
-        cvsProcessInfo.UseShellExecute = false;
-        cvsProcessInfo.RedirectStandardOutput = true;
-        cvsProcessInfo.CreateNoWindow = true;
-
-        // Run the process
-        Process cvsProcess = new Process();
-        cvsProcess.StartInfo = cvsProcessInfo;
-        cvsProcess.Start();
-        string output = cvsProcess.StandardOutput.ReadToEnd();
-        cvsProcess.WaitForExit();
-
-        // Check the results of process output
-        Assertion.AssertEquals (Usage.Options + "\r\n", output);
-
-    }		/// <summary>
-    ///     Ensure valid commands help parameter processing.
-    ///
-    /// </summary>
-    [Test]
-    public void CommandsHelpTest ()
-    {
-        // Test Commands help parameter
-        // Get Executable name
-        String filename = Path.Combine (buildDir, "cvs.exe");
-
-        // Create new process
-        ProcessStartInfo cvsProcessInfo = new ProcessStartInfo(filename, "--help-commands");
-        cvsProcessInfo.UseShellExecute = false;
-        cvsProcessInfo.RedirectStandardOutput = true;
-        cvsProcessInfo.CreateNoWindow = true;
-
-        // Run the process
-        Process cvsProcess = new Process();
-        cvsProcess.StartInfo = cvsProcessInfo;
-        cvsProcess.Start();
-        string output = cvsProcess.StandardOutput.ReadToEnd();
-        cvsProcess.WaitForExit();
-
-        // Check the results of process output
-        Assertion.AssertEquals (Usage.Commands + "\r\n", output);
-    }
-    /// <summary>
-    ///     Ensure valid synonyms help parameter processing.
-    ///
-    /// </summary>
-    [Test]
-    public void SynonymsHelpTest ()
-    {
-        // Get Executable name
-        String filename = Path.Combine (buildDir, "cvs.exe");
-
-        // Create new process
-        ProcessStartInfo cvsProcessInfo = new ProcessStartInfo(filename, "--help-synonyms");
-        cvsProcessInfo.UseShellExecute = false;
-        cvsProcessInfo.RedirectStandardOutput = true;
-        cvsProcessInfo.CreateNoWindow = true;
-
-        // Run the process
-        Process cvsProcess = new Process();
-        cvsProcess.StartInfo = cvsProcessInfo;
-        cvsProcess.Start();
-        string output = cvsProcess.StandardOutput.ReadToEnd();
-        cvsProcess.WaitForExit();
-
-        // Check the results of process output
-        Assertion.AssertEquals (Usage.Synonyms + "\r\n", output);
-    }
-    /// <summary>
-    ///     Ensure invalid help parameter processing.
-    ///
-    /// </summary>
-    [Test]
-    public void BadHelpTest ()
-    {
-        // Get Executable name
-        String filename = Path.Combine (buildDir, "cvs.exe");
-
-        // Create new process
-        ProcessStartInfo cvsProcessInfo = new ProcessStartInfo(filename, "--help-bad");
-        cvsProcessInfo.UseShellExecute = false;
-        cvsProcessInfo.RedirectStandardOutput = true;
-        cvsProcessInfo.CreateNoWindow = true;
-
-        // Run the process
-        Process cvsProcess = new Process();
-        cvsProcess.StartInfo = cvsProcessInfo;
-        cvsProcess.Start();
-        string output = cvsProcess.StandardOutput.ReadToEnd();
-        cvsProcess.WaitForExit();
-
-        // Check the results of process output
-        Assertion.AssertEquals (Usage.General + "\r\n", output);
-    }
-    /// <summary>
-    ///     Ensure no parameters processing.
-    ///
-    /// </summary>
-    [Test]
-    public void NoParamTest ()
-    {
-        // Get Executable name
-        String filename = Path.Combine (buildDir, "cvs.exe");
-
-        // Create new process
-        ProcessStartInfo cvsProcessInfo = new ProcessStartInfo(filename);
-        cvsProcessInfo.UseShellExecute = false;
-        cvsProcessInfo.RedirectStandardOutput = true;
-        cvsProcessInfo.CreateNoWindow = true;
-
-        // Run the process
-        Process cvsProcess = new Process();
-        cvsProcess.StartInfo = cvsProcessInfo;
-        cvsProcess.Start();
-        string output = cvsProcess.StandardOutput.ReadToEnd();
-        cvsProcess.WaitForExit();
-
-        // Check the results of process output
-        Assertion.AssertEquals (Usage.General + "\r\n", output);
-    }
-}
 }

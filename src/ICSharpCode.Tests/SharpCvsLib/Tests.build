@@ -30,10 +30,58 @@
             </references>
         </csc>
     </target>
+    <target name="build-sample">
+        <csc    target="library" 
+                warnaserror="${compile.warnaserror}" 
+                output="${dir.build}/${name.top-level}.${name.project}.${name.tests}-sample.dll" 
+                debug="${compile.debug}" 
+                define="${compile.define}">
+                
+            <arg value="${compile.unsafe}" />
+            <arg value="${compile.checked}" />
+            
+<!-- // TODO: Change to internalize helpers (accessor) -->
+            <sources>
+                <includes name="**/*.cs" />
+                <includes name="../../${name.top-level}/${name.project}/**.cs" />
+                <includes name="../../${name.top-level}.${name.console}/${name.project}/**.cs" />
+                <excludes name="../../${name.top-level}.${name.console}/${name.project}/AssemblyInfo.cs" />
+                <excludes name="Commands/*.cs" />
+                <excludes name="Console/Commands/CheckoutCommandTest.cs"/>
+                <excludes name="Console/Commands/UpdateCommandTest.cs"/>
+                <excludes name="Console/Commands/LoginCommandTest.cs"/>
+            </sources>
+
+            <references>
+                <includes name="System.dll" />            
+                <includes name="${dir.lib}/${lib.zip}" />
+                <includes name="${dir.lib.ext}/${lib.log4net}" />
+                <includes name="${dir.lib.ext}/${lib.nunit}" />
+<!-- // TODO: Change to internalize helpers (lib.accessor) -->
+<!--                <includes name="${dir.build}/${lib.name}.dll" />-->
+            </references>
+        </csc>
+    </target>
     <target name="run-tests">
+        <echo message="Results output directory: ${dir.build}/results" />
         <nunit2>
-                <test assemblyname="${dir.build}/${name.top-level}.${name.project}.${name.tests}.dll" appconfig="ICSharpCode.SharpCvsLib.Tests.dll.config"/>
+            <formatter type="Xml" usefile="true" extension=".xml" outputdir="${dir.build}/tests" />
+            <test assemblyname="${dir.build}/${name.top-level}.${name.project}.${name.tests}.dll" appconfig="ICSharpCode.SharpCvsLib.Tests.dll.config"/>
         </nunit2>
     </target>
-
+    <target name="run-tests-sample" depends="build-sample">
+        <echo message="Results output directory: ${dir.build}/tests" />
+        <nunit2>
+            <formatter type="Xml" usefile="true" extension=".xml" outputdir="${dir.build}/tests" />
+            <test assemblyname="${dir.build}/${name.top-level}.${name.project}.${name.tests}-sample.dll" 
+                  appconfig="ICSharpCode.SharpCvsLib.Tests.dll.config"/>
+        </nunit2>
+    </target>
+    <target name="tests-to-html" failonerror="false">
+        <nunit2report out="${dir.build}/tests/index.html" >
+            <fileset>
+                <includes name="${dir.build}/tests/${name.top-level}.${name.project}.${name.tests}-sample.dll-results.xml" />
+            </fileset>
+        </nunit2report>
+    </target>
 </project>

@@ -145,29 +145,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                         entry.TimeStamp = entry.TimeStamp;
     				
                         String fileName = Path.Combine(entry.Path, entry.Name);
-                        bool fileExists;
-                        fileExists = File.Exists (fileName);
-
-                        if (!fileExists) {
-                            // file does not exist or has been lost, pull down a fresh one
-                            connection.SubmitRequest (new EntryRequest (entry));
-                        } else if (File.GetLastAccessTime(fileName) != entry.TimeStamp) {
-                            // If the file looks like it has been modified then
-                            //  pass a modified request up to the server.
-                            connection.SubmitRequest(new ModifiedRequest(entry.Name));
-
-                            connection.SendFile(fileName, entry.IsBinaryFile);
-                        } else {
-                            // Else the file is not changed, pass this information
-                            //  up to the server as well, can't hurt.
-                            connection.SubmitRequest(new EntryRequest(entry));
-                            connection.SubmitRequest(new UnchangedRequest(entry.Name));
-                        }
-    				
-                        entry.TimeStamp = old;
-
-                        connection.SubmitRequest(new EntryRequest(entry));
-                        this.FetchFile (connection, entry);
+                        this.SendFileRequest (connection, entry);
                     }
                 }
                 connection.SubmitRequest(new UpdateRequest());
@@ -193,7 +171,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             }
         }
 
-        private void FetchFile (ICommandConnection connection,
+        private void SendFileRequest (ICommandConnection connection,
                                 Entry entry) {
             bool fileExists;
             DateTime old = entry.TimeStamp;
