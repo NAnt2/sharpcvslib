@@ -346,7 +346,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         this.commandTxt = arguments[i];
                         try {
                             LoginCommand loginCommand = 
-                                new LoginCommand(this.CvsRoot);
+                                new LoginCommand(this.CvsRoot, this.currentWorkingDirectory);
+                            this.currentWorkingDirectory.CvsRoot = this.CvsRoot;
                             command = loginCommand;
                         } 
                         catch (Exception e) {

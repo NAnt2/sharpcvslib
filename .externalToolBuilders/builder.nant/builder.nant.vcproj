@@ -1,7 +1,7 @@
-<?xml version="1.0" encoding = "Windows-1252"?>
+<?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="7.00"
+	Version="7.10"
 	Name="builder.nant"
 	ProjectGUID="{A76B2D4F-C424-410B-A6F1-7831B5E38E7D}"
 	Keyword="MakeFileProj">
@@ -32,6 +32,8 @@
 				Output="ExternalBuilder.NAnt.exe"/>
 		</Configuration>
 	</Configurations>
+	<References>
+	</References>
 	<Files>
 		<Filter
 			Name="Source Files"

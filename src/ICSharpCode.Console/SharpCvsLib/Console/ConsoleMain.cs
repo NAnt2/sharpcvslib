@@ -85,6 +85,8 @@ namespace ICSharpCode.SharpCvsLib.Console {
                 return;
             }
 
+            LOGGER.Debug("command type: " + command.GetType());
+
             if (null != command) {
                 // might need to move this up to the library, make working
                 //  directory a public property??  Not sure.
@@ -93,42 +95,52 @@ namespace ICSharpCode.SharpCvsLib.Console {
                 string password = "";
 
                 // Create CVSServerConnection object that has the ICommandConnection
-                CVSServerConnection serverConn = new CVSServerConnection();
-                try{
-                    // try connecting with empty password for anonymous users
-                    serverConn.Connect(workingDirectory, password);
+                CVSServerConnection serverConn = new CVSServerConnection(workingDirectory);
+
+                if (null == serverConn) {
+                    System.Console.WriteLine("Unable to connect to server.");
+                    Environment.Exit(-1);
                 }
-                catch (AuthenticationException eDefault){
-                    LOGGER.Info("Authentication failed using empty password, trying .cvspass file.", eDefault);
+
+                if (command.GetType() == typeof (LoginCommand)) {
+                    command.Execute (serverConn);
+                } else {
                     try{
-                        //string scrambledpassword;
-                        // check to connect with password from .cvspass file
-                        // check for .cvspass file and get password
-                        //password = PasswordScrambler.Descramble(scrambledpassword);
+                        // try connecting with empty password for anonymous users
                         serverConn.Connect(workingDirectory, password);
                     }
-                    catch (AuthenticationException eCvsPass){
-                        try {
-                            LOGGER.Info("Authentication failed using .cvspass file, prompting for password.", eCvsPass);
-                            // prompt user for password by using login command?
-                            LoginCommand login = new LoginCommand(workingDirectory.CvsRoot);
-                            serverConn.Connect(workingDirectory, login.Password);
-                            throw eCvsPass;
-                        } catch (AuthenticationException e) {
-                            StringBuilder msg = new StringBuilder();
-                            msg.Append("Fatal error, aborting.");
-                            msg.Append("cvs [login aborted]: ")
-                                .Append(workingDirectory.CvsRoot.User)
-                                .Append(": unknown user or bad password.");
-                            LOGGER.Error(msg, e);
-                            System.Console.WriteLine(msg.ToString());
-                            Environment.Exit(-1);
+                    catch (AuthenticationException eDefault){
+                        LOGGER.Info("Authentication failed using empty password, trying .cvspass file.", eDefault);
+                        try{
+                            //string scrambledpassword;
+                            // check to connect with password from .cvspass file
+                            // check for .cvspass file and get password
+                            //password = PasswordScrambler.Descramble(scrambledpassword);
+                            serverConn.Connect(workingDirectory, password);
+                        }
+                        catch (AuthenticationException eCvsPass){
+                            try {
+                                LOGGER.Info("Authentication failed using .cvspass file, prompting for password.", eCvsPass);
+                                // prompt user for password by using login command?
+                                LoginCommand login = new LoginCommand(workingDirectory.CvsRoot);
+                                serverConn.Connect(workingDirectory, login.Password);
+                                throw eCvsPass;
+                            } catch (AuthenticationException e) {
+                                StringBuilder msg = new StringBuilder();
+                                msg.Append("Fatal error, aborting.");
+                                msg.Append("cvs [login aborted]: ")
+                                    .Append(workingDirectory.CvsRoot.User)
+                                    .Append(": unknown user or bad password.");
+                                LOGGER.Error(msg, e);
+                                System.Console.WriteLine(msg.ToString());
+                                Environment.Exit(-1);
+                            }
                         }
                     }
+                    // Execute the command on cvs repository.
+                    command.Execute(serverConn);
+                    serverConn.Close();
                 }
-                // Execute the command on cvs repository.
-                command.Execute(serverConn);
-                serverConn.Close();
             }
         }
     }

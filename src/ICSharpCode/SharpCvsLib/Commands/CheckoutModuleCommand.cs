@@ -66,7 +66,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         public void Execute(ICommandConnection connection) {
             workingDirectory.Clear();
 
-            connection.SubmitRequest(new CaseRequest());
+            //connection.SubmitRequest(new CaseRequest());
             connection.SubmitRequest(new ArgumentRequest(workingDirectory.ModuleName));
 
             connection.SubmitRequest(new DirectoryRequest(".",

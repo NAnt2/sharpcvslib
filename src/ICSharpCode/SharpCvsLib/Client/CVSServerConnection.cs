@@ -117,6 +117,15 @@ namespace ICSharpCode.SharpCvsLib.Client {
         }
 
         /// <summary>
+        /// Create a new connection and initialize with the working directory
+        /// object.
+        /// </summary>
+        /// <param name="workingDirectory"></param>
+        public CVSServerConnection (WorkingDirectory workingDirectory) : this() {
+            this.repository = workingDirectory;
+        }
+
+        /// <summary>
         /// Gets a file handler for files that are not zipped.
         /// </summary>
         public IFileHandler UncompressedFileHandler {
@@ -350,7 +359,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
             SubmitRequest(new RootRequest(repository.CvsRoot.CvsRepository));
 
             SubmitRequest(new GlobalOptionRequest(GlobalOptionRequest.Options.QUIET));
-            SubmitRequest(new CaseRequest());
+            //SubmitRequest(new CaseRequest());
 
         }
 	

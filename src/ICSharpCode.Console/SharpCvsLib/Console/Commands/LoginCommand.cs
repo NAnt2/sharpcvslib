@@ -32,6 +32,7 @@
 #endregion
 
 using System;
+using System.IO;
 
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Commands;
@@ -44,38 +45,52 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
     /// Login to a cvs repository.
     /// </summary>
     public class LoginCommand : ICommand {
+        private CvsRoot cvsRoot;
         private string password;
-        private string username;
+        private  WorkingDirectory workingDirectory;
+
+        private const string CVSPASS_FILE = ".cvspass";
+        private const string HOME = "HOME";
 
         /// <summary>
         /// The text value of the password that will be used to login.  This should be
         ///     translated into one of the public API command objects.
         /// </summary>
-        public String Password {
+        public CvsRoot CvsRoot {
+            get {return this.cvsRoot;}
+        }
+
+        /// <summary>
+        /// Get the password.
+        /// </summary>
+        public string Password {
             get {return this.password;}
+            set {this.password = PasswordScrambler.Scramble(value);}
         }
 
         /// <summary>
         /// Login to a cvs repository.
         /// </summary>
-        /// <param name="cvsroot">User information</param>
-        public LoginCommand(string cvsroot) : this(new CvsRoot(cvsroot)) {
+        /// <param name="cvsRoot">User information</param>
+        public LoginCommand(string cvsRoot) : this(new CvsRoot(cvsRoot)) {
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="cvsroot"></param>
-        public LoginCommand (CvsRoot cvsroot) {
-            username = cvsroot.User;            
+        /// <param name="cvsRoot"></param>
+        public LoginCommand (CvsRoot cvsRoot) {
+            this.cvsRoot = cvsRoot;
         }
 
         /// <summary>
         /// Login to a cvs repository with workDirectory object
         /// </summary>
+        /// <param name="cvsRoot">The repository root.</param>
         /// <param name="workingDirectory">User information</param>
-        public LoginCommand(WorkingDirectory workingDirectory){
-            username = workingDirectory.CvsRoot.User;
+        public LoginCommand(CvsRoot cvsRoot, WorkingDirectory workingDirectory){
+            this.cvsRoot = cvsRoot;
+            this.workingDirectory = workingDirectory;
             // Is there a password file?
             //     yes, get password for this username
             //     no, prompt user for password to use
@@ -88,13 +103,47 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             // Is there a password file?
             //     yes, get password for this username
             //     no, prompt user for password to use
-            System.Console.Write("CVS password for {0}: ", username);
+            System.Console.Write("CVS password for {0}: ", this.cvsRoot.User);
             password = System.Console.ReadLine();
+
+            password = PasswordScrambler.Scramble(password);
 
             // once we have a password then put it in the .cvspass file.
             // this file is either in the HOME directory or in the root of the 
             // current folder.
-            // TODO: Finish implementation of this command.
+            FileInfo passwordFile = 
+                this.GetPassfile(System.Environment.GetEnvironmentVariable(HOME));
+
+            if (null == passwordFile) {
+                passwordFile = 
+                    this.GetPassfile(Environment.GetFolderPath(Environment.SpecialFolder.Personal));
+            }
+
+            if (null == passwordFile) {
+                passwordFile = this.GetPassfile(Path.DirectorySeparatorChar.ToString());
+            }
+
+            if (null == passwordFile) {
+                System.Console.WriteLine(String.Format("Unable to find passfile: {0}", passwordFile));
+                Environment.Exit(-1);
+            }
+            System.Console.WriteLine(String.Format("Using passfile: {0}.", passwordFile.FullName));
+            StreamWriter writer = passwordFile.AppendText();
+            writer.WriteLine(String.Format("{0} {1}", 
+                connection.Repository.CvsRoot, password));
+            writer.Close();
+        }
+
+        private FileInfo GetPassfile (string path) {
+            try {
+                FileInfo passwordFile = 
+                    new FileInfo(Path.Combine(path, CVSPASS_FILE));
+                StreamWriter writer = passwordFile.AppendText();
+                writer.Close();
+                return passwordFile;
+            } catch (Exception) {
+                return null;
+            }   
         }
     }
 }

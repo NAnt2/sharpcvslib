@@ -59,7 +59,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         public void Process(CvsStream cvsStream, IResponseServices services) {
             string which = cvsStream.ReadLine();
             if (LOGGER.IsDebugEnabled) {
-                LOGGER.Debug("module expansion : " + which);
+                LOGGER.Debug(String.Format("module expansion : ", which));
             }
         }
 
