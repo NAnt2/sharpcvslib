@@ -3,13 +3,13 @@
 -->
 <project name="ICSharpCode.SharpCvsLib" default="build">
     <target name="build">
-        <echo message="${nant.project.basedir}../../src/SharpCvsLibAssemblyInfo.cs" />
+        <echo message="${nant.project.basedir}/../../src/SharpCvsLibAssemblyInfo.cs" />
         <csc    target="exe" 
                 warnaserror="${compile.warnaserror}" 
-                output="${dir.build}/${name.console.exe}.exe" 
+                output="${dir.bin}/${name.console.exe}.exe" 
                 debug="${compile.debug}" 
                 define="${compile.define}"
-                doc="${dir.build}/${name.console.exe}.xml">
+                doc="${dir.bin}/${name.console.exe}.xml">
                 >
                 
             <arg value="${compile.unsafe}" />
@@ -25,7 +25,7 @@
                 <includes name="${dir.lib}/${lib.zip}" />
                 <includes name="${dir.lib.ext}/${lib.log4net}" />
                 <includes name="${dir.lib.ext}/${lib.nunit}" />
-                <includes name="${dir.build}/${name.top-level}.${name.lib}.dll" />
+                <includes name="${dir.bin}/${name.top-level}.${name.lib}.dll" />
             </references>
         </csc>
     </target>

@@ -1,9 +1,9 @@
 Microsoft Visual Studio Solution File, Format Version 7.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsLib", "SharpCvsLib.csproj", "{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsLib", "src\SharpCvsLib.csproj", "{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsLib.Console", "SharpCvsLib.Console.csproj", "{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsLib.Console", "src\SharpCvsLib.Console.csproj", "{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsLib.Tests", "SharpCvsLib.Tests.csproj", "{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsLib.Tests", "src\SharpCvsLib.Tests.csproj", "{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "builder.nant", ".externalToolBuilders\builder.nant\builder.nant.vcproj", "{A76B2D4F-C424-410B-A6F1-7831B5E38E7D}"
 EndProject

@@ -17,9 +17,9 @@
 			ConfigurationType="0">
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="$(SolutionDir)tools\nant\win32\bin\Nant.exe -f:$(SolutionDir)SharpCvsLib.build build.all"
-				ReBuildCommandLine="$(SolutionDir)tools\nant\win32\bin\Nant.exe -f:$(SolutionDir)SharpCvsLib.build build.all"
-				CleanCommandLine="$(SolutionDir)tools\nant\win32\bin\Nant.exe -f:$(SolutionDir)SharpCvsLib.build clean"
+				BuildCommandLine="$(SolutionDir)tools\nant\win32\bin\Nant.exe -f:$(SolutionDir)build\SharpCvsLib.build build.all"
+				ReBuildCommandLine="$(SolutionDir)tools\nant\win32\bin\Nant.exe -f:$(SolutionDir)build\SharpCvsLib.build build.all"
+				CleanCommandLine="$(SolutionDir)tools\nant\win32\bin\Nant.exe -f:$(SolutionDir)build\SharpCvsLib.build clean"
 				Output="ExternalBuilder.NAnt.exe"/>
 		</Configuration>
 		<Configuration

@@ -5,10 +5,10 @@
     <target name="build">
         <csc    target="library" 
                 warnaserror="${compile.warnaserror}" 
-                output="${dir.build}/${name.top-level}.${name.lib}.dll" 
+                output="${dir.bin}/${name.top-level}.${name.lib}.dll" 
                 debug="${compile.debug}" 
                 define="${compile.define}" 
-                doc="${dir.build}/${name.top-level}.${name.lib}.xml">
+                doc="${dir.bin}/${name.top-level}.${name.lib}.xml">
                 
             <arg value="${compile.unsafe}" />
             <arg value="${compile.checked}" />
