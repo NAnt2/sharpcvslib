@@ -318,8 +318,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             this.repository = String.Empty;
                         }
                         try {
-                            CheckoutCommand checkoutCommand = 
-                                new CheckoutCommand(this.CvsRoot, repository, options);
+                            CheckoutCommandParser checkoutCommand = 
+                                new CheckoutCommandParser(this.CvsRoot, this.Repository, options);
                             command = checkoutCommand.CreateCommand ();
                             this.currentWorkingDirectory = 
                                 checkoutCommand.CurrentWorkingDirectory;
@@ -489,9 +489,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             new CommandParserFactory("xml", arguments, 
                             this.cvsRoot, this.currentWorkingDirectory);
 
+                        // TODO: Move this outside of case statement when all commands use same pattern
                         ICommandParser parser = factory.GetCommandParser();
                         command = parser.CreateCommand();
-                        i = arguments.Length;
                         this.currentWorkingDirectory = 
                             parser.CurrentWorkingDirectory;
 

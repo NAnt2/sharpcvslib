@@ -106,6 +106,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 case "xml":
                     parser = XmlLogCommandParser.GetInstance();
                     break;
+                case "co":
+                    parser = CheckoutCommandParser.GetInstance();
+                    break;
                 default:
                     throw new ArgumentException(
                         String.Format("Unknown command: {0}.", this.command));

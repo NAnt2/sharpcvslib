@@ -109,48 +109,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// </summary>
         public void Execute (ICommandConnection connection){
             string password = this.GetPassword();
-
-            if (null == password) {
-                // Is there a password file?
-                //     yes, get password for this username
-                //     no, prompt user for password to use
-                System.Console.Write("CVS password for {0}: ", this.cvsRoot.User);
-                password = System.Console.ReadLine();
-
-                password = PasswordScrambler.Scramble(password);
-
-                // once we have a password then put it in the .cvspass file.
-                // this file is either in the HOME directory or in the root of the 
-                // current folder.
-                FileInfo passwordFile = 
-                    new FileInfo(Environment.GetEnvironmentVariable(ENV_CVS_HOME));
-
-                if (!passwordFile.Exists) {
-                    passwordFile = 
-                        new FileInfo(
-                        Path.Combine(Environment.GetEnvironmentVariable(ENV_CVS_HOME), CVS_PASSFILE));
-                }
-
-                if (null == passwordFile) {
-                    passwordFile = new FileInfo(
-                        Environment.GetFolderPath(Environment.SpecialFolder.Personal));
-                }
-
-                if (null == passwordFile) {
-                    passwordFile = new FileInfo(
-                        Path.DirectorySeparatorChar.ToString());
-                }
-
-                if (null == passwordFile) {
-                    System.Console.WriteLine(String.Format("Unable to find passfile: {0}", passwordFile));
-                    Environment.Exit(-1);
-                }
-                System.Console.WriteLine(String.Format("Using passfile: {0}.", passwordFile.FullName));
-                StreamWriter writer = passwordFile.AppendText();
-                writer.WriteLine(String.Format("{0} {1}", 
-                    connection.Repository.CvsRoot, password));
-                writer.Close();
-            }
         }
 
         /// <summary>
@@ -163,15 +121,26 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                     System.Environment.GetEnvironmentVariable(ENV_CVS_HOME),
                     Path.GetPathRoot(Environment.CurrentDirectory)};
 
-            string password = null;
+            string thePassword = null;
             foreach (string passFilePath in passFileLocations) {
                 LOGGER.Debug(String.Format("Looking for passfile: {0}", passFilePath));
-                password = this.ReadPassword(passFilePath);
-                if (null != password) {
-                    return password;
+                thePassword = this.ReadPassword(passFilePath);
+                if (null != thePassword) {
+                    return thePassword;
                 }
             }
-            return null;
+
+            if (thePassword == null) {
+                System.Console.WriteLine(String.Format("Logging in to {0}", this.CvsRoot));
+                System.Console.Write(String.Format("CVS password: "));
+                thePassword = System.Console.ReadLine();
+
+                password = PasswordScrambler.Scramble(password);
+
+                this.WritePassword(password);
+            }
+
+            return thePassword;
         }
 
         private string ReadPassword (string fullPath) {
@@ -182,41 +151,24 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                     return null;
                 }
             }
-            System.Console.WriteLine(String.Format("Looking for passfile: {0}", passFile.FullName));
+            LOGGER.Debug(String.Format("Looking for passfile: {0}", passFile.FullName));
 
             StreamReader passStream = 
                 new StreamReader(passFile.FullName);
 
             string passLine = passStream.ReadToEnd();
 
-            System.Console.WriteLine(String.Format("PassLine: {0}.", passLine));
+            LOGGER.Debug(String.Format("PassLine: {0}.", passLine));
 
-            //Regex regex = new Regex(CVS_PASS_REGEX, RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
-/*            MatchCollection matches = Regex.Matches(passLine, 
-                CVS_PASS_REGEX, RegexOptions.IgnorePatternWhitespace);
-
-            System.Console.WriteLine(String.Format("Matches count: {0}.", matches.Count));
-            System.Console.WriteLine(String.Format("Match Group count: {0}.", 
-                Regex.Match(passLine, CVS_PASS_REGEX, RegexOptions.IgnorePatternWhitespace).Groups.Count));
-            System.Console.WriteLine(String.Format("Regex: {0}.", CVS_PASS_REGEX));
-            System.Console.WriteLine(String.Format("Attempting to match: {0}.", this.CvsRoot.ToString()));
-            if (matches.Count <= 0) {
-                return null;
-            }
-*/
             Regex regex = new Regex(CVS_PASS_REGEX, 
                 RegexOptions.IgnorePatternWhitespace | RegexOptions.Multiline);
             MatchCollection matches = regex.Matches(passLine);
-//            System.Console.WriteLine(String.Format("Capture count: {0}.", groups.Count));
 
             foreach (Match match in matches) {
-//                string cvsRootTemp = group.Captures[1].Value +
-//                    group.Captures[3].Value + group.Captures[4].Value +
-//                    group.Captures[5].Value;
 
                 try {
                     CvsRoot cvsRootTemp = new CvsRoot(match.Value);
-                    System.Console.WriteLine(String.Format("cvsRootTemp: {0}.", cvsRootTemp));
+                    LOGGER.Debug(String.Format("cvsRootTemp: {0}.", cvsRootTemp));
                     if (this.CvsRoot.Equals(cvsRootTemp)) {
                         return match.Groups[6].Value;
                     }
@@ -225,6 +177,38 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 }
             }
             return null;
+        }
+
+        private void WritePassword(string thePassword) {
+            FileInfo passwordFile = 
+                new FileInfo(Environment.GetEnvironmentVariable(ENV_CVS_HOME));
+
+            if (!passwordFile.Exists) {
+                passwordFile = 
+                    new FileInfo(
+                    Path.Combine(Environment.GetEnvironmentVariable(ENV_CVS_HOME), CVS_PASSFILE));
+            }
+
+            if (null == passwordFile) {
+                passwordFile = new FileInfo(
+                    Environment.GetFolderPath(Environment.SpecialFolder.Personal));
+            }
+
+            if (null == passwordFile) {
+                passwordFile = new FileInfo(
+                    Path.DirectorySeparatorChar.ToString());
+            }
+
+            if (null == passwordFile) {
+                LOGGER.Debug(String.Format("Unable to find passfile: {0}", passwordFile));
+                Environment.Exit(-1);
+            }
+            LOGGER.Debug(String.Format("Using passfile: {0}.", passwordFile.FullName));
+            StreamWriter writer = passwordFile.AppendText();
+            writer.WriteLine(String.Format("{0} {1}", 
+                this.CvsRoot, thePassword));
+            writer.Close();
+
         }
 
     }

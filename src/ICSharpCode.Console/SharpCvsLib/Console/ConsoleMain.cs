@@ -207,8 +207,8 @@ namespace ICSharpCode.SharpCvsLib.Console {
                         // try connecting with empty password for anonymous users
                         serverConn.Connect(workingDirectory, password);
                     }
-                    catch (AuthenticationException){
-//                        LOGGER.Info("Authentication failed using empty password, trying .cvspass file.", eDefault);
+                    catch (AuthenticationException eDefault){
+                        LOGGER.Info("Authentication failed using empty password, trying .cvspass file.", eDefault);
                         try{
                             //string scrambledpassword;
                             // check to connect with password from .cvspass file
@@ -218,19 +218,19 @@ namespace ICSharpCode.SharpCvsLib.Console {
                         }
                         catch (AuthenticationException eCvsPass){
                             try {
-//                                LOGGER.Info("Authentication failed using .cvspass file, prompting for password.", eCvsPass);
+                                LOGGER.Info("Authentication failed using .cvspass file, prompting for password.", eCvsPass);
                                 // prompt user for password by using login command?
                                 LoginCommand login = new LoginCommand(workingDirectory.CvsRoot);
                                 login.Password = login.GetPassword();
                                 serverConn.Connect(workingDirectory, login.Password);
                                 throw eCvsPass;
-                            } catch (AuthenticationException) {
+                            } catch (AuthenticationException e) {
                                 StringBuilder msg = new StringBuilder();
                                 msg.Append("Fatal error, aborting.");
                                 msg.Append("cvs [login aborted]: ")
                                     .Append(workingDirectory.CvsRoot.User)
                                     .Append(": unknown user or bad password.");
-//                                LOGGER.Error(msg, e);
+                                LOGGER.Error(msg, e);
                                 System.Console.WriteLine(msg.ToString());
                                 Environment.Exit(-1);
                             }
