@@ -32,6 +32,7 @@ using System;
 using System.Collections;
 using System.IO;
 
+using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Misc;
 
 using log4net;
@@ -47,7 +48,6 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 			LogManager.GetLogger (typeof(CvsFileManagerTest));
 	    
 	    private CvsFileManager manager;
-	    private readonly String TEST_PATH = "c:/test/sharpdevelop-tests/";
 		
 		/// <summary>
 		/// Constructor for customer db test.
@@ -70,19 +70,18 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		/// </summary>
 		[Test]
 		public void EntryWriteReadTest ()	{
-		    string entryString = 
+		    const string entryString = 
 		        "/CvsFileManager.cs/1.1/Sun May 11 09:07:28 2003//";
 		    Entry entry = new Entry (entryString);
-		    this.manager.AddEntry (TEST_PATH, entry);
+		    this.manager.AddEntry (TestConstants.LOCAL_PATH, entry);
 
-            // FIXME: Test is not working, maybe path combine is wrong?		    
 		    string entryFile = 
-		        Path.Combine (this.TEST_PATH, this.manager.ENTRIES);
+		        Path.Combine (TestConstants.LOCAL_PATH, this.manager.ENTRIES);
 		    Assertion.Assert ("Missing file=[" + entryFile + "]", 
 		                      File.Exists (entryFile));
 		    
-		    ArrayList entries = new ArrayList ();
-		    entries.Add (this.manager.ReadEntries (this.TEST_PATH));
+		    ICollection entries;
+		    entries = this.manager.ReadEntries (TestConstants.LOCAL_PATH);
 		    Assertion.Assert ("There should only be 1 entry, found=[" + entries.Count + "]",
 		                      entries.Count == 1);
 

@@ -50,12 +50,9 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 	[TestFixture]
 	public class EntryTest	{
 		private ILog LOGGER = 
-			LogManager.GetLogger (typeof(Entry));
+			LogManager.GetLogger (typeof(EntryTest));
 	    
-	    private CvsFileManager manager;
-	    private readonly String TEST_PATH =
-	        "c:/test/sharpdevelop-tests/";
-	    
+	    private CvsFileManager manager;	    
 		/// <summary>
 		/// Constructor for customer db test.
 		/// </summary>
