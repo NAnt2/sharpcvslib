@@ -33,7 +33,9 @@
 using System;
 using System.Globalization;
 using System.Text;
+using System.IO;
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Commands;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Console.Parser;
@@ -94,7 +96,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
         public ICommand CreateCommand () {
             UpdateCommand2 updateCommand;
-            try {
+
+            this.ParseOptions(this.unparsedOptions);
+            try 
+            {
                 if (localDirectory == null) {
                     localDirectory = Environment.CurrentDirectory;
                 }
@@ -103,18 +108,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 if (revision != null) {
                     currentWorkingDirectory.Revision = revision;
                 }
-                if (date.Equals(null)) {
+                if (!date.Equals(DateTime.MinValue)) {
                     currentWorkingDirectory.Date = date;
                 }
+                Manager manager = new Manager();
+                currentWorkingDirectory.FoldersToUpdate =
+                    manager.FetchFilesToUpdate (Path.Combine (localDirectory, repository));
                 // Create new UpdateCommand2 object
-                updateCommand = new UpdateCommand2(this.currentWorkingDirectory);
+                updateCommand = new UpdateCommand2(currentWorkingDirectory);
             }
             catch (Exception e) {
                 LOGGER.Error (e);
                 throw e;
             }
-            this.ParseOptions(updateCommand, this.unparsedOptions);
-         
             return updateCommand;
         }
  
@@ -122,11 +128,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// Parse the command line options/ arguments and populate the command
         ///     object with the arguments.
         /// </summary>
-        /// <param name="updateCommand">A update command that is to be
-        ///     populated.</param>
         /// <param name="upOptions">A string value that holds the command
         ///     line options the user has selected.</param>
-        private void ParseOptions (ICommand updateCommand, String upOptions) {
+        private void ParseOptions (String upOptions) {
             int endofOptions = 0;
             for (int i = 0; i < upOptions.Length; i++) {
                 if (upOptions[i]== '-' && upOptions[i+1] == 'r') {
