@@ -106,11 +106,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode\SharpCvsLib\AssemblyInfo.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Client\CVSServerConnection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
