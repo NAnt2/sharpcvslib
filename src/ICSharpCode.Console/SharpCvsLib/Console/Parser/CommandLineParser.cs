@@ -273,6 +273,15 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "lgn":
                         // login to server
                         this.command = arguments[i];
+                        try {
+                            LoginCommand loginCommand = 
+                                new LoginCommand(this.CvsRoot);
+                            loginCommand.Execute ();
+                        } 
+                        catch (Exception e) {
+                            LOGGER.Error(e);
+                            throw new CommandLineParseException("Unable to create login command.", e);
+                        }
                         break;
                     case "passwd":
                     case "password":
@@ -318,6 +327,47 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         catch (Exception e) {
                             LOGGER.Error(e);
                             throw new CommandLineParseException("Unable to create remove command.", e);
+                        }
+                        break;
+                    case "rt":
+                    case "rtag":
+                    case "rtfreeze":
+                        singleOptions = "abBdfFlMnR";
+                        this.command = arguments[i++];
+                        // get rest of arguments which is options on the rtag command.
+                        while (arguments[i].IndexOf("-", 0, 1) >= 0) {
+                            // Get options with second parameters?
+                            if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
+                                for ( int cnt=1; cnt < arguments[i].Length; cnt++ ) {
+                                    this.options = this.options + "-" + arguments[i][cnt] + " "; // No
+                                }
+                            } 
+                            else {
+                                this.options = this.options + arguments[i];       // Yes
+                                this.options = this.options + arguments[i] + " ";
+                            }
+                            i++;
+                        }
+                        if (arguments.Length > i) {
+                            // Safely grab the module, if not specified then
+                            //  pass null into the repository...the cvs command
+                            //  line for cvsnt/ cvs seems to bomb out when
+                            //  it sends to the server
+                            this.repository = arguments[i++];
+                        } 
+                        else {
+                            this.repository = String.Empty;
+                        }
+                        try {
+                            ICSharpCode.SharpCvsLib.Console.Commands.RTagCommand rtagCommand = 
+                                new ICSharpCode.SharpCvsLib.Console.Commands.RTagCommand(this.CvsRoot, repository, options);
+                            command = rtagCommand.CreateCommand ();
+                            this.currentWorkingDirectory = 
+                                rtagCommand.CurrentWorkingDirectory;
+                        } 
+                        catch (Exception e) {
+                            LOGGER.Error(e);
+                            throw new CommandLineParseException("Unable to create rtag command.", e);
                         }
                         break;
                     case "up":
