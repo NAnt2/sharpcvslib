@@ -21,6 +21,7 @@
     <property name="assembly.copyright.text" value="Mike Krueger 2001-2002, SharpCvsLib Developers 2003" />
     <property name="assembly.copyright.href" value="http://sharpcvslib.sourceforge.net/license.html" />
     <property name="assembly.description" value="Cvs client library written in c#" />
+    <property name="assembly.company" value="SharpCvsLib" />
     
     <!-- Compiler information/ settings -->
     <property name="compile.warnaserror" value="true" />
