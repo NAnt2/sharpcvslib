@@ -9,7 +9,8 @@
     <property name="util.copy" value="pscp" />
     <property name="name.developer" value="drakmar" />
     <property name="sf.username" value="${name.developer}@shell.sourceforge.net" />
-    <property name="sf.location" value="/home/groups/s/sh/sharpcvslib/htdocs/nightly-build/${cvs.branch}" />
+    <property name="sf.location.nightly" value="/home/groups/s/sh/sharpcvslib/htdocs/nightly-build/${cvs.branch}" />
+    <property name="sf.location.release" value="/home/groups/s/sh/sharpcvslib/htdocs" />
 
 
     <!-- Names of the files generated -->
@@ -241,14 +242,15 @@
     </target>
     
     <target name="dist">
-        <call target="dist.clean" />
+        <call target="setup" />
+<!--        <call target="dist.clean" />
         <call target="build.all" failonerror="false" />
         <call target="run-tests-sample" failonerror="false" />
         <mkdir dir="${dir.dist}/bin" />
         <mkdir dir="${dir.dist}/src" />    
         
         <call target="netdoc" />
-        
+-->        
         <copy todir="${dir.dist}/bin">
             <fileset basedir="${dir.bin}">
                 <includes name="**/**.dll"/>
@@ -260,6 +262,12 @@
         <copy todir="${dir.dist}/doc">
             <fileset basedir="${dir.doc}">
                 <includes name="**/*"/>
+            </fileset>
+        </copy>
+        <echo message="Copying documents from website: ${dir.base}/../www" />
+        <copy todir="${dir.dist}/doc">
+            <fileset basedir="${dir.base}/../www">
+                <includes name="**/*" />
             </fileset>
         </copy>
         
@@ -325,19 +333,27 @@
     </target>
     
     <target name="build-release.sf" depends="build-release.common" description="Produces the sourceforge.net release build.">
+        <property name="args.copy-docs" value="${dir.doc.msdn}/*.html ${sf.username}:${sf.location.release}/api/msdn" />
+        <exec program="${util.copy}" commandline="${args.copy-docs}"/>
+        
+        <property name="args.copy-docs" value="${dir.doc.msdn}/*.css ${sf.username}:${sf.location.release}/api/msdn" />
+        <exec program="${util.copy}" commandline="${args.copy-docs}"/>
+
+        <property name="args.copy-docs" value="${dir.doc.msdn}/*.gif ${sf.username}:${sf.location.release}/api/msdn" />
+        <exec program="${util.copy}" commandline="${args.copy-docs}"/>
     </target>
     
     <target name="build-release.nightly" depends="build-release.common" description="Produces the nightly build and uploads to sourceforge.net">
-        <property name="args.copy-program" value="${dir.output}/* ${sf.username}:${sf.location}/" />
+        <property name="args.copy-program" value="${dir.output}/* ${sf.username}:${sf.location.nightly}/" />
         <exec program="${util.copy}" commandline="${args.copy-program}"/>
         
-        <property name="args.copy-docs" value="${dir.doc.msdn}/*.html ${sf.username}:${sf.location}/doc/api" />
+        <property name="args.copy-docs" value="${dir.doc.msdn}/*.html ${sf.username}:${sf.location.nightly}/doc/api" />
         <exec program="${util.copy}" commandline="${args.copy-docs}"/>
 
-        <property name="args.copy-docs" value="${dir.doc.msdn}/*.css ${sf.username}:${sf.location}/doc/api" />
+        <property name="args.copy-docs" value="${dir.doc.msdn}/*.css ${sf.username}:${sf.location.nightly}/doc/api" />
         <exec program="${util.copy}" commandline="${args.copy-docs}"/>
         
-        <property name="args.copy-docs" value="${dir.doc.msdn}/*.gif ${sf.username}:${sf.location}/doc/api" />
+        <property name="args.copy-docs" value="${dir.doc.msdn}/*.gif ${sf.username}:${sf.location.nightly}/doc/api" />
         <exec program="${util.copy}" commandline="${args.copy-docs}"/>
         
         <call target="upload-unit-test-results" />
@@ -346,7 +362,7 @@
     
     <target name="upload-unit-test-results">
         <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="tests-to-html"/>
-        <property name="args.copy-docs" value="${dir.bin}/tests/*.html ${sf.username}:${sf.location}/tests/" />
+        <property name="args.copy-docs" value="${dir.bin}/tests/*.html ${sf.username}:${sf.location.nightly}/tests/" />
         <exec program="${util.copy}" commandline="${args.copy-docs}"/>        
     </target>
     
