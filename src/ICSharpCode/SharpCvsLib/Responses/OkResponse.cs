@@ -37,22 +37,20 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     ///     ok \n
     ///         The command completed successfully.
     /// </summary>
-    public class OkResponse : IResponse {
+    public class OkResponse : AbstractResponse {
         /// <summary>
         /// Process an ok response from the server.
         /// 
         ///     TODO: Do something useful with this response.
         /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-        public void Process(CvsStream cvsStream, IResponseServices services) {
+        public override void Process() {
             // TODO: Do something useful with this stream.
         }
 
         /// <summary>
         /// Indicator stating whether the response is terminating or not.
         /// </summary>
-        public bool IsTerminating {
+        public override bool IsTerminating {
             get {return true;}
         }
     }

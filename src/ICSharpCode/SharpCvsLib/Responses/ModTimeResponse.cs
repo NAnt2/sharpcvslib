@@ -37,21 +37,19 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// Handles a response from the server containing the modified
     ///     time.
     /// </summary>
-    public class ModTimeResponse : IResponse {
+    public class ModTimeResponse : AbstractResponse {
         /// <summary>
         /// Process the server response.
         /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-        public void Process(CvsStream cvsStream, IResponseServices services) {
-            string date = cvsStream.ReadLine();
-            services.NextFileDate = date;
+        public override void Process() {
+            string date = this.ReadLine();
+            Services.NextFileDate = date;
         }
 
         /// <summary>
         /// Response terminates transaction: <code>false</code>.
         /// </summary>
-        public bool IsTerminating {
+        public override bool IsTerminating {
             get {return false;}
         }
     }

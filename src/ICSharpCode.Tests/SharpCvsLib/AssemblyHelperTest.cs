@@ -1,6 +1,6 @@
 #region "Copyright"
-// CheckedInResponse.cs
-// Copyright (C) 2001 Mike Krueger
+//
+// Copyright (C) 2004 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,53 +28,61 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Mike Krueger</author>
 //    <author>Clayton Harbour</author>
 #endregion
-
 using System;
+using System.Collections;
+using System.IO;
+using System.Diagnostics;
 
-using ICSharpCode.SharpCvsLib.Misc;
-using ICSharpCode.SharpCvsLib.FileSystem;
+using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
-using ICSharpCode.SharpCvsLib.Streams;
+using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Console.Parser;
+
+using ICSharpCode.SharpCvsLib.Tests;
+using ICSharpCode.SharpCvsLib.Tests.Config;
 
 using log4net;
+using NUnit.Framework;
 
-namespace ICSharpCode.SharpCvsLib.Responses {
-
+namespace ICSharpCode.SharpCvsLib.Console {
     /// <summary>
-    /// Handle a checked in response.
+    ///     Test the command line args parameters for valid ones
+    ///         and test invalid ones.
     /// </summary>
-    public class CheckedInResponse : AbstractResponse {
-        private readonly ILog LOGGER = LogManager.GetLogger(typeof (CheckedInResponse));
+    [TestFixture]
+    public class AssemblyHelperTest : AbstractTest {
+        private ILog LOGGER = LogManager.GetLogger (typeof (AssemblyHelperTest));
+        private SharpCvsLibTestsConfig settings = 
+            SharpCvsLibTestsConfig.GetInstance();
+
+        private const int DEFAULT_WAIT_TIME = 100;
+
+        private string tempDir;
+
+        private String buildDir;
         /// <summary>
-        /// Process a checked in response.
+        ///     Constructory for test case.
         /// </summary>
-        public override void Process() {
-            string localPath      = this.ReadLine();
-            string repositoryPath = this.ReadLine();
-            string entryLine      = this.ReadLine();
-
-            PathTranslator orgPath   =
-                new PathTranslator (Services.Repository,
-                repositoryPath);
-
-            string fileName = orgPath.LocalPathAndFilename;
-            Entry  entry = new Entry(orgPath.LocalPath, entryLine);
-            LOGGER.Debug ("CheckedInResponse adding entry=[" + entry + "]");
-
-            Manager manager = new Manager (Services.Repository.WorkingPath);
-            manager.Add (entry);
+        public AssemblyHelperTest () {
+            buildDir = System.AppDomain.CurrentDomain.BaseDirectory;
         }
 
         /// <summary>
-        /// Return true if this response cancels the transaction
+        /// Setup the unit test.
         /// </summary>
-        public override bool IsTerminating {
-            get {
-                return false;
-            }
+        [SetUp]
+        public override void SetUp () {
+            this.tempDir = this.GetTempPath();
         }
+
+        /// <summary>
+        /// Tear down the unit test.
+        /// </summary>
+        [TearDown]
+        public override void TearDown() {
+
+        }   
     }
 }

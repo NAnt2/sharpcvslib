@@ -47,17 +47,15 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     ///         file contains the `-d' option, it will be the directory specified 
     ///         with `-d', not the name of the module).
     /// </summary>
-    public class ModuleExpansionResponse : IResponse {
+    public class ModuleExpansionResponse : AbstractResponse {
         private readonly ILog LOGGER =
             LogManager.GetLogger (typeof (ModuleExpansionResponse));
 
         /// <summary>
         /// Process the module expansion response.
         /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-        public void Process(CvsStream cvsStream, IResponseServices services) {
-            string which = cvsStream.ReadLine();
+        public override void Process() {
+            string which = this.ReadLine();
             if (LOGGER.IsDebugEnabled) {
                 LOGGER.Debug(String.Format("module expansion : ", which));
             }
@@ -66,7 +64,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// <summary>
         /// Indicator stating whether the response is terminating or not.
         /// </summary>
-        public bool IsTerminating {
+        public override bool IsTerminating {
             get {return false;}
         }
     }

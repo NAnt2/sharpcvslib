@@ -56,27 +56,25 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// directory.
     ///
     /// </summary>
-    public class ClearStaticDirectoryResponse : IResponse {
+    public class ClearStaticDirectoryResponse : AbstractResponse {
         private readonly ILog LOGGER =
             LogManager.GetLogger (typeof (ClearStaticDirectoryResponse));
         /// <summary>
         /// Process a clear static directory response.
         /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-        public void Process(CvsStream cvsStream, IResponseServices services) {
-            string localPath      = cvsStream.ReadLine();
-            string reposPath = cvsStream.ReadLine();
+        public override void Process() {
+            string localPath      = this.ReadLine();
+            string reposPath      = this.ReadLine();
 
-            Manager manager = new Manager (services.Repository.WorkingPath);
-            manager.AddRepository (services.Repository, localPath, reposPath);
-            manager.AddRoot (services.Repository, localPath, reposPath);
-            PathTranslator pathTranslator = new PathTranslator (services.Repository, reposPath);
+            Manager manager = new Manager (Services.Repository.WorkingPath);
+            manager.AddRepository (Services.Repository, localPath, reposPath);
+            manager.AddRoot (Services.Repository, localPath, reposPath);
+            PathTranslator pathTranslator = new PathTranslator (Services.Repository, reposPath);
 
             Entry entry = Entry.CreateEntry(pathTranslator.LocalPathAndFilename);
             // the root module directory does not get a cvs Entries line.
             // TODO: There has to be a cleaner way to do this...
-            if (services.Repository.WorkingPath.Length <= entry.Path.Length) {
+            if (Services.Repository.WorkingPath.Length <= entry.Path.Length) {
                 manager.AddEntry(entry);
             }
 
@@ -95,7 +93,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// <summary>
         /// Return true if this response cancels the transaction
         /// </summary>
-        public bool IsTerminating {
+        public override bool IsTerminating {
             get {return false;}
         }
     }

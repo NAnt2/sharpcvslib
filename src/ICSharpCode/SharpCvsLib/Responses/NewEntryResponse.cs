@@ -46,7 +46,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     ///     Additional data: New Entries line, \n. Like Checked-in, but the file is 
     ///     not up to date.
     /// </summary>
-    public class NewEntryResponse : IResponse {
+    public class NewEntryResponse : AbstractResponse {
         private readonly ILog LOGGER = LogManager.GetLogger(typeof (NewEntryResponse));
         /// <summary>
         /// Process a new entry response.
@@ -54,32 +54,28 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// TODO: Copied implementation from CheckedInResponse, determine if this
         ///     is correct or not.
         /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-        public void Process(CvsStream cvsStream, IResponseServices services) {
-            string localPath      = cvsStream.ReadLine();
-            string repositoryPath = cvsStream.ReadLine();
-            string entryLine      = cvsStream.ReadLine();
+        public override void Process() {
+            string localPath      = this.ReadLine();
+            string repositoryPath = this.ReadLine();
+            string entryLine      = this.ReadLine();
 
             PathTranslator orgPath   =
-                new PathTranslator (services.Repository,
+                new PathTranslator (Services.Repository,
                 repositoryPath);
 
             string fileName = orgPath.LocalPathAndFilename;
             Entry  entry = new Entry(orgPath.LocalPath, entryLine);
             LOGGER.Debug ("CheckedInResponse adding entry=[" + entry + "]");
 
-            Manager manager = new Manager (services.Repository.WorkingPath);
+            Manager manager = new Manager (Services.Repository.WorkingPath);
             manager.Add (entry);
         }
 
         /// <summary>
         /// Return true if this response cancels the transaction
         /// </summary>
-        public bool IsTerminating {
-            get {
-                return false;
-            }
+        public override bool IsTerminating {
+            get {return false;}
         }
     }
 }

@@ -1,6 +1,5 @@
 #region "Copyright"
-// CheckedInResponse.cs
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2004 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,53 +27,15 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Mike Krueger</author>
 //    <author>Clayton Harbour</author>
+//
 #endregion
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Misc;
-using ICSharpCode.SharpCvsLib.FileSystem;
-using ICSharpCode.SharpCvsLib.Client;
-using ICSharpCode.SharpCvsLib.Streams;
-
-using log4net;
-
-namespace ICSharpCode.SharpCvsLib.Responses {
-
-    /// <summary>
-    /// Handle a checked in response.
-    /// </summary>
-    public class CheckedInResponse : AbstractResponse {
-        private readonly ILog LOGGER = LogManager.GetLogger(typeof (CheckedInResponse));
-        /// <summary>
-        /// Process a checked in response.
-        /// </summary>
-        public override void Process() {
-            string localPath      = this.ReadLine();
-            string repositoryPath = this.ReadLine();
-            string entryLine      = this.ReadLine();
-
-            PathTranslator orgPath   =
-                new PathTranslator (Services.Repository,
-                repositoryPath);
-
-            string fileName = orgPath.LocalPathAndFilename;
-            Entry  entry = new Entry(orgPath.LocalPath, entryLine);
-            LOGGER.Debug ("CheckedInResponse adding entry=[" + entry + "]");
-
-            Manager manager = new Manager (Services.Repository.WorkingPath);
-            manager.Add (entry);
-        }
-
-        /// <summary>
-        /// Return true if this response cancels the transaction
-        /// </summary>
-        public override bool IsTerminating {
-            get {
-                return false;
-            }
-        }
-    }
+namespace ICSharpCode.SharpCvsLib.Messages {
+	/// <summary>
+	/// Default message handler for sharpcvslib.
+	/// </summary>
+	public delegate void MessageEventHandler (object sender, MessageEventArgs e);
 }

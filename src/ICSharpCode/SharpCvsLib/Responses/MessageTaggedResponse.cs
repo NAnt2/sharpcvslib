@@ -41,8 +41,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 /// <summary>
 /// Message tagged response.
 /// </summary>
-public class MessageTaggedResponse : IResponse
-{
+public class MessageTaggedResponse : AbstractResponse {
     private readonly ILog LOGGER =
         LogManager.GetLogger (typeof (MessageTaggedResponse));
 
@@ -74,8 +73,6 @@ public class MessageTaggedResponse : IResponse
     ///     always be exactly one space between tagname and data; if there is more 
     ///     than one space, then the spaces beyond the first are part of data. 
     /// </summary>
-    /// <param name="cvsStream"></param>
-    /// <param name="services"></param>
     /// <example>
     /// Here is an example of some tagged text responses. Note that there is a 
     /// trailing space after `Checking in' and `initial revision:' and there are 
@@ -106,11 +103,10 @@ public class MessageTaggedResponse : IResponse
     ///     M done
     ///     
     /// </example>
-    public void Process(CvsStream cvsStream, IResponseServices services)
-    {
-        string message = cvsStream.ReadToEndOfLine();
+    public override void Process() {
+        string message = this.ReadLine();
         // Fire message event to the client app
-        services.SendMessage("MT " + message);
+        Services.SendMessage("MT " + message);
         String msg = "cvs server: MT " + message;
         LOGGER.Debug (msg);
     }
@@ -118,10 +114,8 @@ public class MessageTaggedResponse : IResponse
     /// <summary>
     /// Indicator stating whether the response is terminating or not.
     /// </summary>
-    public bool IsTerminating {
-        get {
-            return false;
-        }
+    public override bool IsTerminating {
+        get {return false;}
     }
 }
 }

@@ -44,22 +44,20 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// <summary>
     /// Handle a checked in response.
     /// </summary>
-    public class RemovedResponse : IResponse {
+    public class RemovedResponse : AbstractResponse {
         private readonly ILog LOGGER = LogManager.GetLogger(typeof (RemovedResponse));
         /// <summary>
         /// Removed pathname \n
         ///     The file has been removed from the repository (this is the case where 
         ///     cvs prints `file foobar.c is no longer pertinent').
         /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-        public void Process(CvsStream cvsStream, IResponseServices services) {
-            string localPath      = cvsStream.ReadLine();
-            string repositoryPath = cvsStream.ReadLine();
-            string entryLine      = cvsStream.ReadLine();
+        public override void Process() {
+            string localPath      = this.ReadLine();
+            string repositoryPath = this.ReadLine();
+            string entryLine      = this.ReadLine();
 
             PathTranslator orgPath   =
-                new PathTranslator (services.Repository,
+                new PathTranslator (Services.Repository,
                 repositoryPath);
 
             LOGGER.Error("TODO: Implement RemovedResponse; This response is currently does not do anything.");
@@ -68,7 +66,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// <summary>
         /// Return true if this response cancels the transaction
         /// </summary>
-        public bool IsTerminating {
+        public override bool IsTerminating {
             get {return true;}
         }
     }

@@ -29,6 +29,9 @@
 // exception statement from your version.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.Streams;
+
 namespace ICSharpCode.SharpCvsLib.Responses {
     /// <summary>
     /// Factory method for instanciating the correct response handler
@@ -41,46 +44,67 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// <param name="responseStr"></param>
         /// <returns></returns>
         public static IResponse CreateResponse(string responseStr) {
+            IResponse response;
             switch (responseStr) {
-            case "M":
-                return new MessageResponse();
-            case "E":
-                return new ErrorMessageResponse();
-            case "MT":
-                return new MessageTaggedResponse();
-            case "Checked-in":
-                return new CheckedInResponse();
-            case "New-entry":
-                return new NewEntryResponse();
-            case "Mod-time":
-                return new ModTimeResponse();
-            case "ok":
-                return new OkResponse();
-            case "error":
-                return new ErrorResponse();
-            case "Merged":
-                return new MergedResponse();
-            case "Updated":
-                return new UpdatedResponse();
-            case "Created":
-                return new CreatedResponse();
-            case "Module-expansion":
-                return new ModuleExpansionResponse();
-            case "Clear-sticky":
-                return new ClearStickyResponse();
-            case "Set-static-directory":
-                return new SetStaticDirectoryResponse();
-            case "Clear-static-directory":
-                return new ClearStaticDirectoryResponse();
-            case "Valid-requests":
-                return new ValidRequestsResponse();
-            case "Set-sticky":
-                return new SetStickyResponse ();
-            case "Removed":
-                return new RemovedResponse();
-            default:
-                return null;
+                case "M":
+                    response = new MessageResponse();
+                    break;
+                case "E":
+                    response = new ErrorMessageResponse();
+                    break;
+                case "MT":
+                    response = new MessageTaggedResponse();
+                    break;
+                case "Checked-in":
+                    response = new CheckedInResponse();
+                    break;
+                case "New-entry":
+                    response = new NewEntryResponse();
+                    break;
+                case "Mod-time":
+                    response = new ModTimeResponse();
+                    break;
+                case "ok":
+                    response = new OkResponse();
+                    break;
+                case "error":
+                    response = new ErrorResponse();
+                    break;
+                case "Merged":
+                    response = new MergedResponse();
+                    break;
+                case "Updated":
+                    response = new UpdatedResponse();
+                    break;
+                case "Created":
+                    response = new CreatedResponse();
+                    break;
+                case "Module-expansion":
+                    response = new ModuleExpansionResponse();
+                    break;
+                case "Clear-sticky":
+                    response = new ClearStickyResponse();
+                    break;
+                case "Set-static-directory":
+                    response = new SetStaticDirectoryResponse();
+                    break;
+                case "Clear-static-directory":
+                    response = new ClearStaticDirectoryResponse();
+                    break;
+                case "Valid-requests":
+                    response = new ValidRequestsResponse();
+                    break;
+                case "Set-sticky":
+                    response = new SetStickyResponse ();
+                    break;
+                case "Removed":
+                    response = new RemovedResponse();
+                    break;
+                default:
+                    response = null;
+                    break;
             }
+            return response;
         }
     }
 }

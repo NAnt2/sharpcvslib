@@ -124,12 +124,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\LoginCommand.cs"
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\ConsoleWriter.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\RTagCommand.cs"
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\LoginCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -185,6 +185,11 @@
                 />
                 <File
                     RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\RemoveCommandParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\RTagCommandParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -169,7 +169,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                     System.Console.Write(String.Format("CVS password: "));
                     thePassword = System.Console.ReadLine();
 
-                    password = PasswordScrambler.Scramble(password);
+                    password = PasswordScrambler.Scramble(thePassword);
 
                     this.WritePassword(password);
                 }
@@ -188,10 +188,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             }
             LOGGER.Debug(String.Format("Looking for passfile: {0}", passFile.FullName));
 
-            StreamReader passStream = 
-                new StreamReader(passFile.FullName);
-
-            string passLine = passStream.ReadToEnd();
+            string passLine = null;
+            using (StreamReader passStream = new StreamReader(passFile.FullName)) {
+                passLine = passStream.ReadToEnd();
+                passStream.Close();
+            }
 
             LOGGER.Debug(String.Format("PassLine: {0}.", passLine));
 
@@ -200,7 +201,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             MatchCollection matches = regex.Matches(passLine);
 
             foreach (Match match in matches) {
-
                 try {
                     CvsRoot cvsRootTemp = new CvsRoot(match.Value);
                     LOGGER.Debug(String.Format("cvsRootTemp: {0}.", cvsRootTemp));
@@ -208,10 +208,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                         return match.Groups[6].Value;
                     }
                 } catch (ICSharpCode.SharpCvsLib.Misc.CvsRootParseException) {
-
+                    LOGGER.Debug(String.Format("Invalid cvsroot: {0}.", match.Value));
                 }
             }
-            return null;
+            return String.Empty;
         }
 
         private void WritePassword(string thePassword) {

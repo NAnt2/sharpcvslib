@@ -41,20 +41,16 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 /// <summary>
 /// Handle an error response from the cvs server.
 /// </summary>
-public class ErrorResponse : IResponse
-{
+public class ErrorResponse : AbstractResponse {
     private readonly ILog LOGGER =
         LogManager.GetLogger (typeof (ErrorResponse));
     /// <summary>
     /// Process an error response.
     /// </summary>
-    /// <param name="cvsStream"></param>
-    /// <param name="services"></param>
-    public void Process(CvsStream cvsStream, IResponseServices services)
-    {
-        string message = cvsStream.ReadLine();
+    public override void Process() {
+        string message = this.ReadLine();
         String msg = "cvs server: M " + message;
-        services.SendErrorMessage(msg);
+        Services.SendErrorMessage(msg);
         LOGGER.Debug (msg);
 
     }
@@ -62,10 +58,8 @@ public class ErrorResponse : IResponse
     /// <summary>
     /// Return true if this response cancels the transaction
     /// </summary>
-    public bool IsTerminating {
-        get {
-            return true;
-        }
+    public override bool IsTerminating {
+        get {return true;}
     }
 }
 }

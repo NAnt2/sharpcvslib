@@ -50,7 +50,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     ///    a date, or something else for future expansion. The remainder of
     ///    tagspec contains the actual tag or date.
     /// </summary>
-    public class SetStickyResponse : IResponse {
+    public class SetStickyResponse : AbstractResponse {
 
         private ILog LOGGER =
             LogManager.GetLogger (typeof (SetStickyResponse));
@@ -58,29 +58,27 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// <summary>
         /// Process the response stream.
         /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-        public void Process(CvsStream cvsStream, IResponseServices services) {
-            string localPath      = cvsStream.ReadLine();
-            string repositoryPath = cvsStream.ReadLine();
-            string stickyTag      = cvsStream.ReadLine();
+        public override void Process() {
+            string localPath      = this.ReadLine();
+            string repositoryPath = this.ReadLine();
+            string stickyTag      = this.ReadLine();
 
             PathTranslator orgPath   =
-                new PathTranslator (services.Repository, repositoryPath);
+                new PathTranslator (Services.Repository, repositoryPath);
 
             string localPathAndFilename = orgPath.LocalPathAndFilename;
             string directory = orgPath.LocalPath;
 
             Manager manager = 
-                new Manager (services.Repository.WorkingPath);
-            manager.AddTag (services.Repository, localPath, repositoryPath, stickyTag);
+                new Manager (Services.Repository.WorkingPath);
+            manager.AddTag (Services.Repository, localPath, repositoryPath, stickyTag);
 
         }
 
         /// <summary>
         /// Indicator stating whether the response is terminating or not.
         /// </summary>
-        public bool IsTerminating {
+        public override bool IsTerminating {
             get {return false;}
         }
     }

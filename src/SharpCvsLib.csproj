@@ -116,10 +116,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode\SharpCvsLib\SharpCvsLib.build"
-                    BuildAction = "None"
-                />
-                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Client\CVSServerConnection.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -415,6 +411,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Messages\MessageEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Messages\MessageEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Messages\UpdateMessage.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -676,6 +682,11 @@
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Requests\ValidResponsesRequest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Responses\AbstractResponse.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

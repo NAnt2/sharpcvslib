@@ -42,13 +42,26 @@ public interface IResponse
     /// <summary>
     /// processes this response
     /// </summary>
-    void Process(CvsStream cvsStream, IResponseServices services);
+    void Process(CvsStream cvsStream, IResponseServices responseServices);
+
+    /// <summary>
+    /// The message received from the server.
+    /// </summary>
+    string ResponseString {get;}
+
+    /// <summary>
+    /// Setter for the response services.
+    /// </summary>
+    IResponseServices ResponseServices {set;}
+
+    /// <summary>
+    /// Setter for the cvs stream.
+    /// </summary>
+    CvsStream CvsStream {set;}
 
     /// <summary>
     /// return true if this response cancels the transaction.
     /// </summary>
-    bool IsTerminating {
-        get;
-    }
+    bool IsTerminating {get;}
 }
 }

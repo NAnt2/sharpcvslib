@@ -48,6 +48,7 @@ using ICSharpCode.SharpCvsLib.Misc;
 
 using ICSharpCode.SharpCvsLib.Console.Commands;
 using ICSharpCode.SharpCvsLib.Console.Parser;
+using ICSharpCode.SharpCvsLib.Messages;
 
 using log4net;
 using log4net.Config;
@@ -194,6 +195,9 @@ namespace ICSharpCode.SharpCvsLib.Console {
 
                 // Create CVSServerConnection object that has the ICommandConnection
                 CVSServerConnection serverConn = new CVSServerConnection(workingDirectory);
+                ConsoleWriter writer = new ConsoleWriter();
+                serverConn.MessageSentEvent += new MessageEventHandler(writer.WriteLine);
+                serverConn.MessageReceivedEvent += new MessageEventHandler(writer.WriteLine);
 
                 if (null == serverConn) {
                     System.Console.WriteLine("Unable to connect to server.");

@@ -64,27 +64,25 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     ///             For example, the client is case-insensitive and the names
     ///             differ only in case.
     /// </summary>
-    public class CreatedResponse : IResponse {
+    public class CreatedResponse : AbstractResponse {
         private readonly ILog LOGGER =
             LogManager.GetLogger (typeof (CreatedResponse));
 
         /// <summary>
         /// Process a created file response.
         /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-        public void Process(CvsStream cvsStream, IResponseServices services) {
-            Manager manager = new Manager (services.Repository.WorkingPath);
+        public override void Process() {
+            Manager manager = new Manager (Services.Repository.WorkingPath);
 
-            String localPath = cvsStream.ReadLine();
-            String reposPath = cvsStream.ReadLine ();
+            String localPath = this.ReadLine();
+            String reposPath = this.ReadLine();
 
-            String entry     = cvsStream.ReadLine();
-            String flags     = cvsStream.ReadLine();
-            String sizeStr   = cvsStream.ReadLine();
+            String entry     = this.ReadLine();
+            String flags     = this.ReadLine();
+            String sizeStr   = this.ReadLine();
 
             PathTranslator orgPath =
-                new PathTranslator (services.Repository, reposPath);
+                new PathTranslator (Services.Repository, reposPath);
             String localPathAndFilename = orgPath.LocalPathAndFilename;
             String directory = orgPath.LocalPath;
 
@@ -112,41 +110,41 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             }
 
 
-            if (services.NextFile != null && services.NextFile.Length > 0) {
-                localPathAndFilename = services.NextFile;
-                services.NextFile = null;
+            if (Services.NextFile != null && Services.NextFile.Length > 0) {
+                localPathAndFilename = Services.NextFile;
+                Services.NextFile = null;
             }
 
             Entry e = new Entry(orgPath.LocalPath, entry);
             
             if (e.IsBinaryFile) {
-                services.UncompressedFileHandler.ReceiveBinaryFile(cvsStream,
+                Services.UncompressedFileHandler.ReceiveBinaryFile(Stream,
                         localPathAndFilename,
                         size);
             } else {
-                services.UncompressedFileHandler.ReceiveTextFile(cvsStream,
+                Services.UncompressedFileHandler.ReceiveTextFile(Stream,
                         localPathAndFilename,
                         size);
             }
 
-            e.Date = services.NextFileDate;
-            services.NextFileDate = null;
+            e.Date = Services.NextFileDate;
+            Services.NextFileDate = null;
 
             manager.Add(e);
             LOGGER.Debug("In created response, just added entry.  File date=[" + e.Date + "]");
             manager.SetFileTimeStamp (localPathAndFilename, e.TimeStamp, e.IsUtcTimeStamp);
 
             UpdateMessage message = new UpdateMessage ();
-            message.Module = services.Repository.WorkingDirectoryName;
+            message.Module = Services.Repository.WorkingDirectoryName;
             message.Repository =  orgPath.RelativePath;
             message.Filename = e.Name;
-            services.SendMessage (message.Message);
+            Services.SendMessage (message.Message);
         }
 
         /// <summary>
         /// Return true if this response cancels the transaction
         /// </summary>
-        public bool IsTerminating {
+        public override bool IsTerminating {
             get {return false;}
         }
     }

@@ -51,18 +51,16 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     ///     not a file within a directory.
     ///
     /// </summary>
-    public class SetStaticDirectoryResponse : IResponse {
+    public class SetStaticDirectoryResponse : AbstractResponse {
         private ILog LOGGER =
             LogManager.GetLogger (typeof (SetStaticDirectoryResponse));
 
         /// <summary>
         /// Process the response stream.
         /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-        public void Process(CvsStream cvsStream, IResponseServices services) {
-            string localPath      = cvsStream.ReadLine();
-            string repositoryPath = cvsStream.ReadLine();
+        public override void Process() {
+            string localPath      = this.ReadLine();
+            string repositoryPath = this.ReadLine();
 
             if (LOGGER.IsDebugEnabled) {
                 StringBuilder msg = new StringBuilder ();
@@ -71,7 +69,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                 LOGGER.Debug (msg);
             }
             PathTranslator pathTranslator =
-                new PathTranslator (services.Repository,
+                new PathTranslator (Services.Repository,
                                     repositoryPath);
             if (LOGGER.IsDebugEnabled) {
                 LOGGER.Debug (pathTranslator.ToString ());
@@ -89,7 +87,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// <summary>
         /// Indicator stating whether the response is terminating or not.
         /// </summary>
-        public bool IsTerminating {
+        public override bool IsTerminating {
             get {return false;}
         }
     }

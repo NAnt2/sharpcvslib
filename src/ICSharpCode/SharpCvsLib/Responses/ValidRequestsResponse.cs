@@ -39,26 +39,21 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 /// <summary>
 /// Valid Request Response
 /// </summary>
-public class ValidRequestsResponse : IResponse
-{
+public class ValidRequestsResponse : AbstractResponse {
     /// <summary>
     /// Process the response stream.
     /// </summary>
-    /// <param name="cvsStream"></param>
-    /// <param name="services"></param>
-    public void Process(CvsStream cvsStream, IResponseServices services)
+    public override void Process()
     {
-        string responses  = cvsStream.ReadLine();
+        string responses  = this.ReadLine();
         // TODO : make something useful with this request
     }
 
     /// <summary>
     /// Indicator for a terminating response.
     /// </summary>
-    public bool IsTerminating {
-        get {
-            return false;
-        }
+    public override bool IsTerminating {
+        get {return false;}
     }
 }
 }

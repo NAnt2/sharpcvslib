@@ -37,36 +37,29 @@ using ICSharpCode.SharpCvsLib.Streams;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
-
-/// <summary>
-/// Handles an error message response.
-/// </summary>
-public class ErrorMessageResponse : IResponse
-{
-    private readonly ILog LOGGER =
-        LogManager.GetLogger (typeof (ErrorMessageResponse));
     /// <summary>
-    /// Process an error message response.
+    /// Handles an error message response.
     /// </summary>
-    /// <param name="cvsStream"></param>
-    /// <param name="services"></param>
-    public void Process(CvsStream cvsStream, IResponseServices services)
-    {
-        string message = cvsStream.ReadToEndOfLine();
-        // Fire message event to the client app
-        services.SendMessage("E " + message);
-        String msg = "cvs server: E " + message;
-        LOGGER.Debug (msg);
+    public class ErrorMessageResponse : AbstractResponse {
+        private readonly ILog LOGGER =
+            LogManager.GetLogger (typeof (ErrorMessageResponse));
+        /// <summary>
+        /// Process an error message response.
+        /// </summary>
+        public override void Process() {
+            string message = this.ReadLine();
+            // Fire message event to the client app
+            Services.SendMessage("E " + message);
+            String msg = "cvs server: E " + message;
+            LOGGER.Debug (msg);
 
-    }
+        }
 
-    /// <summary>
-    /// Return true if this response cancels the transaction
-    /// </summary>
-    public bool IsTerminating {
-        get {
-            return false;
+        /// <summary>
+        /// Return true if this response cancels the transaction
+        /// </summary>
+        public override bool IsTerminating {
+            get {return false;}
         }
     }
-}
 }

@@ -43,33 +43,27 @@ using ICSharpCode.SharpCvsLib.Streams;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
 
-/// <summary>
-/// Handle a clear sticky tag response.
-/// </summary>
-public class ClearStickyResponse : IResponse
-{
-    private readonly ILog LOGGER =
-        LogManager.GetLogger (typeof (ClearStickyResponse));
     /// <summary>
-    /// Process a clear sticky tag response.
+    /// Handle a clear sticky tag response.
     /// </summary>
-    /// <param name="cvsStream"></param>
-    /// <param name="services"></param>
-    public void Process(CvsStream cvsStream, IResponseServices services)
-    {
-        string localPath      = cvsStream.ReadLine();
-        string reposPath = cvsStream.ReadLine();
+    public class ClearStickyResponse : AbstractResponse {
+        private readonly ILog LOGGER =
+            LogManager.GetLogger (typeof (ClearStickyResponse));
+        /// <summary>
+        /// Process a clear sticky tag response.
+        /// </summary>
+        public override void Process() {
+            string localPath      = this.ReadLine();
+            string reposPath = this.ReadLine();
 
-        // TODO: Do something useful with this response.
-    }
+            // TODO: Do something useful with this response.
+        }
 
-    /// <summary>
-    /// Return true if this response cancels the transaction
-    /// </summary>
-    public bool IsTerminating {
-        get {
-            return false;
+        /// <summary>
+        /// Return true if this response cancels the transaction
+        /// </summary>
+        public override bool IsTerminating {
+            get {return false;}
         }
     }
-}
 }

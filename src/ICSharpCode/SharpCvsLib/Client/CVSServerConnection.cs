@@ -205,6 +205,15 @@ namespace ICSharpCode.SharpCvsLib.Client {
         public EncodedMessage MessageEvent = new EncodedMessage ();
 
         /// <summary>
+        /// Occurs when a message is sent to the cvs server.
+        /// </summary>
+        public event MessageEventHandler MessageSentEvent;
+        /// <summary>
+        /// Occurs when a message is received from the cvs server.
+        /// </summary>
+        public event MessageEventHandler MessageReceivedEvent;
+
+        /// <summary>
         /// This message event is fired when there is an error message returned
         ///     from the server.
         /// </summary>
@@ -260,13 +269,15 @@ namespace ICSharpCode.SharpCvsLib.Client {
                 if (LOGGER.IsDebugEnabled) {
                     LOGGER.Debug ("Response : " + responseStr);
                 }
+                this.MessageReceivedEvent(this, new MessageEventArgs(responseStr, "--debug-server--"));
 
                 if (responseStr.Length == 0) {
                     SendMessage("server timed out");
                     break;
                 }
 
-                IResponse response = ResponseFactory.CreateResponse(responseStr.Substring(0, responseStr.Length - 1));
+                IResponse response = 
+                    ResponseFactory.CreateResponse(responseStr.Substring(0, responseStr.Length - 1));
                 if (LOGGER.IsDebugEnabled) {
                     LOGGER.Debug("cvs server: " + response);
                 }
@@ -281,6 +292,9 @@ namespace ICSharpCode.SharpCvsLib.Client {
                 if (response.IsTerminating) {
                     break;
                 }
+                if (response.ResponseString != null) {
+                    this.MessageReceivedEvent(this, new MessageEventArgs(response));
+                }
             }
         }
 
@@ -294,6 +308,10 @@ namespace ICSharpCode.SharpCvsLib.Client {
                 msg.Append ("\nSubmit Request");
                 msg.Append ("\n\trequest=[").Append (request).Append ("]");
                 LOGGER.Debug (msg);
+            }
+
+            if (request.RequestString != null) {
+                this.MessageSentEvent(this, new MessageEventArgs(request));
             }
 
             outputStream.SendString(request.RequestString);

@@ -41,23 +41,19 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 /// <summary>
 /// Message response.
 /// </summary>
-public class MessageResponse : IResponse
-{
-    bool terminating = false;
+public class MessageResponse : AbstractResponse {
+    private bool terminating;
     private readonly ILog LOGGER =
         LogManager.GetLogger (typeof (MessageResponse));
 
     /// <summary>
     /// Process the message response.
     /// </summary>
-    /// <param name="cvsStream"></param>
-    /// <param name="services"></param>
-    public void Process(CvsStream cvsStream, IResponseServices services)
-    {
-        string message = cvsStream.ReadToEndOfLine();
+    public override void Process() {
+        string message = this.ReadLine();
         terminating = message.Trim().ToUpper() == "OK";
         // Fire message event to the client app
-        services.SendMessage("cvs server: M " + message);
+        Services.SendMessage("cvs server: M " + message);
         String msg = "cvs server: M " + message;
         LOGGER.Debug (msg);
     }
@@ -65,10 +61,8 @@ public class MessageResponse : IResponse
     /// <summary>
     /// Indicator stating whether the response is terminating or not.
     /// </summary>
-    public bool IsTerminating {
-        get {
-            return terminating;
-        }
+    public override bool IsTerminating {
+        get {return terminating;}
     }
 }
 }
