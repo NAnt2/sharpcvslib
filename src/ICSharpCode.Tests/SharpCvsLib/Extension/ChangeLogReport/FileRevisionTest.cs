@@ -99,7 +99,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
         }
  
         /// <summary>
-        /// Checks the XML output from the reader matches 
+        /// Checks the XML output from the reader matches
         /// the expected FileRevision values
         /// </summary>
         public static void Check(XmlTextReader reader, string name, string revision, string previousrevision)
@@ -142,8 +142,8 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
             // the previousrevision element
             reader.Read();
             Assertion.AssertEquals(XmlNodeType.Element, reader.NodeType);
-            Assertion.AssertEquals("previousrevision", reader.Name);
-            
+//            Assertion.AssertEquals("previousrevision", reader.Name);
+            Assertion.AssertEquals("prevrevision", reader.Name);           
             // the previousrevision value
             reader.Read();
             Assertion.AssertEquals(XmlNodeType.Text, reader.NodeType);
@@ -152,7 +152,8 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
             // the end of the previousrevision element
             reader.Read();
             Assertion.AssertEquals(XmlNodeType.EndElement, reader.NodeType);
-            Assertion.AssertEquals("previousrevision", reader.Name);
+//            Assertion.AssertEquals("previousrevision", reader.Name);
+            Assertion.AssertEquals("prevrevision", reader.Name);
             
             // the end of the file element
             reader.Read();
