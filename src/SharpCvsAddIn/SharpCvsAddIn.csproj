@@ -293,9 +293,11 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "Resources\app-strings.txt"
-                    BuildAction = "Content"
+                    RelPath = "Jobs\CvsCheckout.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
                 />
+                <Folder RelPath = "Resources\" />
                 <File
                     RelPath = "UI\SolutionExplorer.cs"
                     SubType = "Code"

@@ -109,6 +109,8 @@
 			solutionEvents_ = new Events.SolutionEvents( controller_ );
 			solutionEvents_.AddHandlers();
 
+			controller_.Jobs.Start();
+
 
 #if ALWAYS_REGISTER
 			bool register = true;
@@ -143,6 +145,7 @@
 		public void OnDisconnection(Extensibility.ext_DisconnectMode disconnectMode, ref System.Array custom)
 		{
 			logger_.Debug( "Disconnecting" );
+			controller_.Jobs.Stop();
 			solutionEvents_.RemoveHandlers();
 		}
 

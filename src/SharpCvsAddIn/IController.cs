@@ -140,5 +140,7 @@ namespace SharpCvsAddIn
 		/// <param name="resourceId">Tag that identifies the localized string </param>
 		/// <returns>The string.</returns>
 		string GetLocalizedString( string resourceId );
+
+		JobQueue Jobs { get; }
     }
 }

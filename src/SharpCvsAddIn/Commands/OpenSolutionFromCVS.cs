@@ -12,6 +12,8 @@ using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Commands;
 
+using SharpCvsAddIn.Jobs;
+
 
 namespace SharpCvsAddIn.Commands
 {
@@ -26,6 +28,12 @@ namespace SharpCvsAddIn.Commands
 		override public vsCommandStatus QueryStatus( IController cont )
 		{
 			return vsCommandStatus.vsCommandStatusSupported | vsCommandStatus.vsCommandStatusEnabled;
+		}
+
+		private void OnCheckoutComplete( object sender, object jobData )
+		{
+			CvsCheckoutJob job = (CvsCheckoutJob)jobData ;
+			job.FinishCheckout();
 		}
 
 		/// <summary>
@@ -69,83 +77,19 @@ namespace SharpCvsAddIn.Commands
 							string slnLocation = openDlg.destPathTextBox.Text;
 							string moduleName = openDlg.cvsModuleDropDown.Text;
 							string tag = openDlg.cvsTagDropDown.Text;
-	
-							// see if we can get the solution from cvs, if we do,
-							// write user changes to isolated storage
-							CVSServerConnection serverConnection = null;
-							try
-							{			
-								CvsRoot root = new CvsRoot(connectionString.ToString());
-								WorkingDirectory wd = new WorkingDirectory( root, slnLocation, moduleName );
-								CheckoutModuleCommand cmd = new CheckoutModuleCommand( wd );
-								serverConnection = new CVSServerConnection( wd );
-								cont.OutputPane.RegisterCvsConnection( serverConnection );
-								serverConnection.Connect( wd, connectionString.Password );
-								cmd.Execute( serverConnection );
-							}
-							catch(Exception e )
-							{
-								using( new SafeCursor( Cursors.Default ) )
-								{
-									cont.UIShell.ExceptionMessage( e.Message );
-								}						
-							}
 
-							if( serverConnection != null ) serverConnection.Close();
 
-							try
-							{
-
-								// find solution to open
-								DirectoryInfo di = new DirectoryInfo( openDlg.SolutionPath );
-
-								FileInfo[] files = di.GetFiles( "*.sln" );
-								string solutionName = string.Empty;
-							
-								// no solution file to open
-								if( files.Length == 0 )
-								{
-									cont.UIShell.ExclamationMessage( "MSGBOX_MISSING_SOLUTION_FILE"  );
-									return;
-								}
-
-								// two or more solution files, pick one
-								if( files.Length > 1 )
-								{
-									using( new SafeCursor( Cursors.Default ) )
-									{
-										FormPickSolution fps = new FormPickSolution( cont, files );
-										if( fps.ShowDialog( cont.HostWindow ) == DialogResult.OK )
-										{
-											solutionName = fps.SolutionFile;
-										}
-										else
-										{
-											return;
-										}
-									}
-								}
-
-								solutionName = files[0].Name;
-
-								// ok, if we are this far, we checked out the solution from cvs, lets open it
-								cont.OpenSolution(Path.Combine(openDlg.SolutionPath, solutionName )); 
-								// save user actions
-								Module m = cont.Model.Roots.CurrentRoot.AddModule( moduleName );
-								if( tag != string.Empty )
-								{
-									m.AddTag( tag );
-								}
-
-								cont.Model.Save();
-							}
-							catch(Exception e)
-							{
-								using( new SafeCursor( Cursors.Default ) )
-								{
-									cont.UIShell.ExceptionMessage(e.Message);
-								}
-							}
+							CvsCheckoutJob job = new CvsCheckoutJob( cont, 
+								connectionString.ToString(),
+								moduleName, 
+								slnLocation,
+								connectionString.Password,
+								openDlg.SolutionPath,
+								tag );
+                            
+							// cvs operation will be handled in job queue thread, the remainder of solution 
+							// open operation will be done once job is done in OnCheckoutComplete
+							cont.Jobs.AddJob( job, new JobCompletionHandler( this.OnCheckoutComplete ) );
 						}
 						// everything is successful
 					}

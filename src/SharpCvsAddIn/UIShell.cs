@@ -83,17 +83,20 @@ namespace SharpCvsAddIn
 			// TODO:  Add UIShell.SetRepositoryExplorerSelection implementation
 		}
 
-		public System.Windows.Forms.DialogResult ShowMessageBox(string text, string caption, System.Windows.Forms.MessageBoxButtons buttons)
+		public DialogResult ShowMessageBox( string messageResource, MessageBoxButtons buttons, MessageBoxIcon icons)
 		{
-			// TODO:  Add UIShell.ShowMessageBox implementation
-			return new System.Windows.Forms.DialogResult ();
+			ResourceManager rm = controller_.Model.ResourceManager;
+			
+			return MessageBox.Show( controller_.HostWindow,
+				rm.GetString( messageResource ),
+				rm.GetString( "APPLICATION_TITLE" ),
+				buttons,
+				icons
+				);			
+
 		}
 
-		System.Windows.Forms.DialogResult SharpCvsAddIn.IUIShell.ShowMessageBox(string text, string caption, System.Windows.Forms.MessageBoxButtons buttons, System.Windows.Forms.MessageBoxIcon icon)
-		{
-			// TODO:  Add UIShell.SharpCvsAddIn.IUIShell.ShowMessageBox implementation
-			return new System.Windows.Forms.DialogResult ();
-		}
+
 
 		#endregion
 

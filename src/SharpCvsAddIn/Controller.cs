@@ -22,6 +22,7 @@ namespace SharpCvsAddIn
 		private bool addInLoadedForSolution_ = false;
 		private SolutionExplorer solutionExplorer_ = null;
 		private Events.ProjectFileEvents fileEvents_ = null;
+		private JobQueue jobs_ = null;
 
 		public Controller(EnvDTE._DTE dte, EnvDTE.AddIn addin,IErrorHandler errorHandler)
 		{
@@ -35,6 +36,7 @@ namespace SharpCvsAddIn
 			outputWriter_ = new OutputPaneWriter( application_, this.GetLocalizedString("OUTPUT_WINDOW_PANE") );
 
 			fileEvents_ = new Events.ProjectFileEvents( this );
+			jobs_ = new JobQueue( this);
 
 			//solutionExplorer_.Initialize();
 		}
@@ -43,6 +45,13 @@ namespace SharpCvsAddIn
 		#region IController Members
 
 
+		public JobQueue Jobs
+		{
+			get
+			{
+				return jobs_;
+			}
+		}
 
         public event System.EventHandler Unloading;
 
@@ -64,6 +73,8 @@ namespace SharpCvsAddIn
 		/// </summary>
 		public void HandleSolutionOpenEvent()
 		{
+			// start processing cvs commands
+
 			addInLoadedForSolution_ = true;
 			// synch user interface with loaded project
 			this.SolutionExplorer.Refresh();
