@@ -139,6 +139,10 @@
     <File name="..\src\ICSharpCode\SharpCvsLib\Extension\ChangeLogReport\LogEntry.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Extension\ChangeLogReport\CvsChangeLog.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Extension\ChangeLogReport\FileRevision.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Extension\LogReporter\LogFile.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Extension\LogReporter\LogReport.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Extension\LogReporter\LogReportCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Extension\LogReporter\LogRevision.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\SharpCvsLibAssemblyInfo.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
