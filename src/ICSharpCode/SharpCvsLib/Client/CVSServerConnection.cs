@@ -265,7 +265,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// </summary>
         /// <param name="message"></param>
         public void SendFileUpdatedMessage(string message) {
-            this.FileUpdatedMessageEvent(this, new MessageEventArgs(message));
+            this.FileUpdatedMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
         }
 
         /// <summary>

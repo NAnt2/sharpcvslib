@@ -70,7 +70,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private bool verbose = false;
 
         private const string REGEX_LOG_LEVEL = @"[-]*log:[\s]*(debug|info|warn|error)";
-        private const string REGEX_VERBOSE = @"[-]*verbose]";
+        private const string REGEX_VERBOSE = @"[-]*(verbose)";
 
         private const String ENV_CVS_ROOT = "CVS_ROOT";
 
@@ -198,7 +198,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private void SetVerbose(string commandLine) {
             Regex regex = new Regex(REGEX_VERBOSE);
             Match match = regex.Match(commandLine);
-            if (match.Groups.Count > 0) {
+            if (match.Groups.Count > 0 && match.Groups[1].Value == "verbose") {
                 this.verbose = true;
             }
 
