@@ -74,12 +74,12 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
             Environment.CurrentDirectory = settings.Config.LocalPath;
             
             String commandLine = 
-               "-d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib co sharpcvslib";
+               "-d" + settings.Config.Cvsroot + " co " + settings.Config.Module;
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a ConsoleMain object
             ConsoleMain consoleMain = new ConsoleMain ();
             consoleMain.Execute (commandLineArgs);
-            Assertion.Assert (Directory.Exists(Path.Combine(settings.Config.LocalPath, "sharpcvslib")));
+            Assertion.Assert (Directory.Exists(Path.Combine(settings.Config.LocalPath, settings.Config.Module)));
         }
         /// <summary>
         ///     Checkout files based on revision specified in -r option.
@@ -87,13 +87,14 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         /// </summary>
         [Test]
         public void MinusrOptionCheckoutFilesBasedOnRevision (){
-            String commandLine = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib co -rv0_3_1 sharpcvslib";
+            String commandLine = "-d" + settings.Config.Cvsroot + " co -r " + settings.Config.Tag1 +
+                                 " " + settings.Config.Module;
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a ConsoleMain object
             ConsoleMain consoleMain = new ConsoleMain();
             consoleMain.Execute (commandLineArgs);
             // check for directory
-            Assertion.Assert (Directory.Exists(Path.Combine(settings.Config.LocalPath, "sharpcvslib")));
+            Assertion.Assert (Directory.Exists(Path.Combine(settings.Config.LocalPath, settings.Config.Module)));
             // check for files with specified revision
         }
         /// <summary>
@@ -102,7 +103,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         /// </summary>
         [Test]
         public void MinusdOptionCheckoutFileIntoDir (){
-            String commandLine = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib co -dnewlocation sharpcvslib";
+            String commandLine = "-d" + settings.Config.Cvsroot + " co -d newlocation " + settings.Config.Module;
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a ConsoleMain object
             ConsoleMain consoleMain = new ConsoleMain ();
@@ -116,12 +117,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         /// </summary>
         [Test]
         public void MinusDOptionCheckoutByCertainDate (){
-            String commandLine = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib co -D01.28.03 sharpcvslib";
+            String commandLine = "-d" + settings.Config.Cvsroot + " co -D 01.28.03 " + settings.Config.Module;
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a ConsoleMain object
             ConsoleMain consoleMain = new ConsoleMain();
             Assertion.AssertNotNull ("Should have a command object.", consoleMain);
             consoleMain.Execute( commandLineArgs);
+            Assertion.Assert(Directory.Exists(Path.Combine(settings.Config.LocalPath, settings.Config.Module)));
             // Find a file that should exist 
             //Assertion.Assert ("Should have found the check file.  file=[" +
             //    checkFile + "]", File.Exists (checkFile));
