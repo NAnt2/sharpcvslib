@@ -48,7 +48,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
     public class RTagCommand {
         private WorkingDirectory currentWorkingDirectory;
         private CvsRoot cvsRoot;
-        private string fileNames;
+        private string repository;
         private string localDirectory;
         private string revision;
         private DateTime date;
@@ -66,21 +66,21 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// RTags a cvs repository.
         /// </summary>
         /// <param name="cvsroot">User information</param>
-        /// <param name="fileNames">Files to remove</param>
+        /// <param name="repository">Repository where to tag the files</param>
         /// <param name="rtOptions">Options</param>
-        public RTagCommand(string cvsroot, string fileNames, string rtOptions) : 
-            this(new CvsRoot(cvsroot), fileNames, rtOptions) {
+        public RTagCommand(string cvsroot, string repository, string rtOptions) : 
+            this(new CvsRoot(cvsroot), repository, rtOptions) {
         }
 
         /// <summary>
         ///    RTags in the cvs repository
         /// </summary>
         /// <param name="cvsroot">User Information</param>
-        /// <param name="fileNames">Files to remove</param>
+        /// <param name="repository">Repository that contains the files to be tagged</param>
         /// <param name="rtOptions">Options</param>
-        public RTagCommand(CvsRoot cvsroot, string fileNames, string rtOptions) {
+        public RTagCommand(CvsRoot cvsroot, string repository, string rtOptions) {
             this.cvsRoot = cvsroot;
-            this.fileNames = fileNames;
+            this.repository = repository;
             this.unparsedOptions = rtOptions;
         }
 
@@ -100,8 +100,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                     localDirectory = Environment.CurrentDirectory;
                 }
                 currentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
-                    localDirectory, fileNames);
-                // Create new RemoveCommand object
+                    localDirectory, repository);
+                // Create new RTagCommand object
                 rtagCommand = new ICSharpCode.SharpCvsLib.Commands.RTagCommand(
                                  this.currentWorkingDirectory );
             }
