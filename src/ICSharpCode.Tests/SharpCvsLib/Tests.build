@@ -44,7 +44,7 @@
                 <excludes name="Commands/*.cs" />
                 <excludes name="Console/Commands/*.cs"/>
                 <excludes name="FileHandler/*.cs" />
-                <excludes name="FileSystem/Manager.cs" />
+                <excludes name="FileSystem/ManagerTest.cs" />
             </sources>
 
             <references>
