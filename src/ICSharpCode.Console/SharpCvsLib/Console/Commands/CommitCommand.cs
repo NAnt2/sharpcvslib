@@ -29,6 +29,7 @@
 // exception statement from your version.
 //
 //    <author>Steve Kenzell</author>
+//    <author>Clayton Harbour</author>
 #endregion
 using System;
 using System.Globalization;
@@ -43,35 +44,33 @@ using ICSharpCode.SharpCvsLib.Console.Parser;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Console.Commands {
+namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
     /// <summary>
     /// Commit changes in the cvs repository.
     /// </summary>
-    public class CommitCommand {
-        private WorkingDirectory currentWorkingDirectory;
+    public class CommitCommandParser : AbstractCommandParser {
         private CvsRoot cvsRoot;
         private string fileNames;
         private string unparsedOptions;
         private string revision;
         private string logFile;
         private string message;
-        private readonly ILog LOGGER = 
-            LogManager.GetLogger (typeof(CommitCommand));
 
         /// <summary>
-        /// The current working directory.
+        /// Default constructor.
         /// </summary>
-        public WorkingDirectory CurrentWorkingDirectory {
-            get {return this.currentWorkingDirectory;}
+        public CommitCommandParser () {
+
         }
+
         /// <summary>
         /// Commit changes to a cvs repository.
         /// </summary>
         /// <param name="cvsroot">User information</param>
         /// <param name="fileNames">Files to remove</param>
         /// <param name="ciOptions">Options</param>
-        public CommitCommand(string cvsroot, string fileNames, string ciOptions) : 
+        public CommitCommandParser(string cvsroot, string fileNames, string ciOptions) : 
             this(new CvsRoot(cvsroot), fileNames, ciOptions){
         }
 
@@ -81,10 +80,52 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <param name="cvsroot">User Information</param>
         /// <param name="fileNames">Files to remove</param>
         /// <param name="ciOptions">Options</param>
-        public CommitCommand(CvsRoot cvsroot, string fileNames, string ciOptions) {
+        public CommitCommandParser(CvsRoot cvsroot, string fileNames, string ciOptions) {
             this.cvsRoot = cvsroot;
             this.fileNames = fileNames;
             this.unparsedOptions = ciOptions;
+        }
+
+        /// <summary>
+        /// Create a new instance of the <see cref="XmlLogCommandParser"/>.
+        /// </summary>
+        /// <returns></returns>
+        public static ICommandParser GetInstance() {
+            return GetInstance(typeof(CommitCommandParser));
+        }
+
+        /// <summary>
+        /// Name of the command being parsed.
+        /// </summary>
+        public override string CommandName {
+            get {return "commit";}
+        }
+
+        /// <summary>
+        /// Description of the command.
+        /// </summary>
+        public override string CommandDescription {
+            get {return "Check files into the repository";}
+        }
+
+        /// <summary>
+        /// Nicknames for the add command.
+        /// </summary>
+        public override ICollection Nicks {
+            get {
+                if (0 == this.nicks.Count) {
+                    this.nicks.Add("ci");
+                    this.nicks.Add("com");
+                }
+                return nicks;
+            }
+        }
+
+        /// <summary>
+        /// The add command is implemented in the library and commandline parser.
+        /// </summary>
+        public override bool IsImplemented {
+            get {return true;}
         }
 
         /// <summary>
@@ -95,7 +136,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <exception cref="Exception">TODO: Make a more specific exception</exception>
         /// <exception cref="NotImplementedException">If the command argument
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
-        public ICommand CreateCommand () {
+        public override ICommand CreateCommand () {
             ICSharpCode.SharpCvsLib.Commands.CommitCommand2 commitCommand;
             try {
                 this.ParseOptions(this.unparsedOptions);
@@ -105,10 +146,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 Repository repository = manager.FetchRepository(Environment.CurrentDirectory); 
                 // If this fails error out and the user
                 //    is not in a CVS repository directory tree.
-                currentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
+                CurrentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
                     Environment.CurrentDirectory, repository.FileContents);
                 if (revision != null) {
-                    this.currentWorkingDirectory.Revision = revision;
+                    this.CurrentWorkingDirectory.Revision = revision;
                 }
                 String[] files = Directory.GetFiles(Environment.CurrentDirectory, fileNames);
                 ArrayList copiedFiles = new ArrayList ();
@@ -117,10 +158,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                     String fullPath = Path.Combine(Environment.CurrentDirectory, file);
                     copiedFiles.Add(fullPath);
                 }
-                currentWorkingDirectory.Folders = GetFoldersToCommit(copiedFiles);
+                CurrentWorkingDirectory.Folders = GetFoldersToCommit(copiedFiles);
                 // Create new CommitCommand2 object
                 commitCommand = new ICSharpCode.SharpCvsLib.Commands.CommitCommand2(
-                                 this.currentWorkingDirectory );
+                                 this.CurrentWorkingDirectory );
             }
             catch (Exception e) {
                 LOGGER.Error (e);
@@ -249,6 +290,28 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                         "implemented.";
                     throw new NotImplementedException (msg);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Output the command usage and arguements.
+        /// </summary>
+        public override string Usage {
+            get {
+                string usage = 
+@"Usage: cvs commit [-DnRlf] [-m msg | -F logfile] [-r rev] files...
+    -D          Assume all files are modified.
+    -n          Do not run the module program (if any).
+    -R          Process directories recursively.
+    -l          Local directory only (not recursive).
+    -f          Force the file to be committed; disables recursion.
+    -F logfile  Read the log message from file.
+    -m msg      Log message.
+    -r branch   Commit to specific branch or trunk.
+    -c          Check for valid edits before committing.
+(Specify the --help global option for a list of other help options)";
+
+                return usage;
             }
         }
     }

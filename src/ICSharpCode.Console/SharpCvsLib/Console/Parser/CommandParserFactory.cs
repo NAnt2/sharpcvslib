@@ -137,7 +137,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     allCommands.Add("admin", GetCom("admin", "Administration front end for rcs", new string[]{"adm", "rcs"}));
                     allCommands.Add("annotate", GetCom("annotate", "Show last revision where each line was modified", new string[]{"ann"}));
                     allCommands.Add("chac1", GetCom("chac1", "Change the Access Control List for a directory", new string[] {"setacl", "setperm"}));
-                    allCommands.Add("checkout", GetCom("checkout", "Change the owner of a directory", new string[]{"co", "get"}));
+                    allCommands.Add("checkout", GetCom("checkout", "Checkout sources for editing", new string[]{"co", "get"}));
+                    allCommands.Add("chown", GetCom("chown", "Change the owner of a directory", new ArrayList()));
                     allCommands.Add("commit", GetCom("commit", "Check files into the repository", new string[]{"ci", "com"}));
                     allCommands.Add("diff", GetCom("diff", "Show differences between revisions", new string[]{"di", "dif"}));
                     allCommands.Add("edit", GetCom("edit", "Get ready to edit a watched file", new ArrayList()));
@@ -178,7 +179,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     allCommands.Add("xml", GetCom("xml", "Create an xml report containing the history information for a module", new ArrayList()));
 
                     foreach (Command command in AvailableCommands.Values) {
-                        ((Command)allCommands[command.CommandName]).Implemented = command.Implemented;
+                        allCommands[command.CommandName] = command;
                     }
                 }  
                 return allCommands;

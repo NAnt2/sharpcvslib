@@ -270,8 +270,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             this.repository = String.Empty;
                         }
                         try {
-                            CommitCommand commitCommand = 
-                                new CommitCommand(this.CvsRoot, repository, options);
+                            CommitCommandParser commitCommand = 
+                                new CommitCommandParser(this.CvsRoot, repository, options);
                             command = commitCommand.CreateCommand ();
                             this.currentWorkingDirectory = 
                                 commitCommand.CurrentWorkingDirectory;
