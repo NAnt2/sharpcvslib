@@ -255,7 +255,8 @@ namespace ICSharpCode.SharpCvsLib.Console {
                 pwd = parser.Password;
             } else {
                 LoginCommand loginCommand = new LoginCommand(workingDir.CvsRoot);
-                pwd = loginCommand.GetPassword();
+                loginCommand.Execute();
+                pwd = loginCommand.Password;
             }
 
             if (null == pwd) {

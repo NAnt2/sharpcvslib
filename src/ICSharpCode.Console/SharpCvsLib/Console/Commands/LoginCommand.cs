@@ -146,15 +146,26 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <summary>
         /// Process the login command with cvs library API calls.
         /// </summary>
-        public void Execute (ICommandConnection connection){
+        public void Execute () {
+            if (null != this.CvsRoot && this.CvsRoot.Protocol != 
+                ICSharpCode.SharpCvsLib.Misc.CvsRoot.HostProtocol.PSERVER) {
+                return;
+            }
             this.password = this.GetPassword();
+        }
+
+        /// <summary>
+        /// Process the login command with cvs library API calls.
+        /// </summary>
+        public void Execute (ICommandConnection connection) {
+            this.Execute();
         }
 
         /// <summary>
         /// Lookup the password for the given file
         /// </summary>
         /// <returns></returns>
-        public string GetPassword () {
+        private string GetPassword () {
             string thePassword = null;
             if (null != this.args && this.args.Length > 0) {
                 Regex regex = new Regex(REGEX_PASSWORD);

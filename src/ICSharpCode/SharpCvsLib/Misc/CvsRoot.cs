@@ -58,8 +58,10 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         private readonly ILog LOGGER = LogManager.GetLogger(typeof(CvsRoot));
         /// <summary>
         /// Identify the protocols that are currently supported.
+        /// 
+        /// NOTE: This probably should be replaced by enums.
         /// </summary>
-        private class HostProtocol {
+        public class HostProtocol {
             /// <summary>
             /// Password server protocol.
             /// </summary>

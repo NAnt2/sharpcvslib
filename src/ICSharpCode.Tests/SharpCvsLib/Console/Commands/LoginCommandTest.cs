@@ -89,9 +89,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             Environment.CurrentDirectory = settings.Config.LocalPath;
 
             LoginCommand loginCommand = new LoginCommand(new CvsRoot(":pserver:claytonharbour@linux:/home/cvs/src"));
-            Assertion.AssertNotNull(loginCommand.GetPassword());
+            loginCommand.Execute();
+            Assertion.AssertNotNull(loginCommand.Password);
 
-            LOGGER.Debug(loginCommand.GetPassword());
+            LOGGER.Debug(loginCommand.Password);
         }
     }
 }
