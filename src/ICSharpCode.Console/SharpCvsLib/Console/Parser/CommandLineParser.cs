@@ -200,7 +200,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         this.commandTxt = arguments[i];
                         i++;
                         // get rest of arguments which is options on the commit command.
-                        while (arguments[i].IndexOf("-", 0, 1) >= 0) {
+                        while (arguments.Length > i && arguments[i].IndexOf("-", 0, 1) >= 0) {
                             LOGGER.Debug("Parsing arguments.  Argument[" + i + "]=[" + arguments[i]);
                             // Get options with second parameters?
                             if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
@@ -243,7 +243,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         this.commandTxt = arguments[i];
                         i++;
                         // get rest of arguments which is options on the commit command.
-                        while (arguments[i].IndexOf("-", 0, 1) >= 0) {
+                        while (arguments.Length > i && arguments[i].IndexOf("-", 0, 1) >= 0) {
                             LOGGER.Debug("Parsing arguments.  Argument[" + i + "]=[" + arguments[i]);
                             // Get options with second parameters?
                             if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
@@ -286,7 +286,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         this.commandTxt = arguments[i];
                         i++;
                         // get rest of arguments which is options on the checkout command.
-                        while (arguments[i].IndexOf("-", 0, 1) >= 0){
+                        while (arguments.Length > i && arguments[i].IndexOf("-", 0, 1) >= 0){
                             LOGGER.Debug("Parsing arguments.  Argument[" + i + "]=[" + arguments[i]);
                             // Get options with second parameters?
                             if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0){
@@ -359,7 +359,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         this.commandTxt = arguments[i];
                         i++;
                         // get rest of arguments which is options on the update command.
-                        while (arguments[i].IndexOf("-", 0, 1) >= 0) {
+                        while (arguments.Length > i && arguments[i].IndexOf("-", 0, 1) >= 0) {
                             // Get options with second parameters?
                             if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
                                 for ( int cnt=1; cnt < arguments[i].Length; cnt++ ) {
@@ -400,7 +400,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         singleOptions = "abBdfFlMnR";
                         this.commandTxt = arguments[i++];
                         // get rest of arguments which is options on the rtag command.
-                        while (arguments[i].IndexOf("-", 0, 1) >= 0) {
+                        while (arguments.Length > i && arguments[i].IndexOf("-", 0, 1) >= 0) {
                             // Get options with second parameters?
                             if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
                                 for ( int cnt=1; cnt < arguments[i].Length; cnt++ ) {
@@ -441,7 +441,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         singleOptions = "ACPRbdfmp";
                         this.commandTxt = arguments[i++];
                             // get rest of arguments which is options on the update command.
-                        while (arguments[i].IndexOf("-", 0, 1) >= 0) {
+                        while (arguments.Length > i && arguments[i].IndexOf("-", 0, 1) >= 0) {
                             // Get options with second parameters?
                             if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
                                 for ( int cnt=1; cnt < arguments[i].Length; cnt++ ) {
