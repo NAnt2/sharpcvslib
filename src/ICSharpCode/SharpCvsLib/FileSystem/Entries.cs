@@ -132,6 +132,18 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
             return manager.FetchEntries(cvsFile.FullName);
         }
 
+        public void Save() {
+            DirectoryInfo dir = null;
+            foreach (Entry entry in this.Dictionary.Values) {
+                dir = entry.CvsFile.Directory;
+                break;
+            }
+            if (null != dir) {
+                Manager manager = new Manager(dir);
+                manager.SaveEntries(this);
+            }
+        }
+
         /// <summary>
         /// Render the entries collection as a human readable string.
         /// </summary>

@@ -288,38 +288,15 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "add":
                     case "ad":
                     case "new":
-                        // no single options for the Add command
-                        this.commandTxt = arguments[i];
                         i++;
-                        // get rest of arguments which is options on the commit command.
-                        while (arguments.Length > i && arguments[i].IndexOf("-", 0, 1) >= 0) {
-                            // Get options with second parameters?
-                            if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
-                                for ( int cnt=1; cnt < arguments[i].Length; cnt++ ) {
-                                    this.options = this.options + "-" + arguments[i][cnt] + " "; // No
-                                }
-                            }
-                            else {
-                                this.options = this.options + arguments[i++];       // Yes
-                                this.options = this.options + arguments[i] + " ";
-                            }
-                            i++;
-                        }
-                        if (arguments.Length > i) {
-                            // Safely grab the module, if not specified then
-                            //  pass null into the repository...the cvs command
-                            //  line for cvsnt/ cvs seems to bomb out when
-                            //  it sends to the server
-                            this.repository = arguments[i];
-                        } 
-                        else {
-                            this.repository = String.Empty;
-                        }
+                        string [] tempAddArgs = new string[arguments.Length - i];
+                        Array.Copy(arguments, i, tempAddArgs, 0, arguments.Length - i);
                         AddCommandParser addCommand = 
-                            new AddCommandParser(this.CvsRoot, repository, options);
+                            new AddCommandParser(this.CvsRoot, tempAddArgs);
                         command = addCommand.CreateCommand ();
                         this.currentWorkingDirectory = 
                             addCommand.CurrentWorkingDirectory;
+                        i = arguments.Length;
                         break;
                     case "commit":
                     case "ci":

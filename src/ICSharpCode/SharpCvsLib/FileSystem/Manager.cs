@@ -1009,20 +1009,21 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     managed by CVS.</param>
         /// <returns>The Entry file that has been added.</returns>
         public Entry AddEntry (Entry entry) {
-            if (entry.CvsFile.Exists) {
-                Entries entries = this.FetchEntries(entry.CvsFile.FullName);
-                if (entries.Contains(entry.Key)) {
-                    // update entry
-                    entries[entry.Key] = entry;
-                } else {
-                    // add new entry
-                    entries.Add(entry.Key, entry);
-                }
-                this.WriteToFile(entries);
-            } else {
-                this.WriteToFile(entry);
+            Entries entries = Entries.Load(entry.CvsFile.Directory);
+            if (!entries.Contains(entry.FullPath)) {
+                entries.Add(entry);
             }
+            this.SaveEntries(entries);
+            this.WriteToFile(entries);
             return entry;
+        }
+
+        /// <summary>
+        /// Save the <see cref="Entries"/> in the CVS\Entries file.
+        /// </summary>
+        /// <param name="entries">Entries to save.</param>
+        public void SaveEntries(Entries entries) {
+            this.WriteToFile(entries);
         }
 
         /// <summary>

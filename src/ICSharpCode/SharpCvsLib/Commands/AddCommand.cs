@@ -76,6 +76,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 
         private ILog LOGGER = LogManager.GetLogger (typeof (AddCommand));
         private Folders folders;
+        private string _message;
+        private string _kflag;
 
         /// <summary>
         /// Folders that will be added/ updated when the add command is executed.
@@ -85,6 +87,22 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         public Folders Folders {
             get {return this.folders;}
             set {this.folders = value;}
+        }
+
+        /// <summary>
+        /// Message explaining the purpose of the file.
+        /// </summary>
+        public string Message {
+            get { return this._message; }
+            set { this._message = value; }
+        }
+
+        /// <summary>
+        /// The rcs flag to use when adding the file.
+        /// </summary>
+        public string Kflag {
+            get { return this._kflag; }
+            set { this._kflag = value; }
         }
             
 
@@ -161,9 +179,13 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// <param name="connection">Server connection</param>
         public void Execute(ICommandConnection connection) {
             connection.SubmitRequest(new ArgumentRequest(ArgumentRequest.Options.DASH));
-            int loops = 0;
+            if (null != this.Kflag) {
+                connection.SubmitRequest(new ArgumentRequest(this.Kflag));
+            }
+            if (null != this.Message) {
+                connection.SubmitRequest(new ArgumentRequest(this.Message));
+            }
             foreach (DictionaryEntry folderEntry in this.Folders) {
-                LOGGER.Debug("loops=[" + loops++ + "]");
                 Folder folder = (Folder)folderEntry.Value;
                 this.SetDirectory (connection, folder);
 
@@ -176,11 +198,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                     this.SendFileRequest (connection, entry);
 
                     // Add the file to the cvs entries file
-                    Manager manager = new Manager(connection.Repository.WorkingPath);
-                    manager.Add(entry);
-                    if (LOGGER.IsDebugEnabled) {
-                        LOGGER.Debug("AddCommand.  Entry=[" + entry + "]");
-                    }
+                    Manager manager = new Manager(entry.CvsFile.Directory.FullName);
+                    manager.AddEntry(entry);
                 }
 
                 // send each argument request
@@ -188,19 +207,9 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                     Entry entry = (Entry)entryEntry.Value;
                     connection.SubmitRequest(new ArgumentRequest(entry.Name));
 
-                    //String fileName = Path.Combine(entry.Path, entry.Name);
-                    //this.SendFileRequest (connection, entry);
-
                     // Add the file to the cvs entries file
-                    Manager manager = new Manager(connection.Repository.WorkingPath);
-                    manager.Add(entry);
-                    if (LOGGER.IsDebugEnabled) {
-                        LOGGER.Debug("AddCommand.  Entry=[" + entry + "]");
-                        Entries entries = manager.FetchEntries(entry.FullPath);
-                        foreach (DictionaryEntry dicEntry in entries) {
-                            LOGGER.Debug("entry=[" + dicEntry.Value + "]");
-                        }
-                    }
+                    Manager manager = new Manager(entry.CvsFile.Directory.FullName);
+                    manager.AddEntry(entry);
                 }
             }
 

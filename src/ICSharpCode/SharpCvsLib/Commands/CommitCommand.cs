@@ -54,6 +54,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         private string  logmessage;
         private string  vendor  = "vendor";
         private string  release = "release";
+        private FileInfo _logFile;
+        private string _branch;
 
         /// <summary>
         /// Log message
@@ -61,6 +63,15 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         public string LogMessage {
             get { return logmessage; }
             set { logmessage = value; }
+        }
+
+
+        /// <summary>
+        /// The file to use when populating the log message.
+        /// </summary>
+        public FileInfo LogFile {
+            get { return this._logFile; }
+            set { this._logFile = value; }
         }
 
         /// <summary>
@@ -80,6 +91,13 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         }
 
         /// <summary>
+        /// Branch to commit these changes to.
+        /// </summary>
+        public string Branch {
+            get { return this._branch; }
+            set { this._branch = value; }
+        }
+        /// <summary>
         /// Commit command two constructor
         /// </summary>
         /// <param name="workingdirectory"></param>
@@ -92,8 +110,18 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         /// <param name="connection">Cvs server connection</param>
         public void Execute(ICommandConnection connection) {
+            // read log file if present
+            if (null != this.LogFile) {
+                using (StreamReader reader = new StreamReader(this.LogFile.FullName)) {
+                    this.LogMessage += this.LogFile;
+                }
+            }
             connection.SubmitRequest(new ArgumentRequest("-m"));
             connection.SubmitRequest(new ArgumentRequest("LOG MESSAGE"));
+            if (null != this.Branch) {
+                connection.SubmitRequest(new ArgumentRequest("-r"));
+                connection.SubmitRequest(new ArgumentRequest(this.Branch));
+            }
             connection.SubmitRequest(new ArgumentRequest(ArgumentRequest.Options.DASH));
             foreach (DictionaryEntry folderEntry in workingdirectory.Folders) {
                 Folder folder = (Folder)folderEntry.Value;

@@ -117,42 +117,42 @@ namespace ICSharpCode.SharpCvsLib.Misc {
             get {
                 if (this.HasOverrideDirectory) {
                 return this.OverrideDirectory;
-            } else {
-                return this.repositoryname;
-            }
-        }
-    }
-
-    /// <summary>
-    ///     Specifies the current working path for the sources.  This is
-    ///         a combination of the root/ sandbox directory and the module
-    ///         or override directory.
-    /// </summary>
-    /// <exception cref="InvalidPathException">If the local directory and/ or the 
-    ///     working directory name are null.</exception>
-    public String WorkingPath {
-        get {
-            if (null != this.LocalDirectory) {
-                string tempWorkingPath;
-                if (null == this.WorkingDirectoryName || this.WorkingDirectoryName.Length == 0) {
-                    tempWorkingPath = this.LocalDirectory;
                 } else {
-                    tempWorkingPath = Path.Combine(this.LocalDirectory, this.WorkingDirectoryName);
+                    return this.repositoryname;
                 }
-                if (!tempWorkingPath.EndsWith(Path.DirectorySeparatorChar.ToString())) {
-                    tempWorkingPath = tempWorkingPath + Path.DirectorySeparatorChar;
-                }
-                return tempWorkingPath;
-            } else {
-                StringBuilder msg = new StringBuilder ();
-                msg.Append ("Unable to determine working path, you must specify ");
-                msg.Append ("a local directory and a module/ override directory.");
-                msg.Append ("\nLocalDirectory=[").Append (this.LocalDirectory).Append ("]");
-                msg.Append ("\nWorkingDirectoryName=[").Append (this.WorkingDirectoryName).Append ("]");
-                throw new InvalidPathException (msg.ToString ());
             }
         }
-    }
+
+        /// <summary>
+        ///     Specifies the current working path for the sources.  This is
+        ///         a combination of the root/ sandbox directory and the module
+        ///         or override directory.
+        /// </summary>
+        /// <exception cref="InvalidPathException">If the local directory and/ or the 
+        ///     working directory name are null.</exception>
+        public String WorkingPath {
+            get {
+                if (null != this.LocalDirectory) {
+                    string tempWorkingPath;
+                    if (null == this.WorkingDirectoryName || this.WorkingDirectoryName.Length == 0) {
+                        tempWorkingPath = this.LocalDirectory;
+                    } else {
+                        tempWorkingPath = Path.Combine(this.LocalDirectory, this.WorkingDirectoryName);
+                    }
+                    if (!tempWorkingPath.EndsWith(Path.DirectorySeparatorChar.ToString())) {
+                        tempWorkingPath = tempWorkingPath + Path.DirectorySeparatorChar;
+                    }
+                    return tempWorkingPath;
+                } else {
+                    StringBuilder msg = new StringBuilder ();
+                    msg.Append ("Unable to determine working path, you must specify ");
+                    msg.Append ("a local directory and a module/ override directory.");
+                    msg.Append ("\nLocalDirectory=[").Append (this.LocalDirectory).Append ("]");
+                    msg.Append ("\nWorkingDirectoryName=[").Append (this.WorkingDirectoryName).Append ("]");
+                    throw new InvalidPathException (msg.ToString ());
+                }
+            }
+        }
 
 
         /// <summary>

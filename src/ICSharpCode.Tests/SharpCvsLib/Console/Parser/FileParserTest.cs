@@ -57,8 +57,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
             Assert.AreEqual(fileList.Length, parser.Files.Count);
 
-            for (int i = 0; i < parser.Files.Count; i++) {
-                Assert.AreEqual(new FileInfo(fileList[i]), parser.Files[i]);
+            int i = 0;
+            foreach (FileInfo file in parser.Files) {
+                Assert.AreEqual(new FileInfo(fileList[i]), file);
+                i++;
             }
         }
 
@@ -72,8 +74,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
             Assert.AreEqual(fileList.Length, parser.Files.Count);
 
-            for (int i = 0; i < parser.Files.Count; i++) {
-                Assert.AreEqual(new FileInfo(Path.Combine(Environment.CurrentDirectory, fileList[i])), parser.Files[i]);
+            int i = 0;
+            foreach (FileInfo file in parser.Files) {
+                Assert.AreEqual(new FileInfo(Path.Combine(Environment.CurrentDirectory, 
+                    fileList[i])), file);
+                i++;
             }
         }
     }

@@ -67,7 +67,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private void Parse(string[] args) {
             if (args != null && args.Length > 0) {
                 foreach (string arg in args) {
-                    if (!arg.StartsWith("-")) {
+                    if (!arg.StartsWith("-") && arg != string.Empty) {
                         string file = arg;
                         if (!Path.IsPathRooted(file)) {
                             file = Path.Combine(Directory.GetCurrentDirectory(), file);

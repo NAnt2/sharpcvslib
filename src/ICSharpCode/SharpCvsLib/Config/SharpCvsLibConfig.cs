@@ -58,7 +58,7 @@ namespace ICSharpCode.SharpCvsLib.Config {
 
         private const int DEFAULT_TIMEOUT = 1000;
         private const int DEFAULT_AUTH_SLEEP = 1000;
-        private const string DEFAULT_SHELL = "ssh";
+        private const string DEFAULT_SHELL = "ssh.exe";
         private const string VAR_CVS_RSH = "CVS_RSH";
 
         private static readonly ILog LOGGER = 

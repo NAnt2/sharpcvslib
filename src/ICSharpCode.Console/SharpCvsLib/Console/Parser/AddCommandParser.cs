@@ -50,10 +50,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     /// Add file(s) in the cvs repository.
     /// </summary>
     public class AddCommandParser : AbstractCommandParser {
-        private string fileNames;
-        private string unparsedOptions;
-        private string message;
-        private string kflag; // could be enumeration
+        private string _message;
+        private string _kflag; // could be enumeration
 
         /// <summary>
         /// Default constructor.
@@ -63,29 +61,17 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         }
 
         /// <summary>
-        /// Add file(s) from a cvs repository.
-        /// </summary>
-        /// <param name="cvsroot">User information</param>
-        /// <param name="fileNames">Files to remove</param>
-        /// <param name="adOptions">Options</param>
-        public AddCommandParser(string cvsroot, string fileNames, string adOptions) : 
-            this(new CvsRoot(cvsroot), fileNames, adOptions){
-        }
-
-        /// <summary>
-        /// Add file(s) in the cvs repository
+        ///    Commit changes in the cvs repository
         /// </summary>
         /// <param name="cvsroot">User Information</param>
-        /// <param name="fileNames">Files to remove</param>
-        /// <param name="adOptions">Options</param>
-        public AddCommandParser(CvsRoot cvsroot, string fileNames, string adOptions) {
+        /// <param name="args">Options</param>
+        public AddCommandParser(CvsRoot cvsroot, string[] args) {
             this.CvsRoot = cvsroot;
-            this.fileNames = fileNames;
-            this.unparsedOptions = adOptions;
+            this.Args = args;
         }
 
         /// <summary>
-        /// Create a new instance of the <see cref="UpdateCommandParser"/>.
+        /// Create a new instance of the <see cref="AddCommandParser"/>.
         /// </summary>
         /// <returns></returns>
         public static ICommandParser GetInstance() {
@@ -137,32 +123,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
         public override ICommand CreateCommand () {
             ICSharpCode.SharpCvsLib.Commands.AddCommand addCommand;
-            this.ParseOptions(this.unparsedOptions);
-            try {
-                // Open the Repository file in the CVS directory
-                Manager manager = new Manager(Environment.CurrentDirectory);
-                Repository repository = manager.FetchRepository(Environment.CurrentDirectory); 
+            this.ParseOptions(this.Args);
 
-                CurrentWorkingDirectory.OverrideDirectory = Environment.CurrentDirectory;
-                // If fileNames has a wild card (*) like '*.txt'
-                // Create new AddCommand object
-                addCommand = new ICSharpCode.SharpCvsLib.Commands.AddCommand(
-                                 this.CurrentWorkingDirectory);
+            FileParser parser = new FileParser(this.Args);
 
-                String[] files = Directory.GetFiles(Environment.CurrentDirectory, fileNames);
-                ArrayList copiedFiles = new ArrayList ();
-                foreach (String file in files) {
-                    LOGGER.Debug("file=[" + file + "]");
-                    // Remove the .txt when everything works, giving me bugs...
-                    String fullPath = Path.Combine(Environment.CurrentDirectory, file);
-                    copiedFiles.Add(fullPath);
-                }
-                addCommand.Folders = GetFoldersToAdd(copiedFiles);
-            }
-            catch (Exception e) {
-                LOGGER.Error (e);
-                throw e;
-            }
+            CurrentWorkingDirectory.Folders = parser.Folders;
+            addCommand = new ICSharpCode.SharpCvsLib.Commands.AddCommand(
+                this.CurrentWorkingDirectory);
+
+            // set public properties on the commit command
+            addCommand.Folders = parser.Folders;
+            addCommand.Kflag = this._kflag;
+            addCommand.Message = this._message;
+
             return addCommand;
         }
  
@@ -172,33 +145,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// </summary>
         /// <param name="adOptions">A string value that holds the command
         ///     line options the user has selected.</param>
-        private void ParseOptions (String adOptions) {
-            int endofOptions = 0;
-            for (int i = 0; i < adOptions.Length; i++) {
-                if (adOptions[i]== '-' && adOptions[i+1] == 'm') {
-                    i += 2;
-                    // get message to attach to files 
-                    if (adOptions.IndexOf(" -", i, adOptions.Length - i) == -1) {
-                        endofOptions = adOptions.Length - i - 1;
+        private void ParseOptions (string[] args) {
+            for (int i = 0; i < args.Length; i++) {
+                string arg = args[i];
+                if (arg.StartsWith("-")) {
+                    switch (arg) {
+                        case "-m":
+                            string _message = args[++i];
+                            break;
+                        case "-k":
+                            string _kflag = args[++i];
+                            break;
                     }
-                    else {
-                        endofOptions = adOptions.IndexOf(" -", i, adOptions.Length - i) - 2;
-                    }
-                    message = adOptions.Substring(i, endofOptions);
-					i = i + endofOptions;
                 }
-                if (adOptions[i]== '-' && adOptions[i+1] == 'k') {
-                    i += 2;
-                    // get rcs-kflag to attach to files 
-                    if (adOptions.IndexOf(" -", i, adOptions.Length - i) == -1) {
-                        endofOptions = adOptions.Length - i - 1;
-                    }
-                    else {
-                        endofOptions = adOptions.IndexOf(" -", i, adOptions.Length - i) - 2;
-                    }
-                    kflag = adOptions.Substring(i, endofOptions);
-					i = i + endofOptions;
-				}
             }
         }
         /// <summary>

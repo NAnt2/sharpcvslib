@@ -105,6 +105,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             this.CvsRoot = cvsroot;
             this.fileNames = fileNames;
             this.unparsedOptions = upOptions;
+
+            // HACK: This is just done until I can make this look like the other parsers
+            this.Args = fileNames.Split(' ');
         }
 
         /// <summary>
@@ -142,19 +145,18 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             UpdateCommand2 updateCommand;
 
             this.ParseOptions(this.unparsedOptions);
-            // note the sandbox is actually above the CVS directory
-            Manager manager = new Manager(dir.Parent);
 
-            if (revision != null) {
-                CurrentWorkingDirectory.Revision = revision;
-            }
-            if (!date.Equals(DateTime.MinValue)) {
-                CurrentWorkingDirectory.Date = date;
-            }
-            CurrentWorkingDirectory.FoldersToUpdate =
-                manager.FetchFilesToUpdate (dir.FullName);
+            FileParser parser = new FileParser(this.Args);
+            CurrentWorkingDirectory.Folders = parser.Folders;
             // Create new UpdateCommand2 object
             updateCommand = new UpdateCommand2(CurrentWorkingDirectory);
+
+            if (revision != null) {
+                updateCommand.Revision = revision;
+            }
+            if (!date.Equals(DateTime.MinValue)) {
+                updateCommand.Date = date;
+            }
 
             return updateCommand;
         }
@@ -322,14 +324,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         "implemented.";
                     throw new NotImplementedException (msg);
                 }
-            }
-            this.ParseFiles(upOptions.Split(' '));
-        }
-
-        private void ParseFiles (string[] args) {
-            FileParser parser = new FileParser(args);
-            foreach (FileInfo file in parser.Files) {
-                System.Console.WriteLine(string.Format("File: {0}", file.FullName));
             }
         }
 

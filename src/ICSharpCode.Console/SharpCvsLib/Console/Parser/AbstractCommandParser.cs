@@ -89,7 +89,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 if (null == this.currentWorkingDirectory) {
                     this.currentWorkingDirectory = 
                         new WorkingDirectory(this.CvsRoot, this.CurrentDir.FullName, 
-                        this.Repository.FileContents);
+                        this.Repository.ModuleName);
                 }
                 return this.currentWorkingDirectory;
             }

@@ -52,39 +52,15 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     /// Commit changes in the cvs repository.
     /// </summary>
     public class CommitCommandParser : AbstractCommandParser {
-        private string fileNames;
-        private string unparsedOptions;
-        private string revision;
-        private string logFile;
-        private string message;
+        private string _branch;
+        private string _logFile;
+        private string _message;
 
         /// <summary>
         /// Default constructor.
         /// </summary>
         public CommitCommandParser () {
 
-        }
-
-        /// <summary>
-        /// Commit changes to a cvs repository.
-        /// </summary>
-        /// <param name="cvsroot">User information</param>
-        /// <param name="fileNames">Files to remove</param>
-        /// <param name="ciOptions">Options</param>
-        public CommitCommandParser(string cvsroot, string fileNames, string ciOptions) : 
-            this(new CvsRoot(cvsroot), fileNames, ciOptions){
-        }
-
-        /// <summary>
-        ///    Commit changes in the cvs repository
-        /// </summary>
-        /// <param name="cvsroot">User Information</param>
-        /// <param name="fileNames">Files to remove</param>
-        /// <param name="ciOptions">Options</param>
-        public CommitCommandParser(CvsRoot cvsroot, string fileNames, string ciOptions) {
-            this.CvsRoot = cvsroot;
-            this.fileNames = fileNames;
-            this.unparsedOptions = ciOptions;
         }
 
         /// <summary>
@@ -98,7 +74,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         }
 
         /// <summary>
-        /// Create a new instance of the <see cref="XmlLogCommandParser"/>.
+        /// Create a new instance of the <see cref="CommitCommandParser"/>.
         /// </summary>
         /// <returns></returns>
         public static ICommandParser GetInstance() {
@@ -132,38 +108,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             }
         }
 
-/* Crap from the CommandLineParser
-
-                        singleOptions = "DRcfln";
-                        this.commandTxt = arguments[i];
-                        i++;
-                        // get rest of arguments which is options on the commit command.
-                        while (arguments.Length > i && arguments[i].IndexOf("-", 0, 1) >= 0) {
-                            LOGGER.Debug("Parsing arguments.  Argument[" + i + "]=[" + arguments[i]);
-                            // Get options with second parameters?
-                            if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
-                                for ( int cnt=1; cnt < arguments[i].Length; cnt++ ) {
-                                    this.options = this.options + "-" + arguments[i][cnt] + " "; // No
-                                }
-                            }
-                            else {
-                                this.options = this.options + arguments[i++];       // Yes
-                                this.options = this.options + arguments[i] + " ";
-                            }
-                            i++;
-                        }
-                        if (arguments.Length > i) {
-                            // Safely grab the module, if not specified then
-                            //  pass null into the repository...the cvs command
-                            //  line for cvsnt/ cvs seems to bomb out when
-                            //  it sends to the server
-                            this.repository = arguments[i];
-                        } 
-                        else {
-                            this.repository = String.Empty;
-                        }
-*/
-
         /// <summary>
         /// The add command is implemented in the library and commandline parser.
         /// </summary>
@@ -181,12 +125,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
         public override ICommand CreateCommand () {
             ICSharpCode.SharpCvsLib.Commands.CommitCommand2 commitCommand;
-            this.ParseOptions(this.unparsedOptions);
+            this.ParseOptions();
             string cvsFolder = Path.Combine(Environment.CurrentDirectory, "CVS");
-
-            if (fileNames == null || fileNames.Length == 0) {
-                fileNames = Environment.CurrentDirectory;
-            }
 
             FileParser parser = new FileParser(this.Args);
 
@@ -196,72 +136,53 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 this.CurrentWorkingDirectory );
 
             // set public properties on the commit command
-            if (message != null) {
-                commitCommand.LogMessage = message;
+            commitCommand.LogMessage = _message;
+            commitCommand.Branch = this._branch;
+            if (null != this._logFile) {
+                commitCommand.LogFile = new FileInfo(this._logFile);
             }
         
             return commitCommand;
-        }
-
-        private void GetFilesRecursive(DirectoryInfo dir, ArrayList files) {
-            if (!(dir.Name.IndexOf("CVS") > -1)) {
-                foreach (FileInfo file in dir.GetFiles()) {
-                    files.Add(file);
-                }
-
-                foreach (DirectoryInfo dirInfo in dir.GetDirectories()) {
-                    this.GetFilesRecursive(dirInfo, files);
-                }
-            }
         }
 
         /// <summary>
         /// Parse the command line options/ arguments and populate the command
         ///     object with the arguments.
         /// </summary>
-        /// <param name="ciOptions">A string value that holds the command
-        ///     line options the user has selected.</param>
         /// <exception cref="NotImplementedException">If the command argument
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
-        private void ParseOptions (String ciOptions) {
-            int endofOptions = 0;
+        public override void ParseOptions () {
             for (int i = 0; i < this.Args.Length; i++) {
                 string arg = this.Args[i];
                 if (arg.IndexOf("-") > -1) {
                     switch (arg) {
                         case "-r":
-                            revision = this.Args[++i];
+                            _branch = this.Args[++i];
                             break;
                         case "-F":
-                            logFile = this.Args[++i];
+                            _logFile = this.Args[++i];
                             break;
                         case "-m":
-                            message = this.Args[++i];
+                            _message = this.Args[++i];
                             break;
                         case "-c":
                             throw new NotImplementedException (
                                 "The -c commit option is not implemented.");
-                            break;
                         case "-D":
                             throw new NotImplementedException (
                                 "The -D commit option is not implemented.");
-                            break;
                         case "-f":
                             throw new NotImplementedException (
                                 "The -f commit option is not implemented.");
-                            break;
                         case "-l":
                             throw new NotImplementedException (
                                 "The -l commit option is not implemented.");
-                            break;
                         case "-n":
                             throw new NotImplementedException (
                                 "The -n commit option is not implemented.");
-                            break;
                         case "-R":
                             throw new NotImplementedException (
                                 "The -R commit option is not implemented.");
-                            break;
                     }
                 }
             }
