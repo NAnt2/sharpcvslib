@@ -2,7 +2,7 @@
     Build file for the cvs library files.
 -->
 <project name="ICSharpCode.SharpCvsLib" default="build-${nant.settings.currentframework}">
-	<target name="build-net-1.0">
+    <target name="build-net-1.0">
         <csc    target="library" 
                 warnaserror="${compile.warnaserror}" 
                 output="${dir.build}/${name.lib}.dll" 
@@ -24,8 +24,11 @@
             </references>
             
         </csc>
-	</target>
-	<target name="build-mono-1.0-linux">
+    </target>
+    <target name="build-net-1.1">
+        <call target="build-net-1.0" />
+    </target>
+    <target name="build-mono-1.0-linux">
         <csc    target="library" 
                 warnaserror="${compile.warnaserror}" 
                 output="${dir.build}/${name.top-level}.${name.project}.${name.lib}.dll" 
@@ -46,5 +49,5 @@
             </references>
             
         </csc>
-	</target>
+    </target>
 </project>

@@ -1,42 +1,42 @@
 <!--
     Build file for the SharpCvsLib project:
-		http://sharpcvslib.sourceforge.net
+        http://sharpcvslib.sourceforge.net
 -->
 <project name="${name.top-level}-${name.project}" default="build.all">
 
-	<!-- Names of the files generated -->
-	<property name="name.top-level" value="ICSharpCode" />
-	<property name="name.project" value="SharpCvsLib" />
+    <!-- Names of the files generated -->
+    <property name="name.top-level" value="ICSharpCode" />
+    <property name="name.project" value="SharpCvsLib" />
     <property name="name.lib" value="${name.project}" />    
     <property name="name.console" value="Console" />
     <property name="name.console.exe" value="cvs" />
     <property name="name.tests" value="Tests" />
     
-	<!-- Version information -->
+    <!-- Version information -->
     <property name="assembly.version" value="0.3.4.2" />  
     
     <!-- Compiler information/ settings -->
     <property name="compile.warnaserror" value="true" />
-	<property name="compile.debug" value="true" />
-	<property name="compile.unsafe" value="/unsafe-" />
-	<property name="compile.checked" value="/checked-" />
-	<property name="compile.define" value="DEBUG;TRACE" />
+    <property name="compile.debug" value="true" />
+    <property name="compile.unsafe" value="/unsafe-" />
+    <property name="compile.checked" value="/checked-" />
+    <property name="compile.define" value="DEBUG;TRACE" />
     
 <!-- Comment out net-1.0 framework and uncomment mono framework to run on mono 
-    <property name="nant.settings.currentframework" value = "net-1.0"/>-->    
-    <property name="nant.settings.currentframework" value = "mono-1.0-linux"/>  
+    <property name="nant.settings.currentframework" value = "net-1.0"/>
+    <property name="nant.settings.currentframework" value = "mono-1.0-linux"/>  -->  
 
-	<!-- Directory structure -->
-	<property name="dir.base" value="/home/claytonharbour/eclipse/v2.1/workspace/SharpCvsLib" />
+    <!-- Directory structure -->
+    <property name="dir.base" value="E:/dev/src/sharpcvslib/sharpcvslib" />
     <property name="dir.build" value="${dir.base}/build/bin" /> 
     <property name="dir.conf" value="${dir.base}/conf" />
     <property name="dir.dist" value="${dir.base}/dist" />
     <property name="dir.src" value="${dir.base}/src" />
     <property name="dir.lib" value="${dir.base}/lib" />
     <property name="dir.lib.ext" value="${dir.lib}/ext" />
-	<property name="dir.sf-release.base" value="h:/dev/sf.net/sharpcvslib" />
+    <property name="dir.sf-release.base" value="h:/dev/sf.net/sharpcvslib" />
 
-	<!-- Referenced lib and lib/ext dll files -->
+    <!-- Referenced lib and lib/ext dll files -->
     <property name="lib.log4net" value="log4net.dll" />
     <property name="lib.nunit" value="nunit.framework.dll" />    
     <property name="lib.zip" value="ICSharpCode.SharpZipLib.dll" />
@@ -45,7 +45,7 @@
     <property name="copyright-text" value="Mike Krueger 2001-2002, SharpCvsLib Developers" />
     <property name="copyright-href" value="http://www.gnu.org/copyleft/lesser.html#TOC1" />
 
-	<!-- Targets -->
+    <!-- Targets -->
     <target name="update.src" description="Updates the source from cvs.">
        <cvs-update  module="sharcvslib" 
                     cvsroot=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/nant"
@@ -74,9 +74,9 @@
     </target>
     
     <target name="build.all">
-    	<call target="build.console" />
-    	<call target="build.lib" />
-    	<call target="build.test" />
+        <call target="build.console" />
+        <call target="build.lib" />
+        <call target="build.test" />
     </target>
 
     <target name="build.lib" depends="setup">
