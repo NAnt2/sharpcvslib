@@ -243,7 +243,7 @@ public class CvsRoot
 
     private void Validate () {
         if (protocol.Length == 0 || 
-            user.Length == 0 || 
+            (user.Length == 0 && this.HasUserVar(this.protocol)) || 
             host.Length == 0 || 
             cvsrepository.Length == 0 ||
             this.port == 0) {

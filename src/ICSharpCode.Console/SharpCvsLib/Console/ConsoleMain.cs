@@ -122,7 +122,6 @@ namespace ICSharpCode.SharpCvsLib.Console {
                 command.Execute(serverConn);
                 serverConn.Close();
             }
-
 /*  This code is duplicated and I was not sure what should be moved to the 
  *      CommandLineParser and what was already there.
             switch (parser.Command){
@@ -184,7 +183,6 @@ namespace ICSharpCode.SharpCvsLib.Console {
                 System.Console.WriteLine ("Not a valid comand.");
                 break;
             }
-            System.Console.WriteLine ("Thanks for using the command line tool.");
             */
         }
         

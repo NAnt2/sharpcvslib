@@ -41,110 +41,130 @@ using NUnit.Framework;
 
 namespace ICSharpCode.SharpCvsLib.Misc {
 
-/// <summary>
-///     Test CvsRoot parsing.
-/// </summary>
-[TestFixture]
-public class CvsRootTest {
-
     /// <summary>
-    ///     Tests creation of a valid CvsRoot.
+    ///     Test CvsRoot parsing.
     /// </summary>
-    [Test]
-    public void ValidCvsRootTest () {
-        CvsRoot cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:/cvsroot/sharpcvslib");
+    [TestFixture]
+    public class CvsRootTest {
 
-        Assertion.AssertEquals("ext", cvsRoot.Protocol);
-        Assertion.AssertEquals("gne", cvsRoot.User);
-        Assertion.AssertEquals("cvs.sourceforge.net", cvsRoot.Host);
-        Assertion.AssertEquals("/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
-    }
+        /// <summary>
+        ///     Tests creation of a valid CvsRoot.
+        /// </summary>
+        [Test]
+        public void ValidCvsRootTest () {
+            CvsRoot cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:/cvsroot/sharpcvslib");
 
-    /// <summary>
-    ///     Tests handling of missing protocol.
-    /// </summary>
-    [Test]
-    [ExpectedException(typeof(CvsRootParseException))]
-    public void MissingProtocolTest () {
-        CvsRoot cvsRoot = new CvsRoot ("::gne@cvs.sourceforge.net:/cvsroot/sharpcvslib");
-    }
+            Assertion.AssertEquals("ext", cvsRoot.Protocol);
+            Assertion.AssertEquals("gne", cvsRoot.User);
+            Assertion.AssertEquals("cvs.sourceforge.net", cvsRoot.Host);
+            Assertion.AssertEquals("/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
+        }
 
-    /// <summary>
-    ///     Tests handling of missing user.
-    /// </summary>
-    [Test]
-    [ExpectedException(typeof(CvsRootParseException))]
-    public void MissingUserTest () {
-        CvsRoot cvsRoot = new CvsRoot (":ext:@cvs.sourceforge.net:/cvsroot/sharpcvslib");
-    }
+        /// <summary>
+        ///     Tests handling of missing protocol.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(CvsRootParseException))]
+        public void MissingProtocolTest () {
+            CvsRoot cvsRoot = new CvsRoot ("::gne@cvs.sourceforge.net:/cvsroot/sharpcvslib");
+        }
 
-    /// <summary>
-    ///     Tests handling of missing host.
-    /// </summary>
-    [Test]
-    [ExpectedException(typeof(CvsRootParseException))]
-    public void MissingHostTest () {
-        CvsRoot cvsRoot = new CvsRoot (":ext:gne@:/cvsroot/sharpcvslib");
-    }
+        /// <summary>
+        ///     Tests handling of missing user.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(CvsRootParseException))]
+        public void MissingUserTest () {
+            CvsRoot cvsRoot = new CvsRoot (":ext:@cvs.sourceforge.net:/cvsroot/sharpcvslib");
+        }
 
-    /// <summary>
-    ///     Tests handling of missing repository.
-    /// </summary>
-    [Test]
-    [ExpectedException(typeof(CvsRootParseException))]
-    public void MissingRepositoryTest () {
-        CvsRoot cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:");
-    }
+        /// <summary>
+        ///     Tests handling of missing host.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(CvsRootParseException))]
+        public void MissingHostTest () {
+            CvsRoot cvsRoot = new CvsRoot (":ext:gne@:/cvsroot/sharpcvslib");
+        }
 
-    /// <summary>
-    ///     Tests handling of not starting with a colon.
-    /// </summary>
-    [Test]
-    [ExpectedException(typeof(CvsRootParseException))]
-    public void MissingFirstColonTest () {
-        CvsRoot cvsRoot = new CvsRoot ("a:ext:gne@cvs.sourceforge.net:/cvsroot/sharpcvslib");
-    }
+        /// <summary>
+        ///     Tests handling of missing repository.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(CvsRootParseException))]
+        public void MissingRepositoryTest () {
+            CvsRoot cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:");
+        }
 
-    /// <summary>
-    ///     Tests handling of missing second colon.
-    ///     This tests a known problem in 1.1 which results
-    ///     in an ArgumentOutOfRangeException being thrown instead
-    /// </summary>
-    [Test]
-    [ExpectedException(typeof(CvsRootParseException))]
-    public void MissingSecondColonTest () {
-        CvsRoot cvsRoot = new CvsRoot (":ext-gne@cvs.sourceforge.net-/cvsroot/sharpcvslib");
-    }
+        /// <summary>
+        ///     Tests handling of not starting with a colon.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(CvsRootParseException))]
+        public void MissingFirstColonTest () {
+            CvsRoot cvsRoot = new CvsRoot ("a:ext:gne@cvs.sourceforge.net:/cvsroot/sharpcvslib");
+        }
 
-    /// <summary>
-    ///     Tests handling of missing ampersand.
-    ///     This tests a known problem in 1.1 which results
-    ///     in an ArgumentOutOfRangeException being thrown instead
-    /// </summary>
-    [Test]
-    [ExpectedException(typeof(CvsRootParseException))]
-    public void MissingAmpersandTest () {
-        CvsRoot cvsRoot = new CvsRoot (":ext:gne-cvs.sourceforge.net:/cvsroot/sharpcvslib");
-    }
+        /// <summary>
+        ///     Tests handling of missing second colon.
+        ///     This tests a known problem in 1.1 which results
+        ///     in an ArgumentOutOfRangeException being thrown instead
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(CvsRootParseException))]
+        public void MissingSecondColonTest () {
+            CvsRoot cvsRoot = new CvsRoot (":ext-gne@cvs.sourceforge.net-/cvsroot/sharpcvslib");
+        }
 
-    /// <summary>
-    ///     Tests handling of missing third colon.
-    ///     This tests a known problem in 1.1 which results
-    ///     in an ArgumentOutOfRangeException being thrown instead
-    /// </summary>
-    [Test]
-    [ExpectedException(typeof(CvsRootParseException))]
-    public void MissingThirdColonTest () {
-        CvsRoot cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net-/cvsroot/sharpcvslib");
-    }
+        /// <summary>
+        ///     Tests handling of missing ampersand.
+        ///     This tests a known problem in 1.1 which results
+        ///     in an ArgumentOutOfRangeException being thrown instead
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(CvsRootParseException))]
+        public void MissingAmpersandTest () {
+            CvsRoot cvsRoot = new CvsRoot (":ext:gne-cvs.sourceforge.net:/cvsroot/sharpcvslib");
+        }
 
-    /// <summary>
-    ///     Tests handling of no colons.
-    /// </summary>
-    [Test]
-    [ExpectedException(typeof(CvsRootParseException))]
-    public void NoColonTest () {
-        CvsRoot cvsRoot = new CvsRoot ("-ext-gne@cvs.sourceforge.net-/cvsroot/sharpcvslib");
+        /// <summary>
+        ///     Tests handling of missing third colon.
+        ///     This tests a known problem in 1.1 which results
+        ///     in an ArgumentOutOfRangeException being thrown instead
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(CvsRootParseException))]
+        public void MissingThirdColonTest () {
+            CvsRoot cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net-/cvsroot/sharpcvslib");
+        }
+
+        /// <summary>
+        ///     Tests handling of no colons.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(CvsRootParseException))]
+        public void NoColonTest () {
+            CvsRoot cvsRoot = new CvsRoot ("-ext-gne@cvs.sourceforge.net-/cvsroot/sharpcvslib");
+        }
+
+        /// <summary>
+        /// Tests handling of no username, should be okay if the protocol is 
+        ///     not :ext, :ssh, or :pserver.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(CvsRootParseException))]
+        public void NoUserTestException () {
+            CvsRoot cvsRoot = new CvsRoot (":ext:cvs.sourceforge.net:/cvsroot/sharpcvslib");
+        }
+
+        /// <summary>
+        /// Tests handling of no username, should be okay if the protocol is 
+        ///     not :ext, :ssh, or :pserver.
+        /// </summary>
+        [Test]
+        public void NoUserTestNoException () {
+            CvsRoot localProtocol = new CvsRoot (":local:cvs.sourceforge.net:/cvsroot/sharpcvslib");
+            CvsRoot sspiProtocol = new CvsRoot (":sspi:cvs.sourceforge.net:/cvsroot/sharpcvslib");
+        }
     }
-}
 }
