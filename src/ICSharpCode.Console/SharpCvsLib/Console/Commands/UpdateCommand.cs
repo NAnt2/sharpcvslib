@@ -117,7 +117,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                     currentWorkingDirectory.Date = date;
                 }
                 currentWorkingDirectory.FoldersToUpdate =
-                    manager.FetchFilesToUpdate (Path.Combine(Environment.CurrentDirectory, fileNames));
+                    manager.FetchFilesToUpdate (Environment.CurrentDirectory);
                 // Create new UpdateCommand2 object
                 updateCommand = new UpdateCommand2(currentWorkingDirectory);
             }
