@@ -105,43 +105,152 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// <param name="connection"></param>
 		public void Execute(CVSServerConnection connection)
 		{
-			foreach (DictionaryEntry folder in workingdirectory.Folders) {
-				foreach (Entry entry  in ((Folder)folder.Value).Entries)
-				if (!entry.IsDirectory) {
-					DateTime old = entry.TimeStamp;
-					entry.TimeStamp = entry.TimeStamp;
-					
-					string path = workingdirectory.CvsRoot.CvsRepository +  "/" + workingdirectory.WorkingDirectoryName + folder.Key.ToString();
-					
-					connection.SubmitRequest(new DirectoryRequest(".", path));
-					
-					path = workingdirectory.CvsRoot.CvsRepository + folder.Key.ToString();
-					
-					string fileName = Path.GetDirectoryName(workingdirectory.LocalDirectory) + Path.DirectorySeparatorChar + Path.GetDirectoryName(path.Substring(workingdirectory.CvsRoot.CvsRepository.Length)) + "/" + entry.Name;
-					
-					fileName = fileName.Replace('/', Path.DirectorySeparatorChar);
-		
-		            if (LOGGER.IsDebugEnabled){
-					    LOGGER.Debug("local name ? : "  + fileName);
-		            }
-					
-					if (File.GetLastAccessTime(fileName) != entry.TimeStamp) {
-						connection.SubmitRequest(new ModifiedRequest(entry.Name));
-						
-						if (entry.IsBinaryFile) {
-							connection.UncompressedFileHandler.SendBinaryFile(connection.OutputStream, fileName);
-						} else {
-							connection.UncompressedFileHandler.SendTextFile(connection.OutputStream, fileName);
-						}
-					} else {
-						connection.SubmitRequest(new EntryRequest(entry));
-						connection.SubmitRequest(new UnchangedRequest(entry.Name));
-					}
-					
-					entry.TimeStamp = old;
-				}
-			}
-			connection.SubmitRequest(new UpdateRequest());
+		    this.workingdirectory.ReadAllExistingEntries ();		    
+		    if (LOGGER.IsDebugEnabled) {
+		        String msg = "In execute, looking for working folders.  " +
+		            "count of working folders=[" + 
+		                workingdirectory.Folders.Count + "]";
+		        LOGGER.Debug (msg);
+		    }
+		    Hashtable _folders = (Hashtable)workingdirectory.Folders.Clone ();
+			foreach (DictionaryEntry folder in _folders) {
+			    foreach (Entry entry  in ((Folder)folder.Value).Entries) {
+    				if (!entry.IsDirectory) {
+    					DateTime old = entry.TimeStamp;
+    					entry.TimeStamp = entry.TimeStamp;
+    				    
+    				    if (LOGGER.IsDebugEnabled) {
+    				        String msg = "Working with cvs entry.  " +
+    				            "entry=[" + entry + "]";
+    				        LOGGER.Debug (entry);
+    				    }
+    					
+    					if (LOGGER.IsDebugEnabled) {
+    					    String msg = "Constructing the path to file.  " +
+    					        ";  workingdirectory.CvsRoot.CvsRepository=[" + 
+    					            workingdirectory.CvsRoot.CvsRepository + "]" +
+    					        ";  workingdirectory.WorkingDirectoryName=[" +
+    					            workingdirectory.WorkingDirectoryName + "]" +
+    					        ";  folder.Key.ToString ()=[" + folder.Key.ToString () + "]";
+    					    LOGGER.Debug (msg);
+    					}
+    					string path = workingdirectory.CvsRoot.CvsRepository +  
+    								"/" + workingdirectory.WorkingDirectoryName;/* + 
+    								folder.Key.ToString();*/
+    					
+    					if (LOGGER.IsDebugEnabled) {
+    					    String msg = "Before submit directory request.  " +
+    					        "path=[" + path + "]";
+    					    LOGGER.Debug (msg);
+    					}
+    					
+    					try {
+        					connection.SubmitRequest(new DirectoryRequest(".", path));
+    					}
+    					catch (Exception e) {
+    					    String msg = "Exception while submitting directory request.  " +
+    					        "path=[" + path + "]";
+                            LOGGER.Error (e);
+    					}
+    					
+    					path = workingdirectory.CvsRoot.CvsRepository + 
+    							folder.Key.ToString();
+    					
+    					if (LOGGER.IsDebugEnabled) {
+    					    String msg = "before we get the filename.  " +
+    					        "; localDirectory=[" + workingdirectory.LocalDirectory + "]" +
+    					        "; DirectorySeperatorChar=[" + Path.DirectorySeparatorChar + "]" +
+    					        "; DirectoryName=[" + path.Substring (workingdirectory.CvsRoot.CvsRepository.Length) + "]" +
+    					        "; DirectoryDeperatorChar=[" + Path.DirectorySeparatorChar + "]" +
+    					        "; Entry name=[" + entry.Name + "]";
+    					    LOGGER.Debug (msg);
+    					}
+    					
+    				    string fileName =
+    				        this.getFileNameAndPath (
+    				                                 Path.GetDirectoryName (workingdirectory.LocalDirectory),
+    				                                 path.Substring (workingdirectory.CvsRoot.CvsRepository.Length),
+    				                                 entry.Name);
+    		
+    		            if (LOGGER.IsDebugEnabled){
+    					    LOGGER.Debug("local name ? : "  + fileName);
+    		            }
+    					
+    					bool fileExists;
+    					try {
+    					    fileExists = File.Exists (fileName);
+    					}
+    					catch (Exception e) {
+    					    LOGGER.Error (e);
+    					    fileExists = false;
+    					}
+    					if (!fileExists) {
+    					    if (LOGGER.IsDebugEnabled) {
+    					        String msg = "File does not exist or has been lost.  " +
+    					            "fileName=[" + fileName + "]" +
+    					            "entry=[" + entry + "]";
+    					        LOGGER.Debug (msg);
+    					    }
+    					    connection.SubmitRequest (new EntryRequest (entry));
+    					} else if (File.GetLastAccessTime(fileName) != entry.TimeStamp) {
+    					    if (LOGGER.IsDebugEnabled) {
+    					        String msg = "Last access time for the file is not equal to the entry timestamp.  This has been modified." +
+    					            "fileName=[" + fileName + "]" +
+    					            "entry=[" + entry + "]";
+    					        LOGGER.Debug (msg);
+    					    }
+    						connection.SubmitRequest(new ModifiedRequest(entry.Name));
+    						
+    						if (entry.IsBinaryFile) {
+    							connection.UncompressedFileHandler.SendBinaryFile(connection.OutputStream, fileName);
+    						} else {
+    							connection.UncompressedFileHandler.SendTextFile(connection.OutputStream, fileName);
+    						}
+    					} else {
+    					    if (LOGGER.IsDebugEnabled) {
+    					        String msg = "At the last else condition.  " +
+    					            "fileName=[" + fileName + "]" +
+    					            "entry=[" + entry + "]";
+    					        LOGGER.Debug (entry);
+    					    }
+    						connection.SubmitRequest(new EntryRequest(entry));
+    						connection.SubmitRequest(new UnchangedRequest(entry.Name));
+    					}
+    					
+    					entry.TimeStamp = old;
+    				}
+			    }
+                connection.SubmitRequest(new UpdateRequest());
+			}			
 		}
+		
+		/// <summary>Returns the local filename and path.
+		/// </summary>
+		/// <param name="baseDir">The base working dir.</param>
+		/// <param name="reposDir">The remote repository relative path.</param>
+		/// <param name="entryName">The name of the file to look at.</param>
+    	private String getFileNameAndPath (    string baseDir, 
+    	                                       string reposDir, 
+    	                                       string entryName) {
+            string _baseDir;
+            if (baseDir.EndsWith (Path.DirectorySeparatorChar.ToString ())) {
+                _baseDir = baseDir.Replace (Path.DirectorySeparatorChar.ToString (), "");
+            }
+            else {
+                _baseDir = baseDir;
+            }
+            
+            string _reposDir = reposDir.Replace ('/', Path.DirectorySeparatorChar) + 
+                                Path.DirectorySeparatorChar;
+            string _entryName = entryName.Replace ('/', Path.DirectorySeparatorChar);
+
+            string fileNameAndPath = _baseDir + _reposDir + _entryName;
+
+            if (LOGGER.IsDebugEnabled) {
+                String msg = "fileNameAndPath=[" + fileNameAndPath + "]";
+                LOGGER.Debug (msg);
+            }
+            return fileNameAndPath;
+    	}
 	}
 }

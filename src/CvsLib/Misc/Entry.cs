@@ -213,7 +213,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		}
 		
         /// <summary>
-        /// TODO: Figure out what this does.
+        /// Parses the cvs entries file.
         /// </summary>
         /// <param name="line"></param>
 		public void Parse(string line)
@@ -265,7 +265,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 					if (line == null) {
 						break;
 					}
-					if (line.Length > 1) {
+					if (line.Length > 1) {					    
 						entries.Add(new Entry(line));
 					}
 				}

@@ -63,12 +63,19 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             connection.SubmitRequest(new CaseRequest());
 			connection.SubmitRequest(new ArgumentRequest(workingdirectory.ModuleName));
 			
-			connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository + "/" + workingdirectory.ModuleName));
+			connection.SubmitRequest(new DirectoryRequest(".", 
+                            workingdirectory.CvsRoot.CvsRepository + 
+                            "/" + workingdirectory.ModuleName));
+		    
             connection.SubmitRequest(new ExpandModulesRequest());
 			
             connection.SubmitRequest(new ArgumentRequest("-N"));
             connection.SubmitRequest(new ArgumentRequest(workingdirectory.ModuleName));
-			connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository + "/" + workingdirectory.ModuleName));
+		    
+			connection.SubmitRequest(new DirectoryRequest(".", 
+                            workingdirectory.CvsRoot.CvsRepository + 
+                            "/" + workingdirectory.ModuleName));
+		    
 			connection.SubmitRequest(new CheckoutRequest());
 			workingdirectory.CreateCVSFiles();
 		}

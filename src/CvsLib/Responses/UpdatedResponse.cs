@@ -61,10 +61,11 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 			bool compress = sizestr[0] == 'z';
 			
 			if (LOGGER.IsDebugEnabled) {
-    			LOGGER.Debug ("orgpath=[" + orgpath + "]");
-    			LOGGER.Debug ("entry=[" + entry + "]");
-    			LOGGER.Debug ("flags=[" + flags + "]");
-    			LOGGER.Debug ("sizestr=[" + sizestr + "]");
+			    String msg = "orgpath=[" + orgpath + "]" +
+    			    "entry=[" + entry + "]" +
+    			    "flags=[" + flags + "]" +
+    			    "sizestr=[" + sizestr + "]";
+			    LOGGER.Debug (msg);
 			}
 	    	
 			if (compress) {

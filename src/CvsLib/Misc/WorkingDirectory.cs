@@ -66,6 +66,33 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 			}
 		}
 		
+		/// <summary>The cvs directory information.</summary>
+		public readonly string CVS =
+		    Path.DirectorySeparatorChar + "CVS";
+		/// <summary>The cvs repository file information.</summary>	    
+		public readonly string REPOSITORY = 
+		    Path.DirectorySeparatorChar + "CVS" + 
+		    Path.DirectorySeparatorChar + "Repository";
+		/// <summary>The cvs entries file information.</summary>	    
+	    public readonly string ENTRIES =
+	        Path.DirectorySeparatorChar + "CVS" + 
+	        Path.DirectorySeparatorChar + "Entries";
+	    
+		/// <summary>
+		/// The cvs entries log information, platform inspecific.
+		///     TODO:I don't think this is used by cvs, I think this is just
+		///     some sort of optimization or easy way to view the entries folder.
+		/// </summary>
+	    public readonly string ENTRIES_LOG =
+	        Path.DirectorySeparatorChar + "CVS" +
+	        Path.DirectorySeparatorChar + "Entries" + 
+	        ".log";
+	    /// <summary>The cvs root file information.</summary>
+	    public readonly string ROOT =
+            Path.DirectorySeparatorChar + "CVS" +
+            Path.DirectorySeparatorChar + "Root";
+		    
+		
         /// <summary>
         /// The name of the working directory.  
         ///     TODO: Figure out if this should be the repository name
@@ -81,8 +108,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		}
 		
         /// <summary>
-        /// Folders.
-        ///     TODO: Figure out what this is for.
+        /// A list of the cvs folders on the local host.
         /// </summary>
 		public Hashtable Folders {
 			get {
@@ -149,40 +175,81 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		}
 		
         /// <summary>
-        /// TODO: Figure out what this is doing.
+        /// Converting the local directory string to a remote/ *nix 
+        ///     string.
         /// </summary>
-        /// <param name="directory"></param>
+        /// <param name="directory">The directory path.</param>
         /// <returns></returns>
 		public string ToRemotePath(string directory)
 		{
-			return directory.Substring(localdirectory.Length).Replace("\\", "/");
+			return directory.Substring(
+			                           localdirectory.Length).Replace(Path.DirectorySeparatorChar, '/');
 		}
 		
         /// <summary>
-        /// TODO: Figure out what this is doing.
+        /// Convert the directory name to a win32 directory name
+        ///     with the appropriate slashes.
         /// </summary>
-        /// <param name="directory"></param>
+        /// <param name="directory">The directory path.</param>
         /// <returns></returns>
 		public string ToLocalPath(string directory)
 		{
-			return localdirectory + directory.Substring(cvsroot.CvsRepository.Length).Replace("/", "\\");
+		    string theLocalPath;
+		    
+		    string relativeServerPath = 
+		        directory.Substring (cvsroot.CvsRepository.Length);
+		    
+		    if (LOGGER.IsDebugEnabled) {
+		        String msg = "found relativeServerPath=[" + relativeServerPath + "]";
+		        LOGGER.Debug (msg);
+		    }
+		    if (this.IsRoot (relativeServerPath)) {
+		        theLocalPath = 
+		            localdirectory + 
+		            Path.DirectorySeparatorChar + 
+		            this.RemoveModuleName (relativeServerPath);
+		    }
+		    else {
+		        theLocalPath = 
+		            localdirectory + 
+		            relativeServerPath.Replace ('/', 
+		                                        Path.DirectorySeparatorChar);
+		    }
+		    
+			return theLocalPath;
+		    //  TODO: Remove this when the change works.
+		    // localdirectory + directory.Substring(cvsroot.CvsRepository.Length).Replace("/", "\\");
+		}
+		
+		private string RemoveModuleName (String serverPathAndFile) {
+		    return serverPathAndFile.Replace ("/" + this.ModuleName + "/", "");
+		}
+		
+		private bool IsRoot (String serverPathAndFile) {
+		    string removeModuleName =
+		        this.RemoveModuleName (serverPathAndFile);
+		    if (removeModuleName.IndexOf ('/') > 0) {
+		        return false;
+		    }
+		    
+		    return true;
 		}
 		
 		private void CreateFilesIn(string path, string repository, ArrayList entries)
 		{
-			if (!Directory.Exists(path + "\\CVS")) {
-				Directory.CreateDirectory(path + "\\CVS");
+			if (!Directory.Exists(path + CVS)) {
+				Directory.CreateDirectory(path + CVS);
 			}
 			
-			StreamWriter sw = new StreamWriter(path + "\\CVS\\Repository", false, Encoding.ASCII);
+			StreamWriter sw = new StreamWriter(path + REPOSITORY, false, Encoding.ASCII);
 			sw.Write(repository.Substring(cvsroot.CvsRepository.Length + 1));
 			sw.Close();
 			
-			sw = new StreamWriter(path + "\\CVS\\Root", false, Encoding.ASCII);
+			sw = new StreamWriter(path + ROOT, false, Encoding.ASCII);
 			sw.Write(cvsroot.ToString());
 			sw.Close();
 			
-			sw = new StreamWriter(path + "\\CVS\\Entries", false, Encoding.ASCII);
+			sw = new StreamWriter(path + ENTRIES, false, Encoding.ASCII);
 			
 			bool created = false;
 			if (entries != null && entries.Count > 0) {
@@ -192,7 +259,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 				sw.WriteLine("D");
 				sw.Close();
 				created = true;
-				sw = new StreamWriter(path + "\\CVS\\Entries.Log", false, Encoding.ASCII);
+				sw = new StreamWriter(path + ENTRIES_LOG, false, Encoding.ASCII);
 			}
 			
 			bool empty = true;
@@ -219,10 +286,17 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 			}
 			sw.Close();
 			if (empty && created) {
-				File.Delete(path + "\\CVS\\Entries.Log");
+				File.Delete(path + ENTRIES_LOG);
 			}
 		}
 		
+		/// <summary>
+		/// Uses the assumption that ASCII 0 or ASCII 255 are only
+		///     found in non-text files to determine if the file
+		///     is a binary or a text file.
+		/// Also the assumption is made that a non-text file will
+		///     have an ASCII 0 or ASCII 255 character.
+		/// </summary>
 		private bool IsBinary(string filename)
 		{
 			FileStream fs = File.OpenRead(filename);
@@ -244,25 +318,35 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		}
 
         /// <summary>
-        /// Add the entries in the specified directory.
+        /// Recurses through all child directories starting with
+        ///     base directory.  Add all the cvs entries found
+        ///     to the folder collection.
         /// </summary>
-        /// <param name="directory"></param>
+        /// <param name="directory">The name of the directory.</param>
 		public void AddEntriesIn(string directory)
 		{
 			Entry[] entries = Entry.RetrieveEntries(directory);
 			if (entries != null && entries.Length > 0) {
 				string cvsdir    = ToRemotePath(directory);
-				if (File.Exists(directory + "\\CVS\\Repository")) {
-					StreamReader sr = File.OpenText(directory + "\\CVS\\Repository");
+				if (File.Exists(directory + REPOSITORY)) {
+					StreamReader sr = File.OpenText(directory + REPOSITORY);
 					string line = sr.ReadLine();
 					if (line != null && line.Length > 0) {
-						cvsdir = line + "/" + cvsdir;
+					    // TODO: Figure out what to do with this path seperator
+						cvsdir = "/" + line; // + "/" + cvsdir;
 					}
 					sr.Close();
 				}
 				foreach (Entry entry in entries) {
 					if (entry.IsDirectory) {
 						AddEntriesIn(directory + Path.DirectorySeparatorChar + entry.Name);
+					}
+					
+					if (LOGGER.IsDebugEnabled) {
+					    String msg = "Adding entry.  " +
+					        ";  cvsdir=[" + cvsdir + "]" +
+					        ";  entry=[" + entry + "]";
+					    LOGGER.Debug (msg);
 					}
 					AddEntry(cvsdir, entry);
 				}

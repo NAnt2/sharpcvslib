@@ -117,7 +117,9 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// <param name="connection"></param>
 		public void Execute(CVSServerConnection connection)
 		{
-			connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository + directory));
+			connection.SubmitRequest(new DirectoryRequest(".", 
+                           workingdirectory.CvsRoot.CvsRepository + 
+                           directory));
             
             if (IsIgnoringCase) {
                 connection.SubmitRequest(new ArgumentRequest("-i"));

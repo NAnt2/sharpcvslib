@@ -221,7 +221,8 @@ namespace ICSharpCode.SharpCvsLib {
 					break;
 				}
 				builder.Append((char)i);
-			}									
+			}
+			this.ShowResponse (builder.ToString ());
 			return builder.ToString();
 		}
 		
@@ -239,6 +240,7 @@ namespace ICSharpCode.SharpCvsLib {
 					Thread.Sleep(10);
 				}
 			}
+			this.ShowResponse (line);
 			return line;			
 		}
 		
@@ -257,8 +259,16 @@ namespace ICSharpCode.SharpCvsLib {
 				if (i == '\n' || i ==' ' || i == -1) {
 					break;
 				}
-			}									
+			}
+			this.ShowResponse (builder.ToString ());
 			return builder.ToString();
+		}
+		
+		/// <summary>
+		/// Displays the response from the server
+		/// </summary>
+		private void ShowResponse (String response) {
+		    System.Console.WriteLine ("cvs server: " + response);
 		}
 		
         /// <summary>

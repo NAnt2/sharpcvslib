@@ -152,7 +152,7 @@ namespace ICSharpCode.SharpCvsLib {
 				
 				IResponse response = ResponseFactory.CreateResponse(responseStr.Substring(0, responseStr.Length - 1));
 			    if (LOGGER.IsDebugEnabled) {
-				    LOGGER.Debug("got : " + response);
+				    LOGGER.Debug("cvs server: " + response);
 			    }
 				
 				if (response == null) {
@@ -177,7 +177,7 @@ namespace ICSharpCode.SharpCvsLib {
 		{
 		    if (LOGGER.IsDebugEnabled)
 		    {
-			    LOGGER.Debug("send : " + request.RequestString);
+			    LOGGER.Debug("cvs client: " + request.RequestString);
 		    }
 			
 			outputstream.SendString(request.RequestString);

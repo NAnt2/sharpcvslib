@@ -78,5 +78,17 @@ namespace ICSharpCode.SharpCvsLib.Requests {
 		{
 			
 		}
+		
+		/// <summary>
+		/// Converts the object values into a human readable string.
+		/// </summary>
+		/// <returns>A string representation of the object.</returns>
+		public override string ToString () {
+            return "Request.  " + 
+                "DoesModifyConnection=[" + this.DoesModifyConnection + "]" +
+                "DoesModifyInputStream=[" + this.DoesModifyInputStream + "]" +
+                "IsResponseExpected=[" + this.IsResponseExpected + "]" +
+                "RequestString=[" + this.RequestString + "]";
+		}
 	}
 }
