@@ -164,7 +164,7 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
                 file.WriteByte(GenerateTextByte(n, linefeedChars));
             }
             file.Close();
-
+ 
             return fileName;
         }
 
@@ -187,7 +187,7 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
                 byte actual = (byte)file.ReadByte();
                 byte wanted = GenerateTextByte(n, linefeedChars);
                 msg = String.Format("n:{0} actual:{1} wanted:{2}", n, actual, wanted);
-                Assertion.Assert(msg, actual == wanted);
+                Assertion.AssertEquals(msg, wanted, actual);
             }
             file.Close();
         }
@@ -221,7 +221,7 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
 
             if (isCompressed) {
                 // First char should be a 'z'
-                Assertion.Assert(cvsStream.ReadByte() == 'z');
+                Assertion.AssertEquals(cvsStream.ReadByte(), 'z');
             }
 
             // Read the first line which should be the line length
@@ -229,14 +229,14 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
             len = Int32.Parse(numStr);
             msg = String.Format("Expected length of {0} but got length {1}",
                                 GetTextLen(TEXT_BLOCKS, linefeedChars), len);
-            Assertion.Assert(len == GetTextLen(TEXT_BLOCKS, linefeedChars));
+            Assertion.AssertEquals(GetTextLen(TEXT_BLOCKS, linefeedChars), len);
 
             // Check what was written to the memory stream matches the file we generated
             for (int n = 0; n < GetTextLen(TEXT_BLOCKS, linefeedChars); n++) {
                 byte actual = (byte)cvsStream.ReadByte();
                 byte wanted = GenerateTextByte(n, linefeedChars);
                 msg = String.Format("n:{0} actual:{1} wanted:{2}", n, actual, wanted);
-                Assertion.Assert(msg, actual == wanted);
+                Assertion.AssertEquals(msg, wanted, actual);
             }
         }
 
@@ -374,7 +374,7 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
                 byte actual = (byte)file.ReadByte();
                 byte wanted = GenerateBinaryByte(n);
                 msg = String.Format("n:{0} actual:0x{1:X2} wanted:0x{2:X2}", n, actual, wanted);
-                Assertion.Assert(msg, actual == wanted);
+                Assertion.AssertEquals(msg, wanted, actual);
             }
             file.Close();
         }
@@ -405,7 +405,7 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
 
             if (isCompressed) {
                 // First char should be a 'z'
-                Assertion.Assert(cvsStream.ReadByte() == 'z');
+                Assertion.AssertEquals(cvsStream.ReadByte(), 'z');
             }
 
             // Read the first line which should be the line length
@@ -413,14 +413,14 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
             len = Int32.Parse(numStr);
             msg = String.Format("Expected length of {0} but got length {1}",
                                 GetBinaryLen(BINARY_BLOCKS), len);
-            Assertion.Assert(len == GetBinaryLen(BINARY_BLOCKS));
+            Assertion.AssertEquals(GetBinaryLen(BINARY_BLOCKS), len);
 
             // Check what was written to the memory stream matches the file we generated
             for (int n = 0; n < GetBinaryLen(BINARY_BLOCKS); n++) {
                 byte actual = (byte)cvsStream.ReadByte();
                 byte wanted = GenerateBinaryByte(n);
                 msg = String.Format("n:{0} actual:0x{1:X2} wanted:0x{2:X2}", n, actual, wanted);
-                Assertion.Assert(msg, actual == wanted);
+                Assertion.AssertEquals(msg, wanted, actual);
             }
         }
 
