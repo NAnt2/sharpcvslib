@@ -50,7 +50,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
     public class UpdateCommand {
         private WorkingDirectory currentWorkingDirectory;
         private CvsRoot cvsRoot;
-        private string repository;
+        private string fileNames;
         private string revision;
         private string localDirectory;
         private DateTime date;
@@ -68,21 +68,21 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// Update module files from a cvs repository.
         /// </summary>
         /// <param name="cvsroot">User information</param>
-        /// <param name="repositoryName">Repository</param>
+        /// <param name="fileNames">Files</param>
         /// <param name="upOptions">Options</param>
-        public UpdateCommand(string cvsroot, string repositoryName, string upOptions) : 
-            this(new CvsRoot(cvsroot), repositoryName, upOptions){
+        public UpdateCommand(string cvsroot, string fileNames, string upOptions) : 
+            this(new CvsRoot(cvsroot), fileNames, upOptions){
         }
 
         /// <summary>
         ///    Update modules or files in the cvs repository
         /// </summary>
         /// <param name="cvsroot">User Information</param>
-        /// <param name="repositoryName">Repository</param>
+        /// <param name="fileNames">Files</param>
         /// <param name="upOptions">Options</param>
-        public UpdateCommand(CvsRoot cvsroot, string repositoryName, string upOptions) {
+        public UpdateCommand(CvsRoot cvsroot, string fileNames, string upOptions) {
             this.cvsRoot = cvsroot;
-            repository = repositoryName;
+            this.fileNames = fileNames;
             this.unparsedOptions = upOptions;
         }
 
@@ -100,20 +100,24 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             this.ParseOptions(this.unparsedOptions);
             try 
             {
+                // Open the Repository file in the CVS directory
+                Manager manager = new Manager(Environment.CurrentDirectory);
+                Repository repository = manager.FetchRepository(Environment.CurrentDirectory); 
+                // If this fails error out and state the user
+                //    is not in a CVS repository directory tree.
                 if (localDirectory == null) {
                     localDirectory = Environment.CurrentDirectory;
                 }
                 currentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
-                    localDirectory, repository);
+                    localDirectory, repository.FileContents);
                 if (revision != null) {
                     currentWorkingDirectory.Revision = revision;
                 }
                 if (!date.Equals(DateTime.MinValue)) {
                     currentWorkingDirectory.Date = date;
                 }
-                Manager manager = new Manager(currentWorkingDirectory.WorkingPath);
                 currentWorkingDirectory.FoldersToUpdate =
-                    manager.FetchFilesToUpdate (Path.Combine (localDirectory, repository));
+                    manager.FetchFilesToUpdate (Path.Combine(Environment.CurrentDirectory, fileNames));
                 // Create new UpdateCommand2 object
                 updateCommand = new UpdateCommand2(currentWorkingDirectory);
             }
@@ -130,6 +134,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// </summary>
         /// <param name="upOptions">A string value that holds the command
         ///     line options the user has selected.</param>
+        /// <exception cref="NotImplementedException">If the command argument
+        ///     is not implemented currently.  TODO: Implement the argument.</exception>
         private void ParseOptions (String upOptions) {
             int endofOptions = 0;
             for (int i = 0; i < upOptions.Length; i++) {
