@@ -50,6 +50,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         private CvsRoot cvsRoot;
         private string fileNames;
         private string localDirectory;
+        private string revision;
+        private DateTime date;
         private string unparsedOptions;
         private readonly ILog LOGGER = 
             LogManager.GetLogger (typeof(RTagCommand));
@@ -107,7 +109,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 LOGGER.Error (e);
                 throw e;
             }
-         
             return rtagCommand;
         }
  
@@ -118,7 +119,58 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <param name="rtOptions">A string value that holds the command
         ///     line options the user has selected.</param>
         private void ParseOptions (String rtOptions) {
+            int endofOptions = 0;
             for (int i = 0; i < rtOptions.Length; i++) {
+                if (rtOptions[i]== '-' && rtOptions[i+1] == 'm') {
+                    i += 2;
+                    // get location to place files locally
+                    if (rtOptions.IndexOf(" -", i, rtOptions.Length - i) == -1) {
+                        endofOptions = rtOptions.Length - i - 1;  // minus one so not to
+                        // include last space
+                    }
+                    else {
+                        endofOptions = rtOptions.IndexOf(" -", i, rtOptions.Length - i) - 2;
+                    }
+                    localDirectory = rtOptions.Substring(i, endofOptions);
+                }
+                if (rtOptions[i]== '-' && rtOptions[i+1] == 'r') {
+                    i += 2;
+                    // get revision of files to tag
+                    if (rtOptions.IndexOf(" -", i, rtOptions.Length - i) == -1) {
+                        endofOptions = rtOptions.Length - i - 1;  // minus one so not to
+                        // include last space
+                    }
+                    else {
+                        endofOptions = rtOptions.IndexOf(" -", i, rtOptions.Length - i) - 2;
+                    }
+                    revision = rtOptions.Substring(i, endofOptions);
+                }
+                if (rtOptions[i]== '-' && rtOptions[i+1] == 'D') {
+                    i += 2;
+                    // get date of files for rtag
+                    // Date format needs to be the short date pattern as stated in the 
+                    // Control Panel -> Regional Options -> see Date tab
+                    if (rtOptions.IndexOf(" -", i, rtOptions.Length - i) == -1) {
+                        endofOptions = rtOptions.Length - i - 1;  // minus one so not to
+                        // include last space
+                    }
+                    else {
+                        endofOptions = rtOptions.IndexOf(" -", i, rtOptions.Length - i) - 2;
+                    }
+                    try {
+                        // Parse string to DateTime format
+                        string datepar = rtOptions.Substring(i, endofOptions);
+                        date = System.Convert.ToDateTime(datepar, DateTimeFormatInfo.CurrentInfo);
+                    }
+                    catch {
+                        StringBuilder msg = new StringBuilder ();
+                        msg.Append("The -D rtag option parameter is not ");
+                        msg.Append("in correct format of ");
+                        msg.Append(DateTimeFormatInfo.CurrentInfo.ShortDatePattern);
+                        msg.Append(".");
+                        throw new ApplicationException (msg.ToString());
+                    }
+                }
                 if (rtOptions[i]== '-' && rtOptions[i+1] == 'a') {
                     String msg = "The -a rtag option is not  " +
                         "implemented.";
