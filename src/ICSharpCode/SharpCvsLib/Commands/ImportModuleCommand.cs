@@ -120,7 +120,7 @@ public class ImportModuleCommand : ICommand
         connection.SubmitRequest(new ArgumentRequest(vendor));
         connection.SubmitRequest(new ArgumentRequest(release));
 
-        System.Console.WriteLine("IMPORT START");
+        LOGGER.Info("IMPORT START");
 
         foreach (DictionaryEntry folder in workingdirectory.Folders) {
             foreach (Entry entry  in ((Folder)folder.Value).Entries) {

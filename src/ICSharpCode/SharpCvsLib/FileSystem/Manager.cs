@@ -63,6 +63,16 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
         private String workingPath;
 
+        private Factory _factory;
+
+        private Factory CvsFactory {
+            get {if (this._factory == null) {
+                     this._factory = new Factory();
+                 }
+                return this._factory;
+            }
+        }
+
         /// <summary>Constructory</summary>
         /// <param name="workingPath">The local directory that is being affected
         ///     during this cvs checkout.  This is used for program control,
@@ -102,6 +112,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <returns>A collection of folders that contain the cvs entries for
         ///       each directory.</returns>
         public Folder[] FetchFilesToUpdate (String directory) {
+            if (!directory.EndsWith(Path.DirectorySeparatorChar.ToString())) {
+                directory = directory + Path.DirectorySeparatorChar.ToString();
+            }
+            this.ValidateInSandbox(directory);
             ArrayList folders = new ArrayList ();
             Folder folder = new Folder ();
             folder.Repository = (Repository)this.FetchSingle (directory,
@@ -120,13 +134,19 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
         private void FetchFilesToUpdateRecursive (ArrayList folders,
                 String directory) {
+            this.ValidateInSandbox(directory);
             foreach (String subDir in Directory.GetDirectories (directory)) {
+                LOGGER.Debug("Looking in directory=[" + subDir + "]");
                 Folder folder = new Folder ();
+                if (!directory.EndsWith(Path.DirectorySeparatorChar.ToString())) {
+                    directory = directory + Path.DirectorySeparatorChar.ToString();
+                }
                 folder.Repository = (Repository)this.FetchSingle (directory,
                                     Factory.FileType.Repository);
                 ArrayList colEntries = new ArrayList (this.Fetch (directory,
                                                 Factory.FileType.Entries));
                 foreach (Entry entry in colEntries) {
+                    LOGGER.Debug("Adding entry to update=[" + entry + "]");
                     folder.Entries.Add (entry.FullPath, entry);
                 }
                 folders.Add (folder);
@@ -205,7 +225,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// Add the contents of the cvs file object to the respective file.
         /// </summary>
         public void Add (ICvsFile newCvsEntry) {
-            String cvsPath = this.GetCvsDir (newCvsEntry);
+            String cvsPath = this.CreateCvsDir (newCvsEntry);
             LOGGER.Debug("Add ICvsFile cvsPath=[" + cvsPath + "]");
 
             Hashtable newCvsEntries = new Hashtable();
@@ -214,7 +234,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 LOGGER.Error("newCvsEntry.Path=[" + newCvsEntry.Path + "]");
                 LOGGER.Error("newCvsEntry.FullPath=[" + newCvsEntry.FullPath + "]");
                 ArrayList currentCvsFiles = 
-                    new ArrayList(this.Fetch (newCvsEntry.Path, newCvsEntry.Type));
+                    new ArrayList(this.Fetch (newCvsEntry.FullPath, newCvsEntry.Type));
 
                 int originalCount = currentCvsFiles.Count;
 
@@ -288,7 +308,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// Remove the contents from the cvs control file.
         /// </summary>
         public void Remove (ICvsFile file) {
-            String cvsPath = this.GetCvsDir(file);
+            String cvsPath = this.CreateCvsDir(file);
             this.RemoveFromFile (cvsPath, file.Filename, file.FileContents);
         }
 
@@ -300,10 +320,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     management file (i.e. Entries, Root, etc.).</param>
         /// <param name="line">The line that is to be removed.</param>
         private void RemoveFromFile (String path, String file, String line) {
+            Factory factory = CvsFactory;
             Hashtable cvsFiles =
                 this.ReadFromFile (path, file);
 
-            Factory factory = new Factory();
             ICvsFile cvsFile = 
                 factory.CreateCvsObject(path, factory.GetFileType(file), line);
 
@@ -322,16 +342,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         private void WriteToFile (ICvsFile[] entries) {
             LOGGER.Debug("entries count=[" + entries.Length + "]");
             Hashtable testEntries = 
-                this.ReadFromFile(entries[0].Path, entries[0].Filename);
+                this.ReadFromFile(entries[0].FullPath, entries[0].Filename);
             LOGGER.Debug("test entries count=[" + testEntries.Count + "]");
-            if (entries.Length == 1) {
-                LOGGER.Debug("stack trace=[" + Environment.StackTrace + "]");
-            }
 
             bool append = false;
             foreach (ICvsFile entry in entries) {
                 LOGGER.Debug("fullPath=[" + entry.FullPath + "]");
-                String cvsPath = this.GetCvsDir(entry);
+                String cvsPath = this.CreateCvsDir(entry);
                 String cvsFullPath = Path.Combine(cvsPath, entry.Filename);
                 this.WriteToFile (cvsFullPath,
                                 entry.FileContents,
@@ -353,12 +370,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                                     bool append) {
             this.ValidateInSandbox(cvsFullPath);
             line = line.Replace ("\\", "/");
-
-            if (cvsFullPath.IndexOf(Repository.FILE_NAME) >= 0) {
-                LOGGER.Debug("cvsFullPath=[" + cvsFullPath + "]");
-                LOGGER.Debug("repository sniffing, stack trace=[" + 
-                    Environment.StackTrace + "]");
-            }
 
             if (LOGGER.IsDebugEnabled) {
                 StringBuilder msg = new StringBuilder();
@@ -405,83 +416,42 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <returns>The path to the cvs directory.</returns>
         internal String GetCvsDir (ICvsFile cvsFile) {
             String path = cvsFile.FullPath;
-            if ((path.EndsWith(Path.DirectorySeparatorChar.ToString()) ||
-                path.EndsWith("/")) && !this.HasCvsDir(path)) {
-                // If the full path was passed in then get the directory above.
-                StringBuilder msg = new StringBuilder();
-                msg.Append("The Path is a directory, management is controlled by cvs folder above.");
-                msg.Append("path=[").Append(path).Append("]");
-                // because the path ended with a slash 
-                // the directory is really the last thing before the slash,
-                //  and we need the directory above that...so do this twice
-                path = Path.GetDirectoryName(path);
 
-                //msg.Append("need the directory name above this=[").Append(path).Append("]");
-
-                msg.Append("this should be the directory the passed in folder is managed by=[").Append(path).Append("]");
-                LOGGER.Debug(msg);
-            } /*else if (Directory.Exists(path) && !this.HasCvsDir(path)) {
-                // if the directory exists then get the directory above
-                StringBuilder msg = new StringBuilder();
-                msg.Append("The Path is a directory, but does not have a seperator character.");
-                msg.Append("Management is controlled by cvs folder above and we can safely use ");
-                msg.Append("GetDirectory(String) to get the management directory.");
-                msg.Append("path=[").Append(path).Append("]");
-
-                path = Path.GetDirectoryName(path);
-
-                msg.Append("cvs dir goes in path=[").Append(path).Append("]");
-                LOGGER.Error(msg);
-            }*/ else if (File.Exists(path) || String.Empty != Path.GetExtension(path)) {
-                // if the file exists then get the directory that the file is contained in.
-                StringBuilder msg = new StringBuilder();
-                msg.Append("The Path is a file, management is controlled by the containing directory.");
-                msg.Append("path=[").Append(path).Append("]");
-
-                path = Path.GetDirectoryName(path);
-
-                LOGGER.Debug(msg);
-            }  else if (cvsFile is Entry) {
-                LOGGER.Info("Is entry file=[" + (cvsFile is Entry) + "], it is a " + cvsFile.GetType().FullName.ToString());
-                Entry entry = (Entry)cvsFile;
-                if (entry.IsDirectory) {
-                    path = Path.GetDirectoryName(path);
-                }
-            } else {
-                StringBuilder msg = new StringBuilder();
-                msg.Append("Unable to determine whether this is a file or a directory, ");
-                msg.Append("however the path does not end with a directory seperator ");
-                msg.Append("character so it should be safe in either case to use GetDirectory(String) ");
-                msg.Append("to determine the cvs management folder.");
-                msg.Append("path=[").Append(path).Append("]");
-
-                path = Path.GetDirectoryName(path);
-                LOGGER.Debug(msg);
+            if (cvsFile is Entry) {
                 if (LOGGER.IsDebugEnabled) {
-                    LOGGER.Debug ("stack trace=[" + Environment.StackTrace + "]");
+                    LOGGER.Debug("Is entry file=[" + 
+                        (cvsFile is Entry) + "], it is a " + cvsFile.GetType().FullName.ToString());
                 }
-            }
+                Entry entry = (Entry)cvsFile;
+                if (entry.IsDirectory && 
+                    path.EndsWith(Path.DirectorySeparatorChar.ToString())) {
+                    path = path.Substring(0, path.Length - 1);
+                }
+            } 
+            path = Path.GetDirectoryName(path);
 
             String cvsDir = path;
             if (!this.HasCvsDir(cvsDir)) {
                 cvsDir = Path.Combine(cvsDir, CVS);
-            }
-
-            // verify that there is only one cvs directory
-            if (this.HasCvsDir(cvsDir.Replace(CVS, ""))) {
-                StringBuilder msg = new StringBuilder();
-                msg.Append("Should only have 1 cvs directory.");
-                msg.Append("cvsDir=[").Append(cvsDir).Append("]");
-                LOGGER.Debug(msg);
-                throw new Exception(msg.ToString());
-            }
+            } 
             
+            LOGGER.Debug("path=[" + path + "]");
+            LOGGER.Error("GetCvsDir(String)=[" + cvsDir + "]");
+            return cvsDir;
+        }
+
+        private String CreateCvsDir (ICvsFile cvsFile) {
+            String cvsDir = this.GetCvsDir(cvsFile);
+
+            LOGGER.Debug("CreateCvsDir for cvsFile=[" + cvsFile + "]");
+            LOGGER.Debug("file type=[" + cvsFile.GetType().FullName + "]");
+            LOGGER.Debug("cvsFile.Path=[" + cvsFile.Path + "]");
+            LOGGER.Debug("cvsFile.FullPath=[" + cvsFile.FullPath + "]");
+            LOGGER.Debug("cvsDir=[" + cvsDir + "]");
             this.ValidateInSandbox(cvsDir);
             if (!Directory.Exists(cvsDir)) {
                 Directory.CreateDirectory(cvsDir);
             }
-            LOGGER.Debug("path=[" + path + "]");
-            LOGGER.Error("GetCvsDir(String)=[" + cvsDir + "]");
             return cvsDir;
         }
 
@@ -525,6 +495,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <exception cref="FileNotFoundException">If an entries file cannot
         ///     be found.</exception>
         public ICvsFile FetchSingle (String path, Factory.FileType fileType) {
+            if (!path.EndsWith(Path.DirectorySeparatorChar.ToString())) {
+                path = path + Path.DirectorySeparatorChar.ToString();
+            }
             ICvsFile [] entries = this.Fetch (path, fileType);
 
             StringBuilder msg = new StringBuilder ();
@@ -533,6 +506,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             if (entries.Length == 0) {
                 msg.Append ("File not found.  ");
+                msg.Append("path=[").Append(path).Append("]");
+                msg.Append("fileType=[").Append(fileType).Append("]");
                 throw new FileNotFoundException (msg.ToString ());
             }
             if (entries.Length > 1) {
@@ -575,14 +550,14 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     Fetch all of the entry objects for the specified cvs filename
         ///         in the specified path.
         /// </summary>
-        /// <param name="path">The path to the current working directory
+        /// <param name="fullPath">The path to the current working directory
         ///    or to the cvs directory.</param>
         /// <param name="fileType">The type of the cvs file to fetch.</param>
         /// <returns>A collection of <see cref="ICvsFile">Cvs files</see></returns>
-        public ICvsFile [] Fetch (String path, Factory.FileType fileType) {
-            Factory factory = new Factory ();
+        public ICvsFile [] Fetch (String fullPath, Factory.FileType fileType) {
+            Factory factory = CvsFactory;
             String filename = factory.GetFilename (fileType);
-            Hashtable cvsFiles = this.ReadFromFile (path,
+            Hashtable cvsFiles = this.ReadFromFile (fullPath,
                                                 filename);
 
             ArrayList entries = new ArrayList (cvsFiles.Values);
@@ -598,10 +573,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <returns>A collection of entries from the cvs management file.</returns>
         public Entries FetchEntries (String fullPath) {
             Entries entries = new Entries();
-            Factory factory = new Factory();
+            Factory factory = CvsFactory;
             String filename = factory.GetFilename(Factory.FileType.Entries);
             ICollection cvsFiles = 
-                this.ReadFromFile(Path.GetDirectoryName(fullPath), filename);
+                this.ReadFromFile(fullPath, filename);
 
             foreach (DictionaryEntry entryEntry in cvsFiles) {
                 Entry entry = (Entry)entryEntry.Value;
@@ -610,6 +585,21 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             return entries;
         }
 
+        /// <summary>
+        ///     Read the contents of the specified file line by line.
+        ///         The contents are placed in a collection object and
+        ///         can be later extracted by the specified value object.
+        ///         This is used to keep the file access in one location.
+        /// </summary>
+        /// <param name="fullPath">The full path to the file.</param>
+        /// <param name="fileName">The name of the file to read.</param>
+        /// <returns>A collection of strings, one for each line
+        ///     in the specified file.</returns>
+        private Hashtable ReadFromFile (String fullPath, String fileName) {
+            Factory factory = CvsFactory;
+            Factory.FileType fileType = factory.GetFileType(fileName);
+            return this.ReadFromFile(fullPath, fileType);
+        }
 
         /// <summary>
         ///     Read the contents of the specified file line by line.
@@ -617,17 +607,31 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///         can be later extracted by the specified value object.
         ///         This is used to keep the file access in one location.
         /// </summary>
-        /// <param name="path">The path to the file.</param>
-        /// <param name="file">The name of the file to read.</param>
+        /// <param name="fullPath">The full path to the file.</param>
+        /// <param name="fileType">The type of the file to read.</param>
         /// <returns>A collection of strings, one for each line
         ///     in the specified file.</returns>
-        private Hashtable ReadFromFile (String path, String file) {
+        private Hashtable ReadFromFile (String fullPath, Factory.FileType fileType) {
             Hashtable fileContents = new Hashtable ();
-            //String cvsPath = this.GetCvsDir(path, file);
-            String cvsPath = Path.Combine(path, CVS);
-            String filePath = Path.Combine(cvsPath, file);
-            Factory factory = new Factory();
-            LOGGER.Error("filePath=[" + filePath + "]");
+            Factory factory = CvsFactory;
+
+//            String path = fullPath;
+            String fileName = factory.GetFilename(fileType);
+//            if ((fullPath.EndsWith(Path.DirectorySeparatorChar.ToString()) ||
+//                fullPath.EndsWith("/")) &&
+//                fileType == Factory.FileType.Entries) {
+//                String tempPath = fullPath.Substring(0, fullPath.Length - 1);
+//                path = Path.GetDirectoryName(tempPath);
+//            } else {
+//                path = Path.GetDirectoryName(fullPath);
+//            }
+
+            ICvsFile cvsFileTemp = factory.CreateCvsObject(fullPath, fileType, "/EMPTY////");
+            String cvsPath = this.GetCvsDir(cvsFileTemp);
+//            String cvsPath = Path.Combine(path, CVS);
+            String filePath = Path.Combine(cvsPath, fileName);
+
+//            LOGGER.Debug("filePath=[" + filePath + "]");
             if (File.Exists(filePath)) {
                 StreamReader sr = null;
                 try {
@@ -638,7 +642,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                         if (line == null || line.Length == 1) {
                             break;
                         }
-                        ICvsFile cvsFile = factory.CreateCvsObject(path, file, line);
+                        ICvsFile cvsFile = factory.CreateCvsObject(cvsPath, fileName, line);
                         if (!fileContents.Contains(cvsFile.FullPath)) {
                             fileContents.Add(cvsFile.FullPath, cvsFile);
                         } else {
@@ -649,6 +653,14 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                             throw new DuplicateEntryException (msg.ToString());
                         }
                     }
+                } catch (Exception e) {
+                    StringBuilder msg = new StringBuilder();
+                    msg.Append("CVS management file not found.");
+                    msg.Append("file type=[").Append(fileType.GetType().FullName).Append("]");
+                    msg.Append("fullPath=[").Append(fullPath).Append("]");
+                    msg.Append("filePath=[").Append(filePath).Append("]");
+
+                    LOGGER.Error(e);
                 } finally {
                     if (null != sr) {
                         try {
@@ -658,6 +670,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                         }
                     }
                 }
+            } else {
+                StringBuilder msg = new StringBuilder();
+                msg.Append("CVS management file not found.");
+                msg.Append("file type=[").Append(fileType.GetType().FullName).Append("]");
+                msg.Append("fullPath=[").Append(fullPath).Append("]");
+                msg.Append("filePath=[").Append(filePath).Append("]");
+                LOGGER.Warn(msg);
             }
             return fileContents;
         }
@@ -679,7 +698,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                     fileTimeStamp = DateParser.GetCorrectedTimeStamp (timeStamp);
                 } else {
                     fileTimeStamp = timeStamp.AddHours(1);
-                    System.Console.WriteLine("fileTimeStamp=[" + fileTimeStamp + "]");
+                    LOGGER.Debug("fileTimeStamp=[" + fileTimeStamp + "]");
                 }
 
                 File.SetCreationTime(filenameAndPath, fileTimeStamp);
@@ -817,7 +836,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             PathTranslator pathTranslator =
                 new PathTranslator (workingDirectory,
                                     repositoryPath);
-            Factory factory = new Factory ();
+            Factory factory = CvsFactory;
 
             if (LOGGER.IsDebugEnabled) {
                 StringBuilder msg = new StringBuilder ();
@@ -839,6 +858,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 (Repository)factory.CreateCvsObject (path,
                                                     Factory.FileType.Repository,
                                                     repositoryContents);
+            if (LOGGER.IsDebugEnabled) {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append ("\n Add Repository File.");
+                msg.Append ("\n\t repository.FileContents=[").Append (repository.FileContents).Append ("]");
+                msg.Append ("\n\t repository.FullPath=[").Append (repository.FullPath).Append ("]");
+                LOGGER.Debug (msg);
+            }
             this.Add (repository);
 
             return repository;
@@ -861,7 +887,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             PathTranslator pathTranslator =
                 new PathTranslator (workingDirectory,
                                     repositoryPath);
-            Factory factory = new Factory ();
+            Factory factory = CvsFactory;
 
             if (LOGGER.IsDebugEnabled) {
                 StringBuilder msg = new StringBuilder ();
@@ -874,7 +900,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             }
 
             Root root =
-                (Root)factory.CreateCvsObject (pathTranslator.LocalPath + Path.DirectorySeparatorChar,
+                (Root)factory.CreateCvsObject (pathTranslator.LocalPath,
                                             Factory.FileType.Root,
                                             pathTranslator.CvsRoot.ToString ());
             this.Add (root);
@@ -899,7 +925,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             PathTranslator pathTranslator =
                 new PathTranslator (workingDirectory,
                 repositoryPath);
-            Factory factory = new Factory ();
+            Factory factory = CvsFactory;
 
             if (LOGGER.IsDebugEnabled) {
                 StringBuilder msg = new StringBuilder ();
@@ -912,7 +938,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             }
 
             Tag tag =
-                (Tag)factory.CreateCvsObject (pathTranslator.LocalPath + Path.DirectorySeparatorChar,
+                (Tag)factory.CreateCvsObject (pathTranslator.LocalPath,
                 Factory.FileType.Tag, pathTranslator.CvsRoot.ToString ());
             this.Add (tag);
 
@@ -940,7 +966,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             PathTranslator pathTranslator =
                 new PathTranslator (workingDirectory,
                                     repositoryPath);
-            Factory factory = new Factory ();
+            Factory factory = CvsFactory;
 
             if (LOGGER.IsDebugEnabled) {
                 StringBuilder msg = new StringBuilder ();
@@ -950,7 +976,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 LOGGER.Debug (msg);
             }
 
-            System.Console.WriteLine("pathTranslator.LocalPathAndFilename=[" + 
+            LOGGER.Debug("pathTranslator.LocalPathAndFilename=[" + 
                 pathTranslator.LocalPathAndFilename + "]");
             Entry cvsEntry = Entry.CreateEntry(pathTranslator.LocalPathAndFilename);
 

@@ -88,14 +88,14 @@ namespace ICSharpCode.SharpCvsLib.Tests {
         /// </summary>
         [TearDown]
         public void TearDown() {
-            //this.CleanTempDirectory();            
+            this.CleanTempDirectory();            
         }
 
         /// <summary>
         ///     Check if the temporary directory exists.  If it does then
         ///         remove the directory.
         /// </summary>
-        private void CleanTempDirectory () {
+        protected void CleanTempDirectory () {
             if (Directory.Exists(this.settings.Config.LocalPath)) {
                 Directory.Delete (this.settings.Config.LocalPath, true);
             }

@@ -66,36 +66,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             get {return Tag.FILE_NAME;}
         }
 
-/* TODO: Remove this
-        private String path;
-        private String fileContents;
-
-        /// <summary>
-        /// The full path to the folder/ directory that this cvs object represents.
-        ///     In the case of a tag the path is to the directory that the tag is
-        ///     for.
-        /// </summary>
-        public String FullPath {
-            get {return this.fullPath;}
-        }
-
-        /// <summary>
-        ///     The contents of the cvs file.
-        /// </summary>
-        public String FileContents {
-            get {return this.fileContents;}
-        }
-
-        /// <summary>
-        ///     Constructor for the root object.
-        /// </summary>
-        public Tag (String path, String fileContents) {
-            this.path = path;
-
-            String replace_T_with_N = "N" + fileContents.Substring (1);
-            this.fileContents = replace_T_with_N;
-        }
-*/        
         /// <summary>
         /// Create a new instance of the cvs object.
         /// </summary>

@@ -89,27 +89,21 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             Assertion.Assert ("Should have found the check file.  file=[" +
                             checkFile + "]", File.Exists (checkFile));
 
-            ICvsFile[] entries =
-                manager.Fetch (rootDir, Factory.FileType.Entries);
-            int foundFileEntry = 0;
-            int foundDirectoryEntry = 0;
+            Entries entries =
+                manager.FetchEntries (rootDir);
 
-            foreach (ICvsFile cvsEntry in entries) {
-                Entry entry = (Entry)cvsEntry;
-                System.Console.WriteLine ("entry=[" + entry + "]");
-                if (entry.Name.Equals (this.settings.Config.TargetFile)) {
-                    foundFileEntry++;
-                }
-
-                if (entry.Name.Equals (this.settings.Config.TargetDirectory)) {
-                    foundDirectoryEntry++;
+            String moduleDir = Path.Combine(this.settings.LocalPath, this.settings.Module);
+            Assertion.Assert ("Build file should have a cvs entry.", entries.Contains(Path.Combine(moduleDir, checkFile)));
+            Assertion.Assert (this.settings.Config.TargetDirectory + " directory should have a cvs entry.", 
+                entries.Contains(Path.Combine(moduleDir, "src" + Path.DirectorySeparatorChar.ToString())));
+            foreach (DictionaryEntry dicEntry in entries) {
+                Entry entry = (Entry)dicEntry.Value;
+                if (!entry.IsDirectory) {
+                    Assertion.AssertNotNull("Should have date information.", entry.Date);
                 }
             }
-
-            Assertion.Assert ("Build file should have a cvs entry.", foundFileEntry == 1);
-            Assertion.Assert (this.settings.Config.TargetDirectory + " directory should have a cvs entry.", foundDirectoryEntry == 1);
             Assertion.Assert ("Should not have a cvs directory above module path.",
-                            !Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)));
+                    !Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)));
             Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
                             !Directory.Exists (Path.Combine (this.settings.Config.Module, manager.CVS)));
 
@@ -240,16 +234,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                 Path.Combine (Path.Combine (this.settings.Config.Module, manager.CVS), Tag.FILE_NAME);
             Assertion.Assert ("Should not have a cvs directory and tag file in the current execution path.  ",
                             !Directory.Exists (tagFile));
-        }
-
-        /// <summary>
-        ///     Check if the temporary directory exists.  If it does then
-        ///         remove the directory.
-        /// </summary>
-        private void CleanTempDirectory () {
-            if (Directory.Exists(this.settings.Config.LocalPath)) {
-                Directory.Delete (this.settings.Config.LocalPath, true);
-            }
         }
 
         /// <summary>

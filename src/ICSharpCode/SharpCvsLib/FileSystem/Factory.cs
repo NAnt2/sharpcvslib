@@ -44,7 +44,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///     Creates the cvs object necessary based on the filename.
     /// </summary>
     public class Factory {
-
+        private readonly ILog LOGGER = LogManager.GetLogger(typeof(ICSharpCode.SharpCvsLib.FileSystem.Factory));
         /// <summary>
         ///     Type of cvs file.
         /// </summary>
@@ -123,20 +123,33 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                                         FileType fileType,
                                         String line) {
             ICvsFile entry;
+            LOGGER.Debug("path=[" + path + "]");
+            LOGGER.Debug("line=[" + line + "]");
             switch (fileType) {
                 case (FileType.Entries): {
+                    if (Entry.IsDirectoryEntry(line)) {
+                        if (path.EndsWith("/") || 
+                            path.EndsWith(Path.DirectorySeparatorChar.ToString())) {
+                            path = path.Substring(0, path.Length - 1);
+                        }
+                        path = Path.GetDirectoryName(path);
+                    }
+                    LOGGER.Debug("path=[" + path + "]");
                     entry = new Entry(path, line);
                     break;
                 }
                 case (FileType.Repository):{
+                    LOGGER.Debug("Creating repository file.");
                     entry = new Repository (path, line);
                     break;
                 }
                 case (FileType.Root):{
+                    LOGGER.Debug("Creating root file.");
                     entry = new Root (path, line);
                     break;
                 }
                 case (FileType.Tag):{
+                    LOGGER.Debug("Creating tag file.");
                     entry = new Tag (path, line);
                     break;
                 }

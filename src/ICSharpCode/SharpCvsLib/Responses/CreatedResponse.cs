@@ -133,7 +133,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             services.NextFileDate = null;
 
             manager.Add(e);
-            System.Console.WriteLine("In created response, just added entry.  File date=[" + e.Date + "]");
+            LOGGER.Debug("In created response, just added entry.  File date=[" + e.Date + "]");
             manager.SetFileTimeStamp (localPathAndFilename, e.TimeStamp, e.IsUtcTimeStamp);
 
             UpdateMessage message = new UpdateMessage ();

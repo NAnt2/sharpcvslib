@@ -554,9 +554,79 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             String workingPath = Path.Combine(this.settings.LocalPath, this.settings.Module);
             Manager manager = new Manager(workingPath);
             for (int i = 0; i < cvsDirIn.Length; i++) {
-                Assertion.AssertEquals("cvsDir number=[" + i + "]", 
-                    cvsDirOut[i], manager.GetCvsDir(Entry.CreateEntry(cvsDirIn[i])));
+                try {
+                    Assertion.AssertEquals("cvsDir number=[" + i + "]", 
+                        cvsDirOut[i], manager.GetCvsDir(Entry.CreateEntry(cvsDirIn[i])));
+                } catch (EntryParseException e) {
+                    LOGGER.Error(e);
+                    if (!(cvsDirIn[i].IndexOf(manager.CVS) >= 0)) {
+                        Assertion.Fail("The only reason a parse exception should be thrown is if the " +
+                            "file contains a CVS management folder.  File=[" + cvsDirIn[i] + "]");
+                    }
+                }
             }
+        }
+
+        /// <summary>
+        /// Fetch the Entries file to update.
+        /// </summary>
+        [Test]
+        public void FetchEntriesTest () {
+            this.Checkout();
+            
+            String modulePath = Path.Combine(this.settings.LocalPath, this.settings.Module);
+            Manager manager = new Manager(modulePath);
+            Entries entries1= manager.FetchEntries(modulePath);
+
+            foreach (DictionaryEntry dicEntry in entries1) {
+                Entry entry = (Entry)dicEntry.Value;
+                LOGGER.Debug("entry.FullPath=[" + entry.FullPath + "]");
+                LOGGER.Debug("entry.Path=[" + entry.Path + "]");
+            }
+            Assertion.Assert(entries1.Contains(Path.Combine(modulePath, this.settings.TargetFile)));
+            Assertion.Assert(entries1.Contains(Path.Combine(modulePath, "src") + Path.DirectorySeparatorChar.ToString()));
+
+            String srcDir = Path.Combine(modulePath, "src");
+            Entries entries2 = manager.FetchEntries(srcDir);
+            Assertion.Assert(entries2.Contains(Path.Combine(srcDir, "test-file-2.txt")));
+
+            this.CleanTempDirectory();
+        }
+
+        /// <summary>
+        /// Fetch the Root file to test fetchers and if information was correctly
+        ///     written.
+        /// </summary>
+        [Test]
+        public void FetchRootTest () {
+            this.Checkout();
+            
+            String modulePath = Path.Combine(this.settings.LocalPath, this.settings.Module);
+            Manager manager = new Manager(modulePath);
+            Root root1 = manager.FetchRoot(modulePath);
+            Assertion.AssertEquals(this.settings.Cvsroot, root1.FileContents);
+            Root root2 = manager.FetchRoot(Path.Combine(modulePath, "src"));
+            Assertion.AssertEquals(this.settings.Cvsroot, root2.FileContents);
+
+            this.CleanTempDirectory();
+        }
+
+        /// <summary>
+        /// Fetch the Root file to test fetchers and if information was correctly
+        ///     written.
+        /// </summary>
+        [Test]
+        public void FetchRepositoryTest () {
+            this.Checkout();
+            
+            String modulePath = Path.Combine(this.settings.LocalPath, this.settings.Module);
+            Manager manager = new Manager(modulePath);
+            Repository repository1 = manager.FetchRepository(modulePath);
+            Assertion.AssertEquals(this.settings.Module, repository1.FileContents);
+            Repository repository2 = manager.FetchRepository(Path.Combine(modulePath, "src"));
+            Assertion.AssertEquals(this.settings.Module + "/" + "src", repository2.FileContents);
+
+            this.CleanTempDirectory();
         }
     }
 }

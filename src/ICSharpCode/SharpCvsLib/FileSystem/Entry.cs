@@ -86,26 +86,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         /// <summary>
-        /// Get the path to the folder that contains the file being managed.
-        /// </summary>
-        public override String Path {
-            get {
-                String tempPath;
-                tempPath = System.IO.Path.GetDirectoryName(this.FullPath);   
-                return this.GetPathWithDirectorySeperatorChar(tempPath);
-            }
-        }
-
-        private String GetPathWithDirectorySeperatorChar(String path) {
-            if (!path[path.Length - 1].Equals(System.IO.Path.DirectorySeparatorChar)) {
-                return path + System.IO.Path.DirectorySeparatorChar;
-            } else if (!path[path.Length - 1].Equals('/')) {
-                return path + System.IO.Path.DirectorySeparatorChar;
-            }
-            return path;
-        }
-
-        /// <summary>
         /// Timestamp for the file.
         /// </summary>
         public DateTime TimeStamp {
@@ -179,8 +159,20 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     otherwise.
         /// </summary>
         public bool IsDirectory {
-            get {return isDir;			}
+            get {return isDir;}
             set {isDir = value;}
+        }
+
+        /// <summary>
+        /// Indicate if the file contents string is for a directory entry.  This
+        ///     is identified by an entry line string that contains a "D" 
+        ///     as the first character in the string.
+        /// </summary>
+        /// <param name="fileContents">The contents of the entry file.</param>
+        /// <returns><code>true</code> if the file contents string indicates a 
+        ///     directory, otherwise return <code>false</code>.</returns>
+        public static bool IsDirectoryEntry (String fileContents) {
+            return fileContents[0].ToString().ToUpper().Equals("D");
         }
 
         /// <summary>
@@ -275,29 +267,30 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 // attempt recovery if this file contains a cvs folder.
                 path = System.IO.Path.GetDirectoryName(path);
                 if (PathTranslator.ContainsCVS(path)) {
-                    throw new Exception("Path information should not contain cvs folder.");
+                    throw new EntryParseException("Path information should not contain cvs folder.");
                 }
             }
+            this.Parse(fileContents);
             LOGGER.Error("path=[" + path + "]");
             LOGGER.Error("name=[" + this.Name + "]");
             if (deriveFullPath) {
                 this.FullPath = System.IO.Path.Combine(path, this.Name);
+                if (this.isDir) {
+                    this.FullPath = this.FullPath + System.IO.Path.DirectorySeparatorChar;
+                }
             } else {
                 this.FullPath = path;
             }
-            if (!File.Exists(this.FullPath) &&
-                !Directory.Exists(this.FullPath)) {
-                StringBuilder msg = new StringBuilder();
-                msg.Append("File does not exist in path.");
-                msg.Append("FullPath=[").Append(FullPath).Append("]");
-                msg.Append("Stack trace=[").Append(Environment.StackTrace).Append("]");
-                LOGGER.Warn(msg);
+
+            if (this.FullPath.IndexOf("\\src\\src") >= 0) {
+                throw new Exception("What is going on? Path repeat index=[" + path.IndexOf(this.Name) + "]");
             }
 
             if (LOGGER.IsDebugEnabled) {
                 StringBuilder msg = new StringBuilder();
                 msg.Append("Created new entry=[").Append(this).Append("]");
                 msg.Append("path=[").Append(path).Append("]");
+                msg.Append("entry.FullPath=[").Append(this.FullPath).Append("]");
                 LOGGER.Debug(msg);
                 if (this.ToString().ToUpper().IndexOf("C:") > 0) {
                     LOGGER.Debug("Should not have an entry formatted like this, should just contain relative paths.");
@@ -308,16 +301,42 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
         /// <summary>
         /// Creates a new entry given the path to the file on the filesystem.
+        ///     The entry string is fabricated based on the full path of the file
+        ///     that is under or is to be placed under CVS management control.
         /// </summary>
         /// <param name="fullPath">The path to the file to put under cvs control.</param>
         /// <returns>A new cvs entry, using the full path to the file for the
         ///     entry information.</returns>
+        /// <exception cref="EntryParseException">If the entry file cannot be
+        ///     parsed.  This can occur if the fullPath contains a CVS management
+        ///     folder.</exception>
+        /// <example>
+        ///     <p>A full path such as:
+        ///         <code>C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\sharpcvslib-tests\sharpcvslib-test-repository\someFile.txt</code>
+        ///         would create a Entries line like:
+        ///         <code>/someText.txt////</code>
+        ///         Although the storage of the file is not the responsibility of the Entry class, the
+        ///         file would be stored in the directory:
+        ///         <code>C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\sharpcvslib-tests\sharpcvslib-test-repository\</code>
+        ///     </p>
+        ///     <p>A directory entry would be indicated by a 
+        ///         <code>C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\sharpcvslib-tests\sharpcvslib-test-repository\src\</code>
+        ///         which is flagged by adding a <code>Path.DirectorySeperatorChar</code> to the
+        ///         end of a normal directory, if it does not already exist.  The directory Entry
+        ///         would be placed in the CVS management folder ABOVE the directory itself and
+        ///         the resulting Entries line would look like:
+        ///         <code>D/src////</code>
+        ///         The file would then be placed by the <see cref="ICSharpCode.SharpCvsLib.FileSystem.Manager"/> in 
+        ///         the directory:
+        ///         <code>C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\sharpcvslib-tests\sharpcvslib-test-repository\</code>
+        ///         as well.
+        ///     </p>
+        /// </example>
         public static Entry CreateEntry (String fullPath) {
             String path;
             String fileName;
-            if (PathTranslator.ContainsCVS(fullPath) ||
-                fullPath.EndsWith("/")) {
-                throw new Exception("Unable to create an entry for CVS files.");
+            if (PathTranslator.ContainsCVS(fullPath)) {
+                throw new EntryParseException("Unable to create an entry for CVS files.");
             }
             StringBuilder entryString = new StringBuilder();
             // Sample directory entry:  D/conf////

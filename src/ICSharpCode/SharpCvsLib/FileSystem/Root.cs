@@ -58,41 +58,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     The name of the root file.
         /// </summary>
         public const String FILE_NAME = "Root";
-/* TODO: Remove this
-        private String fullPath;
-        private String fileContents;
-*/
+
         /// <summary>
         ///     The name of the cvs file that the object represents.
         /// </summary>
         public String Filename {
             get {return Root.FILE_NAME;}
         }
-
-/*  TODO: Remove this.
-        /// <summary>
-        /// The full path to the file that this object represents.  In the case of a
-        ///     root object this path represents the folder that the root belongs to.
-        /// </summary>
-        public String FullPath {
-            get {return this.path;}
-        }
-
-        /// <summary>
-        ///     The contents of the cvs file.
-        /// </summary>
-        public String FileContents {
-            get {return this.fileContents;}
-        }
-
-        /// <summary>
-        ///     Constructor for the root object.
-        /// </summary>
-        public Root (String path, String fileContents) {
-            this.path = path;
-            this.fileContents = fileContents;
-        }
-*/
 
         /// <summary>
         /// Create a new instance of the cvs object.

@@ -51,8 +51,24 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         ///     known exception would be the Entry which would have file information
         ///     stripped from the full path.
         /// </summary>
-        public virtual String Path {
-            get {return this.FullPath;}
+        public String Path {
+            get {
+                String tempPath = this.fullPath;
+                if (this.fullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString())) {
+                    tempPath = this.fullPath.Substring(0, this.fullPath.Length - 1);
+                }
+                tempPath = System.IO.Path.GetDirectoryName(tempPath);   
+                return this.GetPathWithDirectorySeperatorChar(tempPath);
+            }
+        }
+
+        private String GetPathWithDirectorySeperatorChar(String path) {
+            if (!path[path.Length - 1].Equals(System.IO.Path.DirectorySeparatorChar)) {
+                return path + System.IO.Path.DirectorySeparatorChar;
+            } else if (!path[path.Length - 1].Equals('/')) {
+                return path + System.IO.Path.DirectorySeparatorChar;
+            }
+            return path;
         }
 
         /// <summary>

@@ -106,8 +106,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                             "entries file in=[" +
                             this.workingDirectory.WorkingPath + "]");
             }
-            //manager.AddDirectories (this.workingDirectory.WorkingPath);
-
         }
     }
 }
