@@ -203,7 +203,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// </summary>
         /// <param name="message"></param>
 		public void SendMessage(string message) {
-		    System.Console.WriteLine (message);
+		    //System.Console.WriteLine (message);
 		    LOGGER.Info (message);
 			MessageEvent.SendMessage(message);
 		}

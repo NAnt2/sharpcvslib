@@ -56,10 +56,10 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 		{
 			string message = cvsStream.ReadLine();
 			terminating = message.Trim().ToUpper() == "OK";
-		    // TODO: Figure out if I should spit this out to the user.
-			//services.SendMessage("M " + message);
-		    String msg = "cvs server: M " + message;
-		    LOGGER.Debug ("M " + message);
+		    // Fire message event to the client app
+			services.SendMessage("M " + message);
+            String msg = "cvs server: M " + message;
+		    LOGGER.Debug (msg);
 		}
 		
         /// <summary>

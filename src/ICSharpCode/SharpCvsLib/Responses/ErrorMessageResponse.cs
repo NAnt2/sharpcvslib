@@ -53,8 +53,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	    public void Process(CvsStream cvsStream, IResponseServices services)
 	    {
 	    	string message = cvsStream.ReadLine();
-	        // TODO: Figure out what to output to the client for this.
-	    	//services.SendMessage("E " + message);
+		    // Fire message event to the client app
+	    	services.SendMessage("E " + message);
             String msg = "cvs server: E " + message;
 	        LOGGER.Debug (msg);
 	        
