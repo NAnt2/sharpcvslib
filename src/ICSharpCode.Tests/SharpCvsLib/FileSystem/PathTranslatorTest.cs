@@ -63,7 +63,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         {
             get {
                 if (IsWindows) {
-                return "Z:\\dev-src";
+                return @"c:\temp\dev-src";
             } else if (IsUnix) {
                 return "/tmp/dev-src";
             } else {
@@ -89,15 +89,16 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             set {this.moduleDir = value;}
         }
         private const String REPOS_NAME1 = "sharpcvslib";
-        private const String REPOS_FILE_PATH1 = "/cvsroot/sharpcvslib/sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/PathTranslator.cs";
-        private const String REPOS_DIR_PATH1 = "/cvsroot/sharpcvslib/sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/";
-        private const String REPOS_FILE_PATH2 = "/cvsroot/sharpcvslib/sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/Sharp";
+        private const String REPOS_FILE_PATH1 = "/cvsroot/sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/PathTranslator.cs";
+        private const String REPOS_DIR_PATH1 = "/cvsroot/sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/";
+        private const String REPOS_FILE_PATH2 = "/cvsroot/sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/Sharp";
         private const String REPOS_DIR_PATH2 = "/home/cvs/src/./";
 
         /// <summary>
         /// Constructor for customer db test.
         /// </summary>
         public PathTranslatorTest () {
+            Directory.CreateDirectory(this.LOCAL_ROOT_DIR1);
         }
 
         /// <summary>
@@ -134,7 +135,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             Assert.AreEqual("/cvsroot/sharpcvslib", pathTranslator.CvsRoot.CvsRepository,
                             pathTranslator.CvsRoot.CvsRepository);
-            Assert.AreEqual ("sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/PathTranslator.cs", pathTranslator.RelativePath);
+            Assert.AreEqual ("src/ICSharpCode/SharpCvsLib/FileSystem/PathTranslator.cs", pathTranslator.RelativePath);
             Assert.AreEqual ("PathTranslator.cs", pathTranslator.Filename);
             String expectedLocalPath =
                 PathTranslator.ConvertToOSSpecificPath (Path.Combine (LOCAL_DIR1, "src/ICSharpCode/SharpCvsLib/FileSystem"));
@@ -159,7 +160,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             Assert.AreEqual ("/cvsroot/sharpcvslib", pathTranslator.CvsRoot.CvsRepository,
                             pathTranslator.CvsRoot.CvsRepository);
-            Assert.AreEqual ("sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/", pathTranslator.RelativePath, pathTranslator.RelativePath);
+            Assert.AreEqual ("src/ICSharpCode/SharpCvsLib/FileSystem/", pathTranslator.RelativePath, pathTranslator.RelativePath);
             Assert.AreEqual ("dev-src", pathTranslator.BaseDir.Name);
             String expectedLocalPath =
                 PathTranslator.ConvertToOSSpecificPath (Path.Combine (LOCAL_DIR1, "src/ICSharpCode/SharpCvsLib/FileSystem/"));
@@ -183,7 +184,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             pathTranslator = new PathTranslator (workingDirectory, REPOS_FILE_PATH2);
 
             Assert.AreEqual ("/cvsroot/sharpcvslib", pathTranslator.CvsRoot.CvsRepository, pathTranslator.CvsRoot.CvsRepository);
-            Assert.AreEqual ("sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/Sharp", pathTranslator.RelativePath);
+            Assert.AreEqual ("src/ICSharpCode/SharpCvsLib/FileSystem/Sharp", pathTranslator.RelativePath);
             Assert.AreEqual ("Sharp", pathTranslator.Filename, pathTranslator.Filename);
             String expectedLocalPath =
                 PathTranslator.ConvertToOSSpecificPath (Path.Combine (LOCAL_DIR1, "src/ICSharpCode/SharpCvsLib/FileSystem/Sharp"));
@@ -225,7 +226,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             PathTranslator pathTranslator = 
                 new PathTranslator (workingDirectory, REPOS_DIR_PATH1);
 
-            Assert.AreEqual("sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/", pathTranslator.RelativePath);
+            Assert.AreEqual("src/ICSharpCode/SharpCvsLib/FileSystem/", pathTranslator.RelativePath);
             Assert.AreEqual ("FileSystem", pathTranslator.Filename);
             String expectedLocalPath =
                 PathTranslator.ConvertToOSSpecificPath (Path.Combine (LOCAL_DIR1, "src/ICSharpCode/SharpCvsLib/FileSystem/"));

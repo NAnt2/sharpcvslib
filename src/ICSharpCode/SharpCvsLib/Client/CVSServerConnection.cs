@@ -64,7 +64,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
     public class CVSServerConnection : 
         IConnection, IResponseServices, ICommandConnection {
 
-        private readonly ILog LOGGER =
+        private static readonly ILog LOGGER =
             LogManager.GetLogger (typeof (CVSServerConnection));
 
         private string nextFileDate;
@@ -101,7 +101,21 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// <summary>
         ///     Initialize the cvs server connection.
         /// </summary>
-        public CVSServerConnection () {
+        public CVSServerConnection () : this(DeriveWorkingDirectory()) {
+
+        }
+
+        /// <summary>
+        /// Create a new connection and initialize with the working directory
+        /// object.
+        /// </summary>
+        /// <param name="workingDirectory"></param>
+        public CVSServerConnection (WorkingDirectory workingDirectory)  {
+            this.repository = workingDirectory;
+            this.Init();
+        }
+
+        private void Init () {
             inputStream  = new CvsStream (new MemoryStream());
             outputStream = new CvsStream (new MemoryStream());
 
@@ -124,15 +138,25 @@ namespace ICSharpCode.SharpCvsLib.Client {
                 config = new SharpCvsLibConfig ();
             }
             LOGGER.Debug("Config=["  + config.ToString() + "]");
+
+            if (this.repository == null) {
+                this.repository = DeriveWorkingDirectory();
+            }
         }
 
-        /// <summary>
-        /// Create a new connection and initialize with the working directory
-        /// object.
-        /// </summary>
-        /// <param name="workingDirectory"></param>
-        public CVSServerConnection (WorkingDirectory workingDirectory) : this() {
-            this.repository = workingDirectory;
+        private static WorkingDirectory DeriveWorkingDirectory () {
+            DirectoryInfo currDir = new DirectoryInfo(Environment.CurrentDirectory);
+            LOGGER.Info(string.Format("Repository is null, " +
+                "attempting to derive from current directory: {0}.", currDir.FullName));
+                    
+                Manager manager = new Manager(currDir);
+            Repository repository = 
+                manager.FetchRepository(currDir.FullName);
+            Root root = 
+                manager.FetchRoot(currDir.FullName);
+            CvsRoot cvsRoot = new CvsRoot(root.FileContents);
+            return
+                new WorkingDirectory(cvsRoot, Environment.CurrentDirectory, repository.ModuleName);
         }
 
         /// <summary>

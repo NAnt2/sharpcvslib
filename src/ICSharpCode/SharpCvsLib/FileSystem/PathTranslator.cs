@@ -62,7 +62,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
         private DirectoryInfo baseDir;
         private string moduleFacade;
-        private DirectoryInfo currentDir;
+
+        private DirectoryInfo _currentDir;
 
         private CvsRoot cvsRoot;
         private String relativePath;
@@ -89,7 +90,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// The name of the file, without any path information.
         /// </summary>
         public String Filename {
-            get {return currentDir.Name;}
+            get {return this._currentDir.Name;}
         }
 
         /// <summary>
@@ -111,11 +112,17 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Obsolete ("Use CurrentDir")]
         public String LocalPathAndFilename {
-            get {return this.currentDir.FullName;}
+            get {return this._currentDir.FullName;}
         }
 
         public DirectoryInfo CurrentDir {
-            get {return this.currentDir;}
+            get {
+                if (null == this._currentDir) {
+                    this._currentDir = new DirectoryInfo(Environment.CurrentDirectory);
+                }
+                return this._currentDir;
+            }
+            set {this._currentDir = value;}
         }
 
         /// <summary>
@@ -165,33 +172,40 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             this.relativePath =
                 this.GetRelativePath (repositoryPath);
 
-            this.currentDir = 
-                new DirectoryInfo(Path.Combine(baseDir.FullName, this.relativePath));
+            this._currentDir = 
+                new DirectoryInfo(Path.Combine(Path.Combine(baseDir.FullName,
+                this.workingDirectory.WorkingDirectoryName), this.relativePath));        
         }
 
         /// <summary>
         ///     Remove the repository name from the beginning of the path so that
         ///         the local path to the file can contain an override directory.
+        ///         
+        ///     The module name is appended in a different section.
         /// </summary>
         /// <param name="repositoryPath">The relative path to the repository directory
         ///     which is returned in the server response.</param>
         /// <returns>The value of the filename.</returns>
         private String GetRelativePath (String repositoryPath) {
-            String filename = 
-                repositoryPath.Replace(this.workingDirectory.CvsRoot.CvsRepository, "");
             if (repositoryPath.EndsWith("/")) {
                 this.isDirectory = true;
             }
 
-            filename = filename.Substring(1, filename.Length - 1);
-            // if the module name is different from the one sent down from the repository
-            //  then we have specified an override directory.
-            if (filename.Substring(0, this.moduleFacade.Length) != this.moduleFacade) {
-                filename = filename.Replace(filename.Substring(0, filename.IndexOf("/")), 
-                    this.moduleFacade);
+            if (repositoryPath.StartsWith(this.cvsRoot.CvsRepository)) {
+                repositoryPath = repositoryPath.Substring(this.cvsRoot.CvsRepository.Length + 1);
             }
 
-            return filename;
+            if (repositoryPath.StartsWith("/")) {
+                repositoryPath = repositoryPath.Substring(1);
+            }
+
+            if (repositoryPath.StartsWith(this.moduleFacade)) {
+                repositoryPath = repositoryPath.Substring(this.moduleFacade.Length + 1);
+            } else if (repositoryPath.StartsWith(this.workingDirectory.ModuleName)) {
+                repositoryPath = repositoryPath.Substring(this.workingDirectory.ModuleName.Length + 1);
+            }
+
+            return repositoryPath;
         }
 
         /// <summary>
