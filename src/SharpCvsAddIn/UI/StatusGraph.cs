@@ -4,6 +4,7 @@ using VSLangProj;
 using SharpCvsAddIn.Utilities;
 using log4net;
 using System.Diagnostics;
+using System.IO;
 
 namespace SharpCvsAddIn.UI
 {
@@ -23,9 +24,15 @@ namespace SharpCvsAddIn.UI
 			protected IController controller_;
 			protected UIHierarchyItem item_;
 			protected TreeView treeview_;
-
-			protected BaseNode( IController con, UIHierarchyItem it )
-				:base(it.Name)
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="con"></param>
+			/// <param name="it"></param>
+			/// <param name="itemName">Item name will be the file name or directory name of the
+			/// item</param>
+			protected BaseNode( IController con, UIHierarchyItem it, string itemName )
+				:base(itemName)
 			{
 				controller_ = con;
 				item_ = it;
@@ -50,7 +57,8 @@ namespace SharpCvsAddIn.UI
 			protected IntPtr InitializeHwnd( )
 			{
 				BaseNode pred = null;
-				if( this.PrevSibling != null )
+				// exception for VSFileProjectItem since it does not have a hwnd of it's own 
+				if( this.PrevSibling != null && !typeof(VSFileProjectItem).IsInstanceOfType(this.PrevSibling) )
 				{
 					pred = (BaseNode)this.PrevSibling;
 					hwnd_ = pred.TreeView.GetNextSibling( pred.Hwnd );
@@ -61,6 +69,8 @@ namespace SharpCvsAddIn.UI
 					pred = (BaseNode)this.Parent;
 					hwnd_ = pred.TreeView.GetChild(pred.Hwnd);
 				}
+
+				Debug.Assert( hwnd_ != IntPtr.Zero );
 
 				return hwnd_;
 			}
@@ -74,7 +84,7 @@ namespace SharpCvsAddIn.UI
 		{
 			private static readonly ILog log_ = LogManager.GetLogger( typeof(SolutionItemsProject));
 			internal SolutionItemsProject( IController cont, UIHierarchyItem item )
-				:base(cont, item)
+				:base(cont, item, item.Name)
 			{
 				log_.Debug("created solution items project" );
 			}
@@ -116,12 +126,15 @@ namespace SharpCvsAddIn.UI
 		{
 			private static readonly ILog log_ = LogManager.GetLogger( typeof(DotNetProject) );
 			private VSProject vsproj_ = null;
+			private EnvDTE.Project project_ = null;
 
+			// TODO - check to see if you can change the project name and make sure it still corresponds to directory name
 			internal DotNetProject( IController controller, UIHierarchyItem item )
-				:base(controller,item)
+				:base(controller,item, item.Name)
 			{
 				log_.Debug( string.Format( "Creating csharp project {0}", item.Name ));
-                vsproj_ = (VSProject)((EnvDTE.Project)item.Object).Object;
+				project_ = (EnvDTE.Project)item_.Object;
+                vsproj_ = (VSProject)project_.Object;
 
 			}
 
@@ -133,6 +146,10 @@ namespace SharpCvsAddIn.UI
 
 				IntPtr hwnd = InitializeHwnd();
 				this.TreeView.SetStatusImage(hwnd, 1);
+
+				// add a place holder for the project file
+				IStatusNode projectFileNode = new VSFileProjectItem( controller_, Path.GetFileName(project_.FileName) );
+				projectFileNode.InitializeNode(this);
 
 				if( item_.UIHierarchyItems.Count > 1 )
 				{
@@ -165,10 +182,14 @@ namespace SharpCvsAddIn.UI
 			}
 		}
 
+		/// <summary>
+		/// This is a placeholder for the references folder that is a child of projects, since the references 
+		/// aren't under source control
+		/// </summary>
 		private class ReferenceProjectItem : BaseNode , IStatusNode 
 		{
 			internal ReferenceProjectItem( IController cont, UIHierarchyItem it )
-				:base(cont, it)
+				:base(cont, it, it.Name )
 			{}
 
 			public void InitializeNode( IStatusNode parent)
@@ -184,11 +205,13 @@ namespace SharpCvsAddIn.UI
 		private class PhysicalFileProjectItem : BaseNode, IStatusNode
 		{
 			private static readonly ILog log_ = LogManager.GetLogger(typeof(PhysicalFileProjectItem));
+			private EnvDTE.ProjectItem projectItem_ = null;
 
 			internal PhysicalFileProjectItem( IController cont, UIHierarchyItem it )
-				:base(cont,it)
+				:base(cont,it, it.Name)
 			{
 				log_.Debug(string.Format("creating new {0} named  {1}", this.GetType().Name, it.Name ));
+				projectItem_ = (EnvDTE.ProjectItem)it.Object;
 
 			}
 			#region IStatusNode Members
@@ -210,6 +233,36 @@ namespace SharpCvsAddIn.UI
 		}
 
 		/// <summary>
+		/// This class represents project files and solution files, they don't have a visual representation but
+		/// instead are represented by the project or solution 'node' that is their parent
+		/// </summary>
+		private class VSFileProjectItem : BaseNode, IStatusNode
+		{
+			internal VSFileProjectItem( IController cont, string fileName )
+				:base(cont,null, fileName)
+			{
+			}
+
+			#region IStatusNode Members
+
+			public void InitializeNode(IStatusNode parent)
+			{
+				// this gets its parents windows handle since it doesn't have one of it's own (it's
+				// not visible). It may seem a little wierd to do it this way but it will allow us to preserve
+				// the order of the visual elements and keep them synched up with this internal
+				// representation of the solution explorer
+				hwnd_ = ((BaseNode)parent).Hwnd;
+				parent.AddChild( this );				
+			}
+
+			#endregion
+
+			
+
+		}
+
+
+		/// <summary>
 		/// this represents a physical folder in the project that we have to traverse to get more project items
 		/// </summary>
 		private class PhysicalDirectoryProjectItem : BaseNode, IStatusNode
@@ -217,7 +270,7 @@ namespace SharpCvsAddIn.UI
 			private static readonly ILog log_ = LogManager.GetLogger(typeof(PhysicalDirectoryProjectItem));
 
 			internal PhysicalDirectoryProjectItem(IController cont, UIHierarchyItem it )
-				:base(cont,it)
+				:base(cont,it, it.Name)
 			{
 				log_.Debug(string.Format("Creating new {0} named {1}", this.GetType().Name, it.Name));
 			}
@@ -252,13 +305,16 @@ namespace SharpCvsAddIn.UI
 		}
 
 
-
+		/// <summary>
+		/// Special node for solutions, this is the parent of all other nodes
+		/// </summary>
 		private class SolutionNode : BaseNode, IStatusNode
 		{
 			private static readonly ILog log_ = LogManager.GetLogger( typeof(SolutionNode) );
 
+
 			internal SolutionNode( IController controller, UIHierarchyItem item )
-				:base( controller, item )
+				:base( controller, item, item.Name )
 			{
 				log_.Debug( string.Format("Create SolutionNode {0}", item_.Name ));
 			}
@@ -267,6 +323,11 @@ namespace SharpCvsAddIn.UI
 			{
 				hwnd_ = controller_.SolutionExplorer.TreeView.GetRoot();
 				controller_.SolutionExplorer.TreeView.SetStatusImage( hwnd_, 1 );
+
+				// create an entry for the solution file, it doesn't show up in the
+				// solution explorer, but we need it as a placeholder for the file status
+				IStatusNode fileNode = new VSFileProjectItem( controller_, Path.GetFileName(controller_.DTE.Solution.FileName) );
+				fileNode.InitializeNode(this);
 
 				if( item_.UIHierarchyItems.Count > 0 )
 				{
@@ -289,6 +350,7 @@ namespace SharpCvsAddIn.UI
 
 
 		}
+
 
 		private static IStatusNode CreateNode( IController cont, UIHierarchyItem child )
 		{
@@ -365,35 +427,6 @@ namespace SharpCvsAddIn.UI
 
 				return null;
 
-				/*
-
-				// assume if item contains items it's a project
-				if( child.UIHierarchyItems.Count > 0 )
-				{
-					EnvDTE.Project proj = (EnvDTE.Project)child.Object;
-				}
-				else
-				{
-					EnvDTE.ProjectItem projItem = (EnvDTE.ProjectItem)child.Object;
-
-					switch( projItem.Kind )					
-					{
-						case EnvDTE.Constants.vsProjectItemKindMisc : // A miscellaneous files project item. 
-							break;
-						case EnvDTE.Constants.vsProjectItemKindPhysicalFile : //A file in the system. 
-							break;
-						case EnvDTE.Constants.vsProjectItemKindPhysicalFolder : // A folder in the system. 
-							break;
-						case EnvDTE.Constants.vsProjectItemKindSolutionItems  : // An item in the solution items project. 
-							break;
-						case EnvDTE.Constants.vsProjectItemKindSubProject : //A sub-project under the project. If returned by ProjectItem.Kind, then ProjectItem.SubProject will return as a Project object. 
-							break;
-						case EnvDTE.Constants.vsProjectItemKindVirtualFolder : // A virtual folder. In Solutio Explorer, a folder that does not physically exist on the system. 
-							break;
-
-					}
-				}
-				*/
 			}
 			catch(Exception e)
 			{
