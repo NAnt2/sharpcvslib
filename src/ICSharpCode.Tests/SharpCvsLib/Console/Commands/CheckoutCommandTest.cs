@@ -45,8 +45,7 @@ using ICSharpCode.SharpCvsLib.Console.Parser;
 using log4net;
 using NUnit.Framework;
 
-namespace ICSharpCode.SharpCvsLib.Console.Commands
-{
+namespace ICSharpCode.SharpCvsLib.Console.Commands{
 /// <summary>
 ///     Test the checkout command object for valid ones
 ///         and test invalid ones.
@@ -67,10 +66,62 @@ public class CheckoutCommandTest{
     public void MakeCheckoutCommandTest (){
         String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
         String repository = "sharpcvslib";
+        String options = "";
         // Test Creating a CheckoutCommand object
-        CheckoutCommand newCheckoutCommand = new CheckoutCommand(root, repository);
+        CheckoutCommand newCheckoutCommand = new CheckoutCommand(root, repository, options);
         Assertion.AssertNotNull ("Should have a command object.", newCheckoutCommand);
         newCheckoutCommand.Execute();
+    }
+    /// <summary>
+    ///     Checkout files based on revision specified in -r option.
+    ///
+    /// </summary>
+    [Test]
+    public void MinusrOptionCheckoutFilesBasedOnRevision (){
+        String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
+        String repository = "sharpcvslib";
+        String options = "-rv0_3_1 ";
+        // Test Creating a CheckoutCommand object
+        CheckoutCommand newCheckoutCommand = new CheckoutCommand(root, repository, options);
+        Assertion.AssertNotNull ("Should have a command object.", newCheckoutCommand);
+        newCheckoutCommand.Execute();
+    }
+    /// <summary>
+    ///     Checkout files to specified local location instead of current local location
+    ///     with the -d option
+    /// </summary>
+    [Test]
+    public void MinusdOptionCheckoutFileIntoDir (){
+        String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
+        String repository = "sharpcvslib";
+        String options = "-dnewlocation ";
+        // Test Creating a CheckoutCommand object
+        CheckoutCommand newCheckoutCommand = new CheckoutCommand(root, repository, options);
+        Assertion.AssertNotNull ("Should have a command object.", newCheckoutCommand);
+        newCheckoutCommand.Execute();
+        Assertion.Assert(Directory.Exists("newlocation"));
+    }
+    /// <summary>
+    ///     Checkout files no earlier than the specified Date 
+    ///     with the -D option
+    /// </summary>
+    [Test]
+    public void MinusDOptionCheckoutByCertainDate (){
+        String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
+        String repository = "sharpcvslib";
+        String options = "-D01.28.03 ";
+        // Test Creating a CheckoutCommand object
+        CheckoutCommand newCheckoutCommand = new CheckoutCommand(root, repository, options);
+        Assertion.AssertNotNull ("Should have a command object.", newCheckoutCommand);
+        newCheckoutCommand.Execute();
+        // Find a file that should exist 
+        //Assertion.Assert ("Should have found the check file.  file=[" +
+        //    checkFile + "]", File.Exists (checkFile));
+
+        // Find a file that should not exist
+        //Assertion.Assert ("Should have found the check file.  file=[" +
+        //    checkFile + "]", File.Exists (checkFile));
+
     }
 }
 }
