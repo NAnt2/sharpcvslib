@@ -58,11 +58,11 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
         public void TestDefaultCtor () {
             LogFile logFile = new LogFile(settings.GetCvsRoot());
 
-            Assertion.AssertEquals("", logFile.RepositoryFnm);
-            Assertion.AssertEquals("", logFile.WorkingFnm);
-            Assertion.AssertEquals("", logFile.Description);
+            Assert.AreEqual("", logFile.RepositoryFnm);
+            Assert.AreEqual("", logFile.WorkingFnm);
+            Assert.AreEqual("", logFile.Description);
             
-            Assertion.AssertEquals(0, logFile.Count);
+            Assert.AreEqual(0, logFile.Count);
         }
     
         /// <summary>
@@ -74,14 +74,14 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
 
             string repositoryFnm = "/cvsroot/sharpcvslib/sharpcvslib/src/ICSharpCode/SharpCvsLib/Client/CVSServerConnection.cs,v";
             logFile.RepositoryFnm = repositoryFnm;
-            Assertion.AssertEquals(repositoryFnm, logFile.RepositoryFnm);
+            Assert.AreEqual(repositoryFnm, logFile.RepositoryFnm);
             
             string workingFnm = "src/ICSharpCode/SharpCvsLib/Client/CVSServerConnection.cs";
             logFile.WorkingFnm = workingFnm;
-            Assertion.AssertEquals(workingFnm, logFile.WorkingFnm);
+            Assert.AreEqual(workingFnm, logFile.WorkingFnm);
             
             logFile.Description = "Test description";
-            Assertion.AssertEquals("Test description", logFile.Description);
+            Assert.AreEqual("Test description", logFile.Description);
         }
     
         /// <summary>
@@ -114,23 +114,23 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
             logRevision3.Revision = "1.3";
             logFile.AddRevision(logRevision3);
 
-            Assertion.AssertEquals(3, logFile.Count);
+            Assert.AreEqual(3, logFile.Count);
             
             // Test indexer
-            Assertion.AssertEquals("1.1", logFile[0].Revision);
-            Assertion.AssertEquals("1.2", logFile[1].Revision);
-            Assertion.AssertEquals("1.3", logFile[2].Revision);
+            Assert.AreEqual("1.1", logFile[0].Revision);
+            Assert.AreEqual("1.2", logFile[1].Revision);
+            Assert.AreEqual("1.3", logFile[2].Revision);
             
             // Test foreach
             int nIndex = 0;
             foreach (LogRevision logRevision in logFile) {
-                Assertion.Assert(nIndex <= 2);
+                Assert.IsTrue(nIndex <= 2);
                 if (nIndex == 0) {
-                    Assertion.AssertEquals("1.1", logRevision.Revision);
+                    Assert.AreEqual("1.1", logRevision.Revision);
                 } else if (nIndex == 1) {
-                    Assertion.AssertEquals("1.2", logRevision.Revision);
+                    Assert.AreEqual("1.2", logRevision.Revision);
                 } else if (nIndex == 2) {
-                    Assertion.AssertEquals("1.3", logRevision.Revision);
+                    Assert.AreEqual("1.3", logRevision.Revision);
                 }
                 
                 nIndex++;

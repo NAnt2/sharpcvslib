@@ -57,7 +57,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
         public void TestDefaultCtor () {
             LogReport logReport = new LogReport();
             
-            Assertion.AssertEquals(0, logReport.Count);
+            Assert.AreEqual(0, logReport.Count);
         }
     
         /// <summary>
@@ -90,23 +90,23 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
             logFile3.RepositoryFnm = "File3";
             logReport.AddFile(logFile3);
 
-            Assertion.AssertEquals(3, logReport.Count);
+            Assert.AreEqual(3, logReport.Count);
             
             // Test indexer
-            Assertion.AssertEquals("File1", logReport[0].RepositoryFnm);
-            Assertion.AssertEquals("File2", logReport[1].RepositoryFnm);
-            Assertion.AssertEquals("File3", logReport[2].RepositoryFnm);
+            Assert.AreEqual("File1", logReport[0].RepositoryFnm);
+            Assert.AreEqual("File2", logReport[1].RepositoryFnm);
+            Assert.AreEqual("File3", logReport[2].RepositoryFnm);
             
             // Test foreach
             int nIndex = 0;
             foreach (LogFile logFile in logReport) {
-                Assertion.Assert(nIndex <= 2);
+                Assert.IsTrue(nIndex <= 2);
                 if (nIndex == 0) {
-                    Assertion.AssertEquals("File1", logFile.RepositoryFnm);
+                    Assert.AreEqual("File1", logFile.RepositoryFnm);
                 } else if (nIndex == 1) {
-                    Assertion.AssertEquals("File2", logFile.RepositoryFnm);
+                    Assert.AreEqual("File2", logFile.RepositoryFnm);
                 } else if (nIndex == 2) {
-                    Assertion.AssertEquals("File3", logFile.RepositoryFnm);
+                    Assert.AreEqual("File3", logFile.RepositoryFnm);
                 }
                 
                 nIndex++;

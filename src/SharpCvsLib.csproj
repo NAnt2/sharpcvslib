@@ -96,11 +96,6 @@
                     AssemblyName = "System.EnterpriseServices"
                     HintPath = "C:\WINNT\Microsoft.NET\Framework\v1.0.3705\System.EnterpriseServices.dll"
                 />
-                <Reference
-                    Name = "nunit.framework"
-                    AssemblyName = "nunit.framework"
-                    HintPath = "c:\progra~1\mailfr~1\testru~1\nunit.framework.dll"
-                />
             </References>
         </Build>
         <Files>

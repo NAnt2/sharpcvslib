@@ -154,16 +154,16 @@ public class PasswordScramblerTest {
             input = new String(charMapping[index, 0], 1);
             expectedOutput = "A" + new String(charMapping[index, 1], 1);
             actualOutput = PasswordScrambler.Scramble(input);
-            Assertion.Assert(actualOutput.Equals(expectedOutput));
+            Assert.IsTrue(actualOutput.Equals(expectedOutput));
 
             // Just to convince myself that we have iterated over all chars specified in the charMapping
             if (index == 0)
             {
-                Assertion.Assert(input.Equals("!"));
+                Assert.IsTrue(input.Equals("!"));
             }
             else if (index == charMapping.GetLength (0) - 1)
             {
-                Assertion.Assert(input.Equals("z"));
+                Assert.IsTrue(input.Equals("z"));
             }
         }
     }
@@ -190,7 +190,7 @@ public class PasswordScramblerTest {
             expectedOutput.Append(charMapping[index, 1]);
         }
         actualOutput = PasswordScrambler.Scramble(input.ToString());
-        Assertion.Assert(actualOutput.Equals(expectedOutput.ToString()));
+        Assert.AreEqual(expectedOutput.ToString(), actualOutput);
     }
 
     /// <summary>
@@ -213,7 +213,7 @@ public class PasswordScramblerTest {
         }
         scrambledOutput = PasswordScrambler.Scramble(input.ToString());
         descrambledOutput = PasswordScrambler.Descramble(scrambledOutput);
-        Assertion.Assert(descrambledOutput.Equals(input.ToString()));
+        Assert.AreEqual(input.ToString(), descrambledOutput);
     }
 }
 }

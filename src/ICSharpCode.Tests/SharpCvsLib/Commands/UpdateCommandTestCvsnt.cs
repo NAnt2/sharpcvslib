@@ -91,10 +91,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                                     CVSNT_MODULE);
 
             CVSServerConnection connection = new CVSServerConnection ();
-            Assertion.AssertNotNull ("Should have a connection object.", connection);
+            Assert.IsNotNull(connection);
 
             ICommand command = new UpdateCommand2 (working);
-            Assertion.AssertNotNull ("Should have a command object.", command);
+            Assert.IsNotNull(command);
 
             connection.Connect (working, this.settings.Config.ValidPassword);
         }
@@ -116,10 +116,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                                     CVSNT_MODULE);
 
             CVSServerConnection connection = new CVSServerConnection ();
-            Assertion.AssertNotNull ("Should have a connection object.", connection);
+            Assert.IsNotNull(connection);
 
             ICommand command = new UpdateCommand2 (working);
-            Assertion.AssertNotNull ("Should have a command object.", command);
+            Assert.IsNotNull(command);
 
             connection.Connect (working, this.settings.Config.ValidPassword);
         }
@@ -139,15 +139,15 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                                     CVSNT_MODULE);
 
             CVSServerConnection connection = new CVSServerConnection ();
-            Assertion.AssertNotNull ("Should have a connection object.", connection);
+            Assert.IsNotNull (connection);
 
             ICommand command = new CheckoutModuleCommand (working);
-            Assertion.AssertNotNull ("Should have a command object.", command);
+            Assert.IsNotNull (command);
 
             try {
                 connection.Connect (working, this.settings.Config.ValidPassword);
             } catch (AuthenticationException) {
-                Assertion.Assert ("Failed to authenticate with server.", true);
+                Assert.IsTrue (true);
             }
 
             command.Execute (connection);

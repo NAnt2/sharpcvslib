@@ -98,9 +98,9 @@ namespace ICSharpCode.SharpCvsLib.Util {
                                     int year,
                                     int month,
                                     int day) {
-            Assertion.AssertEquals (year, date.Year);
-            Assertion.AssertEquals (month, date.Month);
-            Assertion.AssertEquals (day, date.Day);
+            Assert.AreEqual (year, date.Year);
+            Assert.AreEqual (month, date.Month);
+            Assert.AreEqual (day, date.Day);
         }
         private void AssertDateEquals (DateTime date,
                                     int year,
@@ -109,12 +109,12 @@ namespace ICSharpCode.SharpCvsLib.Util {
                                     int hour,
                                     int minute,
                                     int second) {
-            Assertion.AssertEquals (year, date.Year);
-            Assertion.AssertEquals (month, date.Month);
-            Assertion.AssertEquals (day, date.Day);
-            Assertion.AssertEquals (hour, date.Hour);
-            Assertion.AssertEquals (minute, date.Minute);
-            Assertion.AssertEquals (second, date.Second);
+            Assert.AreEqual (year, date.Year);
+            Assert.AreEqual (month, date.Month);
+            Assert.AreEqual (day, date.Day);
+            Assert.AreEqual (hour, date.Hour);
+            Assert.AreEqual (minute, date.Minute);
+            Assert.AreEqual (second, date.Second);
         }
     }
 }

@@ -136,29 +136,29 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void TestParseCheckoutEntry () {
             Entry entry = new Entry (this.settings.Config.LocalPath, CHECKOUT_ENTRY);
 
-            Assertion.AssertEquals (this.settings.Config.LocalPath, entry.Path);
-            Assertion.AssertEquals (Path.Combine (this.settings.Config.LocalPath, CHECKOUT_ENTRY_FILENAME), 
+            Assert.AreEqual (this.settings.Config.LocalPath, entry.Path);
+            Assert.AreEqual (Path.Combine (this.settings.Config.LocalPath, CHECKOUT_ENTRY_FILENAME), 
                 entry.FullPath);
-            Assertion.Assert (entry.Filename.Equals (ENTRY_FILE_NAME));
+            Assert.IsTrue (entry.Filename.Equals (ENTRY_FILE_NAME));
 
-            Assertion.AssertEquals ("CvsFileManagerTest.cs", entry.Name);
-            Assertion.AssertEquals ("1.1", entry.Revision);
-            Assertion.AssertEquals ("Tue May 13 05:10:17 2003", entry.Date);
-            Assertion.Assert (entry.Conflict == null);
-            Assertion.Assert (entry.Options.Equals (""));
-            Assertion.Assert (entry.Tag.Equals (""));
+            Assert.AreEqual ("CvsFileManagerTest.cs", entry.Name);
+            Assert.AreEqual ("1.1", entry.Revision);
+            Assert.AreEqual ("Tue May 13 05:10:17 2003", entry.Date);
+            Assert.IsTrue (entry.Conflict == null);
+            Assert.IsTrue (entry.Options.Equals (""));
+            Assert.IsTrue (entry.Tag.Equals (""));
 
-            Assertion.Assert (entry.TimeStamp.Day == 13);
-            Assertion.Assert (entry.TimeStamp.Month == 5);
-            Assertion.Assert (entry.TimeStamp.Year == 2003);
-            Assertion.Assert (entry.TimeStamp.Hour == 5);
-            Assertion.Assert (entry.TimeStamp.Minute == 10);
-            Assertion.Assert (entry.TimeStamp.Second == 17);
+            Assert.IsTrue (entry.TimeStamp.Day == 13);
+            Assert.IsTrue (entry.TimeStamp.Month == 5);
+            Assert.IsTrue (entry.TimeStamp.Year == 2003);
+            Assert.IsTrue (entry.TimeStamp.Hour == 5);
+            Assert.IsTrue (entry.TimeStamp.Minute == 10);
+            Assert.IsTrue (entry.TimeStamp.Second == 17);
 
-            Assertion.Assert (entry.IsBinaryFile == false);
-            Assertion.Assert (entry.IsDirectory == false);
+            Assert.IsTrue (entry.IsBinaryFile == false);
+            Assert.IsTrue (entry.IsDirectory == false);
 
-            Assertion.Assert (entry.FileContents.Equals (CHECKOUT_ENTRY));
+            Assert.IsTrue (entry.FileContents.Equals (CHECKOUT_ENTRY));
         }
 
         /// <summary>
@@ -168,32 +168,32 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void TestParseRfc1123Entry () {
             Entry entry = new Entry (this.settings.Config.LocalPath, CHECKOUT_ENTRY_2);
 
-            Assertion.Assert (entry.Path.Equals (this.settings.Config.LocalPath));
-            Assertion.Assert (entry.FullPath.Equals (
+            Assert.IsTrue (entry.Path.Equals (this.settings.Config.LocalPath));
+            Assert.IsTrue (entry.FullPath.Equals (
                 Path.Combine(this.settings.Config.LocalPath, CHECKOUT_ENTRY_2_FILENAME)));
-            Assertion.Assert (entry.FullPath.Equals (Path.Combine(this.settings.Config.LocalPath, entry.Name)));
-            Assertion.Assert (entry.Filename.Equals (ENTRY_FILE_NAME));
+            Assert.IsTrue (entry.FullPath.Equals (Path.Combine(this.settings.Config.LocalPath, entry.Name)));
+            Assert.IsTrue (entry.Filename.Equals (ENTRY_FILE_NAME));
 
-            Assertion.Assert (entry.Name.Equals ("EntryTest.cs"));
-            Assertion.Assert (entry.Revision.Equals ("1.1"));
+            Assert.IsTrue (entry.Name.Equals ("EntryTest.cs"));
+            Assert.IsTrue (entry.Revision.Equals ("1.1"));
             // TODO: check what format the date should come back in
-            //Assertion.Assert (entry.Date, entry.Date.Equals ("Fri Jan 03 04:07:36"));
-            Assertion.Assert (entry.Date, entry.Date.Equals ("03 Jan 2003 04:07:36 -0000"));
-            Assertion.Assert (entry.Conflict == null);
-            Assertion.Assert (entry.Options.Equals (""));
-            Assertion.Assert (entry.Tag.Equals (""));
+            //Assert.IsTrue (entry.Date, entry.Date.Equals ("Fri Jan 03 04:07:36"));
+            Assert.IsTrue (entry.Date.Equals ("03 Jan 2003 04:07:36 -0000"));
+            Assert.IsTrue (entry.Conflict == null);
+            Assert.IsTrue (entry.Options.Equals (""));
+            Assert.IsTrue (entry.Tag.Equals (""));
 
-            Assertion.AssertEquals (3, entry.TimeStamp.Day);
-            Assertion.AssertEquals (1, entry.TimeStamp.Month);
-            Assertion.AssertEquals (2003, entry.TimeStamp.Year);
-            Assertion.AssertEquals (4, entry.TimeStamp.Hour);
-            Assertion.AssertEquals (7, entry.TimeStamp.Minute);
-            Assertion.AssertEquals (36, entry.TimeStamp.Second);
+            Assert.AreEqual (3, entry.TimeStamp.Day);
+            Assert.AreEqual (1, entry.TimeStamp.Month);
+            Assert.AreEqual (2003, entry.TimeStamp.Year);
+            Assert.AreEqual (4, entry.TimeStamp.Hour);
+            Assert.AreEqual (7, entry.TimeStamp.Minute);
+            Assert.AreEqual (36, entry.TimeStamp.Second);
 
-            Assertion.AssertEquals (entry.IsBinaryFile, false);
-            Assertion.AssertEquals (entry.IsDirectory, false);
+            Assert.AreEqual (entry.IsBinaryFile, false);
+            Assert.AreEqual (entry.IsDirectory, false);
 
-            Assertion.Assert (entry.FileContents.Equals (NORMALISED_ENTRY_2));
+            Assert.IsTrue (entry.FileContents.Equals (NORMALISED_ENTRY_2));
         }
 
         /// <summary>
@@ -203,19 +203,19 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void TestParseFullCheckoutEntry () {
             Entry entry = new Entry (this.settings.Config.LocalPath, CHECKOUT_ENTRY_3);
 
-            Assertion.Assert (entry.Name.Equals ("ICSharpCode.SharpZipLib.dll"));
-            Assertion.Assert (entry.FullPath.Equals (
+            Assert.IsTrue (entry.Name.Equals ("ICSharpCode.SharpZipLib.dll"));
+            Assert.IsTrue (entry.FullPath.Equals (
                 Path.Combine(this.settings.Config.LocalPath, CHECKOUT_ENTRY_3_FILENAME)));
-            Assertion.Assert (entry.Revision.Equals ("1.2"));
-            Assertion.Assert (entry.Date.Equals ("Sat Jun 21 03:22:02 2003"));
-            Assertion.Assert (entry.Conflict.Equals ("Sat Jun 21 03:22:03 2003"));
-            Assertion.Assert (entry.Options.Equals ("-kb"));
-            Assertion.Assert (entry.Tag.Equals ("TV1.0"));
+            Assert.IsTrue (entry.Revision.Equals ("1.2"));
+            Assert.IsTrue (entry.Date.Equals ("Sat Jun 21 03:22:02 2003"));
+            Assert.IsTrue (entry.Conflict.Equals ("Sat Jun 21 03:22:03 2003"));
+            Assert.IsTrue (entry.Options.Equals ("-kb"));
+            Assert.IsTrue (entry.Tag.Equals ("TV1.0"));
 
-            Assertion.Assert (entry.IsBinaryFile == true);
-            Assertion.Assert (entry.IsDirectory == false);
+            Assert.IsTrue (entry.IsBinaryFile == true);
+            Assert.IsTrue (entry.IsDirectory == false);
 
-            Assertion.Assert (entry.FileContents.Equals (CHECKOUT_ENTRY_3));
+            Assert.IsTrue (entry.FileContents.Equals (CHECKOUT_ENTRY_3));
         }
 
         /// <summary>
@@ -228,9 +228,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         [Test]
         public void TestParseDirEntry () {
             Entry entry = new Entry (this.settings.Config.LocalPath, DIR_ENTRY);
-            Assertion.AssertEquals(Path.Combine(this.settings.Config.LocalPath, DIR_ENTRY_DIRNAME) + Path.DirectorySeparatorChar,
+            Assert.AreEqual(Path.Combine(this.settings.Config.LocalPath, DIR_ENTRY_DIRNAME) + Path.DirectorySeparatorChar,
                 entry.FullPath);
-            Assertion.Assert (entry.IsDirectory == true);
+            Assert.IsTrue (entry.IsDirectory == true);
 
         }
 

@@ -17,9 +17,9 @@
 			ConfigurationType="0">
 			<Tool
 				Name="VCNMakeTool"
-				BuildCommandLine="$(SolutionDir)tools\nant\win32\bin\Nant.exe -f:$(SolutionDir)build\SharpCvsLib.build build.all"
-				ReBuildCommandLine="$(SolutionDir)tools\nant\win32\bin\Nant.exe -f:$(SolutionDir)build\SharpCvsLib.build build.all"
-				CleanCommandLine="$(SolutionDir)tools\nant\win32\bin\Nant.exe -f:$(SolutionDir)build\SharpCvsLib.build clean"
+				BuildCommandLine="$(SolutionDir)tools\nant\Nant.exe -f:$(SolutionDir)build\SharpCvsLib.build build.all"
+				ReBuildCommandLine="$(SolutionDir)tools\nant\Nant.exe -f:$(SolutionDir)build\SharpCvsLib.build build.all"
+				CleanCommandLine="$(SolutionDir)tools\nant\Nant.exe -f:$(SolutionDir)build\SharpCvsLib.build clean"
 				Output="ExternalBuilder.NAnt.exe"/>
 		</Configuration>
 		<Configuration
@@ -33,8 +33,6 @@
 		</Configuration>
 	</Configurations>
 	<References>
-		<AssemblyReference
-			RelativePath="c:\progra~1\mailfr~1\testru~1\nunit.framework.dll"/>
 	</References>
 	<Files>
 		<Filter

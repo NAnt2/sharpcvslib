@@ -93,7 +93,7 @@ namespace ICSharpCode.SharpCvsLib.Console {
             cvsProcess.WaitForExit(DEFAULT_WAIT_TIME);
 
             // Check the results of process output
-            Assertion.AssertEquals (Usage.General + "\r\n", output);
+            Assert.AreEqual (Usage.General + "\r\n", output);
         }
         /// <summary>
         ///     Ensure valid option help parameter processing.
@@ -119,7 +119,7 @@ namespace ICSharpCode.SharpCvsLib.Console {
             cvsProcess.WaitForExit(DEFAULT_WAIT_TIME);
 
             // Check the results of process output
-            Assertion.AssertEquals (Usage.Options + "\r\n", output);
+            Assert.AreEqual (Usage.Options + "\r\n", output);
 
         }		/// <summary>
         ///     Ensure valid commands help parameter processing.
@@ -146,7 +146,7 @@ namespace ICSharpCode.SharpCvsLib.Console {
             cvsProcess.WaitForExit(DEFAULT_WAIT_TIME);
 
             // Check the results of process output
-            Assertion.AssertEquals (Usage.Commands + "\r\n", output);
+            Assert.AreEqual (Usage.Commands + "\r\n", output);
         }
         /// <summary>
         ///     Ensure valid synonyms help parameter processing.
@@ -172,7 +172,7 @@ namespace ICSharpCode.SharpCvsLib.Console {
             cvsProcess.WaitForExit(DEFAULT_WAIT_TIME);
 
             // Check the results of process output
-            Assertion.AssertEquals (Usage.Synonyms + "\r\n", output);
+            Assert.AreEqual (Usage.Synonyms + "\r\n", output);
         }
         /// <summary>
         ///     Ensure invalid help parameter processing.
@@ -198,7 +198,7 @@ namespace ICSharpCode.SharpCvsLib.Console {
             cvsProcess.WaitForExit(DEFAULT_WAIT_TIME);
 
             // Check the results of process output
-            Assertion.AssertEquals (Usage.General + "\r\n", output);
+            Assert.AreEqual (Usage.General + "\r\n", output);
         }
         /// <summary>
         ///     Ensure no parameters processing.
@@ -224,7 +224,7 @@ namespace ICSharpCode.SharpCvsLib.Console {
             cvsProcess.WaitForExit(DEFAULT_WAIT_TIME);
 
             // Check the results of process output
-            Assertion.AssertEquals (Usage.General + "\r\n", output);
+            Assert.AreEqual (Usage.General + "\r\n", output);
         }
     }
 }

@@ -61,7 +61,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 
             String[] files = Directory.GetFiles(modulePath, "*.txt");
 
-            Assertion.Assert(files.Length > 0);
+            Assert.IsTrue(files.Length > 0);
             ArrayList copiedFiles = new ArrayList ();
             foreach (String file in files) {
                 LOGGER.Debug("file=[" + file + "]");
@@ -79,25 +79,26 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                 this.Settings.Config.Module);
 
             CVSServerConnection connection = new CVSServerConnection ();
-            Assertion.AssertNotNull ("Should have a connection object.", connection);
+            Assert.IsNotNull (connection);
 
             AddCommand command = new AddCommand (working);
             //command.Folders = this.GetFolders(modulePath);
             command.Folders = this.GetFoldersToAdd(copiedFiles);
 
-            Assertion.Assert(command.Folders.Count > 0);
+            Assert.IsTrue(command.Folders.Count > 0);
             LOGGER.Debug("folders count=[" + command.Folders.Count + "]");
             foreach (DictionaryEntry folderDic in command.Folders) {
                 Folder folder = (Folder)folderDic.Value;
                 LOGGER.Debug("folder=[" + folder.ToString() + "]");
                 LOGGER.Debug("entries count=[" + folder.Entries.Count + "]");
             }
-            Assertion.AssertNotNull ("Should have a command object.", command);
+            Assert.IsNotNull (command);
 
             try {
                 connection.Connect (working, this.Settings.Config.ValidPassword);
             } catch (AuthenticationException) {
-                Assertion.Assert ("Failed to authenticate with server.", true);
+                // should not get here.
+                Assert.IsTrue (true);
             }
 
             command.Execute (connection);
@@ -106,7 +107,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             try {
                 connection.Connect(working, this.Settings.Config.ValidPassword);
             } catch (AuthenticationException) {
-                Assertion.Assert("Failed to authenticate with server.", true);
+                Assert.IsTrue(true);
             }
             CommitCommand2 commitCommand = new CommitCommand2(working);
             working.Folders = command.Folders;
@@ -117,7 +118,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             Manager manager = new Manager(working.WorkingPath);
             Entries entries = manager.FetchEntries(Path.Combine(modulePath, "Entries"));
             foreach (String addedFile in copiedFiles) {
-                Assertion.Assert(entries.Contains(Path.Combine(modulePath, addedFile)));
+                Assert.IsTrue(entries.Contains(Path.Combine(modulePath, addedFile)));
             }
 
         }

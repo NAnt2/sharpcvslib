@@ -100,15 +100,15 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         }
 
         private void Checkout (WorkingDirectory workingDirectory, CVSServerConnection connection) {
-            Assertion.AssertNotNull ("Should have a connection object.", connection);
+            Assert.IsNotNull (connection);
 
             ICommand command = new CheckoutModuleCommand (workingDirectory);
-            Assertion.AssertNotNull ("Should have a command object.", command);
+            Assert.IsNotNull (command);
 
             try {
                 connection.Connect (workingDirectory, this.settings.Config.ValidPassword);
             } catch (AuthenticationException) {
-                Assertion.Assert ("Failed to authenticate with server.", true);
+                Assert.IsTrue (true);
             }
 
             command.Execute (connection);

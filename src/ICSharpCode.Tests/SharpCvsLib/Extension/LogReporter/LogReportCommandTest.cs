@@ -84,87 +84,87 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
     //    
             LogReport logReport = logCommand.Run(password);
             
-            Assertion.AssertEquals(16, logReport.Count);
+            Assert.AreEqual(16, logReport.Count);
             foreach (LogFile logFile in logReport)
             {
                 if (logFile.WorkingFnm.EndsWith("test-file.txt"))
                 {
-                    Assertion.Assert(!foundTestFile1);
+                    Assert.IsTrue(!foundTestFile1);
                     foundTestFile1 = true;
 
-                    Assertion.AssertEquals("/cvsroot/sharpcvslib-test/sharpcvslib-test-repository/test-file.txt,v", logFile.RepositoryFnm);
-                    Assertion.AssertEquals("test-file.txt", logFile.WorkingFnm);
-                    Assertion.AssertEquals("", logFile.Description);
+                    Assert.AreEqual("/cvsroot/sharpcvslib-test/sharpcvslib-test-repository/test-file.txt,v", logFile.RepositoryFnm);
+                    Assert.AreEqual("test-file.txt", logFile.WorkingFnm);
+                    Assert.AreEqual("", logFile.Description);
                     
                     // check the revisions
-                    Assertion.AssertEquals(3, logFile.Count);
+                    Assert.AreEqual(3, logFile.Count);
                     // most recent version will be first
                     logRevision = logFile[0];
-                    Assertion.AssertEquals("1.3", logRevision.Revision);
+                    Assert.AreEqual("1.3", logRevision.Revision);
                     CheckDate(2003, 9, 14, 1, 8, 21, logRevision.Timestamp);
-                    Assertion.AssertEquals("claytonharbour", logRevision.Author);
-                    Assertion.AssertEquals("Exp", logRevision.State);
-                    Assertion.AssertEquals(3, logRevision.LinesAdded);
-                    Assertion.AssertEquals(1, logRevision.LinesDeleted);
-                    Assertion.AssertEquals("*** empty log message ***", logRevision.Comment);
+                    Assert.AreEqual("claytonharbour", logRevision.Author);
+                    Assert.AreEqual("Exp", logRevision.State);
+                    Assert.AreEqual(3, logRevision.LinesAdded);
+                    Assert.AreEqual(1, logRevision.LinesDeleted);
+                    Assert.AreEqual("*** empty log message ***", logRevision.Comment);
                     
                     logRevision = logFile[1];
-                    Assertion.AssertEquals("1.2", logRevision.Revision);
+                    Assert.AreEqual("1.2", logRevision.Revision);
                     CheckDate(2003, 9, 14, 1, 7, 15, logRevision.Timestamp);
-                    Assertion.AssertEquals("claytonharbour", logRevision.Author);
-                    Assertion.AssertEquals("Exp", logRevision.State);
-                    Assertion.AssertEquals(3, logRevision.LinesAdded);
-                    Assertion.AssertEquals(1, logRevision.LinesDeleted);
-                    Assertion.AssertEquals("Added line.", logRevision.Comment);
+                    Assert.AreEqual("claytonharbour", logRevision.Author);
+                    Assert.AreEqual("Exp", logRevision.State);
+                    Assert.AreEqual(3, logRevision.LinesAdded);
+                    Assert.AreEqual(1, logRevision.LinesDeleted);
+                    Assert.AreEqual("Added line.", logRevision.Comment);
                    
                     logRevision = logFile[2];
-                    Assertion.AssertEquals("1.1", logRevision.Revision);
+                    Assert.AreEqual("1.1", logRevision.Revision);
                     CheckDate(2003, 9, 14, 1, 5, 51, logRevision.Timestamp);
-                    Assertion.AssertEquals("claytonharbour", logRevision.Author);
-                    Assertion.AssertEquals("Exp", logRevision.State);
-                    Assertion.AssertEquals(0, logRevision.LinesAdded);
-                    Assertion.AssertEquals(0, logRevision.LinesDeleted);
-                    Assertion.AssertEquals("Various changes for sticky tag support.  Looked at implementing a message event handling system for request/ responses to output server messages (similar to tortoise).", logRevision.Comment);
+                    Assert.AreEqual("claytonharbour", logRevision.Author);
+                    Assert.AreEqual("Exp", logRevision.State);
+                    Assert.AreEqual(0, logRevision.LinesAdded);
+                    Assert.AreEqual(0, logRevision.LinesDeleted);
+                    Assert.AreEqual("Various changes for sticky tag support.  Looked at implementing a message event handling system for request/ responses to output server messages (similar to tortoise).", logRevision.Comment);
                     
                     // check the symbolic names
                     // check the revisions
-                    Assertion.AssertEquals(3, logFile.SymbolicNames.Count);
+                    Assert.AreEqual(3, logFile.SymbolicNames.Count);
                     symbolicName = logFile.SymbolicNames[0];
-                    Assertion.AssertEquals("V0_3", symbolicName.Name);
-                    Assertion.AssertEquals("1.3", symbolicName.Revision);
+                    Assert.AreEqual("V0_3", symbolicName.Name);
+                    Assert.AreEqual("1.3", symbolicName.Revision);
                     
                     symbolicName = logFile.SymbolicNames[1];
-                    Assertion.AssertEquals("V0_2", symbolicName.Name);
-                    Assertion.AssertEquals("1.2", symbolicName.Revision);
+                    Assert.AreEqual("V0_2", symbolicName.Name);
+                    Assert.AreEqual("1.2", symbolicName.Revision);
                     
                     symbolicName = logFile.SymbolicNames[2];
-                    Assertion.AssertEquals("V0_1", symbolicName.Name);
-                    Assertion.AssertEquals("1.1", symbolicName.Revision);
+                    Assert.AreEqual("V0_1", symbolicName.Name);
+                    Assert.AreEqual("1.1", symbolicName.Revision);
                }
                 if (logFile.WorkingFnm.EndsWith("test-file-2.txt"))
                 {
-                    Assertion.Assert(!foundTestFile2);
+                    Assert.IsTrue(!foundTestFile2);
                     foundTestFile2 = true;
 
-                    Assertion.AssertEquals("/cvsroot/sharpcvslib-test/sharpcvslib-test-repository/src/test-file-2.txt,v", logFile.RepositoryFnm);
-                    Assertion.AssertEquals("src/test-file-2.txt", logFile.WorkingFnm);
-                    Assertion.AssertEquals("", logFile.Description);
+                    Assert.AreEqual("/cvsroot/sharpcvslib-test/sharpcvslib-test-repository/src/test-file-2.txt,v", logFile.RepositoryFnm);
+                    Assert.AreEqual("src/test-file-2.txt", logFile.WorkingFnm);
+                    Assert.AreEqual("", logFile.Description);
                     
-                    Assertion.AssertEquals(1, logFile.Count);
+                    Assert.AreEqual(1, logFile.Count);
                     // most recent version will be first
                     logRevision = logFile[0];
-                    Assertion.AssertEquals("1.1", logRevision.Revision);
+                    Assert.AreEqual("1.1", logRevision.Revision);
                     CheckDate(2003, 9, 14, 15, 57, 48, logRevision.Timestamp);
-                    Assertion.AssertEquals("claytonharbour", logRevision.Author);
-                    Assertion.AssertEquals("Exp", logRevision.State);
-                    Assertion.AssertEquals(0, logRevision.LinesAdded);
-                    Assertion.AssertEquals(0, logRevision.LinesDeleted);
-                    Assertion.AssertEquals("*** empty log message ***", logRevision.Comment);
+                    Assert.AreEqual("claytonharbour", logRevision.Author);
+                    Assert.AreEqual("Exp", logRevision.State);
+                    Assert.AreEqual(0, logRevision.LinesAdded);
+                    Assert.AreEqual(0, logRevision.LinesDeleted);
+                    Assert.AreEqual("*** empty log message ***", logRevision.Comment);
                 }
             }
             
-            Assertion.Assert(foundTestFile1);
-            Assertion.Assert(foundTestFile2);
+            Assert.IsTrue(foundTestFile1);
+            Assert.IsTrue(foundTestFile2);
     //            ...
     //	        foreach (LogRevision logRevision in logFile)
     //	        {
@@ -175,12 +175,12 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
         
         private void CheckDate(int year, int month, int day, int hour, int minute, int second, DateTime timestamp)
         {
-            Assertion.AssertEquals(year, timestamp.Year);
-            Assertion.AssertEquals(month, timestamp.Month);
-            Assertion.AssertEquals(day, timestamp.Day);
-            Assertion.AssertEquals(hour, timestamp.Hour);
-            Assertion.AssertEquals(minute, timestamp.Minute);
-            Assertion.AssertEquals(second, timestamp.Second);
+            Assert.AreEqual(year, timestamp.Year);
+            Assert.AreEqual(month, timestamp.Month);
+            Assert.AreEqual(day, timestamp.Day);
+            Assert.AreEqual(hour, timestamp.Hour);
+            Assert.AreEqual(minute, timestamp.Minute);
+            Assert.AreEqual(second, timestamp.Second);
         }
     }
 }

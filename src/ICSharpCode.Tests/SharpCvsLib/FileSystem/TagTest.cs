@@ -77,13 +77,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 this.TAG_ENTRY1);
 
             String cvsPath = Path.Combine (fullPath, "CVS");
-            Assertion.AssertNotNull ("Path not set/returned", tag.FullPath);
-            Assertion.AssertEquals ("Path not equal", fullPath, tag.FullPath);
-            Assertion.AssertNotNull ("FileContents not equal", tag.FileContents);
-            Assertion.AssertEquals ("FileContents not set/returned", "N" + this.TAG_ENTRY1.Substring (1), tag.FileContents);
-            Assertion.AssertEquals ("Filename not correct", this.TAG_FILE_NAME, tag.Filename);
-            Assertion.AssertEquals ("Type not correct", Factory.FileType.Tag, tag.Type);
-            Assertion.AssertEquals ("IsMultiLined not correct", false, tag.IsMultiLined);
+            Assert.IsNotNull (tag.FullPath);
+            Assert.AreEqual (fullPath, tag.FullPath);
+            Assert.IsNotNull (tag.FileContents);
+            Assert.AreEqual ("N" + this.TAG_ENTRY1.Substring (1), tag.FileContents);
+            Assert.AreEqual (this.TAG_FILE_NAME, tag.Filename);
+            Assert.AreEqual (Factory.FileType.Tag, tag.Type);
+            Assert.AreEqual (false, tag.IsMultiLined);
         }
 
         /// <summary>
@@ -98,14 +98,14 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Tag tagSame2 = new Tag (cvsPath, this.TAG_ENTRY1);
             Tag tagDiff1 = new Tag (cvsPath, this.TAG_ENTRY2);
 
-            Assertion.Assert (tagSame1.Equals (tagSame1));
-            Assertion.Assert (tagSame1.Equals (tagSame2));
-            Assertion.Assert (tagSame2.Equals (tagSame1));
+            Assert.AreEqual (tagSame1, tagSame1);
+            Assert.AreEqual (tagSame2, tagSame1);
+            Assert.AreEqual (tagSame1, tagSame2);
 
-            Assertion.Assert (!tagDiff1.Equals (tagSame1));
-            Assertion.Assert (!tagDiff1.Equals (tagSame2));
-            Assertion.Assert (!tagSame1.Equals (tagDiff1));
-            Assertion.Assert (!tagSame2.Equals (tagDiff1));
+            Assert.IsTrue (!tagDiff1.Equals (tagSame1));
+            Assert.IsTrue (!tagDiff1.Equals (tagSame2));
+            Assert.IsTrue (!tagSame1.Equals (tagDiff1));
+            Assert.IsTrue (!tagSame2.Equals (tagDiff1));
         }
 
         /// <summary>

@@ -84,18 +84,18 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
             
             // the xml declaration
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.XmlDeclaration, reader.NodeType);
+            Assert.AreEqual(XmlNodeType.XmlDeclaration, reader.NodeType);
 
             // the root element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.Element, reader.NodeType);
+            Assert.AreEqual(XmlNodeType.Element, reader.NodeType);
 
             Check(reader, "testfile.cs", "1.4", "1.3");
             
             // the end of the root element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.EndElement, reader.NodeType);
-            Assertion.AssertEquals("test", reader.Name);
+            Assert.AreEqual(XmlNodeType.EndElement, reader.NodeType);
+            Assert.AreEqual("test", reader.Name);
         }
  
         /// <summary>
@@ -106,59 +106,59 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
         {
             // the file element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.Element, reader.NodeType);
-            Assertion.AssertEquals("file", reader.Name);
+            Assert.AreEqual(XmlNodeType.Element, reader.NodeType);
+            Assert.AreEqual("file", reader.Name);
             
             // the name element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.Element, reader.NodeType);
-            Assertion.AssertEquals("name", reader.Name);
+            Assert.AreEqual(XmlNodeType.Element, reader.NodeType);
+            Assert.AreEqual("name", reader.Name);
             
             // the name value
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.Text, reader.NodeType);
-            Assertion.AssertEquals(name, reader.Value);
+            Assert.AreEqual(XmlNodeType.Text, reader.NodeType);
+            Assert.AreEqual(name, reader.Value);
             
             // the end of the name element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.EndElement, reader.NodeType);
-            Assertion.AssertEquals("name", reader.Name);
+            Assert.AreEqual(XmlNodeType.EndElement, reader.NodeType);
+            Assert.AreEqual("name", reader.Name);
             
             // the revision element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.Element, reader.NodeType);
-            Assertion.AssertEquals("revision", reader.Name);
+            Assert.AreEqual(XmlNodeType.Element, reader.NodeType);
+            Assert.AreEqual("revision", reader.Name);
             
             // the revision value
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.Text, reader.NodeType);
-            Assertion.AssertEquals(revision, reader.Value);
+            Assert.AreEqual(XmlNodeType.Text, reader.NodeType);
+            Assert.AreEqual(revision, reader.Value);
             
             // the end of the revision element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.EndElement, reader.NodeType);
-            Assertion.AssertEquals("revision", reader.Name);
+            Assert.AreEqual(XmlNodeType.EndElement, reader.NodeType);
+            Assert.AreEqual("revision", reader.Name);
             
             // the previousrevision element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.Element, reader.NodeType);
-//            Assertion.AssertEquals("previousrevision", reader.Name);
-            Assertion.AssertEquals("prevrevision", reader.Name);           
+            Assert.AreEqual(XmlNodeType.Element, reader.NodeType);
+//            Assert.AreEqual("previousrevision", reader.Name);
+            Assert.AreEqual("prevrevision", reader.Name);           
             // the previousrevision value
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.Text, reader.NodeType);
-            Assertion.AssertEquals(previousrevision, reader.Value);
+            Assert.AreEqual(XmlNodeType.Text, reader.NodeType);
+            Assert.AreEqual(previousrevision, reader.Value);
             
             // the end of the previousrevision element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.EndElement, reader.NodeType);
-//            Assertion.AssertEquals("previousrevision", reader.Name);
-            Assertion.AssertEquals("prevrevision", reader.Name);
+            Assert.AreEqual(XmlNodeType.EndElement, reader.NodeType);
+//            Assert.AreEqual("previousrevision", reader.Name);
+            Assert.AreEqual("prevrevision", reader.Name);
             
             // the end of the file element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.EndElement, reader.NodeType);
-            Assertion.AssertEquals("file", reader.Name);
+            Assert.AreEqual(XmlNodeType.EndElement, reader.NodeType);
+            Assert.AreEqual("file", reader.Name);
         }
     }
 }

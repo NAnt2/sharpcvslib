@@ -64,8 +64,7 @@ public class UpdateMessageTest {
 
         String cvsMessage = "U " + MODULE + "/" + REPOSITORY +
                             "/" + FILENAME;
-        Assertion.AssertEquals ("Expecting result=[" + cvsMessage + "]",
-                                message.Message, cvsMessage);
+        Assert.AreEqual (message.Message, cvsMessage);
     }
 
     /// <summary>
@@ -84,7 +83,7 @@ public class UpdateMessageTest {
 
         System.Console.WriteLine ("made=[" + cvsMessage + "]");
         System.Console.WriteLine ("generated=[" + message.Message + "]");
-        Assertion.AssertEquals ("Expecting result=[" + cvsMessage + "]",
+        Assert.AreEqual ("Expecting result=[" + cvsMessage + "]",
                                 message.Message, cvsMessage);
     }
 }

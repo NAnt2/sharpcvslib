@@ -155,15 +155,15 @@ namespace ICSharpCode.SharpCvsLib.Tests {
             System.Console.WriteLine (this.settings.Config.LocalPath);
 
             CVSServerConnection connection = new CVSServerConnection ();
-            Assertion.AssertNotNull ("Should have a connection object.", connection);
+            Assert.IsNotNull(connection, "Should have a connection object.");
 
             ICommand command = new CheckoutModuleCommand (working);
-            Assertion.AssertNotNull ("Should have a command object.", command);
+            Assert.IsNotNull (command, "Should have a command object.");
 
             try {
                 connection.Connect (working, this.settings.Config.ValidPassword);
             } catch (AuthenticationException) {
-                Assertion.Assert ("Failed to authenticate with server.", true);
+                Assert.IsTrue (true, "Failed to authenticate with server.");
             }
 
             command.Execute (connection);

@@ -86,26 +86,26 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         public void CheckoutTest () {
             this.Checkout ();
 
-            Assertion.Assert ("Should have found the check file.  file=[" +
-                            checkFile + "]", File.Exists (checkFile));
+            Assert.IsTrue (File.Exists (checkFile), "Should have found the check file.  file=[" +
+                            checkFile + "]");
 
             Entries entries =
                 manager.FetchEntries (rootDir);
 
             String moduleDir = Path.Combine(this.settings.LocalPath, this.settings.Module);
-            Assertion.Assert ("Build file should have a cvs entry.", entries.Contains(Path.Combine(moduleDir, checkFile)));
-            Assertion.Assert (this.settings.Config.TargetDirectory + " directory should have a cvs entry.", 
-                entries.Contains(Path.Combine(moduleDir, "src" + Path.DirectorySeparatorChar.ToString())));
+            Assert.IsTrue (entries.Contains(Path.Combine(moduleDir, checkFile)), "Build file should have a cvs entry.");
+            Assert.IsTrue (entries.Contains(Path.Combine(moduleDir, "src" + Path.DirectorySeparatorChar.ToString())),
+                this.settings.Config.TargetDirectory + " directory should have a cvs entry.");
             foreach (DictionaryEntry dicEntry in entries) {
                 Entry entry = (Entry)dicEntry.Value;
                 if (!entry.IsDirectory) {
-                    Assertion.AssertNotNull("Should have date information.", entry.Date);
+                    Assert.IsNotNull(entry.Date, "Should have date information.");
                 }
             }
-            Assertion.Assert ("Should not have a cvs directory above module path.",
-                    !Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)));
-            Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
-                            !Directory.Exists (Path.Combine (this.settings.Config.Module, manager.CVS)));
+            Assert.IsTrue (!Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)), 
+                "Should not have a cvs directory above module path.");
+            Assert.IsTrue (!Directory.Exists (Path.Combine (this.settings.Config.Module, manager.CVS)), 
+                "Should not have a cvs directory in the current execution path.  ");
 
 
         }
@@ -138,8 +138,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// <param name="expectedContent">The file contents that are expected.</param>
         private void CheckoutRevisionTest (String revision, String expectedContent) {
             this.Checkout (revision, null);
-            Assertion.Assert ("Should have found the check file.  file=[" +
-                            checkFile + "]", File.Exists (checkFile));
+            Assert.IsTrue (File.Exists (checkFile), "Should have found the check file.  file=[" +
+                            checkFile + "]");
 
             ICvsFile[] entries =
                 manager.Fetch (rootDir, Factory.FileType.Entries);
@@ -158,17 +158,17 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                 }
             }
 
-            Assertion.Assert ("Build file should have a cvs entry.", foundFileEntry == 1);
-            Assertion.Assert (this.settings.Config.TargetDirectory + " directory should have a cvs entry.", foundDirectoryEntry == 1);
-            Assertion.Assert ("Should not have a cvs directory above module path.",
-                            !Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)));
-            Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
-                            !Directory.Exists (Path.Combine (this.settings.Config.Module, manager.CVS)));
+            Assert.IsTrue(foundFileEntry == 1, "Build file should have a cvs entry.");
+            Assert.IsTrue (foundDirectoryEntry == 1, this.settings.Config.TargetDirectory + " directory should have a cvs entry.");
+            Assert.IsTrue (!Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)),
+                            "Should not have a cvs directory above module path.");
+            Assert.IsTrue (!Directory.Exists (Path.Combine (this.settings.Config.Module, manager.CVS)),
+                            "Should not have a cvs directory in the current execution path.  ");
 
             String tagFile =
                 Path.Combine (Path.Combine (this.settings.Config.Module, manager.CVS), Tag.FILE_NAME);
-            Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
-                            !Directory.Exists (tagFile));
+            Assert.IsTrue (!Directory.Exists (tagFile), 
+                            "Should not have a cvs directory in the current execution path.  ");
 
             AssertFileContentsEqualString (checkFile, expectedContent);
         }
@@ -185,9 +185,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             //    to the string read so this is removed manually:
             actualContent = actualContent.Substring (0, actualContent.Length -2);
             reader.Close ();
-            Assertion.AssertEquals ("Files should be equal.",
-                                    expectedContent,
-                                    actualContent);
+            Assert.AreEqual(expectedContent, actualContent,
+                "Files should be equal.");
         }
 
 
@@ -203,8 +202,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                 Path.Combine (rootDir, this.settings.Config.TargetFile);
 
             this.Checkout (null, this.settings.Config.OverrideDirectory);
-            Assertion.Assert ("Should have found the check file.  file=[" +
-                            checkFile + "]", File.Exists (checkFile));
+            Assert.IsTrue (File.Exists (checkFile), "Should have found the check file.  file=[" +
+                            checkFile + "]");
 
             ICvsFile[] entries =
                 manager.Fetch (rootDir, Factory.FileType.Entries);
@@ -223,17 +222,17 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                 }
             }
 
-            Assertion.Assert ("Build file should have a cvs entry.", foundFileEntry == 1);
-            Assertion.Assert (this.settings.Config.TargetDirectory + " directory should have a cvs entry.", foundDirectoryEntry == 1);
-            Assertion.Assert ("Should not have a cvs directory above module path.",
-                            !Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)));
-            Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
-                            !Directory.Exists (Path.Combine (this.settings.Config.Module, manager.CVS)));
+            Assert.IsTrue (foundFileEntry == 1, "Build file should have a cvs entry.");
+            Assert.IsTrue (foundDirectoryEntry == 1, this.settings.Config.TargetDirectory + " directory should have a cvs entry.");
+            Assert.IsTrue (!Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)),
+                "Should not have a cvs directory above module path.");
+            Assert.IsTrue (!Directory.Exists (Path.Combine (this.settings.Config.Module, manager.CVS)),
+                "Should not have a cvs directory in the current execution path.  ");
 
             String tagFile =
                 Path.Combine (Path.Combine (this.settings.Config.Module, manager.CVS), Tag.FILE_NAME);
-            Assertion.Assert ("Should not have a cvs directory and tag file in the current execution path.  ",
-                            !Directory.Exists (tagFile));
+            Assert.IsTrue (!Directory.Exists (tagFile), 
+                "Should not have a cvs directory and tag file in the current execution path.  ");
         }
 
         /// <summary>
@@ -270,15 +269,15 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             working.OverrideDirectory = overrideDirectory;
 
             CVSServerConnection connection = new CVSServerConnection ();
-            Assertion.AssertNotNull ("Should have a connection object.", connection);
+            Assert.IsNotNull (connection, "Should have a connection object.");
 
             ICommand command = new CheckoutModuleCommand (working);
-            Assertion.AssertNotNull ("Should have a command object.", command);
+            Assert.IsNotNull(command, "Should have a command object.");
 
             try {
                 connection.Connect (working, this.settings.Config.ValidPassword);
             } catch (AuthenticationException) {
-                Assertion.Assert ("Failed to authenticate with server.", true);
+                Assert.IsTrue(true, "Failed to authenticate with server.");
             }
 
             command.Execute (connection);

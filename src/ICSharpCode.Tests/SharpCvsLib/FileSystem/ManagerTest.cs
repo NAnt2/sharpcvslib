@@ -180,7 +180,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                                 Factory.FileType.Entries,
                                 this.cvsEntries.Length + 1);
 
-            Assertion.Assert(!Directory.Exists(Path.Combine(this.GetTempPath(), "CVS")));
+            Assert.IsTrue(!Directory.Exists(Path.Combine(this.GetTempPath(), "CVS")));
 
         }
 
@@ -216,7 +216,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             Entries entriesTest = manager.FetchEntries(((Entry)(entries[0])).FullPath);
 
-            Assertion.Assert(File.Exists(Path.Combine(Path.Combine(path, "CVS"), "Entries")));
+            Assert.IsTrue(File.Exists(Path.Combine(Path.Combine(path, "CVS"), "Entries")));
         }
 
         private void WriteTestDirectoryEntries (String path) {
@@ -258,7 +258,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 manager.Fetch (path, fileType);
             LOGGER.Error("path=[" + path + "]");
             int entriesFound = currentEntries.Length;
-            Assertion.AssertEquals (entriesExpected, entriesFound);
+            Assert.AreEqual (entriesExpected, entriesFound);
         }
 
         /// <summary>
@@ -287,15 +287,15 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             manager.AddDirectories(modulePath);
 
             Entries entries = manager.FetchEntries(modulePath + Path.DirectorySeparatorChar);
-            Assertion.Assert(entries.Contains(Path.Combine(modulePath, directories[1])));
+            Assert.IsTrue(entries.Contains(Path.Combine(modulePath, directories[1])));
 
-            Assertion.Assert(entries.Contains(Path.Combine(modulePath, directories[3])));
+            Assert.IsTrue(entries.Contains(Path.Combine(modulePath, directories[3])));
 
             foreach (DictionaryEntry entryDic in entries) {
                 LOGGER.Debug("entry=[" + entryDic.Value + "]");
             }
-            Assertion.AssertEquals 
-                ("Did not find all directory names in entries file.", 4, entries.Count);
+            Assert.AreEqual 
+                (4, entries.Count, "Did not find all directory names in entries file.");
         }
 
         /// <summary>
@@ -320,15 +320,15 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Directory.CreateDirectory (Path.Combine (newDirectory, manager.CVS));
 
             manager.AddDirectories (path);
-            Assertion.Assert ("Should contain the directory entry.",
-                            null != manager.Find (path, NEW_DIRECTORY + Path.DirectorySeparatorChar));
-            Assertion.Assert ("There should be no cvs entry above the root directory.",
-                            !Directory.Exists (Path.Combine (this.settings.Config.LocalPath,
-                                                            manager.CVS)));
+            Assert.IsTrue (null != manager.Find (path, NEW_DIRECTORY + Path.DirectorySeparatorChar),
+                "Should contain the directory entry.");
+            Assert.IsTrue (!Directory.Exists (Path.Combine (this.settings.Config.LocalPath,
+                                                            manager.CVS)),
+                "There should be no cvs entry above the root directory.");
             String modulePath = 
                 Path.Combine(this.settings.Config.LocalPath, this.settings.Module);
-            Assertion.Assert("Should not create cvs entry for module path.",
-                !Directory.Exists(Path.Combine(modulePath, this.settings.Module)));
+            Assert.IsTrue(!Directory.Exists(Path.Combine(modulePath, this.settings.Module)),
+                "Should not create cvs entry for module path.");
 
             Entries entries = manager.FetchEntries(Path.Combine(modulePath, Entry.FILE_NAME));
             entries.Contains(Path.Combine(modulePath, "CvsFileManager"));
@@ -363,8 +363,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             manager.AddRepository(repository);
             working.FoldersToUpdate = manager.FetchFilesToUpdate (rootDir);
 
-            Assertion.Assert ("Working folders count should be greater than 1.",
-                            working.FoldersToUpdate.Length > 1);
+            Assert.IsTrue(working.FoldersToUpdate.Length > 1,
+                "Working folders count should be greater than 1.");
         }
 
         private bool IsInEntries (Entry entry, Entry[] entries) {
@@ -384,10 +384,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                                     this.settings.Config.Module);
 
             CVSServerConnection connection = new CVSServerConnection ();
-            Assertion.AssertNotNull ("Should have a connection object.", connection);
+            Assert.IsNotNull (connection, "Should have a connection object.");
 
             ICommand command = new CheckoutModuleCommand (working);
-            Assertion.AssertNotNull ("Should have a command object.", command);
+            Assert.IsNotNull(command, "Should have a command object.");
 
             connection.Connect (working, this.settings.Config.ValidPassword);
 
@@ -417,7 +417,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             {
                 manager.Fetch (rootDir, Factory.FileType.Entries);
             } catch (FileNotFoundException) {
-                Assertion.Assert ("Should not be here, this should be trapped.", true);
+                Assert.IsTrue (true, "Should not be here, this should be trapped.");
             }
         }
 
@@ -462,7 +462,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             // TODO: This is a bad test, however the DateTime.ToUniversalTime () method
             //    is broken in .net 1.0
-            Assertion.AssertEquals (entry.TimeStamp,
+            Assert.AreEqual (entry.TimeStamp,
                                     File.GetLastWriteTime(filenameAndPath).Subtract (System.TimeZone.CurrentTimeZone.GetUtcOffset (entry.TimeStamp)));
 
         }
@@ -482,9 +482,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             LOGGER.Debug("Folders=[" + folders + "]");
 
-            Assertion.AssertEquals(2, folders.Count);
-            Assertion.Assert(folders.Contains(modulePath));
-            Assertion.Assert(folders.Contains(Path.Combine(modulePath, "src")));
+            Assert.AreEqual(2, folders.Count);
+            Assert.IsTrue (folders.Contains(modulePath));
+            Assert.IsTrue(folders.Contains(Path.Combine(modulePath, "src")));
         }
 
         /// <summary>
@@ -525,12 +525,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Manager manager = new Manager(workingPath);
             for (int i = 0; i < cvsDirIn.Length; i++) {
                 try {
-                    Assertion.AssertEquals("cvsDir number=[" + i + "]", 
+                    Assert.AreEqual("cvsDir number=[" + i + "]", 
                         cvsDirOut[i], manager.GetCvsDir(Entry.CreateEntry(cvsDirIn[i])));
                 } catch (EntryParseException e) {
                     LOGGER.Error(e);
                     if (!(cvsDirIn[i].IndexOf(manager.CVS) >= 0)) {
-                        Assertion.Fail("The only reason a parse exception should be thrown is if the " +
+                        Assert.Fail("The only reason a parse exception should be thrown is if the " +
                             "file contains a CVS management folder.  File=[" + cvsDirIn[i] + "]");
                     }
                 }
@@ -553,12 +553,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 LOGGER.Debug("entry.FullPath=[" + entry.FullPath + "]");
                 LOGGER.Debug("entry.Path=[" + entry.Path + "]");
             }
-            Assertion.Assert(entries1.Contains(Path.Combine(modulePath, this.settings.TargetFile)));
-            Assertion.Assert(entries1.Contains(Path.Combine(modulePath, "src") + Path.DirectorySeparatorChar.ToString()));
+            Assert.IsTrue(entries1.Contains(Path.Combine(modulePath, this.settings.TargetFile)));
+            Assert.IsTrue(entries1.Contains(Path.Combine(modulePath, "src") + Path.DirectorySeparatorChar.ToString()));
 
             String srcDir = Path.Combine(modulePath, "src");
             Entries entries2 = manager.FetchEntries(srcDir);
-            Assertion.Assert(entries2.Contains(Path.Combine(srcDir, "test-file-2.txt")));
+            Assert.IsTrue(entries2.Contains(Path.Combine(srcDir, "test-file-2.txt")));
 
             this.CleanTempDirectory();
         }
@@ -574,9 +574,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             String modulePath = Path.Combine(this.settings.LocalPath, this.settings.Module);
             Manager manager = new Manager(modulePath);
             Root root1 = manager.FetchRoot(modulePath);
-            Assertion.AssertEquals(this.settings.Cvsroot, root1.FileContents);
+            Assert.AreEqual(this.settings.Cvsroot, root1.FileContents);
             Root root2 = manager.FetchRoot(Path.Combine(modulePath, "src"));
-            Assertion.AssertEquals(this.settings.Cvsroot, root2.FileContents);
+            Assert.AreEqual(this.settings.Cvsroot, root2.FileContents);
 
             this.CleanTempDirectory();
         }
@@ -592,9 +592,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             String modulePath = Path.Combine(this.settings.LocalPath, this.settings.Module);
             Manager manager = new Manager(modulePath);
             Repository repository1 = manager.FetchRepository(modulePath);
-            Assertion.AssertEquals(this.settings.Module, repository1.FileContents);
+            Assert.AreEqual(this.settings.Module, repository1.FileContents);
             Repository repository2 = manager.FetchRepository(Path.Combine(modulePath, "src"));
-            Assertion.AssertEquals(this.settings.Module + "/" + "src", repository2.FileContents);
+            Assert.AreEqual(this.settings.Module + "/" + "src", repository2.FileContents);
 
             this.CleanTempDirectory();
         }

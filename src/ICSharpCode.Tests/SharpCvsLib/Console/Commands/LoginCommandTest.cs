@@ -74,7 +74,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             String [] commandLineArgs = commandLine.Split(' ');
             // Create the consoleMain to test the LoginCommand
             ConsoleMain consoleMain = new ConsoleMain();
-            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
+            Assert.IsNotNull (consoleMain);
 
             consoleMain.Execute(commandLineArgs);
         }
@@ -90,7 +90,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
 
             LoginCommand loginCommand = new LoginCommand(new CvsRoot(":pserver:claytonharbour@linux:/home/cvs/src"));
             loginCommand.Execute();
-            Assertion.AssertNotNull(loginCommand.Password);
+            Assert.IsNull(loginCommand.Password);
 
             LOGGER.Debug(loginCommand.Password);
         }

@@ -80,12 +80,11 @@ public class SharpCvsLibConfigHandlerTest {
     }
 
     private void CheckValues (SharpCvsLibConfig config) {
-        Assertion.AssertEquals ("timeout value",
-                                TIMEOUT,
-                                1000);
-        Assertion.AssertEquals ("authorization sleep value",
-                                AUTH_SLEEP,
-                                1000);
+        Assert.AreEqual (TIMEOUT,
+                                1000, "timeout value");
+        Assert.AreEqual (AUTH_SLEEP,
+                                1000,
+            "authorization sleep value");
     }
 
     /// <summary>

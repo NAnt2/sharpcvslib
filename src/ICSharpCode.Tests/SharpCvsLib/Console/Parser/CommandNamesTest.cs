@@ -79,9 +79,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private void AssertCommandEquals (Command com,
                                         string prime, string nick1, string nick2)
         {
-            Assertion.AssertEquals (prime, com.First);
-            Assertion.AssertEquals (nick1, com.Nick1);
-            Assertion.AssertEquals (nick2, com.Nick2);
+            Assert.AreEqual (prime, com.First);
+            Assert.AreEqual (nick1, com.Nick1);
+            Assert.AreEqual (nick2, com.Nick2);
         }
     }
 }

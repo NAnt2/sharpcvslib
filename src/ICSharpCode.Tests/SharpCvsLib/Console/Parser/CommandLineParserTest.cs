@@ -68,7 +68,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             String[] args = {"--help"};
             // Test Creating a CommandLineParser object
             CommandLineParser newCommandLineParser = new CommandLineParser( args);
-            Assertion.AssertNotNull ("Should have a command object.", newCommandLineParser);
+            Assert.IsNotNull (newCommandLineParser);
             LOGGER.Debug("Before parse execute for MakeCommandParserTest.");
             newCommandLineParser.Execute();
         }
@@ -95,7 +95,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
                 LOGGER.Debug("Before execute MinusDOptionConnectedToCvsRoot good.");
                 parser.Execute ();
-                Assertion.Fail("Should throw an exception.");
+                Assert.Fail("Should throw an exception.");
             } catch (CvsRootParseException e){
                 // expected the exception, log the error for good luck
                 LOGGER.Debug(e);
@@ -112,7 +112,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 parser.Execute();
             } catch (CvsRootParseException e){
                 LOGGER.Error(e);
-                Assertion.Fail ("Should not throw an exception, valid parameters.");
+                Assert.Fail ("Should not throw an exception, valid parameters.");
             } catch (Exception e) {
                 // this should not happen, log it and rethrow the exception
                 LOGGER.Error(e);
@@ -135,8 +135,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 LOGGER.Error(e);
                 throw e;
             }
-            Assertion.Equals("-r v0_3_1 -d newlocation ", parser.Options);
-            Assertion.Equals("sharpcvslib", parser.Repository);
+            Assert.AreEqual("-r v0_3_1 -d newlocation ", parser.Options);
+            Assert.AreEqual("sharpcvslib", parser.Repository);
         }
     }
 }

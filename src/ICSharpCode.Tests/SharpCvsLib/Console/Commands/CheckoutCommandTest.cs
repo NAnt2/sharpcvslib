@@ -82,7 +82,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
             // Test Creating a ConsoleMain object
             ConsoleMain consoleMain = new ConsoleMain ();
             consoleMain.Execute (commandLineArgs);
-            Assertion.Assert (Directory.Exists(Path.Combine(settings.Config.LocalPath, settings.Config.Module)));
+            Assert.IsTrue (Directory.Exists(Path.Combine(settings.Config.LocalPath, settings.Config.Module)));
         }
         /// <summary>
         ///     Checkout files based on revision specified in -r option.
@@ -97,7 +97,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
             ConsoleMain consoleMain = new ConsoleMain();
             consoleMain.Execute (commandLineArgs);
             // check for directory
-            Assertion.Assert (Directory.Exists(Path.Combine(settings.Config.LocalPath, settings.Config.Module)));
+            Assert.IsTrue (Directory.Exists(Path.Combine(settings.Config.LocalPath, settings.Config.Module)));
             // check for files with specified revision
         }
         /// <summary>
@@ -110,9 +110,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a ConsoleMain object
             ConsoleMain consoleMain = new ConsoleMain ();
-            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
+            Assert.IsNotNull (consoleMain);
             consoleMain.Execute (commandLineArgs);
-            Assertion.Assert(Directory.Exists(Path.Combine(settings.Config.LocalPath, "newlocation")));
+            Assert.IsTrue(Directory.Exists(Path.Combine(settings.Config.LocalPath, "newlocation")));
         }
         /// <summary>
         ///     Checkout files no earlier than the specified Date 
@@ -124,9 +124,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a ConsoleMain object
             ConsoleMain consoleMain = new ConsoleMain();
-            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
+            Assert.IsNotNull (consoleMain);
             consoleMain.Execute( commandLineArgs);
-            Assertion.Assert(Directory.Exists(Path.Combine(settings.Config.LocalPath, settings.Config.Module)));
+            Assert.IsTrue(Directory.Exists(Path.Combine(settings.Config.LocalPath, settings.Config.Module)));
             // Find a file that should exist 
             //Assertion.Assert ("Should have found the check file.  file=[" +
             //    checkFile + "]", File.Exists (checkFile));
@@ -155,14 +155,14 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
                 main.Execute(commandLine.Split(' '));
             } catch (Exception e) {
                 LOGGER.Error(e);
-                Assertion.Fail(e.ToString());
+                Assert.Fail(e.ToString());
             }
 
             Manager manager = new Manager(this.GetTempPath());
             String modDir = Path.Combine(this.GetTempPath(), this.settings.Config.Module);
             Tag tag = manager.FetchTag(Path.Combine(modDir, "src"));
-            Assertion.AssertNotNull(tag);
-            Assertion.AssertEquals("NHEAD", tag.FileContents);
+            Assert.IsNotNull(tag);
+            Assert.AreEqual("NHEAD", tag.FileContents);
  
         }
 
@@ -184,13 +184,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
                 main.Execute(commandLine.Split(' '));
             } catch (Exception e) {
                 LOGGER.Error(e);
-                Assertion.Fail(e.ToString());
+                Assert.Fail(e.ToString());
             }
             Manager manager = new Manager(this.GetTempPath());
             String modDir = Path.Combine(this.GetTempPath(), this.settings.Config.Module);
             Tag tag = manager.FetchTag(Path.Combine(modDir, "src"));
-            Assertion.AssertNotNull(tag);
-            Assertion.AssertEquals("NHEAD", tag.FileContents);
+            Assert.IsNotNull(tag);
+            Assert.AreEqual("NHEAD", tag.FileContents);
         }
 
     }

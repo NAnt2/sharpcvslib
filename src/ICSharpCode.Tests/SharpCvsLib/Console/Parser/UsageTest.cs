@@ -72,7 +72,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         public void MakeUsageTest ()
         {
             // Check the Usage.General string against literal
-            Assertion.Equals(Usage.General, @"   Usage: cvs [cvs-options] command [command-options-and-arguments]
+            Assert.AreEqual(Usage.General, @"   Usage: cvs [cvs-options] command [command-options-and-arguments]
                             where cvs-options are -q, -n, etc.
                             (specify --help-options for a list of options)
                             where command is add, admin, etc.
@@ -90,7 +90,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             the CVSNT home page at http://www.cvsnt.org/
                             ");
             // Check the Usage.Commands string against literal
-            Assertion.Equals(Usage.Commands, @"CVS commands are:
+            Assert.AreEqual(Usage.Commands, @"CVS commands are:
                             add          Add a new file/directory to the repository
                             admin        Administration front end for rcs
                             annotate     Show last revision where each line was modified
@@ -143,7 +143,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             (Specify the --help option for a list of other help options)
                             ");
             // Check the Usage.Options string against literal
-            Assertion.Equals(Usage.Options, @"CVS global options (specified before the command name) are:
+            Assert.AreEqual(Usage.Options, @"CVS global options (specified before the command name) are:
                             -D prefix       Adds a prefix to CVSROOT.
                             -H              Displays usage information for command.
                             -Q              Cause CVS to be really quiet.
@@ -174,7 +174,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             (Specify the --help option for a list of other help options)
                             ");
             // Check the Usage.Synonyms string for not being null
-            Assertion.AssertNotNull(Usage.Synonyms);
+            Assert.IsNotNull(Usage.Synonyms);
         }
     }
 }

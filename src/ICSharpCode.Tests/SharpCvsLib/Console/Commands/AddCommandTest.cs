@@ -77,7 +77,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             // commit remove TargetFile
             String[] files = Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, 
                 settings.Config.Module), settings.Config.TargetFile);
-            Assertion.Assert(files.Length > 0);
+            Assert.IsTrue(files.Length > 0);
 
             foreach (String file in files) {
                 LOGGER.Debug("file=[" + file + "]");
@@ -90,10 +90,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             String [] commandLineArgs = commandLine.Split(' ');
             // Create consoleMain object to test the Add command
             ConsoleMain consoleMain = new ConsoleMain();
-            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
+            Assert.IsNotNull (consoleMain);
             
             consoleMain.Execute(commandLineArgs);
-            Assertion.Assert(File.Exists(fullPath));
+            Assert.IsTrue(File.Exists(fullPath));
         }
     }
 }

@@ -53,35 +53,35 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         [Test]
         public void ValidCvsRootTest () {
             CvsRoot cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:/cvsroot/sharpcvslib");
-            Assertion.AssertEquals("ext", cvsRoot.Protocol);
-            Assertion.AssertEquals("gne", cvsRoot.User);
-            Assertion.AssertEquals("cvs.sourceforge.net", cvsRoot.Host);
-            Assertion.AssertEquals("/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
+            Assert.AreEqual("ext", cvsRoot.Protocol);
+            Assert.AreEqual("gne", cvsRoot.User);
+            Assert.AreEqual("cvs.sourceforge.net", cvsRoot.Host);
+            Assert.AreEqual("/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
 
             cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:2401:/cvsroot/sharpcvslib");
-            Assertion.AssertEquals("ext", cvsRoot.Protocol);
-            Assertion.AssertEquals("gne", cvsRoot.User);
-            Assertion.AssertEquals("cvs.sourceforge.net", cvsRoot.Host);
-            Assertion.AssertEquals("/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
-            Assertion.AssertEquals(2401, cvsRoot.Port);
+            Assert.AreEqual("ext", cvsRoot.Protocol);
+            Assert.AreEqual("gne", cvsRoot.User);
+            Assert.AreEqual("cvs.sourceforge.net", cvsRoot.Host);
+            Assert.AreEqual("/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
+            Assert.AreEqual(2401, cvsRoot.Port);
 
             cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:d:/cvsroot/sharpcvslib");
-            Assertion.AssertEquals("ext", cvsRoot.Protocol);
-            Assertion.AssertEquals("gne", cvsRoot.User);
-            Assertion.AssertEquals("cvs.sourceforge.net", cvsRoot.Host);
-            Assertion.AssertEquals("d:/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
+            Assert.AreEqual("ext", cvsRoot.Protocol);
+            Assert.AreEqual("gne", cvsRoot.User);
+            Assert.AreEqual("cvs.sourceforge.net", cvsRoot.Host);
+            Assert.AreEqual("d:/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
 
             cvsRoot = new CvsRoot (":ext:gne@cvs.sourceforge.net:2401:d:/cvsroot/sharpcvslib");
-            Assertion.AssertEquals("ext", cvsRoot.Protocol);
-            Assertion.AssertEquals("gne", cvsRoot.User);
-            Assertion.AssertEquals(2401, cvsRoot.Port);
-            Assertion.AssertEquals("cvs.sourceforge.net", cvsRoot.Host);
-            Assertion.AssertEquals("d:/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
+            Assert.AreEqual("ext", cvsRoot.Protocol);
+            Assert.AreEqual("gne", cvsRoot.User);
+            Assert.AreEqual(2401, cvsRoot.Port);
+            Assert.AreEqual("cvs.sourceforge.net", cvsRoot.Host);
+            Assert.AreEqual("d:/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
 
             cvsRoot = new CvsRoot(":sspi:cvs.sourceforge.net:d:/cvsroot/sharpcvslib");
-            Assertion.AssertEquals("sspi", cvsRoot.Protocol);
-            Assertion.AssertEquals("cvs.sourceforge.net", cvsRoot.Host);
-            Assertion.AssertEquals("d:/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
+            Assert.AreEqual("sspi", cvsRoot.Protocol);
+            Assert.AreEqual("cvs.sourceforge.net", cvsRoot.Host);
+            Assert.AreEqual("d:/cvsroot/sharpcvslib", cvsRoot.CvsRepository);
         }
 
         /// <summary>

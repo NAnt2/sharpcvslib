@@ -17,13 +17,13 @@
             <arg value="${compile.checked}" />
             
             <sources basedir="${dir.src}/${name.top-level}.${name.console}/${name.project}">
-                <includes name="Main.cs" />
-                <includes name="AssemblyHelper.cs"/>
+                <include name="Main.cs" />
+                <include name="AssemblyHelper.cs"/>
             </sources>
 
             <references>
-                <includes name="System.dll" />            
-                <includes name="System.EnterpriseServices.dll" />
+                <include name="System.dll" />            
+                <include name="System.EnterpriseServices.dll" />
             </references>
         </csc>
 
@@ -39,18 +39,18 @@
             <arg value="${compile.checked}" />
             
             <sources basedir="${dir.src}/${name.top-level}.${name.console}/${name.project}">
-                <includes name="**/*.cs" />
-                <excludes name="Main.cs"/>
-                <excludes name="AssemblyInfo.cs"/>
+                <include name="**/*.cs" />
+                <exclude name="Main.cs"/>
+                <exclude name="AssemblyInfo.cs"/>
             </sources>
 
             <references>
-                <includes name="System.dll" />            
-                <includes name="System.EnterpriseServices.dll" />
-                <includes name="${dir.lib}/${lib.zip}" />
-                <includes name="${dir.lib.ext}/${lib.log4net}" />
-                <includes name="${dir.lib.ext}/${lib.nunit}" />
-                <includes name="${dir.bin}/${name.top-level}.${name.lib}.dll" />
+                <include name="System.dll" />            
+                <include name="System.EnterpriseServices.dll" />
+                <include name="${dir.lib}/${lib.zip}" />
+                <include name="${dir.lib.ext}/${lib.log4net}" />
+                <include name="${dir.lib.ext}/${lib.nunit}" />
+                <include name="${dir.bin}/${name.top-level}.${name.lib}.dll" />
             </references>
         </csc>
         

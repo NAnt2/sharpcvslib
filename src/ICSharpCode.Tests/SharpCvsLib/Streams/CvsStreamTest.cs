@@ -119,9 +119,9 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         public void CanReadTest ()
         {
             replyForCanRead = true;
-            Assertion.Assert(cvsStream.CanRead == replyForCanRead);
+            Assert.IsTrue(cvsStream.CanRead == replyForCanRead);
             replyForCanRead = false;
-            Assertion.Assert(cvsStream.CanRead == replyForCanRead);
+            Assert.IsTrue(cvsStream.CanRead == replyForCanRead);
         }
         /// <summary>
         ///     Our 'Base' implementation for Stream.CanRead.
@@ -140,9 +140,9 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         public void CanSeekTest ()
         {
             replyForCanSeek = true;
-            Assertion.Assert(cvsStream.CanSeek == replyForCanSeek);
+            Assert.IsTrue(cvsStream.CanSeek == replyForCanSeek);
             replyForCanSeek = false;
-            Assertion.Assert(cvsStream.CanSeek == replyForCanSeek);
+            Assert.IsTrue(cvsStream.CanSeek == replyForCanSeek);
         }
         /// <summary>
         ///     Our 'Base' implementation for Stream.CanSeek.
@@ -161,9 +161,9 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         public void CanWriteTest ()
         {
             replyForCanWrite = true;
-            Assertion.Assert(cvsStream.CanWrite == replyForCanWrite);
+            Assert.IsTrue(cvsStream.CanWrite == replyForCanWrite);
             replyForCanWrite = false;
-            Assertion.Assert(cvsStream.CanWrite == replyForCanWrite);
+            Assert.IsTrue(cvsStream.CanWrite == replyForCanWrite);
         }
         /// <summary>
         ///     Our 'Base' implementation for Stream.CanWrite.
@@ -182,9 +182,9 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         public void LengthTest ()
         {
             replyForLength = 0;
-            Assertion.Assert(cvsStream.Length == replyForLength);
+            Assert.IsTrue(cvsStream.Length == replyForLength);
             replyForLength = 999;
-            Assertion.Assert(cvsStream.Length == replyForLength);
+            Assert.IsTrue(cvsStream.Length == replyForLength);
         }
         /// <summary>
         ///     Our 'Base' implementation for Stream.Length.
@@ -204,15 +204,15 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         {
             // First test get
             replyForPosition = 0;
-            Assertion.Assert(cvsStream.Position == replyForPosition);
+            Assert.IsTrue(cvsStream.Position == replyForPosition);
             replyForPosition = 999;
-            Assertion.Assert(cvsStream.Position == replyForPosition);
+            Assert.IsTrue(cvsStream.Position == replyForPosition);
 
             // now test set
             cvsStream.Position = 111;
-            Assertion.Assert(valueParamFromPosition == 111);
+            Assert.IsTrue(valueParamFromPosition == 111);
             cvsStream.Position = 222;
-            Assertion.Assert(valueParamFromPosition == 222);
+            Assert.IsTrue(valueParamFromPosition == 222);
         }
         /// <summary>
         ///     Our 'Base' implementation for Stream.Position.
@@ -235,7 +235,7 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         {
             flushCalled = false;
             cvsStream.Flush();
-            Assertion.Assert(flushCalled);
+            Assert.IsTrue(flushCalled);
         }
         /// <summary>
         ///     Our 'Base' implementation for Stream.Flush.
@@ -252,11 +252,11 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         public void SeekTest ()
         {
             replyForSeek = 666;
-            Assertion.Assert(cvsStream.Seek(999, SeekOrigin.Begin) == replyForSeek);
-            Assertion.Assert(offsetParamFromSeek == 999 && originParamFromSeek == SeekOrigin.Begin);
+            Assert.IsTrue(cvsStream.Seek(999, SeekOrigin.Begin) == replyForSeek);
+            Assert.IsTrue(offsetParamFromSeek == 999 && originParamFromSeek == SeekOrigin.Begin);
             replyForSeek = 777;
-            Assertion.Assert(cvsStream.Seek(0, SeekOrigin.End) == replyForSeek);
-            Assertion.Assert(offsetParamFromSeek == 0 && originParamFromSeek == SeekOrigin.End);
+            Assert.IsTrue(cvsStream.Seek(0, SeekOrigin.End) == replyForSeek);
+            Assert.IsTrue(offsetParamFromSeek == 0 && originParamFromSeek == SeekOrigin.End);
         }
         /// <summary>
         ///     Our 'Base' implementation for Stream.Seek.
@@ -276,9 +276,9 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         public void SetLengthTest ()
         {
             cvsStream.SetLength(111);
-            Assertion.Assert(lenParamFromSetLength == 111);
+            Assert.IsTrue(lenParamFromSetLength == 111);
             cvsStream.SetLength(222);
-            Assertion.Assert(lenParamFromSetLength == 222);
+            Assert.IsTrue(lenParamFromSetLength == 222);
         }
         /// <summary>
         ///     Our 'Base' implementation for Stream.SetLength.
@@ -299,14 +299,14 @@ namespace ICSharpCode.SharpCvsLib.Streams {
 
             // First test Write(byte[], int, int)
             cvsStream.Write(array, 1, 3);
-            Assertion.Assert(dataParamFromWrite == array &&
+            Assert.IsTrue(dataParamFromWrite == array &&
                             offsetParamFromWrite == 1 &&
                             countParamFromWrite == 3);
 
             // Now test Write(byte[])
             dataParamFromWrite = null;
             cvsStream.Write(array);
-            Assertion.Assert(dataParamFromWrite == array &&
+            Assert.IsTrue(dataParamFromWrite == array &&
                             offsetParamFromWrite == 0 &&
                             countParamFromWrite == array.Length);
         }
@@ -320,11 +320,11 @@ namespace ICSharpCode.SharpCvsLib.Streams {
             String str = "Hello World!";
             cvsStream.SendString(str);
 
-            Assertion.Assert(dataParamFromWrite.Length == str.Length);
-            Assertion.Assert(countParamFromWrite == str.Length);
-            Assertion.Assert(offsetParamFromWrite == 0);
+            Assert.IsTrue(dataParamFromWrite.Length == str.Length);
+            Assert.IsTrue(countParamFromWrite == str.Length);
+            Assert.IsTrue(offsetParamFromWrite == 0);
             for (int n = 0; n < str.Length; n++) {
-                Assertion.Assert(str[n] == (char)dataParamFromWrite[n]);
+                Assert.IsTrue(str[n] == (char)dataParamFromWrite[n]);
             }
         }
 
@@ -345,9 +345,9 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         public void WriteByteTest ()
         {
             cvsStream.WriteByte(42);
-            Assertion.Assert(byteParamFromWriteByte == 42);
+            Assert.IsTrue(byteParamFromWriteByte == 42);
             cvsStream.WriteByte(222);
-            Assertion.Assert(byteParamFromWriteByte == 222);
+            Assert.IsTrue(byteParamFromWriteByte == 222);
         }
         /// <summary>
         ///     Our 'Base' implementation for Stream.WriteByte.
@@ -365,7 +365,7 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         {
             closeCalled = false;
             cvsStream.Close();
-            Assertion.Assert(closeCalled);
+            Assert.IsTrue(closeCalled);
         }
         /// <summary>
         ///     Our 'Base' implementation for Stream.Close.
@@ -382,9 +382,9 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         public void ReadByteTest ()
         {
             replyForReadByte = 42;
-            Assertion.Assert(cvsStream.ReadByte() == 42);
+            Assert.IsTrue(cvsStream.ReadByte() == 42);
             replyForReadByte = 222;
-            Assertion.Assert(cvsStream.ReadByte() == 222);
+            Assert.IsTrue(cvsStream.ReadByte() == 222);
         }
         /// <summary>
         ///     Our 'Base' implementation for Stream.ReadByte.
@@ -405,16 +405,16 @@ namespace ICSharpCode.SharpCvsLib.Streams {
 
             // First test Read(byte[], int, int)
             replyFromRead = 2;
-            Assertion.Assert(cvsStream.Read(array, 1, 3) == replyFromRead);
-            Assertion.Assert(dataParamFromRead == array &&
+            Assert.IsTrue(cvsStream.Read(array, 1, 3) == replyFromRead);
+            Assert.IsTrue(dataParamFromRead == array &&
                             offsetParamFromRead == 1 &&
                             countParamFromRead == 3);
 
             // Now test Read(byte[])
             dataParamFromRead = null;
             replyFromRead = 4;
-            Assertion.Assert(cvsStream.Read(array) == replyFromRead);
-            Assertion.Assert(dataParamFromRead == array &&
+            Assert.IsTrue(cvsStream.Read(array) == replyFromRead);
+            Assert.IsTrue(dataParamFromRead == array &&
                             offsetParamFromRead == 0 &&
                             countParamFromRead == array.Length);
         }
@@ -453,7 +453,7 @@ namespace ICSharpCode.SharpCvsLib.Streams {
             // and check we have received what we expected.
             for (int n = 0; n < TEST_DATA.Length; n++)
             {
-                Assertion.Assert(TEST_DATA[n] == (char)buffer[n]);
+                Assert.IsTrue(TEST_DATA[n] == (char)buffer[n]);
             }
 
             cvsStream.BaseStream.Close();
@@ -477,9 +477,9 @@ namespace ICSharpCode.SharpCvsLib.Streams {
 
             // Now read the stream.
             line = cvsStream.ReadLine();
-            Assertion.Assert(line.Equals("Hello World!"));
+            Assert.IsTrue(line.Equals("Hello World!"));
             line = cvsStream.ReadLine();
-            Assertion.Assert(line.Equals("Goodbye"));
+            Assert.IsTrue(line.Equals("Goodbye"));
 
             cvsStream.BaseStream.Close();
         }
@@ -502,11 +502,11 @@ namespace ICSharpCode.SharpCvsLib.Streams {
 
             // Now read the stream.
             word = cvsStream.ReadToFirstWS();
-            Assertion.Assert(word.Equals("Hello "));
+            Assert.IsTrue(word.Equals("Hello "));
             word = cvsStream.ReadToFirstWS();
-            Assertion.Assert(word.Equals("World!\n"));
+            Assert.IsTrue(word.Equals("World!\n"));
             word = cvsStream.ReadToFirstWS();
-            Assertion.Assert(word.Equals("Goodbye\n"));
+            Assert.IsTrue(word.Equals("Goodbye\n"));
 
             cvsStream.BaseStream.Close();
         }

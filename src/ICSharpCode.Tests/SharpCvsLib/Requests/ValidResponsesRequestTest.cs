@@ -68,11 +68,11 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             // split the responses in the request into seperate strings
             responses = requestString.Split(null);
 
-            Assertion.Assert(responses.Length > 1);
-            Assertion.AssertEquals(responses[0], "Valid-responses");
+            Assert.IsTrue(responses.Length > 1);
+            Assert.AreEqual(responses[0], "Valid-responses");
 
-            Assertion.Assert(!request.IsResponseExpected);
-            Assertion.Assert(!request.DoesModifyConnection);
+            Assert.IsTrue(!request.IsResponseExpected);
+            Assert.IsTrue(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             // Check that we really do support each of these responses
             for (int responseNum = 1; responseNum < responses.Length; responseNum++) {
                 IResponse response = ResponseFactory.CreateResponse(responses[responseNum]);
-                Assertion.AssertNotNull(responses[responseNum] + " not really supported", response);
+                Assert.IsNotNull(response, responses[responseNum] + " not really supported");
             }
         }
 
@@ -134,7 +134,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             responses = requestString.Split(null);
 
             Assembly cvsLibAssembly = Assembly.GetAssembly(request.GetType());
-            Assertion.AssertNotNull("Can't load sharpcvslib assembly", cvsLibAssembly);
+            Assert.IsNotNull(cvsLibAssembly);
 
             Type[] types = cvsLibAssembly.GetTypes();
             foreach(Type t in types) {
@@ -147,8 +147,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
                 }
             }
 
-            Assertion.AssertEquals("Mismatch betwen response classes and the Valid-responses request",
-                                responseClasses, responses.Length - 1);
+            Assert.AreEqual(responseClasses, responses.Length - 1, "Mismatch betwen response classes and the Valid-responses request");
         }
     }
 }

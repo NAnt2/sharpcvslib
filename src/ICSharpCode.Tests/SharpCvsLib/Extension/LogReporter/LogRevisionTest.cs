@@ -54,14 +54,14 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
         public void TestDefaultCtor () {
             LogRevision logRevision = new LogRevision();
 
-            Assertion.AssertEquals("", logRevision.Revision);
-            //Assertion.AssertEquals(DateTime.Now, this.Timestamp);
-            Assertion.AssertEquals("", logRevision.Author);
-            Assertion.AssertEquals("", logRevision.State);
-            Assertion.AssertEquals("", logRevision.Comment);
-            Assertion.AssertEquals(0, logRevision.LinesAdded);
-            Assertion.AssertEquals(0, logRevision.LinesDeleted);
-            Assertion.AssertEquals("", logRevision.Branches);
+            Assert.AreEqual("", logRevision.Revision);
+            //Assert.AreEqual(DateTime.Now, this.Timestamp);
+            Assert.AreEqual("", logRevision.Author);
+            Assert.AreEqual("", logRevision.State);
+            Assert.AreEqual("", logRevision.Comment);
+            Assert.AreEqual(0, logRevision.LinesAdded);
+            Assert.AreEqual(0, logRevision.LinesDeleted);
+            Assert.AreEqual("", logRevision.Branches);
         }
     
         /// <summary>
@@ -72,34 +72,34 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
             LogRevision logRevision = new LogRevision();
 
             logRevision.Revision = "1.2";
-            Assertion.AssertEquals("1.2", logRevision.Revision);
+            Assert.AreEqual("1.2", logRevision.Revision);
             
             logRevision.Timestamp = new DateTime(2004, 3, 7, 23, 50, 48, 123); 
-            Assertion.AssertEquals(2004, logRevision.Timestamp.Year);
-            Assertion.AssertEquals(3, logRevision.Timestamp.Month);
-            Assertion.AssertEquals(7, logRevision.Timestamp.Day);
-            Assertion.AssertEquals(23, logRevision.Timestamp.Hour);
-            Assertion.AssertEquals(50, logRevision.Timestamp.Minute);
-            Assertion.AssertEquals(48, logRevision.Timestamp.Second);
-            Assertion.AssertEquals(123, logRevision.Timestamp.Millisecond);
+            Assert.AreEqual(2004, logRevision.Timestamp.Year);
+            Assert.AreEqual(3, logRevision.Timestamp.Month);
+            Assert.AreEqual(7, logRevision.Timestamp.Day);
+            Assert.AreEqual(23, logRevision.Timestamp.Hour);
+            Assert.AreEqual(50, logRevision.Timestamp.Minute);
+            Assert.AreEqual(48, logRevision.Timestamp.Second);
+            Assert.AreEqual(123, logRevision.Timestamp.Millisecond);
             
             logRevision.Author = "gne";
-            Assertion.AssertEquals("gne", logRevision.Author);
+            Assert.AreEqual("gne", logRevision.Author);
             
             logRevision.State = "Exp";
-            Assertion.AssertEquals("Exp", logRevision.State);
+            Assert.AreEqual("Exp", logRevision.State);
             
             logRevision.Comment = "my comment";
-            Assertion.AssertEquals("my comment", logRevision.Comment);
+            Assert.AreEqual("my comment", logRevision.Comment);
             
             logRevision.LinesAdded = 15;
-            Assertion.AssertEquals(15, logRevision.LinesAdded);
+            Assert.AreEqual(15, logRevision.LinesAdded);
             
             logRevision.LinesDeleted = 23;
-            Assertion.AssertEquals(23, logRevision.LinesDeleted);
+            Assert.AreEqual(23, logRevision.LinesDeleted);
             
             logRevision.Branches = "1.1";
-            Assertion.AssertEquals("1.1", logRevision.Branches);
+            Assert.AreEqual("1.1", logRevision.Branches);
         }
     }
 }

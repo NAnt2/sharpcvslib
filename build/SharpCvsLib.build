@@ -46,7 +46,7 @@
                     <attribute type="ApplicationNameAttribute" value="${name.project}" />
                 </attributes>
                 <references>
-                    <includes name="System.EnterpriseServices.dll" />
+                    <include name="System.EnterpriseServices.dll" />
                 </references>
             </asminfo>    
         </ifnot>    
@@ -57,25 +57,25 @@
         <mkdir dir="${dir.bin}/tests" />
         <copy todir="${dir.bin}">
             <fileset basedir="${dir.lib}">
-                <includes name="${lib.zip}" />
+                <include name="${lib.zip}" />
             </fileset>
         </copy>        
         <copy todir="${dir.bin}">
             <fileset basedir="${dir.lib.ext}">
-                <includes name="${lib.log4net}" />
-                <includes name="${lib.nunit}" />
+                <include name="${lib.log4net}" />
+                <include name="${lib.nunit}" />
             </fileset>
         </copy>
         <copy todir="${dir.bin}">
             <fileset basedir="${dir.conf}">
-                <includes name="*.config" />
+                <include name="*.config" />
             </fileset>
         </copy>
         <copy   file="${dir.conf}/${name.top-level}.${name.project}.${name.tests}.dll.config" 
                 tofile="${dir.bin}/${name.top-level}.${name.project}.${name.tests}-sample.dll.config" />
         <copy todir="${dir.bin}">
             <fileset basedir="${dir.doc}">
-                <includes name="NamespaceSummary.xml" />
+                <include name="NamespaceSummary.xml" />
             </fileset>
         </copy>
         
@@ -136,12 +136,12 @@
         
         <ndoc verbose="true">
             <assemblies basedir="${dir.bin}">
-                <includes name="${name.top-level}.${name.lib}.dll" />
-                <includes name="${name.console.exe}.exe" />
-                <excludes name="${name.top-level}.${name.lib}.${name.tests}.dll"/>
+                <include name="${name.top-level}.${name.lib}.dll" />
+                <include name="${name.console.exe}.exe" />
+                <exclude name="${name.top-level}.${name.lib}.${name.tests}.dll"/>
             </assemblies>
             <summaries basedir="${dir.bin}">
-                <includes name="NamespaceSummary.xml"/>
+                <include name="NamespaceSummary.xml"/>
             </summaries>
             <documenters>
                 <documenter name="MSDN">
@@ -201,50 +201,50 @@
             this will be used for both the source and binary release -->
         <copy todir="${dir.dist}/doc" flatten="true">
             <fileset basedir="${dir.doc}">
-                <includes name="**/*.chm"/>
-                <includes name="license.html"/>
+                <include name="**/*.chm"/>
+                <include name="license.html"/>
             </fileset>
         </copy>
         <!-- Copy the binary and config files from the bin directory -->
         <copy todir="${dir.dist}/bin">
             <fileset basedir="${dir.base}">
-                <includes name="${dir.bin}/*.dll"/>
-                <includes name="${dir.bin}/*.exe"/>
-                <includes name="${dir.bin}/*.config"/>
+                <include name="${dir.bin}/*.dll"/>
+                <include name="${dir.bin}/*.exe"/>
+                <include name="${dir.bin}/*.config"/>
             </fileset>
         </copy>
         
         <copy todir="${dir.dist}/bin/doc" flatten="true">
             <fileset basedir="${dir.dist}/doc">
-                <includes name="**/*.chm"/>
-                <includes name="license.html"/>
+                <include name="**/*.chm"/>
+                <include name="license.html"/>
             </fileset>
         </copy>
         
         <copy todir="${dir.dist}/src">
             <fileset basedir="${dir.base}">
-                <includes name="${dir.external-build}**" />
-                <includes name="${dir.bin}**" />
-                <includes name="${dir.build}**" />
-                <includes name="${dir.conf}**" />
-                <includes name="${dir.lib}**" />
-                <includes name="${dir.src}**" />
-                <includes name="${dir.tools}/nant**" />
+                <include name="${dir.external-build}**" />
+                <include name="${dir.bin}**" />
+                <include name="${dir.build}**" />
+                <include name="${dir.conf}**" />
+                <include name="${dir.lib}**" />
+                <include name="${dir.src}**" />
+                <include name="${dir.tools}/nant**" />
                 
-                <excludes name="${dir.doc}**" />
-                <excludes name="**/*.log.*" />
-                <excludes name="**/bin/**" />
-                <excludes name="**/obj/**" />
-                <excludes name="**/*.suo" />
-                <excludes name="**/*.user" />
+                <exclude name="${dir.doc}**" />
+                <exclude name="**/*.log.*" />
+                <exclude name="**/bin/**" />
+                <exclude name="**/obj/**" />
+                <exclude name="**/*.suo" />
+                <exclude name="**/*.user" />
 
             </fileset>
         </copy>
 
         <copy todir="${dir.dist}/src/doc" flatten="true">
             <fileset basedir="${dir.dist}/doc">
-                <includes name="**/*.chm"/>
-                <includes name="license.html"/>
+                <include name="**/*.chm"/>
+                <include name="license.html"/>
             </fileset>
         </copy>
 
@@ -254,7 +254,7 @@
     <target name="integration" depends="src.update, dist">
         <copy todir="${ccnet.log.dir}/${label-to-apply}">
             <fileset basedir="${dir.dist}">
-                <includes name="**"/>
+                <include name="**"/>
             </fileset>
         </copy>
     </target>
@@ -275,13 +275,13 @@
         
         <zip zipfile="${dir.output}/${name.lib}-${assembly.version}-bin.zip">
             <fileset basedir="${dir.dist}">
-                <includes name="bin/**/*.*" />
+                <include name="bin/**/*.*" />
             </fileset>
         </zip>
         
         <zip zipfile="${dir.output}/${name.lib}-${assembly.version}-src.zip">
             <fileset basedir="${dir.dist}">
-                <includes name="src/**/*.*" />
+                <include name="src/**/*.*" />
             </fileset>
         </zip>
 

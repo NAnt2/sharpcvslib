@@ -89,11 +89,11 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
             
             // the xml declaration
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.XmlDeclaration, reader.NodeType);
+            Assert.AreEqual(XmlNodeType.XmlDeclaration, reader.NodeType);
 
             // the root element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.Element, reader.NodeType);
+            Assert.AreEqual(XmlNodeType.Element, reader.NodeType);
 
             CheckStart(reader, timestamp, "Gerald Evans");
             FileRevisionTest.Check(reader, "testfile.cs", "1.4", "1.3");
@@ -102,8 +102,8 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
             
             // the end of the root element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.EndElement, reader.NodeType);
-            Assertion.AssertEquals("test", reader.Name);
+            Assert.AreEqual(XmlNodeType.EndElement, reader.NodeType);
+            Assert.AreEqual("test", reader.Name);
         }
  
         /// <summary>
@@ -116,56 +116,56 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
         {
             // the entry element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.Element, reader.NodeType);
-            Assertion.AssertEquals("entry", reader.Name);
+            Assert.AreEqual(XmlNodeType.Element, reader.NodeType);
+            Assert.AreEqual("entry", reader.Name);
             
             // the date element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.Element, reader.NodeType);
-            Assertion.AssertEquals("date", reader.Name);
+            Assert.AreEqual(XmlNodeType.Element, reader.NodeType);
+            Assert.AreEqual("date", reader.Name);
             
             // the date value
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.Text, reader.NodeType);
+            Assert.AreEqual(XmlNodeType.Text, reader.NodeType);
     	    string outputDateFormat = "yyyy'-'MM'-'dd";
-            Assertion.AssertEquals(XmlNodeType.Text, reader.NodeType);
-            Assertion.AssertEquals(timestamp.ToString(outputDateFormat), reader.Value);
+            Assert.AreEqual(XmlNodeType.Text, reader.NodeType);
+            Assert.AreEqual(timestamp.ToString(outputDateFormat), reader.Value);
             
             // the end of the date element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.EndElement, reader.NodeType);
-            Assertion.AssertEquals("date", reader.Name);
+            Assert.AreEqual(XmlNodeType.EndElement, reader.NodeType);
+            Assert.AreEqual("date", reader.Name);
             
             // the time element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.Element, reader.NodeType);
-            Assertion.AssertEquals("time", reader.Name);
+            Assert.AreEqual(XmlNodeType.Element, reader.NodeType);
+            Assert.AreEqual("time", reader.Name);
             
             // the time value
             reader.Read();
     	    string outputTimeFormat = "HH':'mm";
-            Assertion.AssertEquals(XmlNodeType.Text, reader.NodeType);
-            Assertion.AssertEquals(timestamp.ToString(outputTimeFormat), reader.Value);
+            Assert.AreEqual(XmlNodeType.Text, reader.NodeType);
+            Assert.AreEqual(timestamp.ToString(outputTimeFormat), reader.Value);
             
             // the end of the time element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.EndElement, reader.NodeType);
-            Assertion.AssertEquals("time", reader.Name);
+            Assert.AreEqual(XmlNodeType.EndElement, reader.NodeType);
+            Assert.AreEqual("time", reader.Name);
             
             // the author element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.Element, reader.NodeType);
-            Assertion.AssertEquals("author", reader.Name);
+            Assert.AreEqual(XmlNodeType.Element, reader.NodeType);
+            Assert.AreEqual("author", reader.Name);
             
             // the author value
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.CDATA, reader.NodeType);
-            Assertion.AssertEquals("Gerald Evans", reader.Value);
+            Assert.AreEqual(XmlNodeType.CDATA, reader.NodeType);
+            Assert.AreEqual("Gerald Evans", reader.Value);
             
             // the end of the author element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.EndElement, reader.NodeType);
-            Assertion.AssertEquals("author", reader.Name);
+            Assert.AreEqual(XmlNodeType.EndElement, reader.NodeType);
+            Assert.AreEqual("author", reader.Name);
         }
         
         /// <summary>
@@ -179,23 +179,23 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
             
             // the msg element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.Element, reader.NodeType);
-            Assertion.AssertEquals("msg", reader.Name);
+            Assert.AreEqual(XmlNodeType.Element, reader.NodeType);
+            Assert.AreEqual("msg", reader.Name);
             
             // the msg value
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.CDATA, reader.NodeType);
-            Assertion.AssertEquals("checkin comment", reader.Value);
+            Assert.AreEqual(XmlNodeType.CDATA, reader.NodeType);
+            Assert.AreEqual("checkin comment", reader.Value);
             
             // the end of the msg element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.EndElement, reader.NodeType);
-            Assertion.AssertEquals("msg", reader.Name);
+            Assert.AreEqual(XmlNodeType.EndElement, reader.NodeType);
+            Assert.AreEqual("msg", reader.Name);
             
             // the end of the entry element
             reader.Read();
-            Assertion.AssertEquals(XmlNodeType.EndElement, reader.NodeType);
-            Assertion.AssertEquals("entry", reader.Name);
+            Assert.AreEqual(XmlNodeType.EndElement, reader.NodeType);
+            Assert.AreEqual("entry", reader.Name);
         }
     }
 }
