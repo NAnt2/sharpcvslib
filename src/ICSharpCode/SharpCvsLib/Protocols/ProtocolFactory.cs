@@ -22,10 +22,14 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
 
         private void PopulateProtocols() {
             foreach (Type type in this.GetType().Assembly.GetTypes()) {
-                if (!type.IsAbstract && type.IsSubclassOf(typeof(IProtocol))) {
-                    ProtocolAttribute protocol = 
+                if (type.IsAbstract) {
+                    continue;
+                }
+                if (type.IsSubclassOf(typeof(AbstractProtocol))) {
+                    ProtocolAttribute protocolAttribute = 
                         (ProtocolAttribute)type.GetCustomAttributes(typeof(ProtocolAttribute), false)[0];
-                    this.Protocols.Add(protocol.Protocol, type);
+                    IProtocol protocol = (IProtocol)Activator.CreateInstance(type, false);
+                    this.Protocols.Add(protocolAttribute.Protocol, protocol);
                 }
             }
         }
@@ -46,16 +50,17 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
         /// Get the specified protocol.  If the protocol does not exist an exception is
         /// thrown.
         /// </summary>
-        /// <param name="protocol">String value of the protocol to get.</param>
+        /// <param name="protocolName">String value of the protocol to get.</param>
         /// <returns>The requested implementation of <see cref="IProtocol"/>.</returns>
         /// <exception cref="UnsupportedProtocolException">If the specified protocol does
         /// not exist.</exception>
-        public IProtocol GetProtocol(string protocol) {
-            if (!this.Exists(protocol)) {
+        public IProtocol GetProtocol(string protocolName) {
+            if (!this.Exists(protocolName)) {
                 throw new UnsupportedProtocolException (
-                    string.Format("Unknown protocol=[{0}]", protocol));
+                    string.Format("Unknown protocol=[{0}]", protocolName));
             }
-            return (IProtocol)this.Protocols[protocol];
+            object protocol = this.Protocols[protocolName];
+            return (IProtocol)protocol;
         }
 	}
 }

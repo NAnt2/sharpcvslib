@@ -1207,7 +1207,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                         if (cvsRootTemp.Equals(cvsRoot)) {
                             return passLineSplit[i + 1];
                         } 
-                    } catch (ICSharpCode.SharpCvsLib.Misc.CvsRootParseException) {
+                    } catch (ICSharpCode.SharpCvsLib.Exceptions.CvsRootParseException) {
                         // ignore, no match
                     }
                 }

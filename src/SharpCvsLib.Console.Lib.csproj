@@ -194,6 +194,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\StatusCommandParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\UpdateCommandParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

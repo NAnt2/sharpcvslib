@@ -75,6 +75,11 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         public event MessageEventHandler UnspecifiedResponseMessageEvent;
 
         /// <summary>
+        /// Listen for generic message events from the server.
+        /// </summary>
+        public event MessageEventHandler MessageResponseMessageEvent;
+
+        /// <summary>
         /// Default constructor.
         /// </summary>
 		public ResponseMessageEvents() {
@@ -114,7 +119,12 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                 if (null != ListResponseMessageEvent) {
                     this.ListResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.EMPTY_PREFIX));
                 }
-            } else {
+            } else if (responseType == typeof(MessageResponse)) {
+                if (null != MessageResponseMessageEvent) {
+                    this.MessageResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.EMPTY_PREFIX));
+                }
+            }
+            else {
                 if (null != this.UnspecifiedResponseMessageEvent) {
                     this.UnspecifiedResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.DEFAULT_PREFIX));
                 }

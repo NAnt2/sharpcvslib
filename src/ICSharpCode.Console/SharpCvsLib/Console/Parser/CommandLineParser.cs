@@ -523,6 +523,21 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         this.currentWorkingDirectory = 
                             rtagCommand.CurrentWorkingDirectory;
                         break;
+                    case "st":
+                    case "stat":
+                    case "status":
+                        string[] commandArgs = new string[arguments.Length - i];
+                        Array.Copy(arguments, i, commandArgs, 0, arguments.Length - i);
+                        factory = 
+                            new CommandParserFactory("status", commandArgs, 
+                            this.cvsRoot, this.currentWorkingDirectory);
+
+                        parser = factory.GetCommandParser();
+                        i = arguments.Length;
+                        command = parser.CreateCommand();
+                        this.currentWorkingDirectory = 
+                            parser.CurrentWorkingDirectory;
+                        break;
                     case "up":
                     case "upd":
                     case "update":

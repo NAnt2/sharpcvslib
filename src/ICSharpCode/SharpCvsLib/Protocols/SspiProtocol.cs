@@ -53,7 +53,7 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
 	/// Handle connect and authentication for the pserver protocol.
 	/// </summary>
 	[Protocol("sspi")]
-	public class SspiProtocol : AbstractProtocol {
+	public class SspiProtocol : AbstractProtocol, IProtocol {
         private readonly ILog LOGGER =
             LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 

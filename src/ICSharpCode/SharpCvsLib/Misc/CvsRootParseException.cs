@@ -40,7 +40,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 	///     a root that is not understood by the server.  
 	/// </summary>
 	[Obsolete ("Use ICSharpCode.SharpCvsLib.Exceptions.CvsRootParseException.")]
-	public class CvsRootParseException : Exception{
+	public class CvsRootParseException : ICSharpCode.SharpCvsLib.Exceptions.CvsRootParseException{
         /// <summary>
         /// Indicate that an invalid cvsroot has been passed into the library.
         /// </summary>

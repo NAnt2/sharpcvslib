@@ -38,33 +38,34 @@ using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
 
-/// <summary>
-/// Message response.
-/// </summary>
-public class MessageResponse : AbstractResponse {
-    private bool terminating;
-    private readonly ILog LOGGER =
-        LogManager.GetLogger (typeof (MessageResponse));
-
     /// <summary>
-    /// Process the message response.
+    /// Message response.
     /// </summary>
-    public override void Process() {
-        string message = this.ReadLine();
-        terminating = message.Trim().ToUpper() == "OK";
-        // Fire message event to the client app
-        Services.SendMessage("cvs server: M " + message);
-        String msg = "cvs server: M " + message;
-        LOGGER.Debug (msg);
-    }
+    public class MessageResponse : AbstractResponse {
+        private bool terminating;
+        private readonly ILog LOGGER =
+            LogManager.GetLogger (typeof (MessageResponse));
 
-    /// <summary>
-    /// Indicator stating whether the response is terminating or not.
-    /// </summary>
-    public override bool IsTerminating {
-        get {return terminating;}
+        /// <summary>
+        /// Process the message response.
+        /// </summary>
+        public override void Process() {
+            string message = this.ReadLine();
+            terminating = message.Trim().ToUpper() == "OK";
+            // Fire message event to the client app
+            Services.SendMessage("cvs server: M " + message);
+            String msg = "cvs server: M " + message;
+            LOGGER.Debug (msg);
+            Services.ResponseMessageEvents.SendResponseMessage(msg, this.GetType());
+        }
+
+        /// <summary>
+        /// Indicator stating whether the response is terminating or not.
+        /// </summary>
+        public override bool IsTerminating {
+            get {return terminating;}
+        }
     }
-}
 }
 
 

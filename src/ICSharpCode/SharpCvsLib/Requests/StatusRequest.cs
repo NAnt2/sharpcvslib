@@ -41,18 +41,14 @@ public class StatusRequest : AbstractRequest
     /// Request a status on a previous entry.
     /// </summary>
     public override string RequestString {
-        get {
-            return "status\n";
-        }
+        get { return "status\n"; }
     }
 
     /// <summary>
     /// <code>true</code>, a response is expected.
     /// </summary>
     public override bool IsResponseExpected {
-        get {
-            return true;
-        }
+        get { return true; }
     }
 }
 }

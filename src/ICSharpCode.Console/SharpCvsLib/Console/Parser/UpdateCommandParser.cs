@@ -176,7 +176,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
             try {
                 this.cvsRootVar = new CvsRoot(root.FileContents);
-            } catch (CvsRootParseException) {
+            } catch (ICSharpCode.SharpCvsLib.Exceptions.CvsRootParseException) {
                 this.InvalidRepository();
             }
 

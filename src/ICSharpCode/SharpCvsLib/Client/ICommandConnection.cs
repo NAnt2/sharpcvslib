@@ -34,6 +34,7 @@
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Requests;
+using ICSharpCode.SharpCvsLib.Responses;
 
 
 namespace ICSharpCode.SharpCvsLib.Client {
@@ -58,5 +59,10 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// <param name="filename"></param>
         /// <param name="isBinary"></param>
         void SendFile(string filename, bool isBinary);
+
+        /// <summary>
+        /// Message event for server responses.
+        /// </summary>
+        ResponseMessageEvents ResponseMessageEvents {get;}
     }
 }
