@@ -36,6 +36,7 @@
     <File name="..\src\ICSharpCode\SharpCvsLib\Commands\RemoveCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Commands\UpdateCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Commands\RTagCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Commands\XmlLogCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Misc\CvsRoot.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Misc\PasswordScrambler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Misc\WorkingDirectory.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -133,7 +134,6 @@
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\UnsupportedResponseException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Misc\CvsRootParseException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Misc\UnsupportedProtocolException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name="..\src\ICSharpCode\SharpCvsLib\AssemblyInfo.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\NewEntryResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\MergedResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\RemovedResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
