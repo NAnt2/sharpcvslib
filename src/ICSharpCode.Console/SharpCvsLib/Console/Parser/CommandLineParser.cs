@@ -473,8 +473,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             this.repository = String.Empty;
                         }
                         try {
-                            UpdateCommand updateCommand = 
-                                new UpdateCommand(this.CvsRoot, repository, options);
+                            UpdateCommandParser updateCommand = 
+                                new UpdateCommandParser(this.CvsRoot, repository, options);
                             command = updateCommand.CreateCommand ();
                             this.currentWorkingDirectory = 
                                 updateCommand.CurrentWorkingDirectory;

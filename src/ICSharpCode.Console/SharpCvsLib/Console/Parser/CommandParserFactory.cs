@@ -106,8 +106,15 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 case "xml":
                     parser = XmlLogCommandParser.GetInstance();
                     break;
+                case "checkout":
                 case "co":
+                case "get":
                     parser = CheckoutCommandParser.GetInstance();
+                    break;
+                case "up":
+                case "upd":
+                case "update":
+                    parser = UpdateCommandParser.GetInstance();
                     break;
                 default:
                     throw new ArgumentException(
