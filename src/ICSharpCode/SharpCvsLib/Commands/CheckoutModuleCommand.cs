@@ -40,6 +40,8 @@ using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.FileSystem;
 
+using log4net;
+
 namespace ICSharpCode.SharpCvsLib.Commands { 
 
     /// <summary>
@@ -49,6 +51,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     {
         private WorkingDirectory workingDirectory;
 
+        private ILog LOGGER = LogManager.GetLogger (typeof (CheckoutModuleCommand));
         /// <summary>
         /// Constructor
         /// </summary>
@@ -97,6 +100,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 
             connection.SubmitRequest(new CheckoutRequest());
             Manager manager = new Manager ();
+            LOGGER.Info ("looking for directories to add to the entries file in=[" + 
+                         this.workingDirectory.LocalDirectory + "]");
             manager.AddDirectories (this.workingDirectory.LocalDirectory);
 
         }

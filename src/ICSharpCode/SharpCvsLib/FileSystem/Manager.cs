@@ -75,6 +75,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 LOGGER.Error (e);
                 return;
             }
+            LOGGER.Error ("path=[" + path + "]");
             foreach (String directory in directories) {
                 // Only add the directory if the folder already contains a
                 //    cvs directory.
@@ -161,7 +162,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 String msg = "CreateDirectory from path.  " + 
                     "path=[" + path + "]" +
                     "hasCvsDir=[" + hasCvsDir + "]";
-                LOGGER.Debug (msg);
+                LOGGER.Debug (msg);                
             }
             if (hasCvsDir) {
                 String upPath = Directory.GetParent (path).FullName;

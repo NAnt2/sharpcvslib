@@ -105,6 +105,8 @@
     <File name=".\src\ICSharpCode\SharpCvsLib\FileSystem\Tag.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode\SharpCvsLib\Requests\RequestMessageEventHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode\SharpCvsLib\Requests\RequestMessageEventArgs.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode\SharpCvsLib\Util" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode\SharpCvsLib\Util\DateParser.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto=".\lib\ICSharpCode.SharpZipLib.dll" localcopy="True" />

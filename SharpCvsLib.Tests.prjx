@@ -13,12 +13,15 @@
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\FileSystem\RootTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\FileSystem\EntryTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\FileSystem\ManagerTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\FileSystem\FileComparator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\FileSystem\FactoryTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\FileSystem\PathTranslatorTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\FileSystem\TagTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Messages" subtype="Directory" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Messages\UpdateMessageTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Config" subtype="Directory" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Config\SharpCvsLibConfigHandlerTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Commands\UpdateCommandTestCvsnt.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\FileSystem\FileComparator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto=".\lib\ext\log4net.dll" localcopy="True" />

@@ -51,15 +51,44 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 			LogManager.GetLogger (typeof(EntryTest));
 	    
 	    /// <summary>
-	    ///     Test entry 1.
+	    ///     Test entry 1: Standard checkout file.
 	    /// </summary>
     	public const String CHECKOUT_ENTRY = 
     	        "/CvsFileManagerTest.cs/1.1/Tue May 13 05:10:17 2003//"; 
 	    /// <summary>
-	    ///     Test entry 2.
+	    ///     Test entry 2: Date in RFC1123 format.
 	    /// </summary>
         public const String CHECKOUT_ENTRY_2 =
                 "/EntryTest.cs/1.1/03 Jan 2003 04:07:36 -0000//";
+        private const String NORMALISED_ENTRY_2 =
+                "/EntryTest.cs/1.1/Fri Jan 03 04:07:36 2003//";
+	    /// <summary>
+	    ///     Test entry 3: Checkout file with conflict, binary flag and tag.
+	    /// </summary>
+    	public const String CHECKOUT_ENTRY_3 = 
+    	        "/ICSharpCode.SharpZipLib.dll/1.2/Sat Jun 21 03:22:02 2003+Sat Jun 21 03:22:03 2003/-kb/TV1.0"; 
+	    /// <summary>
+	    ///     Test entry 4: Subdirectory.
+	    /// </summary>
+        public const String DIR_ENTRY =
+                "D/ICSharpCode.Tests////";
+	    /// <summary>
+	    ///     Test entry 5: Too many arguments in entry.
+	    /// </summary>
+        public const String INVALID_ENTRY_1 =
+    	        "/CvsFileManagerTest.cs/1.1/Tue May 13 05:10:17 2003///"; 
+	    /// <summary>
+	    ///     Test entry 6: Not enough arguments in entry.
+	    /// </summary>
+        public const String INVALID_ENTRY_2 =
+    	        "/CvsFileManagerTest.cs/1.1/Tue May 13 05:10:17 2003/"; 
+	    /// <summary>
+	    ///     Test entry 7: Invalid date in entry.
+	    /// </summary>
+        public const String INVALID_ENTRY_3 =
+    	        "/CvsFileManagerTest.cs/1.1/Result of merge//"; 
+                
+        private readonly String ENTRY_FILE_NAME = "Entries";
 
 	    private Manager manager;	    
 		/// <summary>
@@ -92,9 +121,15 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void TestParseCheckoutEntry () {
             Entry entry = new Entry (TestConstants.LOCAL_PATH, CHECKOUT_ENTRY);
             
+            Assertion.Assert (entry.Path.Equals (TestConstants.LOCAL_PATH));
+            Assertion.Assert (entry.Filename.Equals (ENTRY_FILE_NAME));
+            
             Assertion.Assert (entry.Name.Equals ("CvsFileManagerTest.cs"));
             Assertion.Assert (entry.Revision.Equals ("1.1"));
             Assertion.Assert (entry.Date.Equals ("Tue May 13 05:10:17 2003"));
+            Assertion.Assert (entry.Conflict == null);
+            Assertion.Assert (entry.Options.Equals (""));
+            Assertion.Assert (entry.Tag.Equals (""));
             
             Assertion.Assert (entry.TimeStamp.Day == 13);
             Assertion.Assert (entry.TimeStamp.Month == 5);
@@ -107,6 +142,110 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Assertion.Assert (entry.IsDirectory == false);
             
             Assertion.Assert (entry.FileContents.Equals (CHECKOUT_ENTRY));
+        }
+        
+        /// <summary>
+        /// Test parsing of the RFC1123 date format.
+        /// </summary>
+        [Test]
+        public void TestParseRfc1123Entry () {
+            Entry entry = new Entry (TestConstants.LOCAL_PATH, CHECKOUT_ENTRY_2);
+            
+            Assertion.Assert (entry.Path.Equals (TestConstants.LOCAL_PATH));
+            Assertion.Assert (entry.Filename.Equals (ENTRY_FILE_NAME));
+            
+            Assertion.Assert (entry.Name.Equals ("EntryTest.cs"));
+            Assertion.Assert (entry.Revision.Equals ("1.1"));
+            // TODO: check what format the date should come back in
+//          Assertion.Assert (entry.Date, entry.Date.Equals ("Fri Jan 03 04:07:36"));
+            Assertion.Assert (entry.Date, entry.Date.Equals ("03 Jan 2003 04:07:36 -0000"));
+            Assertion.Assert (entry.Conflict == null);
+            Assertion.Assert (entry.Options.Equals (""));
+            Assertion.Assert (entry.Tag.Equals (""));
+            
+            Assertion.Assert (entry.TimeStamp.Day == 3);
+            Assertion.Assert (entry.TimeStamp.Month == 1);
+            Assertion.Assert (entry.TimeStamp.Year == 2003);
+            Assertion.Assert (entry.TimeStamp.Hour == 4);
+            Assertion.Assert (entry.TimeStamp.Minute == 7);
+            Assertion.Assert (entry.TimeStamp.Second == 36);
+            
+            Assertion.Assert (entry.IsBinaryFile == false);
+            Assertion.Assert (entry.IsDirectory == false);
+            
+            Assertion.Assert (entry.FileContents.Equals (NORMALISED_ENTRY_2));
+        }
+        
+        /// <summary>
+        /// Test parsing of an entry with conflict, options and the tag field populated.
+        /// </summary>
+        [Test]
+        public void TestParseFullCheckoutEntry () {
+            Entry entry = new Entry (TestConstants.LOCAL_PATH, CHECKOUT_ENTRY_3);
+            
+            Assertion.Assert (entry.Name.Equals ("ICSharpCode.SharpZipLib.dll"));
+            Assertion.Assert (entry.Revision.Equals ("1.2"));
+            Assertion.Assert (entry.Date.Equals ("Sat Jun 21 03:22:02 2003"));
+            Assertion.Assert (entry.Conflict.Equals ("Sat Jun 21 03:22:03 2003"));
+            Assertion.Assert (entry.Options.Equals ("-kb"));
+            Assertion.Assert (entry.Tag.Equals ("TV1.0"));
+            
+            Assertion.Assert (entry.IsBinaryFile == true);
+            Assertion.Assert (entry.IsDirectory == false);
+            
+            Assertion.Assert (entry.FileContents.Equals (CHECKOUT_ENTRY_3));
+        }
+        
+        /// <summary>
+        /// Test parsing of a sub-directory entry.
+        /// The items that should be parsed out of the cvs string are:
+        ///         <ol>
+        ///             <li>name</li>
+        ///         </ol>
+        /// </summary>
+        [Test]
+        public void TestParseDirEntry () {
+            Entry entry = new Entry (TestConstants.LOCAL_PATH, DIR_ENTRY);
+            
+            Assertion.Assert (entry.Name.Equals ("ICSharpCode.Tests"));
+            // TODO: Check if it makes any sense to test Revision, Date, etc.
+            
+            Assertion.Assert (entry.IsDirectory == true);
+            
+            Assertion.Assert (entry.FileContents.Equals (DIR_ENTRY));
+        }
+        
+        /// <summary>
+        /// Test too many args.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestTooManyArgsEntry () {
+            Entry entry = new Entry (TestConstants.LOCAL_PATH, INVALID_ENTRY_1);
+        }
+        
+        /// <summary>
+        /// Test not enough args.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(ArgumentException))]
+        public void TestNotEnoughArgsEntry () {
+            Entry entry = new Entry (TestConstants.LOCAL_PATH, INVALID_ENTRY_2);
+        }
+        
+        /// <summary>
+        /// Test invalid date format.
+        /// 
+        /// TODO: Check if this should really throw an exception.
+        /// Cederqvist seems to imply that an invalid date is OK,
+        /// and that the only thing that is important is whether 
+        /// the timestamp of the actual file matches what's in 
+        /// this field or not.
+        /// </summary>
+        [Test]
+        [ExpectedException(typeof(FormatException))]
+        public void TestInvalidDateEntry () {
+            Entry entry = new Entry (TestConstants.LOCAL_PATH, INVALID_ENTRY_3);
         }
         
         /// <summary>

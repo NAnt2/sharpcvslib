@@ -34,10 +34,13 @@
 
 using System;
 using System.Collections;
-using System.IO;
 using System.Globalization;
+using System.IO;
+using System.Text;
 
 using log4net;
+
+using ICSharpCode.SharpCvsLib.Util;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem { 
 	
@@ -68,19 +71,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 	    
 	    private Tag tagFile        = null;
 
-        /// <summary>
-        ///     Date format for the <code>RFC1123</code> specification.
-        /// </summary>	    
-	    public const String RFC1123 = 
-	        "dd MMM yyyy HH':'mm':'ss '-0000'";
-	    /// <summary>
-	    ///     A standard cvs date format.
-	    /// </summary>
-	    public const String FORMAT_1 =
-	        "ddd MMM dd HH':'mm':'ss yyyy";
-//	        "ddd MMM dd HH:mm:ss yyyy";	    
-		
-		
+
 		/// <summary>
 		///     The name of the entries file.
 		/// </summary>
@@ -235,7 +226,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     				
     				if (date != null) {
     				    String dateString;
-					    dateString = this.TimeStamp.ToString(FORMAT_1, 
+    				    // TODO: Determine if this should be pulled out into a seperate class.
+					    dateString = this.TimeStamp.ToString(DateParser.FORMAT_1, 
 					                                         DateTimeFormatInfo.InvariantInfo);
     					str += dateString;
     				}
@@ -288,55 +280,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		public void SetTimeStamp()
 		{
 		    DateTime timestamp = DateTime.Now;
-		    if (LOGGER.IsDebugEnabled){
-		        String msg = "Converting date string.  " +
-		            "date=[" + date + "]" +
-		            "RFC1123Pattern=[" + RFC1123 + "]" +
-		            "FORMAT_1=[" + FORMAT_1 + "]";
-			    LOGGER.Debug(msg);
-		    }				
 		    
-			if (date != null && date.Length > 0)  {
-				try {
-					timestamp = DateTime.ParseExact(date, 
-					                                RFC1123,
-					                                DateTimeFormatInfo.InvariantInfo);
-				    if (LOGGER.IsDebugEnabled) {
-				        String msg = "Converted using pattern=[" + RFC1123 + "]" +
-				            "timestamp=[" + timestamp + "]";
-				        LOGGER.Debug (msg);
-				    }
-				} catch (Exception e1) {
-				    LOGGER.Error (this, e1);
-					try {
-						timestamp = DateTime.ParseExact("0" + date, 
-						                                RFC1123, 
-						                                DateTimeFormatInfo.InvariantInfo);
-    				    if (LOGGER.IsDebugEnabled) {
-    				        String msg = "Converted using pattern=[0 + " + 
-    				        RFC1123 + "]" +
-    				        "timestamp=[" + timestamp + "]";
-    				        LOGGER.Debug (msg, e1);
-    				    }
-
-					} catch (Exception e2) {
-				        LOGGER.Error (this, e2);
-					    try {
-       						timestamp = DateTime.ParseExact(date, 
-       						                                FORMAT_1, 
-       						                                DateTimeFormatInfo.InvariantInfo);
-        				    if (LOGGER.IsDebugEnabled) {
-        				        String msg = "Converted using pattern=[" + FORMAT_1 + "]" +
-        				            "timestamp=[" + timestamp + "]";
-        				        LOGGER.Debug (msg, e2);
-        				    }
-					    } catch (Exception e3) {
-    				        LOGGER.Error (this, e3);
-					        throw new System.FormatException (this.ToString (), e3);
-					    }
-					}
-				}				
-			}
+		    timestamp = DateParser.ParseCvsDate (date);
 			if (LOGGER.IsDebugEnabled) {
 			    String msg = "timestamp=[" + timestamp + "]";
 			    LOGGER.Debug (msg);

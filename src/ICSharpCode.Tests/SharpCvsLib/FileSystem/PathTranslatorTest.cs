@@ -1,0 +1,176 @@
+#region "Copyright"
+// Copyright (C) 2003 Clayton Harbour
+//
+// This program is free software; you can redistribute it and/or
+// modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation; either version 2
+// of the License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+//
+// As a special exception, the copyright holders of this library give you
+// permission to link this library with independent modules to produce an
+// executable, regardless of the license terms of these independent
+// modules, and to copy and distribute the resulting executable under
+// terms of your choice, provided that you also meet, for each linked
+// independent module, the terms and conditions of the license of that
+// module.  An independent module is a module which is not derived from
+// or based on this library.  If you modify this library, you may extend
+// this exception to your version of the library, but you are not
+// obligated to do so.  If you do not wish to do so, delete this
+// exception statement from your version.
+//
+//    Author: Gerald Evans
+#endregion
+
+using System;
+using System.Collections;
+using System.IO;
+
+using log4net;
+using NUnit.Framework;
+
+using ICSharpCode.SharpCvsLib.Misc;
+
+namespace ICSharpCode.SharpCvsLib.FileSystem {
+	/// <summary>
+    /// Tests the PathTranslator.
+    /// 
+    /// Note: This test is also dependent on the correct functioning
+    /// of WorkingDirectory and CvsRoot.
+	/// </summary>
+	[TestFixture]
+	public class PathTranslatorTest	{
+		private ILog LOGGER = 
+			LogManager.GetLogger (typeof(EntryTest));
+	    
+        private const String ROOT_ENTRY1 = 
+            ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
+	    // TODO: need *nix style dir when testing on *nix
+	    private String LOCAL_DIR1 
+	    {
+	        get {
+	            if (IsWindows) {
+	                return "Z:\\sharpcvslib";
+	            } else if (IsUnix) {
+	                return "/tmp/sharpcvslib";
+	            } else {
+	                String msg = "Path seperator unknown.";
+	                throw new Exception (msg);
+	            }
+	        }
+	    }
+	    
+	    private bool IsUnix {
+	        get {return Path.DirectorySeparatorChar.Equals ('/');}
+	    }
+	    
+	    private bool IsWindows {
+	        get {return Path.DirectorySeparatorChar.Equals ('\\');}
+	    }
+	    private const String REPOS_NAME1 = "sharpcvslib";
+	    private const String REPOS_FILE_PATH1 = "/cvsroot/sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/PathTranslator.cs";
+	    private const String REPOS_DIR_PATH1 = "/cvsroot/sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/";
+	    private const String REPOS_FILE_PATH2 = "/cvsroot/sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/Sharp";
+
+		/// <summary>
+		/// Constructor for customer db test.
+		/// </summary>
+		public PathTranslatorTest () {
+		}
+
+        /// <summary>
+        ///     Perform setup operations for the test.  Create a new
+        ///         file manager object.
+        /// </summary>
+        [SetUp]
+        public void SetUp () {
+        }
+        
+        /// <summary>
+        ///     Clean up any test directories, etc.
+        /// </summary>
+        [TearDown]
+        public void TearDown () {
+		    if (Directory.Exists (TestConstants.LOCAL_PATH)) {
+    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    }            
+        }
+        
+        /// <summary>
+        /// Test translation of a file path
+        /// </summary>
+        [Test]
+        public void TestFilePathTranslation () {
+            CvsRoot cvsRoot;
+            WorkingDirectory workingDirectory;
+            PathTranslator pathTranslator;
+            
+            cvsRoot = new CvsRoot (ROOT_ENTRY1);
+            workingDirectory = new WorkingDirectory (cvsRoot, LOCAL_DIR1, REPOS_NAME1);
+            pathTranslator = new PathTranslator (workingDirectory, REPOS_FILE_PATH1);
+            
+            Assertion.Assert (pathTranslator.CvsRoot, pathTranslator.CvsRoot.Equals ("/cvsroot/sharpcvslib"));
+            Assertion.Assert (pathTranslator.RelativePath, pathTranslator.RelativePath.Equals ("src/ICSharpCode/SharpCvsLib/FileSystem/"));
+            Assertion.Assert (pathTranslator.Filename, pathTranslator.Filename.Equals ("PathTranslator.cs"));
+            String expectedLocalPath = Path.Combine (LOCAL_DIR1, "src/ICSharpCode/SharpCvsLib/FileSystem/");
+            Assertion.Assert (pathTranslator.LocalPath, pathTranslator.LocalPath.Equals (expectedLocalPath));
+            Assertion.Assert (pathTranslator.LocalPathAndFilename, pathTranslator.LocalPathAndFilename.Equals (Path.Combine (expectedLocalPath, "PathTranslator.cs")));
+            Assertion.Assert (pathTranslator.IsDirectory == false);
+        }
+        
+        /// <summary>
+        /// Test translation of a directory path
+        /// </summary>
+        [Test]
+        public void TestDirPathTranslation () {
+            CvsRoot cvsRoot;
+            WorkingDirectory workingDirectory;
+            PathTranslator pathTranslator;
+            
+            cvsRoot = new CvsRoot (ROOT_ENTRY1);
+            workingDirectory = new WorkingDirectory (cvsRoot, LOCAL_DIR1, REPOS_NAME1);
+            pathTranslator = new PathTranslator (workingDirectory, REPOS_DIR_PATH1);
+            
+            Assertion.Assert (pathTranslator.CvsRoot, pathTranslator.CvsRoot.Equals ("/cvsroot/sharpcvslib"));
+            Assertion.Assert (pathTranslator.RelativePath, pathTranslator.RelativePath.Equals ("src/ICSharpCode/SharpCvsLib/FileSystem/"));
+            Assertion.Assert (pathTranslator.Filename, pathTranslator.Filename.Length == 0);
+            String expectedLocalPath = Path.Combine (LOCAL_DIR1, "src/ICSharpCode/SharpCvsLib/FileSystem/");
+            Assertion.Assert (pathTranslator.LocalPath, pathTranslator.LocalPath.Equals (expectedLocalPath));
+            Assertion.Assert (pathTranslator.LocalPathAndFilename, pathTranslator.LocalPathAndFilename.Equals (expectedLocalPath));
+            Assertion.Assert (pathTranslator.IsDirectory == true);
+        }
+        
+        /// <summary>
+        /// Test translation of a file path where the filename is repeated somewhere in the path.
+        /// This exploits a know problem in release 1.3 of PathTranslator.
+        /// </summary>
+        [Test]
+        public void TestRepeatedFileComponent () {
+            CvsRoot cvsRoot;
+            WorkingDirectory workingDirectory;
+            PathTranslator pathTranslator;
+            
+            cvsRoot = new CvsRoot (ROOT_ENTRY1);
+            workingDirectory = new WorkingDirectory (cvsRoot, LOCAL_DIR1, REPOS_NAME1);
+            pathTranslator = new PathTranslator (workingDirectory, REPOS_FILE_PATH2);
+            
+            Assertion.Assert (pathTranslator.CvsRoot, pathTranslator.CvsRoot.Equals ("/cvsroot/sharpcvslib"));
+            Assertion.Assert (pathTranslator.RelativePath, pathTranslator.RelativePath.Equals ("src/ICSharpCode/SharpCvsLib/FileSystem/"));
+            Assertion.Assert (pathTranslator.Filename, pathTranslator.Filename.Equals ("Sharp"));
+            String expectedLocalPath = Path.Combine (LOCAL_DIR1, "src/ICSharpCode/SharpCvsLib/FileSystem/");
+            Assertion.Assert (pathTranslator.LocalPath, pathTranslator.LocalPath.Equals (expectedLocalPath));
+            Assertion.Assert (pathTranslator.LocalPathAndFilename, pathTranslator.LocalPathAndFilename.Equals (Path.Combine (expectedLocalPath, "Sharp")));
+            Assertion.Assert (pathTranslator.IsDirectory == false);
+        }        
+        
+	}
+}
+

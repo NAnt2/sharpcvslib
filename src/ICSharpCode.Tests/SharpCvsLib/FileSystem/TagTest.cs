@@ -26,8 +26,8 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
-//    Author: Clayton Harbour
-//     claytonharbour@sporadicism.com
+//
+//    Author: Gerald Evans
 #endregion
 
 using System;
@@ -44,61 +44,62 @@ using NUnit.Framework;
 namespace ICSharpCode.SharpCvsLib.FileSystem {
 
     /// <summary>
-    ///     Test the root file parses the input string correctly
-    ///         and assigns the correct values to the properties.
+    ///     Test the tag file and its properties.
     /// </summary>
     [TestFixture]
-    public class RootTest {
+    public class TagTest {
         
-        private readonly String ROOT_ENTRY1 = 
-            ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-        private readonly String ROOT_ENTRY2 = 
-            ":pserver:user@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-        private readonly String ROOT_FILE_NAME = "Root";
+        private readonly String TAG_ENTRY1 = 
+            "TVer1.1";
+        private readonly String TAG_ENTRY2 = 
+            "D15 sep 2003 10:05:17";
+        private readonly String TAG_FILE_NAME = "Tag";
         /// <summary>
         ///     Constructor for test case.
         /// </summary>
-        public RootTest () {
+        public TagTest () {
             
         }
         
         /// <summary>
-        ///     Ensure that the values the root is initialized with 
+        ///     Ensure that the values the tag is initialized with 
         ///         can be determined.
         /// </summary>
         [Test]
-        public void CreateRootTest () {
+        public void CreateTagTest () {
             String fullPath = TestConstants.LOCAL_PATH;
-            Root root = new Root (fullPath, this.ROOT_ENTRY1);
+            Tag tag = new Tag (fullPath, this.TAG_ENTRY1);
             
             String cvsPath = Path.Combine (fullPath, "CVS");
-            Assertion.Assert ("Path not set/returned", root.Path.Equals (fullPath));
-            Assertion.Assert ("FileContents not set/returned", root.FileContents.Equals (this.ROOT_ENTRY1));
-            Assertion.Assert ("Filename not correct", root.Filename.Equals (this.ROOT_FILE_NAME));
-            Assertion.Assert ("Type not correct", root.Type == Factory.FileType.Root);
-            Assertion.Assert ("IsMultiLined not correct", root.IsMultiLined == false);
+            Assertion.AssertNotNull ("Path not set/returned", tag.Path);
+            Assertion.AssertEquals ("Path not equal", fullPath, tag.Path);
+            Assertion.AssertNotNull ("FileContents not equal", tag.FileContents);
+            Assertion.AssertEquals ("FileContents not set/returned", "N" + this.TAG_ENTRY1.Substring (1), tag.FileContents);
+            Assertion.AssertEquals ("Filename not correct", this.TAG_FILE_NAME, tag.Filename);
+            Assertion.AssertEquals ("Type not correct", Factory.FileType.Tag, tag.Type);
+            Assertion.Assert ("IsMultiLined not correct", tag.IsMultiLined == false);
         }
         
         /// <summary>
-        ///     Test that the equals method correctly identifies two root objects
+        ///     Test that the equals method correctly identifies two tag objects
         ///         as equal.
         /// </summary>
         [Test]
         public void EqualsTest () {
             String cvsPath = Path.Combine (TestConstants.LOCAL_PATH, 
                                            TestConstants.MODULE);
-            Root RootSame1 = new Root (cvsPath, this.ROOT_ENTRY1);
-            Root RootSame2 = new Root (cvsPath, this.ROOT_ENTRY1);
-            Root RootDiff1 = new Root (cvsPath, this.ROOT_ENTRY2);
+            Tag tagSame1 = new Tag (cvsPath, this.TAG_ENTRY1);
+            Tag tagSame2 = new Tag (cvsPath, this.TAG_ENTRY1);
+            Tag tagDiff1 = new Tag (cvsPath, this.TAG_ENTRY2);
             
-            Assertion.Assert (RootSame1.Equals (RootSame1));
-            Assertion.Assert (RootSame1.Equals (RootSame2));
-            Assertion.Assert (RootSame2.Equals (RootSame1));
+            Assertion.Assert (tagSame1.Equals (tagSame1));
+            Assertion.Assert (tagSame1.Equals (tagSame2));
+            Assertion.Assert (tagSame2.Equals (tagSame1));
             
-            Assertion.Assert (!RootDiff1.Equals (RootSame1));
-            Assertion.Assert (!RootDiff1.Equals (RootSame2));
-            Assertion.Assert (!RootSame1.Equals (RootDiff1));
-            Assertion.Assert (!RootSame2.Equals (RootDiff1));
+            Assertion.Assert (!tagDiff1.Equals (tagSame1));
+            Assertion.Assert (!tagDiff1.Equals (tagSame2));
+            Assertion.Assert (!tagSame1.Equals (tagDiff1));
+            Assertion.Assert (!tagSame2.Equals (tagDiff1));
         }
         
         /// <summary>

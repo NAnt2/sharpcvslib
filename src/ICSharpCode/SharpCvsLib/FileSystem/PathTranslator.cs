@@ -120,7 +120,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 line.Substring (cvsRoot.Length);
             if (tempRelativePath.Length >= this.filename.Length &&
                 this.filename.Length > 0) {
-                tempRelativePath = tempRelativePath.Replace (filename, "");
+                tempRelativePath = tempRelativePath.Substring(0, 
+                    tempRelativePath.Length - this.filename.Length);
+
             }
             
             if (tempRelativePath[0].Equals ('/')) {
