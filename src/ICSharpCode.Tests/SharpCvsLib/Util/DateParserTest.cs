@@ -81,13 +81,26 @@ namespace ICSharpCode.SharpCvsLib.Util {
         }
         
         /// <summary>
-        ///     Test that the parser throws an exception with a bad date.
+        ///     Test that the parser DOES NOT throw an exception with a bad date.
         /// </summary>
-        [ExpectedException (typeof (System.FormatException))]
+        [Test]
         public void ParseCvsDateBad () {
-            DateTime date1 = DateParser.ParseCvsDate ("really really bad date");    
+            DateTime date1 = DateParser.ParseCvsDate ("Result of merge");
+            DateTime now = DateTime.Now;
+            
+            // Since we probably don't have the same now just be happy
+            //    with the same day
+            AssertDateEquals (date1, now.Year, now.Month, now.Day);
         }
         
+        private void AssertDateEquals (DateTime date,
+                                       int year,
+                                       int month,
+                                       int day) {
+            Assertion.AssertEquals (year, date.Year);
+            Assertion.AssertEquals (month, date.Month);
+            Assertion.AssertEquals (day, date.Day);                                           
+        }
         private void AssertDateEquals (DateTime date,
                                        int year,
                                        int month,
