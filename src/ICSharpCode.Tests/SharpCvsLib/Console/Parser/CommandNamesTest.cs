@@ -74,7 +74,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             AssertCommandEquals ((Command)commands["add"], "add", "ad", "new");
 
             // Check the last command object
-            AssertCommandEquals ((Command)commands["watchers"], "watchers", null, null);
+            AssertCommandEquals ((Command)commands["watchers"], "watchers", string.Empty, string.Empty);
         }
         private void AssertCommandEquals (Command com,
                                         string prime, string nick1, string nick2)
