@@ -29,16 +29,19 @@
     <property name="dir.src" value="${dir.base}/src" />
     <property name="dir.lib" value="${dir.base}/lib" />
     <property name="dir.lib.ext" value="${dir.lib}/ext" />
-    <property name="dir.sf-release.base" value="h:/dev/sf.net/sharpcvslib" />
-
+    <property name="dir.release" value="${dir.base}/release" />
+    
+    <property name="dir.doc.msdn" value="${dir.dist}/doc/api/msdn" />
+    
     <!-- Referenced lib and lib/ext dll files -->
     <property name="lib.log4net" value="log4net.dll" />
     <property name="lib.nunit" value="nunit.framework.dll" />    
     <property name="lib.zip" value="ICSharpCode.SharpZipLib.dll" />
 
     <!-- Documentation variables -->
-    <property name="copyright-text" value="Mike Krueger 2001-2002, SharpCvsLib Developers" />
-    <property name="copyright-href" value="http://www.gnu.org/copyleft/lesser.html#TOC1" />
+    <property name="doc.title" value="${name.project}" />
+    <property name="doc.copyright.text" value="Mike Krueger 2001-2002, SharpCvsLib Developers 2003" />
+    <property name="doc.copyright.href" value="http://www.gnu.org/copyleft/lesser.html#TOC1" />
 
     <!-- Targets -->
     <target name="update.src" description="Updates the source from cvs.">
@@ -87,50 +90,47 @@
     </target>
 
     <target name="netdoc" failonerror="true">
-        <property name="Title" value="#Cvslib" />
-        <property name="ShowMissingSummaries" value="True" />
-        <property name="OutputDirectory" value="${dist.dir}/${assembly.version}/doc/api" />
+        <property name="doc.exe" value="hhc.exe" />
         
-        <property name="ShowMissingSummaries" value="True" />
-        <property name="ShowMissingRemarks" value="False" />
-        <property name="ShowMissingParams" value="True" />
-        <property name="ShowMissingReturns" value="True" />
-        <property name="ShowMissingValues" value="True" />
+        <property name="doc.show-missing-summaries" value="True" />
+        <property name="doc.show-missing-remarks" value="False" />
+        <property name="doc.show-missing-params" value="True" />
+        <property name="doc.show-missing-returns" value="True" />
+        <property name="doc.show-missing-values" value="True" />
 
-        <property name="DocumentInternals" value="False" />
-        <property name="DocumentProtected" value="True" />
-        <property name="DocumentPrivates" value="False" />
-        <property name="DocumentEmptyNamespaces" value="False" />
+        <property name="doc.internals" value="False" />
+        <property name="doc.protected" value="True" />
+        <property name="doc.privates" value="False" />
+        <property name="doc.empty-namespaces" value="False" />
 
-        <property name="IncludeAssemblyVersion" value="False" />
+        <property name="doc.include-assembly-version" value="True" />
 
-        <echo message="${dir.build}" />
         <ndoc>
             <assemblies basedir="${dir.build}">
-                <includes name="${lib.name}.dll"/>
+                <includes name="${name.top-level}.${name.lib}.dll"/>
             </assemblies>
             <documenters>
                 <documenter name="MSDN">
-                    <property name="Title" value="${Title}" />
-                    <property name="OutputDirectory" value="${OutputDirectory}/MSDN" />
+                    <property name="Title" value="${doc.title}" />
+                    <property name="OutputDirectory" value="${dir.doc.msdn}" />
 
-                    <property name="ShowMissingSummaries" value="${ShowMissingSummaries}" />
-                    <property name="ShowMissingRemarks" value="${ShowMissingRemarks}" />
-                    <property name="ShowMissingParams" value="${ShowMissingParams}" />
-                    <property name="ShowMissingReturns" value="${ShowMissingReturns}" />
-                    <property name="ShowMissingValues" value="${ShowMissingValues}" />
+                    <property name="ShowMissingSummaries" value="${doc.show-missing-summaries}" />
+                    <property name="ShowMissingRemarks" value="${doc.show-missing-remarks}" />
+                    <property name="ShowMissingParams" value="${doc.show-missing-params}" />
+                    <property name="ShowMissingReturns" value="${doc.show-missing-returns}" />
+                    <property name="ShowMissingValues" value="${doc.show-missing-values}" />
 
-                    <property name="DocumentInternals" value="${DocumentInternals}" />
-                    <property name="DocumentProtected" value="${DocumentProtected}" />
-                    <property name="DocumentPrivates" value="${DocumentPrivates}" />
-                    <property name="DocumentEmptyNamespaces" value="${DocumentEmptyNamespaces}" />
+                    <property name="DocumentInternals" value="${doc.internals}" />
+                    <property name="DocumentProtected" value="${doc.protected}" />
+                    <property name="DocumentPrivates" value="${doc.privates}" />
+                    <property name="DocumentEmptyNamespaces" value="${doc.empty-namespaces}" />
 
-                    <property name="IncludeAssemblyVersion" value="${IncludeAssemblyVersion}" />
-                    <property name="CopyrightText" value="${copyright-text}" />
-                    <property name="CopyrightHref" value="${copyright-href}" />
+                    <property name="IncludeAssemblyVersion" value="${doc.include-assembly-version}" />
+                    <property name="CopyrightText" value="${doc.copyright.text}" />
+                    <property name="CopyrightHref" value="${doc.copyright.href}" />
 
-                    <property name="HtmlHelpName" value="Sporadicism.Blogger" />
-                    <property name="HtmlHelpCompilerFilename" value="hhc.exe" />
+                    <property name="HtmlHelpName" value="${doc.title}" />
+                    <property name="HtmlHelpCompilerFilename" value="${doc.exe}" />
                     <property name="IncludeFavorites" value="False" />
                     <property name="SplitTOCs" value="False" />
                     <property name="DefaulTOC" value="" />
@@ -143,27 +143,21 @@
     <target name="run-tests" depends="build.all">
             <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="run-tests"/>
     </target>
-    <target name="dist" depends="build.lib, build.test, build.console, run-tests">
-        <property name="dist.src" value="${dist.dir}/${assembly.version}/src" />
-        <property name="dist.bin" value="${dist.dir}/${assembly.version}/bin" />
+    
+    <target name="dist" depends="build.lib, build.test, build.console">
+        <mkdir dir="${dir.dist}/bin" />
+        <mkdir dir="${dir.dist}/src" />    
         
-        <mkdir dir="${dist.bin}" />
-        <mkdir dir="${dist.src}" />    
         <call target="netdoc" />
         
-        <copy todir="${dist.bin}/${lib.name}">
+        <copy todir="${dir.dist}/bin/${name.lib}">
             <fileset basedir="${dir.build}">
                 <includes name="**/**.dll"/>
                 <includes name="**/**.config"/>
             </fileset>
         </copy>
-        <zip zipfile="${dist.dir}/${assembly.version}/${lib.name}-${assembly.version}-bin.zip">
-            <fileset basedir="${dist.bin}">
-                <includes name="**/**.*" />
-            </fileset>
-        </zip>
         
-        <copy todir="${dist.src}/${lib.name}">
+        <copy todir="${dir.dist}/src/${name.lib}">
             <fileset basedir=".">
                 <includes name="**/**.*" />
                 <excludes name="*.suo" />
@@ -174,33 +168,45 @@
             </fileset>
         </copy>
         
-        <zip zipfile="${dist.dir}/${assembly.version}/${lib.name}-${assembly.version}-src.zip">
-            <fileset basedir="${dist.src}">
-                <includes name="**/**.*" />
-            </fileset>
-        </zip>
     </target>
     
-    <target name="sf-release">
-        <property name="dir.export" value="${dir.sf-release.base}" />
-        <property name="dir.version" value="${dir.version}/${assembly.version}" />
-        <property name="dir.filesdir" value="${dir.version}/files" />
+    <target name="build-release.common">
+        <call target="dist" />
+        <property name="dir.output" value="${dir.release}/${assembly.version}" />
         
-        <mkdir dir="${dir.version}" />
-        <mkdir dir="${dir.files}" />
+        <echo message="Building release:" />
+        <echo message="-----------------" />
+        <echo message="Release version: ${assembly.version}" />
+        <echo message="Source directory: ${dir.dist}/src" />
+        <echo message="Binary directory: ${dir.dist}/bin" />
+        <echo message="Output directory: ${dir.output}" />
         
-        <copy todir="${dir.files}">
-            <fileset basedir=".">
-                <includes name="**/**.*" />
-                <excludes name="*.suo" />
-                <excludes name="*.csproj.user" />
-            </fileset>
-        </copy>
-        <zip zipfile="${dir.version}/${name.lib}-${assembly.version}.zip">
-            <fileset basedir="${dir.files}">
-                <includes name="**/**.*" />
+        <mkdir dir="${dir.output}" />
+        
+        <zip zipfile="${dir.output}/${name.lib}-${assembly.version}-bin.zip">
+            <fileset basedir="${dir.dist}">
+                <includes name="bin/**/**.*" />
+                <includes name="doc/**/**.chm" />
             </fileset>
         </zip>
+        
+        <zip zipfile="${dir.output}/${name.lib}-${assembly.version}-src.zip">
+            <fileset basedir="${dir.dist}">
+                <includes name="src/**/**.*" />
+                <includes name="doc/**/**.chm" />
+            </fileset>
+        </zip>
+
+    </target>
+    
+    <target name="build-release.sf">
+        <property name="assembly.version" value="${assembly.version}" />
+        <call target="build-release.common" />        
+    </target>
+    
+    <target name="build-release.nightly">
+        <tstamp property="assembly.version" pattern="yyyyMMdd-HHmm" verbose="true"/>    
+        <call target="build-release.common" />
     </target>
     
     <target name="clean">
