@@ -35,6 +35,7 @@ using System.Text;
 
 using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Tests.Config;
 
 using log4net;
 using NUnit.Framework;
@@ -46,6 +47,8 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
     /// </summary>
     [TestFixture]
     public class LogReportTest {
+        private SharpCvsLibTestsConfig settings = 
+            SharpCvsLibTestsConfig.GetInstance();
     
         /// <summary>
         ///     Tests the default constructor.
@@ -75,15 +78,15 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
         public void TestFiles () {
             LogReport logReport = new LogReport();
             
-            LogFile logFile1 = new LogFile();
+            LogFile logFile1 = new LogFile(settings.GetCvsRoot());
             logFile1.RepositoryFnm = "File1";
             logReport.AddFile(logFile1);
             
-            LogFile logFile2 = new LogFile();
+            LogFile logFile2 = new LogFile(settings.GetCvsRoot());
             logFile2.RepositoryFnm = "File2";
             logReport.AddFile(logFile2);
             
-            LogFile logFile3 = new LogFile();
+            LogFile logFile3 = new LogFile(settings.GetCvsRoot());
             logFile3.RepositoryFnm = "File3";
             logReport.AddFile(logFile3);
 

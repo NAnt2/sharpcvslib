@@ -35,6 +35,7 @@ using System.Text;
 
 using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Tests.Config;
 
 using log4net;
 using NUnit.Framework;
@@ -46,13 +47,16 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
     /// </summary>
     [TestFixture]
     public class LogFileTest {
+        private SharpCvsLibTestsConfig settings = 
+            SharpCvsLibTestsConfig.GetInstance();
+
     
         /// <summary>
         ///     Tests the default constructor.
         /// </summary>
         [Test]
         public void TestDefaultCtor () {
-            LogFile logFile = new LogFile();
+            LogFile logFile = new LogFile(settings.GetCvsRoot());
 
             Assertion.AssertEquals("", logFile.RepositoryFnm);
             Assertion.AssertEquals("", logFile.WorkingFnm);
@@ -66,7 +70,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
         /// </summary>
         [Test]
         public void TestProperties () {
-            LogFile logFile = new LogFile();
+            LogFile logFile = new LogFile(settings.GetCvsRoot());
 
             string repositoryFnm = "/cvsroot/sharpcvslib/sharpcvslib/src/ICSharpCode/SharpCvsLib/Client/CVSServerConnection.cs,v";
             logFile.RepositoryFnm = repositoryFnm;
@@ -86,7 +90,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
         [Test]
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void TestInvalidIndexZero () {
-            LogFile logFile = new LogFile();
+            LogFile logFile = new LogFile(settings.GetCvsRoot());
             
             LogRevision logRevision = logFile[0];
         }
@@ -96,7 +100,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
         /// </summary>
         [Test]
         public void TestRevisions () {
-            LogFile logFile = new LogFile();
+            LogFile logFile = new LogFile(settings.GetCvsRoot());
             
             LogRevision logRevision1 = new LogRevision();
             logRevision1.Revision = "1.1";

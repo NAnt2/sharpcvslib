@@ -236,7 +236,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
      
             // Initialse state machine
             curLogReport = new LogReport(); // this is what we are going to return to the caller
-            curLogFile = new LogFile();
+            curLogFile = new LogFile(this.cvsRoot);
             curLogRevision = new LogRevision();
             logState = LogState.WANT_FILE_HEADER_START;
              
@@ -358,7 +358,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
                         // and now the file
                         curLogReport.AddFile(curLogFile);
                     }
-                    curLogFile = new LogFile();
+                    curLogFile = new LogFile(this.cvsRoot);
                     logState = LogState.WANT_FILE_HEADER_START;    
                 }
                 else {

@@ -35,6 +35,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter
 {
 	using System;
 	using System.Collections;
+    using ICSharpCode.SharpCvsLib.Misc;
 	
 	/// <summary>
 	/// Represents a single file from a LogReport
@@ -45,6 +46,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter
 	/// </remarks>
 	public class LogFile : IEnumerable
 	{
+        private CvsRoot cvsRoot;
 	    private string repositoryFnm;
 		/// <summary>
 		/// The repository path+filename
@@ -62,7 +64,17 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter
 	        get { 
                 if (null == this.workingFnm || String.Empty == this.workingFnm) {
                     // remove the ,v from the end of the file.
-                    return this.RepositoryFnm.Substring(0, this.RepositoryFnm.Length - 2);
+                    string temp = this.RepositoryFnm.Substring(0, this.RepositoryFnm.Length - 2);
+                    try {
+                        // remove the cvs root server absolute path information
+                        temp = temp.Substring(this.cvsRoot.CvsRepository.Length, 
+                            temp.Length - this.cvsRoot.CvsRepository.Length);
+                        // remove the /
+                        temp = temp.Substring(1, temp.Length - 1);
+                    } catch (Exception) {
+                        // just take the repository filename if this errors out
+                    }
+                    return temp;
                 }
                 return workingFnm; }
 	        set { workingFnm = value; }
@@ -82,11 +94,12 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter
 		/// <summary>
 		/// Default constructor - initializes all fields to default values
 		/// </summary>
-		public LogFile()
+		public LogFile(CvsRoot cvsRoot)
 		{
 		    this.repositoryFnm = "";
 		    this.workingFnm = "";
 		    this.description = "";
+            this.cvsRoot = cvsRoot;
 		}
 		
 //		/// <summary>
