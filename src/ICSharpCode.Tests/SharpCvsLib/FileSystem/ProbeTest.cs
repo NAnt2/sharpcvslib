@@ -46,6 +46,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// Test the file system probe finds and returns the correct number of
     ///     existing and non-existing files given the list of original files.
     /// </summary>
+    [TestFixture]
     public class ProbeTest : AbstractTest {
 
         /// <summary>

@@ -38,69 +38,69 @@ using log4net;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
 
-/// <summary>
-///     Compare two files using the following algorithm:
-///         1) Compare file sizes.
-///         2) Compare file contents.
-/// </summary>
-public class FileComparator : IComparable {
-
-    String filename;
-
     /// <summary>
-    ///     The name of the file to use in the comparason.
+    ///     Compare two files using the following algorithm:
+    ///         1) Compare file sizes.
+    ///         2) Compare file contents.
     /// </summary>
-    public String Filename {
-        get {return this.filename;}
-        set {this.filename = value;}
-    }
-    /// <summary>
-    ///     Compare the specified file to the given.  Return
-    ///         1 - if this object is greater than the given object.
-    ///         0 - if this object is equal to the given object.
-    ///        -1 - if this object is less than the given object.
-    /// </summary>
-    public int CompareTo (object obj) {
-        if (obj is FileComparator) {
-            FileComparator that = (FileComparator)obj;
+    public class FileComparator : IComparable {
 
-            if (File.Exists (this.filename) && File.Exists (that.filename)) {
-                StreamReader thisReader = new StreamReader (this.filename);
-                StreamReader thatReader = new StreamReader (that.filename);
+        String filename;
 
-                String thisContents = thisReader.ReadToEnd ();
-                String thatContents = thatReader.ReadToEnd ();
+        /// <summary>
+        ///     The name of the file to use in the comparason.
+        /// </summary>
+        public String Filename {
+            get {return this.filename;}
+            set {this.filename = value;}
+        }
+        /// <summary>
+        ///     Compare the specified file to the given.  Return
+        ///         1 - if this object is greater than the given object.
+        ///         0 - if this object is equal to the given object.
+        ///        -1 - if this object is less than the given object.
+        /// </summary>
+        public int CompareTo (object obj) {
+            if (obj is FileComparator) {
+                FileComparator that = (FileComparator)obj;
 
-                return thisContents.CompareTo (thatContents);
-            } else {
-                return 0;
+                if (File.Exists (this.filename) && File.Exists (that.filename)) {
+                    StreamReader thisReader = new StreamReader (this.filename);
+                    StreamReader thatReader = new StreamReader (that.filename);
+
+                    String thisContents = thisReader.ReadToEnd ();
+                    String thatContents = thatReader.ReadToEnd ();
+
+                    return thisContents.CompareTo (thatContents);
+                } else {
+                    return 0;
+                }
             }
+            return -1;
         }
-        return -1;
-    }
 
-    /// <summary>
-    ///     Determine if this object and the object in question are equal.
-    /// </summary>
-    /// <param name="obj">The object to compare this object against.</param>
-    /// <returns><code>true</code> if the objects are equal, or
-    ///     <code>false</code> if the two objects are not equal.</returns>
-    public override bool Equals (object obj) {
-        if (obj is FileComparator) {
-            FileComparator that = (FileComparator)obj;
-            return this.filename == that.filename;
+        /// <summary>
+        ///     Determine if this object and the object in question are equal.
+        /// </summary>
+        /// <param name="obj">The object to compare this object against.</param>
+        /// <returns><code>true</code> if the objects are equal, or
+        ///     <code>false</code> if the two objects are not equal.</returns>
+        public override bool Equals (object obj) {
+            if (obj is FileComparator) {
+                FileComparator that = (FileComparator)obj;
+                return this.filename == that.filename;
+            }
+            return false;
         }
-        return false;
-    }
 
-    /// <summary>
-    ///     Return the hash code of the file.
-    /// </summary>
-    /// <returns>The hash code of the file contents.</returns>
-    public override int GetHashCode () {
-        StreamReader reader = new StreamReader (this.filename);
-        String fileContents = reader.ReadToEnd ();
-        return fileContents.GetHashCode ();
+        /// <summary>
+        ///     Return the hash code of the file.
+        /// </summary>
+        /// <returns>The hash code of the file contents.</returns>
+        public override int GetHashCode () {
+            StreamReader reader = new StreamReader (this.filename);
+            String fileContents = reader.ReadToEnd ();
+            return fileContents.GetHashCode ();
+        }
     }
-}
 }

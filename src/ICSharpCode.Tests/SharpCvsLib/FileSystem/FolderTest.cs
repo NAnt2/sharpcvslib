@@ -41,25 +41,25 @@ using NUnit.Framework;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
 
-/// <summary>
-/// Represents a list of entries in the repository or
-///     in simple terms a folder or directory on the
-///     cvs server.
-/// </summary>
-[TestFixture]
-public class FolderTest {
     /// <summary>
-    /// Perform setup operations.
+    /// Represents a list of entries in the repository or
+    ///     in simple terms a folder or directory on the
+    ///     cvs server.
     /// </summary>
-    [SetUp]
-    public void SetUp () {
+    [TestFixture]
+    public class FolderTest {
+        /// <summary>
+        /// Perform setup operations.
+        /// </summary>
+        [SetUp]
+        public void SetUp () {
+        }
+
+        /// <summary>Perform tear down operations.</summary>
+        [TearDown]
+        public void TearDown () {
+
+        }
+
     }
-
-    /// <summary>Perform tear down operations.</summary>
-    [TearDown]
-    public void TearDown () {
-
-    }
-
-}
 }
