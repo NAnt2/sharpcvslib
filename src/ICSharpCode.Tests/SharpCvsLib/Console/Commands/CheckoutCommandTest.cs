@@ -76,7 +76,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
             String commandLine = 
                "-d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib co sharpcvslib";
             String [] commandLineArgs = commandLine.Split(' ');
-            // Test Creating a CheckoutCommand object
+            // Test Creating a ConsoleMain object
             ConsoleMain consoleMain = new ConsoleMain ();
             consoleMain.Execute (commandLineArgs);
             Assertion.Assert (Directory.Exists(Path.Combine(settings.Config.LocalPath, "sharpcvslib")));
@@ -87,13 +87,14 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         /// </summary>
         [Test]
         public void MinusrOptionCheckoutFilesBasedOnRevision (){
-//            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-//            String repository = "sharpcvslib";
-//            String options = "-rv0_3_1 ";
-            // Test Creating a CheckoutCommand object
-//            CheckoutCommand newCheckoutCommand = new CheckoutCommand(root, repository, options);
-//            Assertion.AssertNotNull ("Should have a command object.", newCheckoutCommand);
-//            newCheckoutCommand.Execute();
+            String commandLine = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib co -rv0_3_1 sharpcvslib";
+            String [] commandLineArgs = commandLine.Split(' ');
+            // Test Creating a ConsoleMain object
+            ConsoleMain consoleMain = new ConsoleMain();
+            consoleMain.Execute (commandLineArgs);
+            // check for directory
+            Assertion.Assert (Directory.Exists(Path.Combine(settings.Config.LocalPath, "sharpcvslib")));
+            // check for files with specified revision
         }
         /// <summary>
         ///     Checkout files to specified local location instead of current local location
@@ -101,14 +102,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         /// </summary>
         [Test]
         public void MinusdOptionCheckoutFileIntoDir (){
-//            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-//            String repository = "sharpcvslib";
-//            String options = "-dnewlocation ";
-            // Test Creating a CheckoutCommand object
-//            CheckoutCommand newCheckoutCommand = new CheckoutCommand(root, repository, options);
-//            Assertion.AssertNotNull ("Should have a command object.", newCheckoutCommand);
-//            newCheckoutCommand.Execute();
-//            Assertion.Assert(Directory.Exists("newlocation"));
+            String commandLine = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib co -dnewlocation sharpcvslib";
+            String [] commandLineArgs = commandLine.Split(' ');
+            // Test Creating a ConsoleMain object
+            ConsoleMain consoleMain = new ConsoleMain ();
+            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
+            consoleMain.Execute (commandLineArgs);
+            Assertion.Assert(Directory.Exists(Path.Combine(settings.Config.LocalPath, "newlocation")));
         }
         /// <summary>
         ///     Checkout files no earlier than the specified Date 
@@ -116,13 +116,12 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         /// </summary>
         [Test]
         public void MinusDOptionCheckoutByCertainDate (){
-//            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-//            String repository = "sharpcvslib";
-//            String options = "-D01.28.03 ";
-            // Test Creating a CheckoutCommand object
-//            CheckoutCommand newCheckoutCommand = new CheckoutCommand(root, repository, options);
-//            Assertion.AssertNotNull ("Should have a command object.", newCheckoutCommand);
-//            newCheckoutCommand.Execute();
+            String commandLine = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib co -D01.28.03 sharpcvslib";
+            String [] commandLineArgs = commandLine.Split(' ');
+            // Test Creating a ConsoleMain object
+            ConsoleMain consoleMain = new ConsoleMain();
+            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
+            consoleMain.Execute( commandLineArgs);
             // Find a file that should exist 
             //Assertion.Assert ("Should have found the check file.  file=[" +
             //    checkFile + "]", File.Exists (checkFile));
