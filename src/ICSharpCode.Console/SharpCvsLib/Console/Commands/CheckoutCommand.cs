@@ -99,14 +99,15 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
         public ICommand CreateCommand () {
             CheckoutModuleCommand checkoutCommand;
-            try{
+            try {
+                this.ParseOptions(this.unparsedOptions);
                 // create CvsRoot object parameter
-                if (localDirectory == null){
+                if (localDirectory == null) {
                     localDirectory = Environment.CurrentDirectory;
                 }
                 this.currentWorkingDirectory = new WorkingDirectory(this.cvsRoot,
                     localDirectory, repository);
-                if (revision != null){
+                if (revision != null) {
                     this.currentWorkingDirectory.Revision = revision;
                 }
                 if (date.Equals(null)) {
@@ -119,9 +120,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
                 LOGGER.Error (e);
                 throw e;
             }
-
-            this.ParseOptions(checkoutCommand, this.unparsedOptions);
-
             return checkoutCommand;
         }
 
@@ -129,11 +127,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         /// Parse the command line options/ arguments and populate the command
         ///     object with the arguments.
         /// </summary>
-        /// <param name="checkoutCommand">A checkout command that is to be
-        ///     populated.</param>
         /// <param name="coOptions">A string value that holds the command
         ///     line options the user has selected.</param>
-        private void ParseOptions (ICommand checkoutCommand, String coOptions) {
+        private void ParseOptions (String coOptions) {
             int endofOptions = 0;
             // get Checkout Options and parameters
             for (int i = 0; i < coOptions.Length; i++){
