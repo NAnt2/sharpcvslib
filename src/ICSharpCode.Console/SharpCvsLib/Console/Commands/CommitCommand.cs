@@ -107,6 +107,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 //    is not in a CVS repository directory tree.
                 currentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
                     Environment.CurrentDirectory, repository.FileContents);
+                if (revision != null) {
+                    this.currentWorkingDirectory.Revision = revision;
+                }
                 String[] files = Directory.GetFiles(Environment.CurrentDirectory, fileNames);
                 ArrayList copiedFiles = new ArrayList ();
                 foreach (String file in files) {
