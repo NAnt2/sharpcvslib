@@ -93,7 +93,9 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                 this.ClearStaticDirectoryResponseMessageEvent(this, 
                     new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
             } else if (responseType == typeof(ErrorResponse) || responseType == typeof(ErrorMessageResponse)) {
-                this.ErrorResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.ERROR_PREFIX));
+                if (ErrorResponseMessageEvent != null) {
+                    this.ErrorResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.ERROR_PREFIX));
+                }
             }
             else {
                 this.UnspecifiedResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
