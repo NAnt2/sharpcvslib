@@ -49,21 +49,12 @@
     </target>
 
     <!--     ************************************************************************
-			    FIXME: Having security issues with the 1-1 framework, is this just
-			        my machine??!    
-        ************************************************************************ -->
-    <target name="set-env-net-1.0">
-    	<property name="nant.settings.currentframework" value = "net-1.0"/>
-    </target>
-    <target name="set-env-net-1.1">
-    	<call target="set-env-net-1.0" />
-    </target>
-    
-    <target name="set-env-mono-1.0-linux">
-    	<!-- Nothing to do here -->
-    </target>
+                FIXME: Having security issues with the 1-1 framework, is this just
+                    my machine??!    
+        ************************************************************************ 
+        <property name="nant.settings.currentframework" value = "net-1.0"/>-->
 
-    <target name="setup" depends="set-env-${nant.settings.currentframework}">
+    <target name="setup">
         <mkdir dir="${dir.build}" />
         <copy todir="${dir.build}">
             <fileset basedir="${dir.lib}">
@@ -90,15 +81,15 @@
     </target>
 
     <target name="build.lib" depends="setup">
-            <nant buildfile="${dir.src}/${name.top-level}/${name.project}/${name.project}.build" target="build-${nant.settings.currentframework}"/>
+            <nant buildfile="${dir.src}/${name.top-level}/${name.project}/${name.project}.build" target="build"/>
     </target>
 
     <target name="build.console" depends="setup">
-            <nant buildfile="${dir.src}/${name.top-level}.${name.console}/${name.project}/${name.console}.build" target="build-${nant.settings.currentframework}"/>
+            <nant buildfile="${dir.src}/${name.top-level}.${name.console}/${name.project}/${name.console}.build" target="build"/>
     </target>
     
     <target name="build.test" depends="setup">
-            <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="build-${nant.settings.currentframework}"/>
+            <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="build"/>
     </target>
 
     <target name="netdoc" failonerror="true">
@@ -156,7 +147,7 @@
     </target>
     
     <target name="run-tests" depends="build.all">
-            <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="run-tests-${nant.settings.currentframework}"/>
+            <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="run-tests"/>
     </target>
     <target name="dist" depends="build.lib, build.test, build.console, run-tests">
         <property name="dist.src" value="${dist.dir}/${assembly.version}/src" />
@@ -219,8 +210,7 @@
     </target>
     
     <target name="clean">
-        <property name="dir.build" value="${dir.build}" />
-        <call target="Clean" />
-        <delete file="${dir.build}/**.*" failonerror="false" />
+        <echo message="Build directory: ${dir.build}" />
+        <delete dir="${dir.build}" failonerror="false"/>
     </target>
 </project>

@@ -1,8 +1,8 @@
 <!--
     Build test classes for library and other apps.
 -->
-<project name="ICSharpCode.SharpCvsLib" default="build-net-1.0">
-    <target name="build-net-1.0">
+<project name="ICSharpCode.SharpCvsLib" default="build">
+    <target name="build">
         <csc    target="library" 
                 warnaserror="${compile.warnaserror}" 
                 output="${dir.build}/${name.top-level}.${name.project}.${name.tests}.dll" 
@@ -28,47 +28,7 @@
             </references>
         </csc>
     </target>
-    <target name="build-net-1.1">
-        <call target="build-net-1.0" />
-    </target>
-    <target name="build-mono-1.0-linux">
-        <csc    target="library" 
-                warnaserror="${compile.warnaserror}" 
-                output="${dir.build}/${name.top-level}.${name.project}.${name.tests}.dll" 
-                debug="${compile.debug}" 
-                define="${compile.define}">
-                
-            <arg value="${compile.unsafe}" />
-            <arg value="${compile.checked}" />
-            
-<!-- // TODO: Change to internalize helpers (accessor) -->
-            <sources>
-                <includes name="**/*.cs" />
-                <includes name="${dir.src}/${name.top-level}/${name.project}/**.cs" />
-            </sources>
-            <references>
-                <includes name="System.dll" />            
-                <includes name="${dir.lib}/${lib.zip}" />
-                <includes name="${dir.lib.ext}/${lib.log4net}" />
-                <includes name="${dir.lib.ext}/${lib.nunit}" />
-<!-- // TODO: Change to internalize helpers (lib.accessor) -->
-<!--                <includes name="${dir.build}/${lib.name}.dll" />-->
-            </references>
-        </csc>
-    </target>
-
-    <!-- Run all of the unit tests for the entire project -->
-    <target name="run-tests-mono-1.0-linux">
-        <call target="run-tests-all-platforms" />
-    </target>
-    <target name="run-tests-net-1.0">
-        <call target="run-tests-all-platforms" />
-    </target>
-    <target name="run-tests-net-1.1">
-        <call target="run-tests-all-platforms" />
-    </target>
-    
-    <target name="run-tests-all-platforms">
+    <target name="run-tests">
         <nunit2>
                 <test assemblyname="${dir.build}/${name.top-level}.${name.project}.${name.tests}.dll" appconfig="ICSharpCode.SharpCvsLib.Tests.dll.config"/>
         </nunit2>

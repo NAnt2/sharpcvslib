@@ -1,8 +1,8 @@
 <!--
     Build test classes for library and other apps.
 -->
-<project name="ICSharpCode.SharpCvsLib" default="build-${nant.currentsettings.framework}">
-    <target name="build-net-1.0">
+<project name="ICSharpCode.SharpCvsLib" default="build">
+    <target name="build">
         <csc    target="exe" 
                 warnaserror="${compile.warnaserror}" 
                 output="${dir.build}/${name.top-level}.${name.console}.dll" 
@@ -22,31 +22,6 @@
                 <includes name="${dir.lib.ext}/${lib.log4net}" />
                 <includes name="${dir.lib.ext}/${lib.nunit}" />
                 <includes name="${dir.build}/*.dll" />
-            </references>
-        </csc>
-    </target>
-    <target name="build-net-1.1">
-        <call target="build-net-1.0" />
-    </target>
-    <target name="build-mono-1.0-linux">
-        <csc    target="exe" 
-                warnaserror="${compile.warnaserror}" 
-                output="${dir.build}/${name.top-level}.${name.console}.dll" 
-                debug="${compile.debug}" 
-                define="${compile.define}">
-                
-            <arg value="${compile.unsafe}" />
-            <arg value="${compile.checked}" />
-            
-            <sources>
-                <includes name="**/*.cs" />
-            </sources>
-
-            <references>
-                <includes name="System.dll" />            
-                <includes name="${dir.lib}/${lib.zip}" />
-                <includes name="${dir.lib.ext}/${lib.log4net}" />
-                <includes name="${dir.lib.ext}/${lib.nunit}" />
             </references>
         </csc>
     </target>
