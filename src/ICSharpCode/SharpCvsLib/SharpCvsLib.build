@@ -15,6 +15,7 @@
             
             <sources>
                 <includes name="**/*.cs" />
+                <includes name="../../SharpCvsLibAssemblyInfo.cs" />
             </sources>
             
             <references>

@@ -25,24 +25,7 @@
 
 using System;
 using System.Reflection;
-using System.Runtime.CompilerServices;
-
-[assembly: AssemblyTitle("SharpCvsLib")]
-[assembly: AssemblyDescription(".Net cvs client implementation")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("http://sharpcvslib.sourceforge.net")]
-[assembly: AssemblyProduct("SharpCvs Console")]
-[assembly: AssemblyCopyright("Sharpcvslib Developers 2003")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
-
-[assembly: AssemblyVersion("0.0.1.0")]
-
-[assembly: AssemblyDelaySign(false)]
-[assembly: AssemblyKeyFile("")]
-[assembly: AssemblyKeyName("")]
-
-[assembly: CLSCompliant(true)]
+using System.Runtime.InteropServices;
 
 [assembly: log4net.Config.DOMConfigurator(Watch=true)]
 

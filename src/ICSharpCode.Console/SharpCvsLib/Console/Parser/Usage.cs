@@ -38,6 +38,7 @@
 
 using System;
 using System.Text;
+using System.Reflection;
 
 namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
@@ -51,10 +52,25 @@ public class Usage {
         // should never get called.
     }
 
+    private static readonly String currentVersion = Usage.GetVersion();
+    
+    private static String GetVersion () {
+        Assembly a = typeof(Usage).Assembly;
+        String version = a.GetName().Version.ToString();
+        return version;
+    }
+    
+    /// <summary>Gets a string that contains information about the program and verion.</summary>
+    public static String ProgramInformation {
+        get{
+            return "Sharpcvslib Command Line Version: " + currentVersion;
+        }
+    }    
+    
     /// <summary>Displays default/ general help message.</summary>
     public static String General {
         get {
-            return
+            return ProgramInformation + "\n\n" +
                 @"   Usage: cvs [cvs-options] command [command-options-and-arguments]
                 where cvs-options are -q, -n, etc.
                 (specify --help-options for a list of options)

@@ -3,6 +3,7 @@
 -->
 <project name="ICSharpCode.SharpCvsLib" default="build">
     <target name="build">
+        <echo message="${nant.project.basedir}../../src/SharpCvsLibAssemblyInfo.cs" />
         <csc    target="exe" 
                 warnaserror="${compile.warnaserror}" 
                 output="${dir.build}/${name.console.exe}.exe" 
@@ -16,6 +17,7 @@
             
             <sources>
                 <includes name="**/*.cs" />
+                <includes name="../../SharpCvsLibAssemblyInfo.cs" />
             </sources>
 
             <references>
