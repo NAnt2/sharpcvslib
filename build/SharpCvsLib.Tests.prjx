@@ -203,6 +203,9 @@
     <File name="..\src\ICSharpCode.Tests\SharpCvsLib\Extension\LogReporter\LogFileTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode.Tests\SharpCvsLib\Extension\LogReporter\LogReportTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode.Tests\SharpCvsLib\Extension\LogReporter\LogReportCommandTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode.Tests\SharpCvsLib\Extension\ChangeLogReport\CvsChangeLogTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode.Tests\SharpCvsLib\Extension\ChangeLogReport\FileRevisionTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode.Tests\SharpCvsLib\Extension\ChangeLogReport\LogEntryTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\SharpCvsLibAssemblyInfo.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>

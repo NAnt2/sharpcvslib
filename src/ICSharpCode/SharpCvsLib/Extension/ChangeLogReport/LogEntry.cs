@@ -42,7 +42,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
     /// multiple files.  
     /// </summary>
     public class LogEntry : IComparable {
-        string date;
+        DateTime date;
         string author;
         string comment;
         ArrayList fileRevisions = new ArrayList();
@@ -50,7 +50,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
     	/// <summary>
     	/// constructor
     	/// </summary>
-    	public LogEntry(string date, string author, string comment) {
+    	public LogEntry(DateTime date, string author, string comment) {
     	    this.date = date;
     	    this.author = author;
     	    this.comment = comment;
@@ -59,10 +59,11 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
     	/// <summary>
     	/// The key is based on date/author/comment
     	/// date is first, so it sorts by date first
+    	/// The "s" format specifier produces a sortable date
     	/// </summary>
     	public string Key {
     	    get {
-    	        return date + author + "\n" + comment;
+    	        return date.ToString("s") + author + "\n" + comment;
     	    }
     	}
     	/// <summary>
@@ -97,18 +98,14 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
     	    
     	    xmlWriter.WriteStartElement("entry");
     	    
-    	    // need to convert format of date/time
-    	    string inputFormat = "yyyy'/'MM'/'dd HH':'mm':'ss";
-    	    DateTime inputDate = System.DateTime.ParseExact(date, inputFormat, null);
-    	    
     	    xmlWriter.WriteStartElement("date");
     	    string outputDateFormat = "yyyy'-'MM'-'dd";
-    	    xmlWriter.WriteString(inputDate.ToString(outputDateFormat));
+    	    xmlWriter.WriteString(date.ToString(outputDateFormat));
     	    xmlWriter.WriteEndElement();
     	    
     	    xmlWriter.WriteStartElement("time");
     	    string outputTimeFormat = "HH':'mm";
-    	    xmlWriter.WriteString(inputDate.ToString(outputTimeFormat));
+    	    xmlWriter.WriteString(date.ToString(outputTimeFormat));
     	    xmlWriter.WriteEndElement();
     	    		    
     	    xmlWriter.WriteStartElement("author");
