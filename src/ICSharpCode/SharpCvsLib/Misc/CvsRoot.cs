@@ -56,11 +56,28 @@ namespace ICSharpCode.SharpCvsLib.Misc {
               :((?:(?:[A-Za-z]:/)|/).[^\s]*)";
 
         private readonly ILog LOGGER = LogManager.GetLogger(typeof(CvsRoot));
+
+        /// <summary>
+        /// Available protocols.
+        /// </summary>
+        public enum ProtocolType {
+            pserver, ssh, ext, sspi
+        }
+
+        private ProtocolType protocol   = ProtocolType.pserver;
+        private string user             = String.Empty;
+        private string host             = String.Empty;
+        private int port                = SharpCvsLibConfig.DEFAULT_PORT;
+        private string cvsrepository    = String.Empty;
+
+        private const int PROTOCOL_INDEX = 1;
+
         /// <summary>
         /// Identify the protocols that are currently supported.
         /// 
         /// NOTE: This probably should be replaced by enums.
         /// </summary>
+        [Obsolete("Use the enumeration ProtocolType.")]
         public class HostProtocol {
             /// <summary>
             /// Password server protocol.
@@ -75,40 +92,29 @@ namespace ICSharpCode.SharpCvsLib.Misc {
             /// </summary>
             public const String EXT     = "ext";
         }
-        private string protocol         = String.Empty;
-        private string user             = String.Empty;
-        private string host             = String.Empty;
-        private int port                = SharpCvsLibConfig.DEFAULT_PORT;
-        private string cvsrepository    = String.Empty;
-
-        private const int PROTOCOL_INDEX = 1;
 
         /// <summary>
-        /// The protocol to use when communicating with the server.  Currently supported
-        ///     and accepted values are:
-        ///     <ol>
-        ///         <li>pserver</li>
-        ///         <li>ssh</li>
-        ///         <li>ext</li>
-        ///     </ol>
+        /// The protocol to use when communicating with the server.  See <see cref="ProtocolType"/>
+        /// for currently supported and accepted values.
         /// </summary>
         public string Protocol {
-            get {return protocol;}
-            set {
-                LOGGER.Debug(String.Format("Protocol: {0}", value)); 
-                AssertNotEmpty(value, "Protocol");
-                protocol = value;
-            }
+            get {return protocol.ToString();}
+            set { 
+                this.protocol = 
+                      (ProtocolType)System.Enum.Parse(typeof(ProtocolType), value); }
+        }
+
+        public ProtocolType TransportProtocol {
+            get { return this.protocol; }
+            set { this.protocol = value; }
         }
 
         /// <summary>
         /// User name used to access the repository.
         /// </summary>
         public string User {
-            get {return user;}
-            set {
-                LOGGER.Debug(String.Format("User: {0}", value)); 
-                user = value;}
+            get { return user; }
+            set { user = value; }
         }
 
         /// <summary>
@@ -132,7 +138,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
                     this.Host = value;
                 }
 
-                if (HasUserVar(this.Protocol)) {
+                if (HasUserVar(this.TransportProtocol)) {
                     AssertNotEmpty(this.User, "User");
                 }
             }
@@ -180,9 +186,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         ///     
         ///     <list type="table">
         ///         <term>protocol:</term>
-        ///         <description>pserver, ssh and ext protocols
-        ///             <warn>NOTE: Currently unsupported, but valid cvs protocols include: sspi and ntserver</warn>
-        ///         </description>
+        ///         <description>pserver, ssh, ext, sspi protocols</description>
         ///         <term>username:</term>
         ///         <description>the login user for the remote client.  This will be
         ///             used to authenticate the user on the remote machine.
@@ -196,30 +200,59 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <param name="cvsRoot"></param>
         /// <example>
         ///     Cvsroot examples:
-        ///     <table>
-        ///     
+        ///     <list type="table">
         ///         <item>:pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib
-        ///         
         ///                 would be parsed as follows:
-        ///                 <list>
-        ///                     <item>protocol    = pserver (password server protocol)</item>
-        ///                     <item>user        = anonymous</item>
-        ///                     <item>server      = cvs.sourceforge.net</item>
-        ///                     port        = 2401 (default port)
-        ///                     path        = /cvsroot/sharpcvslib
-        ///                     
-        ///             2) :pserver:anonymous@cvs.sourceforge.net:80:/cvsroot/sharpcvslib
-        ///             
-        ///                 would be parsed as follows:
-        ///                     protocol    = pserver (password server protocol)
-        ///                     user        = anonymous
-        ///                     server      = cvs.sourceforge.net
-        ///                     port        = 80
-        ///                     path        = /cvsroot/sharpcvslib
-        ///             
-        ///     
+        ///             <list type="table">
+        ///                 <item>
+        ///                     <term>protocol</term>
+        ///                     <description>pserver (password server protocol)</description>
+        ///                 </item>
+        ///                 <item>
+        ///                     <term>user</term>
+        ///                     <description>anonymous</description>
+        ///                 </item>
+        ///                 <item>
+        ///                     <term>server</term>
+        ///                     <description>cvs.sourceforge.net</description>
+        ///                 </item>
+        ///                 <item>
+        ///                     <term>port</term>
+        ///                     <description>2401 (default port)</description>
+        ///                 </item>
+        ///                 <item>
+        ///                     <term>path</term>
+        ///                     <description>/cvsroot/sharpcvslib</description>
+        ///                 </item>
+        ///             </list>
+        ///         </item>
+        ///         <item>:pserver:anonymous@cvs.sourceforge.net:80:/cvsroot/sharpcvslib
+        ///             <list type="table">
+        ///                 <item>
+        ///                     <term>protocol</term>
+        ///                     <description>pserver (password server protocol)</description>
+        ///                 </item>
+        ///                 <item>
+        ///                     <term>user</term>
+        ///                     <description>anonymous</description>
+        ///                 </item>
+        ///                 <item>
+        ///                     <term>server</term>
+        ///                     <description>cvs.sourceforge.net</description>
+        ///                 </item>
+        ///                 <item>
+        ///                     <term>port</term>
+        ///                     <description>80</description>
+        ///                 </item>
+        ///                 <item>
+        ///                     <term>path</term>
+        ///                     <description>/cvsroot/sharpcvslib</description>
+        ///                 </item>
+        ///             </list>
+        ///         </item>
+        ///     </list>
         /// </example>
-        /// <exception cref="CvsRootParseException">If the cvsroot does not
+        /// <exception cref="ICSharpCode.SharpCvsLib.Exceptions.CvsRootParseException">If the cvsroot does not
         ///     translate to a valid cvsroot.</exception>
         public CvsRoot(string cvsRoot) {
             this.Parse (cvsRoot);
@@ -230,7 +263,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// Parse the cvs root.  
         /// </summary>
         /// <param name="cvsRoot">The array of cvs root variables</param>
-        /// <exception cref="CvsRootParseException">A parse exception is thrown
+        /// <exception cref="ICSharpCode.SharpCvsLib.Exceptions.CvsRootParseException">A parse exception is thrown
         ///     if the cvsroot is not in a format that is recognized.</exception>
         private void Parse (String cvsRoot) {
             Regex regex = new Regex(CVSROOT_REGEX, RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
@@ -239,7 +272,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 
             LOGGER.Debug(String.Format("Matches count: {0}.", matches.Groups.Count));
             if (!matches.Success) {
-                throw new CvsRootParseException(String.Format(@"Bad cvsroot. 
+                throw new ICSharpCode.SharpCvsLib.Exceptions.CvsRootParseException(String.Format(@"Bad cvsroot. 
     Expected ( :protocol:[usename@]server[:port]:[C:]/path/to/repos ) 
     Found ( {0} )",
                     cvsRoot));
@@ -268,16 +301,19 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         }
 
         private bool HasUserVar (String[] vars) {
-            return this.HasUserVar(vars[PROTOCOL_INDEX]);
-        }
-
-        private bool HasUserVar (String protocol) {
+            string protocol = vars[PROTOCOL_INDEX];
             if (null == protocol) {
                 return false;
             }
-            if (protocol.ToLower().Equals(HostProtocol.PSERVER) ||
-                protocol.ToLower().Equals(HostProtocol.SSH) ||
-                protocol.ToLower().Equals(HostProtocol.EXT)){
+            ProtocolType tProtocol = 
+                (ProtocolType)System.Enum.Parse(typeof(ProtocolType), protocol);
+            return this.HasUserVar(tProtocol);
+        }
+
+        private bool HasUserVar (ProtocolType protocol) {
+            if (protocol == ProtocolType.pserver ||
+                protocol == ProtocolType.ssh ||
+                protocol == ProtocolType.ext){
                 return true;
             }
             return false;
@@ -285,7 +321,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 
         private void AssertNotEmpty(string value, string fieldName) {
             if (null == value || value.Length == 0) {
-                throw new CvsRootParseException(
+                throw new ICSharpCode.SharpCvsLib.Exceptions.CvsRootParseException(
                     String.Format("{0} must contain a value.", fieldName));
             }
         }
@@ -295,7 +331,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </summary>
         /// <returns></returns>
         public override string ToString() {
-            return ':' + protocol + ':' + user + '@' + host + ':' + cvsrepository;
+            return ':' + protocol.ToString() + ':' + user + '@' + host + ':' + cvsrepository;
         }
 
         /// <summary>

@@ -70,7 +70,7 @@
                 </imports>
                 <attributes>
                     <attribute type="ComVisibleAttribute" value="false" />
-                    <attribute type="CLSCompliantAttribute" value="true" />
+                    <attribute type="CLSCompliantAttribute" value="false" />
                     <attribute type="AssemblyVersionAttribute" value="${assembly.version}" />
                     <attribute type="AssemblyTitleAttribute" value="${assembly.title}" />
                     <attribute type="AssemblyDescriptionAttribute" value="${assembly.description}" />

@@ -67,9 +67,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         }
 
         /// <summary>
-        /// Initialize a cvs repository.
+        /// Initialize a cvs command.
         /// </summary>
         /// <param name="cvsroot">User information</param>
+        /// <param name="args">Commandline arguments.</param>
         public ImportCommandParser(string cvsroot, string[] args) : 
             this(new CvsRoot(cvsroot), args){
         }
@@ -78,6 +79,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// Initialize a cvs repository
         /// </summary>
         /// <param name="cvsroot">User Information</param>
+        /// <param name="args">Commandline arguments.</param>
         public ImportCommandParser(CvsRoot cvsroot, string[] args) {
             this.cvsRoot = cvsroot;
             this.unparsedOptions = args;
@@ -160,11 +162,15 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             return importCommand;
         }
 
+        public override void ParseOptions() {
+            this.ParseOptions(this.Args);
+        }
+
         /// <summary>
         /// Parse the command line options/ arguments and populate the command
         ///     object with the arguments.
         /// </summary>
-        /// <param name="options">A string value that holds the command
+        /// <param name="arguments">A string value that holds the command
         ///     line options the user has selected.</param>
         private void ParseOptions (string[] arguments) {
             string singleOptions = "Cdfn";

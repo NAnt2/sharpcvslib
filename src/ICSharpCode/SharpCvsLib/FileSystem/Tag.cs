@@ -69,7 +69,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <summary>
         /// Create a new instance of the cvs object.
         /// </summary>
-        /// <param name="fullPath">The full path to the object being managed.</param>
+        /// <param name="cvsFile">The full path to the object being managed.</param>
         /// <param name="fileContents">The contents of the cvs management file.</param>
         public Tag (FileInfo cvsFile, String fileContents) : 
             base (cvsFile, fileContents) {
@@ -93,7 +93,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <summary>
         /// Load the root file.
         /// </summary>
-        /// <param name="rootFile"></param>
+        /// <param name="tagFile"></param>
         /// <returns></returns>
         public static Tag Load (FileInfo tagFile) {
             if (tagFile.Name != Tag.FILE_NAME) {

@@ -37,6 +37,7 @@ using System.IO;
 using System.Text;
 using System.Diagnostics;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Config;
 using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib.Streams;
@@ -48,6 +49,7 @@ namespace ICSharpCode.SharpCvsLib.Protocols
 	/// <summary>
 	/// Handle connect and authentication for the pserver protocol.
 	/// </summary>
+	[Protocol("ext")]
 	public class ExtProtocol : AbstractProtocol {
         private const string VERSION_ONE = "-1";
         private const string VERSION_TWO = "-2";

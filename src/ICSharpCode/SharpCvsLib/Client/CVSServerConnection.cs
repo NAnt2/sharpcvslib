@@ -391,18 +391,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// </summary>
         /// <param name="password"></param>
         public void Authentication(string password) {
-            switch (repository.CvsRoot.Protocol) {
-                case "ext": 
-                    this.protocol = new ExtProtocol ();
-                    break;
-                case "pserver": 
-                    this.protocol = new PServerProtocol();
-                    break;
-                default: 
-                    StringBuilder notSupportedMsg = new StringBuilder ();
-                    notSupportedMsg.Append("Unknown protocol=[").Append(repository.CvsRoot.Protocol).Append("]");
-                    throw new UnsupportedProtocolException (notSupportedMsg.ToString());
-            }
+            this.protocol = 
+                ProtocolFactory.Instance.GetProtocol(repository.CvsRoot.Protocol);
 
             this.protocol.Repository = this.Repository;
             this.protocol.Password = password;

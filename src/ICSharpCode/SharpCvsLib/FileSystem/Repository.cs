@@ -62,7 +62,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     The repository file stores the relative path to the directory
         ///         from the server's perspective.
         /// </summary>
-        /// <param name="path">The path to the directory above the CVS directory.</param>
+        /// <param name="cvsFile">The cvs management file.</param>
         /// <param name="line">The line to enter into the repository file.</param>
         public Repository (FileInfo cvsFile, String line) : base (cvsFile, line) {
         }
@@ -75,7 +75,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     The repository file stores the relative path to the directory
         ///         from the server's perspective.
         /// </summary>
-        /// <param name="path">The path to the directory above the CVS directory.</param>
+        /// <param name="filePath">The path to the cvs management file.</param>
         /// <param name="line">The line to enter into the repository file.</param>
         [Obsolete ("Use constructor Repository(FileInfo string)")]
         public Repository (string filePath, string line) : 

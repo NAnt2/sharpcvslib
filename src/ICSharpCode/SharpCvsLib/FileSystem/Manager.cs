@@ -1192,7 +1192,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <summary>
         /// Read the password string from the given .cvspass file.
         /// </summary>
-        /// <param name="cvsPassFile"></param>
+        /// <param name="cvsRoot"></param>
         /// <returns></returns>
         public string ReadPassword (CvsRoot cvsRoot) {
             string pwd = String.Empty;

@@ -86,12 +86,27 @@
                     HintPath = "..\lib\ext\log4net.dll"
                     Private = "False"
                 />
+                <Reference
+                    Name = "System.Data"
+                    AssemblyName = "System.Data"
+                    HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
+                />
+                <Reference
+                    Name = "DocsVision.Remoting"
+                    AssemblyName = "DocsVision.Remoting"
+                    HintPath = "..\lib\ext\DocsVision.Remoting.dll"
+                />
             </References>
         </Build>
         <Files>
             <Include>
                 <File
                     RelPath = "SharpCvsLibAssemblyInfo.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Attributes\ProtocolAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -226,12 +241,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Exceptions\CvsRootParseException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Exceptions\EntryNotFoundException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Exceptions\ExecuteShellException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Exceptions\UnsupportedProtocolException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -501,7 +526,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Protocols\ProtocolFactory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Protocols\PServerProtocol.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Protocols\SspiProtocol.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Remoting\Transport\CvsTransport\CvsTransport.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

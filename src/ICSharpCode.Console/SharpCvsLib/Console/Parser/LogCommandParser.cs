@@ -69,6 +69,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// Retrieve the cvs revision history for a file or group of files.
         /// </summary>
         /// <param name="cvsroot">User information</param>
+        /// <param name="args">Commandline arguments.</param>
         public LogCommandParser(string cvsroot, string[] args) : 
             this(new CvsRoot(cvsroot), args){
         }
@@ -77,6 +78,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// Retrieve the cvs revision history for a file or group of files.
         /// </summary>
         /// <param name="cvsroot">User Information</param>
+        /// <param name="args">Commandline arguments.</param>
         public LogCommandParser(CvsRoot cvsroot, string[] args) {
             this.cvsRoot = cvsroot;
             this.unparsedOptions = args;
@@ -131,16 +133,27 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory());
 
             this.ParseOptions(this.unparsedOptions);
-            Repository repos = null;
-            Root root = null;
             try {
-                repos = Repository.Load(dir);
-                root = Root.Load(dir);
+                Repository repository = Repository.Load(dir);
+                if (null == repository || null == repository.FileContents) {
+                    throw new CvsFileNotFoundException(
+                        string.Format("Valid CVS\\Repository file not found in {0}",
+                        dir));
+                }
+                this.repository = repository.FileContents;
+                Root root = Root.Load(dir);
+                if (null == root || null == root.FileContents) {
+                    throw new CvsFileNotFoundException(
+                        string.Format("Valid CVS\\Root file not found in {0}",
+                        dir));
+                }   
+                this.cvsRoot = new CvsRoot(root.FileContents);
             } catch (CvsFileNotFoundException e) {
+                LOGGER.Error(e);
                 ConsoleMain.ExitProgram("Not a CVS repository.", e);
             }
 
-            CurrentWorkingDirectory = new WorkingDirectory( new CvsRoot(root.FileContents),
+            CurrentWorkingDirectory = new WorkingDirectory(this.cvsRoot,
                 dir.FullName, this.repository);
 
 
@@ -151,11 +164,16 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             return logCommand;
         }
 
+        public override void ParseOptions() {
+            this.ParseOptions(this.Args);
+        }
+
+
         /// <summary>
         /// Parse the command line options/ arguments and populate the command
         ///     object with the arguments.
         /// </summary>
-        /// <param name="options">A string value that holds the command
+        /// <param name="arguments">A string value that holds the command
         ///     line options the user has selected.</param>
         private void ParseOptions (string[] arguments) {
             string singleOptions = "lRhtNbT";

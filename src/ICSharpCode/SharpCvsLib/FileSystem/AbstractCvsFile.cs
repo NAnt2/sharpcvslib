@@ -130,8 +130,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         ///         uses to hold information about the repository and local file
         ///         system.
         /// </summary>
-        /// <param name="fullPath">The full path to the file or directory on the
-        ///     filesystem that this object is managing.</param>
+        /// <param name="cvsFile">The file that is being managed by cvs.</param>
         /// <param name="fileContents">A line of comments that represents information
         ///     to be written to the cvs management file, or is written in the
         ///     cvs management file.</param>

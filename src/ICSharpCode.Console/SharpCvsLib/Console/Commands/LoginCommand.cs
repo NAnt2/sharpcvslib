@@ -156,9 +156,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// Process the login command with cvs library API calls.
         /// </summary>
         public void Execute () {
-            if (null != this.CvsRoot && this.CvsRoot.Protocol != 
-                ICSharpCode.SharpCvsLib.Misc.CvsRoot.HostProtocol.PSERVER) {
-                LOGGER.Info(string.Format("cvs [login aborted]: The :{0}: protocol does not support the login command",
+            if (null != this.CvsRoot && this.CvsRoot.TransportProtocol != 
+                CvsRoot.ProtocolType.pserver) {
+                LOGGER.Debug(string.Format("cvs [login aborted]: The :{0}: protocol does not support the login command",
                     this.CvsRoot.Protocol));
                 return;
             }

@@ -305,7 +305,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <summary>
         /// Creates an <see cref="Entry"/> object that manages the file being passed in.
         /// </summary>
-        /// <param name="managedFile">The file that is under cvs control.</returns>
+        /// <param name="managedFile">The file that is under cvs control.</param>
+        /// <returns>An entry object that is prepopulated with the information from the
+        ///     <code>CVS\Entries</code> file if present or the cvs information needed
+        ///     for a new file.</returns>
         /// <exception cref="EntryParseException">If the entry file cannot be
         ///     parsed.</exception>
         /// <example>
@@ -380,7 +383,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <summary>
         /// Creates an <see cref="Entry"/> object that manages the file being passed in.
         /// </summary>
-        /// <param name="managedDir">The directory that is under cvs control.</returns>
+        /// <param name="managedDir">The directory that is under cvs control.</param>
+        /// <returns>A new cvs entry, using the full path to the file for the
+        ///     entry information.</returns>
         /// <exception cref="EntryParseException">If the entry file cannot be
         ///     parsed.</exception>
         /// <example>

@@ -31,6 +31,7 @@
 //    <author>Steve Kenzell</author>
 //    <author>Clayton Harbour</author>
 #endregion
+
 using System;
 using System.Collections;
 using System.Globalization;
@@ -363,6 +364,14 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         "implemented.";
                     throw new NotImplementedException (msg);
                 }
+            }
+            this.ParseFiles(upOptions.Split(' '));
+        }
+
+        private void ParseFiles (string[] args) {
+            FileParser parser = new FileParser(args);
+            foreach (FileInfo file in parser.Files) {
+                System.Console.WriteLine(string.Format("File: {0}", file.FullName));
             }
         }
 

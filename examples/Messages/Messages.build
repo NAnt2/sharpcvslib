@@ -15,7 +15,7 @@
     <target name="build" description="Build all targets.">
         <solution configuration="${configuration}">
             <projects>
-                <includes name="Messages.csproj"/>
+                <include name="Messages.csproj"/>
             </projects>
         </solution>
     </target>

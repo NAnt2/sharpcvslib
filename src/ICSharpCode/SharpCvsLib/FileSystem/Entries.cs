@@ -118,7 +118,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         /// <summary>
         /// Load the given string.
         /// </summary>
-        /// <param name="fileContents">Contents of the entries file.</param>
+        /// <param name="cvsFile">Path to the file being managed, this will
+        /// load the corresponding Entry from the Entries file.</param>
         /// <returns></returns>
         public static Entries Load (FileInfo cvsFile) {
             return LoadImpl(cvsFile);

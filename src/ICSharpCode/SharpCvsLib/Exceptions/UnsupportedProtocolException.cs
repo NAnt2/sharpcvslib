@@ -1,13 +1,11 @@
 using System;
 
-namespace ICSharpCode.SharpCvsLib.Misc
-{
+namespace ICSharpCode.SharpCvsLib.Exceptions {
 	/// <summary>
 	/// The unsupported protocol exception is thrown when a client attempts to use
 	///     a protocol that is not understood or not supported currently by the
 	///     library.
 	/// </summary>
-	[Obsolete("Use ICSharpCode.SharpCvsLib.Exceptions.UnsupportedProtocolException.")]
 	public class UnsupportedProtocolException : NotImplementedException{
         /// <summary>
         /// Indicate that an unknown protocol has been used.

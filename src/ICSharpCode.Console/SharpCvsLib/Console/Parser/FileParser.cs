@@ -1,6 +1,6 @@
 #region "Copyright"
 //
-// Copyright (C) 2003 Clayton Harbour
+// Copyright (C) 2005 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -29,33 +29,42 @@
 // exception statement from your version.
 //
 //    <author>Clayton Harbour</author>
-//
 #endregion
 
 using System;
+using System.Collections;
+using System.IO;
 
-namespace ICSharpCode.SharpCvsLib.Misc {
+using ICSharpCode.SharpCvsLib.FileSystem;
+
+namespace ICSharpCode.SharpCvsLib.Console.Parser {
 	/// <summary>
-	/// An invalid cvsroot exception is thrown if the client attempts to send in
-	///     a root that is not understood by the server.  
+	/// Parses out file names from command line arguments and attempts to resovle the file path
+	/// using the current working directory.  Constructs a collection of <see cref="FileInfo"/>
+	/// objects.
 	/// </summary>
-	[Obsolete ("Use ICSharpCode.SharpCvsLib.Exceptions.CvsRootParseException.")]
-	public class CvsRootParseException : Exception{
-        /// <summary>
-        /// Indicate that an invalid cvsroot has been passed into the library.
-        /// </summary>
-        /// <param name="msg">A useful message that will help a developer debug
-        ///     the problem that has occurred.</param>
-		public CvsRootParseException(String msg) : base (msg) {
+	public class FileParser {
+        private Hashtable _files = new Hashtable();
+        private Entries _cvsEntries = new Entries();
+
+        public ICollection Files {
+            get { return this._files.Values; }
+        }
+
+		public FileParser(string[] args) {
+            this.Parse(args);
 		}
 
-        /// <summary>
-        /// Indicate that an invalid cvsroot has been passed into the library.
-        /// </summary>
-        /// <param name="msg">A useful message that will help a developer debug
-        ///     the problem that has occurred.</param>
-        /// <param name="e"></param>
-        public CvsRootParseException (String msg, Exception e) : base (msg, e) {
+        private void Parse(string[] args) {
+            foreach (string arg in args) {
+                if (!arg.StartsWith("-")) {
+                    string file = arg;
+                    if (!Path.IsPathRooted(file)) {
+                        file = Path.Combine(Directory.GetCurrentDirectory(), file);
+                    }
+                    this._files.Add(file, new FileInfo(file));
+                }
+            }
         }
 	}
 }

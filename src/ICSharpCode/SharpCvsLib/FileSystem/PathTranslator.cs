@@ -319,7 +319,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// Checks the end of a path string, if the path ends in CVS it does nothing, 
         /// otherwise it appends CVS to the full path.
         /// </summary>
-        /// <param name="fullPath">Full path to a file/ directory that may or may
+        /// <param name="fs">Full path to a file/ directory that may or may
         ///     not end with CVS.</param>
         /// <returns>The full path with a CVS appended.</returns>
         public static FileSystemInfo AppendCvs(FileSystemInfo fs) {
@@ -356,8 +356,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         /// <param name="fullPath">Full path that may or may not contain a CVS 
         ///     directory.</param>
-        /// <param name="managingFile">Name of the managing file, should correspond
-        ///     to a type in <see cref="ICSharpCode.SharpCvsLib.FileSystem.Manager.FileType"/></param>
+        /// <param name="managingFile">Name of the managing file, such as 
+        ///     <see cref="Tag"/>, <see cref="Entry"/>.</param>
         /// <returns></returns>
         public static string AppendCvs(string fullPath, string managingFile) {
             return Path.Combine(AppendCvs(fullPath).FullName, managingFile);

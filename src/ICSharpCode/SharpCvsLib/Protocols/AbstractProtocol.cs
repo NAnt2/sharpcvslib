@@ -99,11 +99,9 @@ namespace ICSharpCode.SharpCvsLib.Protocols
         /// <param name="Object"></param>
         /// <param name="e"></param>
         protected void SendConnectedMessageEvent(object Object, MessageEventArgs e) {
-            try {
+            if (null != this.ConnectedMessageEvent) {
                 this.ConnectedMessageEvent(Object, e);
-            } catch (NullReferenceException) {
-                LOGGER.Debug("No one is listening to the connected event.");
-            }
+            } 
         }
 
         /// <summary>
@@ -112,11 +110,9 @@ namespace ICSharpCode.SharpCvsLib.Protocols
         /// <param name="Object"></param>
         /// <param name="e"></param>
         protected void SendDisconnectedMessageEvent(object Object, MessageEventArgs e) {
-            try {
+            if (null != this.DisconnectedMessageEvent) {
                 this.DisconnectedMessageEvent(Object, e);
-            } catch (NullReferenceException) {
-                LOGGER.Debug("No one is listening to the disconnected event.");
-            }
+            } 
         }
 
         /// <summary>

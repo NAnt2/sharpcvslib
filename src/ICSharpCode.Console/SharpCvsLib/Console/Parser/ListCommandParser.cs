@@ -166,8 +166,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser{
         /// Parse the command line options/ arguments and populate the command
         ///     object with the arguments.
         /// </summary>
-        /// <param name="options">A string value that holds the command
-        ///     line options the user has selected.</param>
         public override void ParseOptions () {
             int endofOptions = 0;
             // get Checkout Options and parameters

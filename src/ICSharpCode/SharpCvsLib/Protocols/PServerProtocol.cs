@@ -40,6 +40,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Text.RegularExpressions;
 
+using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Messages;
@@ -50,11 +51,11 @@ using ICSharpCode.SharpCvsLib.Util;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Protocols
-{
+namespace ICSharpCode.SharpCvsLib.Protocols {
 	/// <summary>
 	/// Handle connect and authentication for the pserver protocol.
 	/// </summary>
+	[Protocol("pserver")]
 	public class PServerProtocol : AbstractProtocol {
         private readonly ILog LOGGER =
             LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
