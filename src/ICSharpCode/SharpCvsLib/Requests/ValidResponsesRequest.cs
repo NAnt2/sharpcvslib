@@ -39,7 +39,11 @@ public class ValidResponsesRequest : AbstractRequest
     /// </summary>
     public override string RequestString {
         get {
-            return "Valid-responses ok error Valid-requests Checked-in New-entry Checksum Copy-file Updated Created Update-existing Merged Patched Rcs-diff Mode Mod-time Removed Remove-entry Set-static-directory Clear-static-directory Set-sticky Clear-sticky Template Set-checkin-prog Set-update-prog Notified Module-expansion Wrapper-rcsOption M Mbinary E F MT\n";
+// TODO: These are the responses we would like to support (at some time in the future)
+//            return "Valid-responses ok error Valid-requests Checked-in New-entry Checksum Copy-file Updated Created Update-existing Merged Patched Rcs-diff Mode Mod-time Removed Remove-entry Set-static-directory Clear-static-directory Set-sticky Clear-sticky Template Set-checkin-prog Set-update-prog Notified Module-expansion Wrapper-rcsOption M Mbinary E F MT\n";
+// However we have to come clean and admit that currently we only support the following responses
+// TODO: We have to claim Merged and Removed are supported or some cvs servers refuse to talk to us!
+            return "Valid-responses ok error Valid-requests Checked-in Updated Created Merged Mod-time Removed Set-static-directory Clear-static-directory Set-sticky Clear-sticky Module-expansion M E MT\n";
         }
     }
 
