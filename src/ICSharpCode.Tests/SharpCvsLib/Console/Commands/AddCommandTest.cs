@@ -76,7 +76,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             // remove file TargetFile
             // commit remove TargetFile
             String[] files = Directory.GetFiles(Path.Combine(Environment.CurrentDirectory, 
-                settings.Config.Module), "*.txt");
+                settings.Config.Module), settings.Config.TargetFile);
             Assertion.Assert(files.Length > 0);
 
             foreach (String file in files) {
