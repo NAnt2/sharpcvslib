@@ -65,7 +65,8 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
             LOGGER.Debug(fileName);
             while (true) {
                 string line = fs.ReadLine();
-                if (line == null || line.Length == 0 || String.Empty == line) {
+//                if (line == null || line.Length == 0 || String.Empty == line) {
+                if (line == null) {
                     break;
                 }
 
@@ -107,7 +108,8 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
             StreamWriter fs = File.CreateText(fileName);
             while (true) {
                 string line = tmpTxtFile.ReadLine();
-                if (line == null || line.Length == 0 || String.Empty == line) {
+//                if (line == null || line.Length == 0 || String.Empty == line) {
+                if (line == null) {
                     break;
                 }
                 fs.WriteLine(line);
