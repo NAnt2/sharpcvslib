@@ -67,10 +67,19 @@
     <target name="run-tests-sample" depends="build-sample" failonerror="false">
         <echo message="Results output directory: ${dir.bin}/tests" />
         <mkdir dir="${dir.bin}/tests" />
+
+        <xmlpoke    filename="${dir.bin}/${name.top-level}.${name.project}.${name.tests}-sample.dll.config"
+                    xpath="/configuration/configSections/section[@name = 'sharpcvslib']/@type"
+                    value="ICSharpCode.SharpCvsLib.Config.SharpCvsLibConfigHandler,${name.top-level}.${name.project}.${name.tests}-sample" />
+        
+        <xmlpoke    filename="${dir.bin}/${name.top-level}.${name.project}.${name.tests}-sample.dll.config"
+                    xpath="/configuration/configSections/section[@name = 'sharpcvslib-tests']/@type"
+                    value="ICSharpCode.SharpCvsLib.Tests.Config.SharpCvsLibTestsConfigHandler,${name.top-level}.${name.project}.${name.tests}-sample" />
+                    
         <nunit2>
             <formatter type="Xml" usefile="true" extension=".xml" outputdir="${dir.bin}/tests" />
             <test assemblyname="${dir.bin}/${name.top-level}.${name.project}.${name.tests}-sample.dll" 
-                  appconfig="ICSharpCode.SharpCvsLib.Tests-sample.dll.config"/>
+                  appconfig="${dir.bin}/${name.top-level}.${name.project}.${name.tests}-sample.dll.config"/>
         </nunit2>
     </target>
     <target name="tests-to-html" failonerror="false">
