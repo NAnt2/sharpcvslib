@@ -100,18 +100,24 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		    ICollection entries = 
 		        manager.ReadEntries (cvsPath);
 		    IEnumerator entriesEnum = entries.GetEnumerator ();
-            int found = 0;	
+            int foundFileEntry = 0;	
+		    int foundDirectoryEntry = 0;
 		    
 		    while (entriesEnum.MoveNext ()) {
 		        Entry entry = (Entry)entriesEnum.Current;
 		        
 		        System.Console.WriteLine ("entry=[" + entry + "]");
 		        if (entry.Name.Equals (TestConstants.BUILD_FILE)) {
-		            found++;
+		            foundFileEntry++;
+		        }
+		        
+		        if (entry.Name.Equals (TestConstants.CONF_DIRECTORY)) {
+		            foundDirectoryEntry++;
 		        }
 		    }
 		    
-		    Assertion.Assert ("Build file should have a cvs entry.", found == 1);
+		    Assertion.Assert ("Build file should have a cvs entry.", foundFileEntry == 1);
+		    Assertion.Assert ("Conf directory should have a cvs entry.", foundDirectoryEntry == 1);
 		}
 	}
 }

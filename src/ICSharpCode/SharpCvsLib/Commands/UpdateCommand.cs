@@ -106,14 +106,15 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// <param name="connection"></param>
 		public void Execute(CVSServerConnection connection)
 		{
-		    this.workingdirectory.ReadAllExistingEntries ();
+		    CvsFileManager manager = new CvsFileManager ();
+		    Hashtable _folders = manager.getFolders (this.workingdirectory);
 		    if (LOGGER.IsDebugEnabled) {
 		        String msg = "In execute, looking for working folders.  " +
 		            "count of working folders=[" + 
 		                workingdirectory.Folders.Count + "]";
 		        LOGGER.Debug (msg);
 		    }
-		    Hashtable _folders = (Hashtable)workingdirectory.Folders.Clone ();
+		    //Hashtable _folders = (Hashtable)workingdirectory.Folders.Clone ();
 			foreach (DictionaryEntry folder in _folders) {
 			    foreach (Entry entry  in ((Folder)folder.Value).Entries) {
     				if (!entry.IsDirectory) {

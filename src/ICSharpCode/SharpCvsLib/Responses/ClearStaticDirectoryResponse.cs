@@ -71,9 +71,12 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	        }
 	        CvsFileManager manager = new CvsFileManager ();
 		    manager.AddRepository (services.Repository.LocalDirectory, localPath, repositoryPath);
-		    manager.AddRoot (services.Repository.LocalDirectory, localPath, 
-		                           services.Repository.CvsRoot.ToString ());
-	        manager.AddEntry (services.Repository.LocalDirectory, localPath, new Entry ("D/" + localPath + "////"));
+		    manager.AddRoot (services.Repository.LocalDirectory, 
+		                     localPath,
+		                     services.Repository.CvsRoot.ToString ());
+	        manager.AddEntry (services.Repository.LocalDirectory, 
+	                          localPath, 
+	                          manager.CreateDirectoryEntryFromPath (localPath));
 	        
 	    }
 	    

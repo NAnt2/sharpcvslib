@@ -49,6 +49,9 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 			get {
 				return entries;
 			}
+			set {
+			    this.entries = value;
+			}
 		}
 	}
 	

@@ -81,7 +81,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 			bool compress = sizestr[0] == 'z';
 			
 			if (LOGGER.IsDebugEnabled) {
-			    String msg = "orgPath=[" + orgpath + "]" +
+			    String msg = "In created response process.  " +
+			        "orgPath=[" + orgpath + "]" +
 			        "localpath=[" + localpath + "]" +
 			        "directory=[" + directory + "]" +
 			        "entry=[" + entry + "]" +
@@ -125,6 +126,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 			File.SetLastWriteTime(localpath, e.TimeStamp);
 	        
 	        manager.AddEntry (directory, e);
+	        
 	        String cvsMsg = "cvs server: U " + orgpath;	        
 	        manager.SendCvsMessage (cvsMsg);	        
 	    }

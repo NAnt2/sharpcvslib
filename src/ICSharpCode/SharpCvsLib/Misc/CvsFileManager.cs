@@ -77,10 +77,73 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 	    /// <summary>The cvs root file information.</summary>
 	    public string ROOT {
 	        get {return this.CVS + Path.DirectorySeparatorChar + "Root";}
-	    }            
-
+	    }  
+	    
         /// <summary>Constructory</summary>        
         public CvsFileManager () {
+        }
+        
+        public void AddDirectories (WorkingDirectory directory) {
+            String path = directory.LocalDirectory;
+            
+            this.AddDirectories (path);
+        }
+        
+        private void AddDirectories (String path) {
+            foreach (String directory in Directory.GetDirectories (path)) {
+                Entry dirEntry = this.CreateDirectoryEntryFromPath (path, directory);
+                
+                this.AddEntry (path, dirEntry);
+                this.AddDirectories (directory);
+            }
+        }
+        
+        private Entry CreateDirectoryEntryFromPath (String pathToDirectory, String directory) {
+            return this.CreateDirectoryEntryFromPath (directory.Substring (pathToDirectory.Length + 1));
+            
+        }
+        
+        public Hashtable getFolders (WorkingDirectory workingDirectory) {
+            Hashtable folders = new Hashtable ();
+            this.getFolders (folders, workingDirectory.LocalDirectory);
+            return folders;
+        }
+        
+        private void getFolders (Hashtable folders, String path) {
+            foreach (String directory in Directory.GetDirectories (path)) {
+                ICollection entries = this.ReadEntries (directory);
+                Entry dirEntry = this.CreateDirectoryEntryFromPath (path, directory);
+                String repositoryEntry = this.ReadRepository (directory);
+                if (!dirEntry.Name.Equals ("CVS")) {
+                    Folder folder = new Folder ();
+                    folder.Entries = new ArrayList (entries);
+                    folders.Add (repositoryEntry, folder);
+                    this.getFolders (folders, directory);
+                }
+            }
+        }
+        
+        public Entry CreateDirectoryEntryFromPath (String path) {
+            string[] dirTokens = path.Split ('/');
+            
+            string dirToken = dirTokens[dirTokens.Length - 1];
+            string dirEntry = "D/" + dirToken;
+            
+            // If there is some path information append empty slashes,
+            //     otherwise just leave the entry as 'D/'.
+            if (dirEntry.Length > 2) {
+                int addSlashes = 6 - dirEntry.Split ('/').Length;
+                for (int slashes = 0; slashes < addSlashes; slashes++) {
+                    dirEntry = dirEntry + "/";
+                }
+            }
+            if (LOGGER.IsDebugEnabled) {
+                String msg = "dirEntry=[" + dirEntry + "]" + 
+                    "dirToken=[" + dirToken + "]";
+                LOGGER.Debug (msg);
+            }
+            Entry entry = new Entry (dirEntry);
+            return entry;
         }
 
         /// <summary>
@@ -106,7 +169,11 @@ namespace ICSharpCode.SharpCvsLib.Misc {
             
             bool exists = false;
             foreach (Entry existingEntry in existingEntries) {
-                if (existingEntry.Name.Equals (newEntry.Name)) {
+                if (null == existingEntry.Name &&
+                    existingEntry.IsDirectory) {
+                    workingEntries.Add (newEntry);
+                }
+                else if (existingEntry.Name.Equals (newEntry.Name)) {
                     workingEntries.Add (newEntry);
                     exists = true;
                 }
@@ -330,6 +397,26 @@ namespace ICSharpCode.SharpCvsLib.Misc {
             LOGGER.Info (message);
         }
         
+        public String ReadRepository (String path) {
+            if (LOGGER.IsDebugEnabled) {
+                String msg = "Enter read repository.  " +
+                    "path=[" + path + "]";
+                LOGGER.Debug (msg);
+            }
+            ArrayList repos = 
+                new ArrayList (this.ReadFromFile (path, this.REPOSITORY));
+            if (repos.Count == 0) {
+                return String.Empty;
+            }
+            else if (repos.Count == 1) {
+                IEnumerator reposEntries = repos.GetEnumerator ();
+                reposEntries.MoveNext ();
+                return (String)reposEntries.Current;
+            }
+            else {
+                throw new Exception ("Repository entry should only be 1 line.");
+            }
+        }
         /// <summary>
         ///     Reads all the entries in the <code>CVS\Entries</code>
         ///         file and returns the 
@@ -338,6 +425,11 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <returns>An array of entries if found, or an empty array if no 
         ///     entries were found.</returns>
         public ICollection ReadEntries (String path) {
+            if (LOGGER.IsDebugEnabled) {
+                String msg = "Enter read entries.  "  +
+                    "path=[" + path + "]";
+                LOGGER.Debug (msg);
+            }
             ArrayList entries = new ArrayList ();
             ICollection entryStrings;
             
@@ -347,7 +439,9 @@ namespace ICSharpCode.SharpCvsLib.Misc {
                 Entry entry = new Entry (entryString);
                 if (LOGGER.IsDebugEnabled) {
                     String msg = "Adding entry to entries collection.  " +
-                        "entry=[" + entry + "]";
+                        "entry=[" + entry + "]" + 
+                        "entry.Name=[" + entry.Name + "]";
+                    LOGGER.Debug (msg);
                 }
                 entries.Add (new Entry (entryString));
             }    

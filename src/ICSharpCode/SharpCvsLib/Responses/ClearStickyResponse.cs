@@ -31,6 +31,10 @@
 
 using System;
 
+using log4net;
+
+using ICSharpCode.SharpCvsLib.Misc;
+
 namespace ICSharpCode.SharpCvsLib.Responses { 
 	
     /// <summary>
@@ -38,6 +42,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// </summary>
 	public class ClearStickyResponse : IResponse
 	{
+	    private readonly ILog LOGGER = 
+	        LogManager.GetLogger (typeof (ClearStickyResponse));
         /// <summary>
         /// Process a clear sticky tag response.
         /// </summary>
@@ -47,7 +53,20 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	    {
             string localPath      = cvsStream.ReadLine();
             string repositoryPath = cvsStream.ReadLine();
-	    	// TODO : make something useful with this request
+	        
+	        // TODO: Remove this duplication, find good common place for 
+	        //    the directory entry creation.
+	        if (LOGGER.IsDebugEnabled) {
+	            String msg = "Clear sticky response.  " +
+	                "; localPath=[" + localPath + "]" +
+	                "; repositoryPath=[" + repositoryPath + "]";
+	            LOGGER.Debug (msg);
+	        }
+	        CvsFileManager manager = new CvsFileManager ();
+	        manager.AddEntry (services.Repository.LocalDirectory, 
+	                          localPath, 
+	                          manager.CreateDirectoryEntryFromPath (localPath));
+
 	    }
 	    
         /// <summary>

@@ -264,7 +264,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 					sr.Close();
 				}
 				foreach (Entry entry in entries) {
-					if (entry.IsDirectory) {
+					if (entry.IsDirectory && null != entry.Name) {
 						AddEntriesIn(Path.Combine (directory, entry.Name));
 					}
 					
@@ -291,10 +291,12 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		            "localdirectory=[" + this.localdirectory + "]";
 		        LOGGER.Debug (msg);
 		    }
-			AddEntriesIn(localdirectory);
-		    if (null == this.Folders || 0 == this.Folders.Count) {
-		        AddEntriesIn (Path.Combine (localdirectory, this.ModuleName));
-		    }
+		    string wd = 
+		        Path.Combine (localdirectory, this.ModuleName);
+			AddEntriesIn(wd);
+//		    if (null == this.Folders || 0 == this.Folders.Count) {
+//		        AddEntriesIn (Path.Combine (localdirectory, this.ModuleName));
+//		    }
 		}		
 	}
 }

@@ -115,7 +115,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		        Directory.GetFiles (cvsPath);
 		    String[] directories = 
 		        Directory.GetDirectories (cvsPath);
-		    int total = files.Length + directories.Length;
+		    // Plus the root folder.
+		    int total = files.Length + directories.Length + 1;
 		    Assertion.Assert ("Count of directories and files should be equal to " +
 		                      "the entries in the CVS/Entries file.  They are not.  " +
 		                      "entriesCount=[" + entries.Count + "]" + 

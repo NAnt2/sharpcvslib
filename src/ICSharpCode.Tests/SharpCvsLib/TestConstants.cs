@@ -41,5 +41,6 @@ namespace ICSharpCode.SharpCvsLib {
         public const String PASSWORD_VALID = "";
         public const String PASSWORD_INVALID = "I_HATE_YOU_TOO";
         public const String BUILD_FILE = "SharpCvsLib.build";
+        public const String CONF_DIRECTORY = "CONF_DIRECTORY";
     }
 }

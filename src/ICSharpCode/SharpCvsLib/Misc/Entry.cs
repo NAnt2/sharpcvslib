@@ -253,44 +253,48 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </summary>
         /// <param name="line"></param>
 		public void Parse(string line)
-		{
+		{		    
 		    if (LOGGER.IsDebugEnabled) {
-		        String msg = "cvsEntry=[" + line + "]";
+//    	        System.Diagnostics.StackTrace trace = 
+//    	            new System.Diagnostics.StackTrace ();		        
+		        String msg = "cvsEntry=[" + line + "]";// +
+//		                        "stackTrace=[" + trace.ToString () + "]";
 		        LOGGER.Debug (msg);
 		    }
 		    
 			if (line.StartsWith("D/")) {
 				this.isDir = true;
 				line = line.Substring(1);
+			    this.name = "";
 			}
 			string[] tokens = line.Split( new char[] { '/' });
-			if (tokens.Length < 6) {
+			if (tokens.Length < 6 && !this.isDir) {
 				throw new ArgumentException("not enough tokens in entry line (#" + 
 				                            tokens.Length + ")\n" + line);
 			}
-			/* TODO: See if I should be checking for > 6 tokens...
 			else if (tokens.Length > 6) {
 			    throw new ArgumentException ("Too many tokens in entry line." +
 			                                 "tokens.Length=[" + tokens.Length + "]" +
 			                                 "line=[" + line + "]");
-			}*/
-			
-			name      = tokens[1];
-			revision  = tokens[2];
-			date      = tokens[3];
-			
-			int conflictIndex = date.IndexOf('+');
-			
-			if (conflictIndex > 0) {
-				Conflict = date.Substring(conflictIndex + 1);
-				date = date.Substring(0, conflictIndex);
 			}
-			
+									
+    		name      = tokens[1];
 			if (!this.isDir) {
+    			revision  = tokens[2];
+    			date      = tokens[3];			    
+
+    			int conflictIndex = date.IndexOf('+');
+    			
+    			if (conflictIndex > 0) {
+    				Conflict = date.Substring(conflictIndex + 1);
+    				date = date.Substring(0, conflictIndex);
+    			}
+			    
     			SetTimeStamp();
+    			options   = tokens[4];
+    			tag       = tokens[5];
+			    
 			}
-			options   = tokens[4];
-			tag       = tokens[5];
 		}
 		
 		/// <summary>

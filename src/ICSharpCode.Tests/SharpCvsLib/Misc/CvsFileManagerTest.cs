@@ -76,9 +76,9 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         
         [TearDown]
         public void TearDown () {
-            string cvsFile = 
-                Path.Combine (TestConstants.LOCAL_PATH, this.manager.ENTRIES);
-            File.Delete (cvsFile);
+//            string cvsFile = 
+//                Path.Combine (TestConstants.LOCAL_PATH, this.manager.ENTRIES);
+//            File.Delete (cvsFile);
         }
         
 		/// <summary>
@@ -108,6 +108,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
                               readEntry.CvsEntry.Equals (cvsEntries[0]));
 		}
 		
+		// TODO: Implement this method when I start doing cvs add and removes, etc.
 		public void EntryLogWriteReadTest () {
 		    Entry entry = new Entry (this.cvsEntries[0]);
 		    this.manager.AddEntry (TestConstants.LOCAL_PATH, entry);
@@ -157,6 +158,44 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		    this.verifyEntryCount (TestConstants.LOCAL_PATH,
 		                           this.cvsEntries.Length + 1);
 		    
+		}
+		
+		[Test]
+		public void WriteDirectoryEntriesFromPathTest () {
+		    String[] directories = {"/sharpcvslib-tests/conf",
+		                            "/sharpcvslib-tests/doc",
+		                            "/sharpcvslib-tests/lib",
+		                            "/sharpcvslib-tests/src"};
+		    
+		    this.manager.AddEntry (TestConstants.LOCAL_PATH, 
+		                           this.manager.CreateDirectoryEntryFromPath (directories[0]));
+		    this.manager.AddEntry (TestConstants.LOCAL_PATH, 
+		                           this.manager.CreateDirectoryEntryFromPath (directories[1]));
+		    this.manager.AddEntry (TestConstants.LOCAL_PATH, 
+		                           this.manager.CreateDirectoryEntryFromPath (directories[2]));
+		    this.manager.AddEntry (TestConstants.LOCAL_PATH, 
+		                           this.manager.CreateDirectoryEntryFromPath (directories[3]));
+		    
+		    ICollection currentEntries = 
+		        this.manager.ReadEntries (TestConstants.LOCAL_PATH);
+		    
+		    Assertion.Assert ("Current entries should = directory count, which is 4", 
+		                      currentEntries.Count == 4);
+		    
+		    int found = 0;
+		    foreach (Entry entry in currentEntries) {
+		        foreach (String directory in directories) {
+		            string dirName = 
+		                directory.Substring (directory.LastIndexOf ('/') + 1);
+		            if (entry.Name.Equals (dirName)) {
+		                found++;
+		            }
+		        }
+		    }
+		    Assertion.Assert ("Did not find all directory names in entries file." +
+		                      "looking for=[4] and found=[" + found + "]", 
+		                      4 == found);
+		                      
 		}
 		
 		private void verifyEntryCount (String path, int entriesExpected) {

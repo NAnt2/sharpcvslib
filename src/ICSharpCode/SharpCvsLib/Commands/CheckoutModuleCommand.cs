@@ -30,6 +30,7 @@
 #endregion
 
 using System;
+using System.IO;
 
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
@@ -78,9 +79,9 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                             "/" + workingdirectory.ModuleName));
 		    
 			connection.SubmitRequest(new CheckoutRequest());
-			//workingdirectory.CreateCVSFiles();
-		    //CvsFileManager manager = new CvsFileManager ();
-		    //manager.AddDirectoryEntries (this.workingdirectory.LocalDirectory);
+		    CvsFileManager manager = new CvsFileManager ();
+		    manager.AddDirectories (this.workingdirectory);
+
 		}
 	}
 }
