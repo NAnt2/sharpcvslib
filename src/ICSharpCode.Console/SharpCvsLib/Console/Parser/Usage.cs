@@ -189,7 +189,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 return msg.ToString ();
             }
         }
-
     }
     
 }

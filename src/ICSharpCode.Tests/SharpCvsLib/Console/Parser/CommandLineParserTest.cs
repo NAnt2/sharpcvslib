@@ -80,5 +80,29 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser
 			Assertion.AssertNotNull ("Should have a command object.", newCommandLineParser);
 			newCommandLineParser.Execute();
 		}
+
+        /// <summary>
+        /// Test that the -d option parameter is connected to the cvsroot, to keep
+        ///     the implementation similar to cvs/ cvsnt.
+        ///     
+        ///     Correct
+        ///     <code>
+        ///         cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/sharpcvslib login
+        ///     </code>
+        ///     Incorrect:
+        ///     <code>
+        ///         cvs -d :pserver:anonymous:cvs.sf.net:/cvsroot/sharpcvslib login
+        ///     </code>
+        /// </summary>
+        [Test]
+        public void MinusDOptionConnectedToCvsRoot () {
+            String[] args = {"-d:pserver:anonymous:cvs.sf.net:/cvsroot/sharpcvslib", "login"};
+            CommandLineParser parser = new CommandLineParser (args);
+            try {
+                parser.Execute ();
+            } catch {
+                Assertion.Fail ("Should not throw an exception, valid parameters.");
+            }
+        }
 	}
 }

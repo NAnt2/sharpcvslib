@@ -108,13 +108,24 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             }
 
             for (int i = 0; i < arguments.Length; i++) {
+                if (arguments[i].IndexOf ("-d", 0, 2) >= 0) {
+                    cvsroot = arguments[i++].Substring (2);
+                }
                 switch (arguments[i]) {
                     case "checkout":
                     case "co": 
                         this.command = arguments[i++];
                         // get rest of arguments which is options on the checkout command.
                         // pass argument coOptions an array of strings.
-                        this.repository = arguments[i++];
+                        if (arguments.Length < i) {
+                            // Safely grab the module, if not specified then
+                            //  pass null into the reporitory...the cvs command
+                            //  line for cvsnt/ cvs seems to bomb out when
+                            //  it sends to the server
+                            this.repository = arguments[i++];
+                        } else {
+                            this.repository = String.Empty;
+                        }
                         break;
                     case "login":
                         // login to server
@@ -137,9 +148,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         break;
                     case "--help-synonyms":
                         System.Console.WriteLine (Usage.Synonyms);
-                        break;
-                    case "-d":
-                        cvsroot = arguments[++i];
                         break;
                     default:
                         System.Console.WriteLine (Usage.General);

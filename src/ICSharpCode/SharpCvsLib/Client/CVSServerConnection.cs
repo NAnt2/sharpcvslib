@@ -96,8 +96,9 @@ namespace ICSharpCode.SharpCvsLib.Client {
 	    public CVSServerConnection () {
             inputStream  = new CvsStream (new MemoryStream());
 		    outputStream = new CvsStream (new MemoryStream());
+	        SharpCvsLibConfig config = new SharpCvsLibConfig ();
 	        try {
-    	        SharpCvsLibConfig config = 
+    	        config = 
                     (SharpCvsLibConfig)ConfigurationSettings.GetConfig 
                     (SharpCvsLibConfigHandler.APP_CONFIG_SECTION);
     	        
@@ -113,6 +114,14 @@ namespace ICSharpCode.SharpCvsLib.Client {
                     // TODO: Fix up the verbose property so logging can be shut off.
                 }
                 
+	        } catch (Exception e) {
+	            LOGGER.Error (e);
+	            this.timeout = DEFAULT_TIMEOUT;
+	            this.authSleep = DEFAULT_AUTH_SLEEP;
+	        }
+	        
+	        try
+	        {
                 if (config.Log.DebugLog.Enabled) {
                     requestLog = new RequestLog ();
                     responseLog = new ResponseLog ();
@@ -124,8 +133,6 @@ namespace ICSharpCode.SharpCvsLib.Client {
                 }
 	        } catch (Exception e) {
 	            LOGGER.Error (e);
-	            this.timeout = DEFAULT_TIMEOUT;
-	            this.authSleep = DEFAULT_AUTH_SLEEP;
                     requestLog = new RequestLog ();
                     responseLog = new ResponseLog ();
                     
@@ -135,6 +142,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
                         new EncodedMessage.MessageHandler (responseLog.Log);
 
 	        }
+
 	    }
 		
         /// <summary>

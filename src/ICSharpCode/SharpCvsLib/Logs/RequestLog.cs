@@ -39,9 +39,11 @@ namespace ICSharpCode.SharpCvsLib.Logs {
     /// <summary>
     /// Utility class for debugging cvs server responses.  Logging outputs are 
     ///     attempted in the following order:
-    ///         1) log4net properties for Type in application config file.
-    ///         2) cvs.out file in the working folder of the assembly.
-    ///         3) console message
+    ///     <ol>
+    ///         <li>log4net properties for Type in application config file.</li>
+    ///         <li>cvs.out file in the working folder of the assembly.</li>
+    ///         <li>console message</li>
+    ///     </ol>
     /// A failure at any level causes the program to attempt to log to another 
     ///     level.
     /// </summary>
