@@ -1,6 +1,6 @@
 <project>
     <assemblies>
-        <assembly location="E:\dev\src\sharpcvslib\sharpcvslib\build\bin\Release\ICSharpCode.SharpCvsLib.dll" documentation="E:\dev\src\sharpcvslib\sharpcvslib\build\bin\Release\ICSharpCode.SharpCvsLib.xml" />
+        <assembly location="E:\dev\src\sharpcvslib\sharpcvslib\build\bin\Debug\ICSharpCode.SharpCvsLib.dll" documentation="E:\dev\src\sharpcvslib\sharpcvslib\build\bin\Debug\ICSharpCode.SharpCvsLib.xml" />
     </assemblies>
     <namespaces>
         <namespace name="ICSharpCode.SharpCvsLib"></namespace>

@@ -69,6 +69,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     The type of file that this is.
         /// </summary>
         Factory.FileType Type {get;}
+        
+        /// <summary>
+        ///     Indicates whether the cvs file can contain multiple lines
+        ///         or if it can only contain a one line entry.
+        /// </summary>
+        bool IsMultiLined {get;}
                 
     }
 }

@@ -236,7 +236,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 ICollection cvsFiles = this.Fetch (cvsPath,
                                                    newCvsEntry.Type);
                 
-                if (cvsFiles.Count >= 1 && !this.IsAllowedMulti (newCvsEntry.Type)) {
+                if (cvsFiles.Count >= 1 && !newCvsEntry.IsMultiLined) {
                     LOGGER.Debug ("The file already has an entry and cannot be changed.");
                     return;
                 }
@@ -264,21 +264,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                               (ICvsFile[])newCvsEntries.ToArray 
                                   (typeof (ICvsFile)));
         }
-        
-        private bool IsAllowedMulti (Factory.FileType fileType) {
-            switch (fileType) {
-                case Factory.FileType.Entries:
-                    return true;
-                case Factory.FileType.Repository:
-                    return false;
-                case Factory.FileType.Root:
-                    return false;
-                default:
-                    throw new ArgumentException ("Unknown file type.");
                 
-            }
-        }
-        
         /// <summary>
         ///     Find an entry given the name of the entry and a starting
         ///         search path.
@@ -595,7 +581,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                                               DateTime timeStamp) {
             return timeStamp.Add (System.TimeZone.CurrentTimeZone.GetUtcOffset (timeStamp));
         }
-
     }
     
 }

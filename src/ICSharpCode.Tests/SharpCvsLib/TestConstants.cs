@@ -68,5 +68,8 @@ namespace ICSharpCode.SharpCvsLib {
         /// </summary>
         public const String TARGET_DIRECTORY = "src";
         
+        /// <summary>The revision to fetch.</summary>
+        public const String REVISION = "TEST_TAG_1";
+        
     }
 }

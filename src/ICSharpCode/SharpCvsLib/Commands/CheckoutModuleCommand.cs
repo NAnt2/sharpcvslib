@@ -41,51 +41,59 @@ using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.FileSystem;
 
 namespace ICSharpCode.SharpCvsLib.Commands { 
-	
+
     /// <summary>
     /// Checkout module command
     /// </summary>
-	public class CheckoutModuleCommand : ICommand
-	{
-		private WorkingDirectory workingdirectory;
-		
+    public class CheckoutModuleCommand : ICommand
+    {
+        private WorkingDirectory workingDirectory;
+
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="workingdirectory"></param>
-		public CheckoutModuleCommand(WorkingDirectory workingdirectory)
-		{
-			this.workingdirectory    = workingdirectory;
-		}
+        /// <param name="workingDirectory"></param>
+        public CheckoutModuleCommand(WorkingDirectory workingDirectory)
+        {
+            this.workingDirectory    = workingDirectory;
+        }
 
         /// <summary>
         /// Execute checkout module command.
         /// </summary>
         /// <param name="connection">Server connection</param>
-		public void Execute(CVSServerConnection connection)
-		{
-            workingdirectory.Clear();
+        public void Execute(CVSServerConnection connection)
+        {
+            workingDirectory.Clear();
             
             connection.SubmitRequest(new CaseRequest());
-			connection.SubmitRequest(new ArgumentRequest(workingdirectory.ModuleName));
-			
-			connection.SubmitRequest(new DirectoryRequest(".", 
-                            workingdirectory.CvsRoot.CvsRepository + 
-                            "/" + workingdirectory.ModuleName));
-		    
-            connection.SubmitRequest(new ExpandModulesRequest());
-			
-            connection.SubmitRequest(new ArgumentRequest("-N"));
-            connection.SubmitRequest(new ArgumentRequest(workingdirectory.ModuleName));
-		    
-			connection.SubmitRequest(new DirectoryRequest(".", 
-                            workingdirectory.CvsRoot.CvsRepository + 
-                            "/" + workingdirectory.ModuleName));
-		    
-			connection.SubmitRequest(new CheckoutRequest());
-		    Manager manager = new Manager ();
-		    manager.AddDirectories (this.workingdirectory.LocalDirectory);
+            connection.SubmitRequest(new ArgumentRequest(workingDirectory.ModuleName));
 
-		}
-	}
+            connection.SubmitRequest(new DirectoryRequest(".", 
+                            workingDirectory.CvsRoot.CvsRepository + 
+                            "/" + workingDirectory.ModuleName));
+
+            connection.SubmitRequest(new ExpandModulesRequest());
+
+            connection.SubmitRequest(
+                new ArgumentRequest(ArgumentRequest.Options.MODULE_NAME));
+            
+            if (workingDirectory.HasRevision) {
+                connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.REVISION));
+            }
+            if (workingDirectory.HasRevision) {
+                connection.SubmitRequest(new ArgumentRequest(workingDirectory.Revision));
+            }
+            connection.SubmitRequest(new ArgumentRequest(workingDirectory.ModuleName));
+
+            connection.SubmitRequest(new DirectoryRequest(".", 
+                            workingDirectory.CvsRoot.CvsRepository + 
+                            "/" + workingDirectory.ModuleName));
+
+            connection.SubmitRequest(new CheckoutRequest());
+            Manager manager = new Manager ();
+            manager.AddDirectories (this.workingDirectory.LocalDirectory);
+
+        }
+    }
 }

@@ -57,6 +57,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		private CvsRoot cvsroot;
 		private string  localdirectory;
 		private string  repositoryname;
+	    private String revision;
 		
 		private Hashtable folders = new Hashtable();
 	    
@@ -130,6 +131,26 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 			}
 		}
 		
+		/// <summary>Used to specify the revision of the module
+		/// requested.  This should correspond to a module tag.</summary>
+		public String Revision {
+		    get {
+		        return this.revision;
+		    }
+		    set {
+		        this.revision = value;
+		    }
+		}
+		
+		/// <summary>Determine if a revision has been specified.</summary>
+		/// <returns><code>true</code> if a specific revision has been 
+		/// specified and the <code>Revision</code> field is non-null;
+		/// <code>false</code> otherwise.</returns>
+		public bool HasRevision {
+		    get {return String.Empty != this.Revision ||
+		                null != this.Revision;}
+		}
+
         /// <summary>
         /// Public constructor.
         /// </summary>

@@ -1,7 +1,7 @@
 <!--
     Build file for the 
 -->
-<project name="ICSharpCode.SharpCvsLib" default="Debug">
+<project name="ICSharpCode.SharpCvsLib" default="debug">
 
     <property name="lib.name" value="ICSharpCode.SharpCvsLib" />    
     <property name="assembly.version" value="0.3.4.1" />  
@@ -24,7 +24,8 @@
     <property name="nunit" value="nunit.framework.dll" />    
     <property name="ziplib" value="ICSharpCode.SharpZipLib.dll" />
 
-    <target name="Debug" depends="update.src, SharpCvsLib.Debug" />
+    <target name="debug" depends="SharpCvsLib.Debug" />
+    <target name="debug-with-update" depends="update.src, SharpCvsLib.Debug" />
     <target name="Release" depends="SharpCvsLib.Release" />
     
         <property name="debug" value="true" />
@@ -37,7 +38,7 @@
     <property name="copyright-href" value="http://www.gnu.org/copyleft/lesser.html#TOC1" />
     
     <target name="update.src" description="Updates the source from cvs.">
-       <cvs-update  module="nant" 
+       <cvs-update  module="sharcvslib" 
                     cvsroot=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/nant"
                     destination="${src.dir}"
                     password="" />
@@ -302,7 +303,9 @@
                 <includes name="${build.dir}/${lib.name}.dll" />
             </references>
         </csc>
+    </target>
 
+    <target name="run-tests" depends="SharpCvsLib.Tests">
         <nunit2>
             <test assemblyname="${build.dir}/${tests.name}.dll"/>
         </nunit2>

@@ -418,5 +418,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		
 		/// <summary>The type of file that this is.</summary>
 		public Factory.FileType Type {get {return Factory.FileType.Entries;}}
+	
+        /// <summary>Indicates whether the file can contain multiple
+        /// lines.</summary>
+        /// <returns><code>true</code> if the file can contain multiple
+        /// lines; <code>false</code> otherwise.</returns>
+        public bool IsMultiLined {
+            get {return true;}
+        }
 	}
 }
