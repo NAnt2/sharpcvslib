@@ -92,6 +92,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
         public ICommand CreateCommand () {
             ICSharpCode.SharpCvsLib.Commands.RemoveCommand removeCommand;
+            this.ParseOptions(this.unparsedOptions);
             try {
                 if (localDirectory == null) {
                     localDirectory = Environment.CurrentDirectory;
@@ -107,8 +108,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 LOGGER.Error (e);
                 throw e;
             }
-            this.ParseOptions(removeCommand, this.unparsedOptions);
-         
             return removeCommand;
         }
  
@@ -116,11 +115,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// Parse the command line options/ arguments and populate the command
         ///     object with the arguments.
         /// </summary>
-        /// <param name="removeCommand">A remove command that is to be
-        ///     populated.</param>
         /// <param name="rmOptions">A string value that holds the command
         ///     line options the user has selected.</param>
-        private void ParseOptions (ICommand removeCommand, String rmOptions) {
+        private void ParseOptions (String rmOptions) {
             for (int i = 0; i < rmOptions.Length; i++) {
                 if (rmOptions[i]== '-' && rmOptions[i+1] == 'f') {
                     String msg = "The -f remove option is not  " +
