@@ -169,7 +169,7 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\XmlLogCommand.cs"
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\AbstractCommandParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -194,7 +194,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\CommandParserFactory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\ICommandParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\Usage.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\XmlLogCommandParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

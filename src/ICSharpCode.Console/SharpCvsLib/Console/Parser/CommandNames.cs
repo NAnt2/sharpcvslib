@@ -89,7 +89,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
              new Command("update",   "up",       "upd"),
              new Command("version",  "ve",       "ver"),
              new Command("watch",    null,       null),
-             new Command("watchers", null,       null)
+             new Command("watchers", null,       null),
+             new Command("xml",     null,       null)
             } ;
 
         /// <summary>Holds a list of command objects.</summary>

@@ -56,9 +56,9 @@ namespace ICSharpCode.SharpCvsLib {
             
             try {
                 Assembly log4net = AssemblyHelper.LoadLog4Net(sharpcvslibConsole);
-            } catch (Exception e) {
+            } catch (Exception) {
                 // unable to load log4net, get on with it.
-                System.Console.WriteLine(e.Message);
+                //System.Console.WriteLine(e.Message);
             }
             //Assembly log4net = AssemblyHelper.LoadAssembly(AssemblyHelper.LOG4NET);
 

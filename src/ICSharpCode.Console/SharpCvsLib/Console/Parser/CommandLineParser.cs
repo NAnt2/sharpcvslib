@@ -485,26 +485,15 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         }
                         break;
                     case "xml":
-                        ArrayList allArgs = new ArrayList();
-                        foreach (string argument in arguments) {
-                            allArgs.Add(argument);
-                        }
-                        ArrayList subArgs = new ArrayList();
-                        bool add = false;
-                        foreach (string argument in arguments) {
-                            if (add) {
-                                subArgs.Add(argument);
-                            }
-                            if (argument.Equals("xml")) {
-                                add = true;
-                            }
-                        }
-                        ICSharpCode.SharpCvsLib.Console.Commands.XmlLogCommand consoleCommand =
-                            new ICSharpCode.SharpCvsLib.Console.Commands.XmlLogCommand(this.CvsRoot, (string[])subArgs.ToArray(typeof(String))); 
-                        command = consoleCommand.CreateCommand();
+                        CommandParserFactory factory = 
+                            new CommandParserFactory("xml", arguments, 
+                            this.cvsRoot, this.currentWorkingDirectory);
+
+                        ICommandParser parser = factory.GetCommandParser();
+                        command = parser.CreateCommand();
                         i = arguments.Length;
                         this.currentWorkingDirectory = 
-                            consoleCommand.CurrentWorkingDirectory;
+                            parser.CurrentWorkingDirectory;
 
                         break;
                     default:
@@ -551,7 +540,18 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             for (int i = 0; i < arguments.Length; i++) {
                 switch (arguments[i]) {
                     case "--help":
-                        System.Console.WriteLine(Usage.General);
+                        if (i+1 < arguments.Length) {
+                            i++;
+                            string command = arguments[i];
+                            CommandParserFactory factory = 
+                                new CommandParserFactory(command, arguments, this.cvsRoot, 
+                                this.currentWorkingDirectory);
+                            ICommandParser commandParser = factory.GetCommandParser ();
+                            System.Console.WriteLine(commandParser.Usage);
+                            return true;
+                        } else {
+                            System.Console.WriteLine(Usage.General);
+                        }
                         return true;
                     case "--help-options":
                         System.Console.WriteLine(Usage.Options);

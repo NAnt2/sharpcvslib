@@ -114,6 +114,19 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             get {return this.xslFilename;}
             set {this.xslFilename = value;} 
         }
+
+        private string htmlFilename;
+        /// <summary>
+        /// The name of the html file created after the xsl transform.
+        /// </summary>
+        public string HtmlFilename {
+            get {
+                if (null == this.htmlFilename) {
+                    this.htmlFilename = Path.GetFileNameWithoutExtension(this.XmlFilename) + ".html";
+                }
+                return this.htmlFilename;}
+            set {this.htmlFilename = value;}
+        }
              
 
         /// <summary>
@@ -151,7 +164,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                 XslTransform t = new XslTransform();
                 try {
                     t.Load(this.XslFilename);
-                    t.Transform(this.XmlFilename, this.XmlFilename + ".html");
+                    t.Transform(this.XmlFilename, this.HtmlFilename);
                 } catch (Exception e) {
                     LOGGER.Error(e);
                 }

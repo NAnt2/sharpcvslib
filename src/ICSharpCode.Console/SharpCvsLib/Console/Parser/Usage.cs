@@ -140,6 +140,7 @@ update       Bring work tree in sync with repository
 version      Show current CVS version(s)
 watch        Set watches
 watchers     See who is watching a file
+xml          Create an xml report containing the history information for a module
 (Specify the --help option for a list of other help options)
 
 Thanks for using the command line tool.";

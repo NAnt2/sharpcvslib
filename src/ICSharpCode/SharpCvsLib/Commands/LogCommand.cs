@@ -224,7 +224,7 @@ public class LogCommand : ICommand, ILogCommand
     /// </summary>
     /// <param name="dateArg"></param>
     protected void AddDateArg(string dateArg) {
-        System.Console.WriteLine(String.Format("Adding date argument: {0}.", dateArg));
+//        System.Console.WriteLine(String.Format("Adding date argument: {0}.", dateArg));
         this.dateArgs.Add(dateArg);
     }
 
