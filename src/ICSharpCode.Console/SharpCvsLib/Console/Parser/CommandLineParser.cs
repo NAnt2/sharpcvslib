@@ -227,8 +227,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             this.repository = String.Empty;
                         }
                         try {
-                            ICSharpCode.SharpCvsLib.Console.Commands.AddCommand addCommand = 
-                                new ICSharpCode.SharpCvsLib.Console.Commands.AddCommand(this.CvsRoot, repository, options);
+                            AddCommandParser addCommand = 
+                                new AddCommandParser(this.CvsRoot, repository, options);
                             command = addCommand.CreateCommand ();
                             this.currentWorkingDirectory = 
                                 addCommand.CurrentWorkingDirectory;
@@ -491,6 +491,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
                         // TODO: Move this outside of case statement when all commands use same pattern
                         ICommandParser parser = factory.GetCommandParser();
+                        i = arguments.Length;
                         command = parser.CreateCommand();
                         this.currentWorkingDirectory = 
                             parser.CurrentWorkingDirectory;

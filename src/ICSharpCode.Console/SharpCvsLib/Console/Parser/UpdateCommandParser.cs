@@ -71,6 +71,12 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             get {return "update";}
         }
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public UpdateCommandParser () {
+
+        }
 
         /// <summary>
         /// Update module files from a cvs repository.
