@@ -228,7 +228,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
 		public void Connect(WorkingDirectory repository, string password)
 		{
 			this.repository = repository;
-			Authentification(password);
+			Authentication(password);
 		}
 		
 		private string shell = "ssh";
@@ -267,7 +267,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// Authentication for the repository.
         /// </summary>
         /// <param name="password"></param>
-		public void Authentification(string password)
+		public void Authentication(string password)
 		{
 			switch (repository.CvsRoot.Protocol) {
 				case "ext":
@@ -329,7 +329,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
 			            String msg = "Failed to read line from server.  " +
 			                "It is possible that the remote server was down.";
 			            LOGGER.Error (msg, e);
-			            throw new Exception (msg);
+			            throw new AuthenticationException (msg);
 			        }
 			        
 					switch (retStr) {

@@ -80,10 +80,10 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	        Manager manager = new Manager ();
 	        Factory factory = new Factory ();
 	        ICvsFile repository = factory.CreateCvsObject (repositoryPath.LocalPath, 
-	                                                       Repository.FILE_NAME,
+	                                                       Factory.FileType.Repository,
 	                                                       localPath);
 	        ICvsFile root = factory.CreateCvsObject (repositoryPath.LocalPath,
-	                                                 Root.FILE_NAME,
+	                                                 Factory.FileType.Root,
 	                                                 services.Repository.CvsRoot.ToString ());
 		    manager.Add (repository);
 		    manager.Add (root);

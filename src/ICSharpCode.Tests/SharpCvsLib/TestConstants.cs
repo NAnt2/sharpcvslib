@@ -36,9 +36,9 @@ namespace ICSharpCode.SharpCvsLib {
     public class TestConstants {
         public const String LOCAL_PATH = "c:/test/sharpcvslib-tests/";
         public const String CVSROOT = 
-            ":pserver:charbour@linux.sporadicism.com:/home/cvs/src";
+            ":pserver:anonymous@linux.sporadicism.com:/home/cvs/src";
         public const String MODULE = "Logger";
-        public const String PASSWORD_VALID = "William";
+        public const String PASSWORD_VALID = "";
         public const String PASSWORD_INVALID = "I_HATE_YOU_TOO";
         public const String TARGET_FILE = "Logger.sln";
         public const String TARGET_DIRECTORY = "lib";

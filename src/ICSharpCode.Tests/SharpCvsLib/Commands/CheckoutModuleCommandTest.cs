@@ -38,6 +38,7 @@ using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
+using ICSharpCode.SharpCvsLib.Exceptions;
 
 using log4net;
 using NUnit.Framework;
@@ -91,7 +92,11 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             ICommand command = new CheckoutModuleCommand (working);
             Assertion.AssertNotNull ("Should have a command object.", command);
 		    
-            connection.Connect (working, TestConstants.PASSWORD_VALID);
+		    try {
+                connection.Connect (working, TestConstants.PASSWORD_VALID);
+		    } catch (AuthenticationException) {
+		        Assertion.Assert ("Failed to authenticate with server.", true);
+		    }
 
             command.Execute (connection);
             connection.Close ();
@@ -100,7 +105,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		                      buildFile + "]", File.Exists (buildFile));
 		    
 		    ICvsFile[] entries = 
-		        manager.Fetch (cvsPath, Entry.FILE_NAME);
+		        manager.Fetch (cvsPath, Factory.FileType.Entries);
             int foundFileEntry = 0;	
 		    int foundDirectoryEntry = 0;
 		    

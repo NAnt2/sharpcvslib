@@ -98,8 +98,8 @@
     <File name=".\src\ICSharpCode\SharpCvsLib\Messages\UpdateMessage.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
-    <Reference type="Assembly" refto=".\lib\log4net.dll" />
     <Reference type="Assembly" refto=".\lib\ICSharpCode.SharpZipLib.dll" />
+    <Reference type="Assembly" refto=".\lib\log4net.dll" />
   </References>
   <DeploymentInformation target="" script="" strategy="File" />
   <Configuration runwithwarnings="False" name="Debug">

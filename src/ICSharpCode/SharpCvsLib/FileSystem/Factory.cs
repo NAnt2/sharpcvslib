@@ -45,6 +45,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// </summary>
     public class Factory {
         
+        public enum FileType {
+            Root,
+            Repository,
+            Entries
+        }
         /// <summary>
         ///     Constructor.
         /// </summary>
@@ -57,27 +62,46 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///         cvs file interface.
         /// </summary>
         public ICvsFile CreateCvsObject (String path, 
-                                       String filename, 
+                                       FileType fileType, 
                                        String line) {
             ICvsFile entry;
-            switch (filename) {
-                case (Entry.FILE_NAME):
+            switch (fileType) {
+                case (FileType.Entries):
                     entry = new Entry (path, line);
                     break;
-                case (Repository.FILE_NAME):
+                case (FileType.Repository):
                     entry = new Repository (path, line);
                     break;
-                case (Root.FILE_NAME):
+                case (FileType.Root):
                     entry = new Root (path, line);
                     break;
                 default:
-                    String msg = "Unable to create object, " +
-                        "unknown filename type=[" + filename + "]";
+                    String msg = "Unable to create object.";
                     throw new Exception (msg);
                     
             }
             return entry;
             
+        }
+        
+        /// <summary>
+        ///     Get the name of the file given the file type.
+        /// </summary>
+        /// <param name="fileType">The type of the file.</param>
+        /// <returns>The name of the cvs file.</returns>
+        public String GetFilename (FileType fileType) {
+            switch (fileType) {
+                case (FileType.Entries):
+                    return Entry.FILE_NAME;
+                case (FileType.Repository):
+                    return Repository.FILE_NAME;
+                case (FileType.Root):
+                    return Root.FILE_NAME;
+                default:
+                    String msg = "Unable to create object.";
+                    throw new Exception (msg);
+                    
+            }            
         }
     }
 }

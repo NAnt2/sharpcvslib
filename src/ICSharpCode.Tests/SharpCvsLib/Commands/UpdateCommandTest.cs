@@ -90,7 +90,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		                      buildFile + "]", File.Exists (buildFile));
 		    
 		    ICvsFile[] entries = 
-		        this.manager.Fetch(rootDir, Entry.FILE_NAME);
+		        this.manager.Fetch(rootDir, Factory.FileType.Entries);
             int found = 0;	
 		    
 		    String[] files = 
@@ -156,7 +156,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// </summary>
 		[TearDown]
 		public void TearDown () {
-		    //Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    Directory.Delete (TestConstants.LOCAL_PATH, true);
 		}
 
 

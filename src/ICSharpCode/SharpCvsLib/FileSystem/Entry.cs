@@ -398,9 +398,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		    return this.FileContents;
 		}
 		
-		/// <summary>
-		///     This is a file that can contain multiple entries.
-		/// </summary>
-		public bool IsMultiEntry { get {return true;}}
+		/// <summary>The type of file that this is.</summary>
+		public Factory.FileType Type {get {return Factory.FileType.Entries;}}
 	}
 }

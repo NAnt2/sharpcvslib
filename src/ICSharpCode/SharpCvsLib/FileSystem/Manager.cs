@@ -108,8 +108,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             ArrayList folders = new ArrayList ();
             Folder folder = new Folder ();
             folder.Repos = (Repository)this.FetchSingle (directory, 
-                                                         Repository.FILE_NAME);
-            folder.Entries = new ArrayList (this.Fetch (directory, Entry.FILE_NAME));
+                                                         Factory.FileType.Repository);
+            folder.Entries = new ArrayList (this.Fetch (directory, 
+                                                        Factory.FileType.Entries));
             folders.Add (folder);
             this.FetchFilesToUpdateRecursive (folders, directory);
             
@@ -121,8 +122,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             foreach (String subDir in Directory.GetDirectories (directory)) {
                 Folder folder = new Folder ();
                 folder.Repos = (Repository)this.FetchSingle (directory, 
-                                                             Repository.FILE_NAME);
-                folder.Entries = new ArrayList (this.Fetch (directory, Entry.FILE_NAME));
+                                                             Factory.FileType.Repository);
+                folder.Entries = new ArrayList (this.Fetch (directory, 
+                                                            Factory.FileType.Entries));
                 folders.Add (folder);
                 this.FetchFilesToUpdateRecursive (folders, subDir);
             }
@@ -224,9 +226,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             bool newEntry = true;
             
             try {
-                ICollection cvsFiles = this.Fetch (cvsPath, newCvsEntry.Filename);
+                ICollection cvsFiles = this.Fetch (cvsPath,
+                                                   newCvsEntry.Type);
                 
-                if (cvsFiles.Count >= 1 || !newCvsEntry.IsMultiEntry) {
+                if (cvsFiles.Count >= 1 && !this.IsAllowedMulti (newCvsEntry.Type)) {
                     LOGGER.Debug ("The file already has an entry and cannot be changed.");
                     return;
                 }
@@ -255,6 +258,20 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                                   (typeof (ICvsFile)));
         }
         
+        private bool IsAllowedMulti (Factory.FileType fileType) {
+            switch (fileType) {
+                case Factory.FileType.Entries:
+                    return true;
+                case Factory.FileType.Repository:
+                    return false;
+                case Factory.FileType.Root:
+                    return false;
+                default:
+                    throw new ArgumentException ("Unknown file type.");
+                
+            }
+        }
+        
         /// <summary>
         ///     Find an entry given the name of the entry and a starting
         ///         search path.
@@ -271,7 +288,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 "name=[" + name + "]";
             ICvsFile[] cvsEntries;
             try {
-                cvsEntries = this.Fetch (path, Entry.FILE_NAME);
+                cvsEntries = this.Fetch (path, Factory.FileType.Entries);
             } catch (IOException e) {
                 LOGGER.Debug (e);
                 throw new EntryNotFoundException (errorMsg);
@@ -467,13 +484,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///    or to the cvs directory.</param>
         /// <param name="filename">The name of the cvs file to fetch values.</param>
         /// <returns>A single <see cref="ICvsFile">Cvs file</see></returns>
-        public ICvsFile FetchSingle (String path, String filename) {
-            ICvsFile [] entries = this.Fetch (path, filename);
+        public ICvsFile FetchSingle (String path, Factory.FileType fileType) {
+            ICvsFile [] entries = this.Fetch (path, fileType);
             
             if (entries.Length == 0) {
                 String msg = "File not found.  " +
-                    "path=[" + path + "]" + 
-                    "filename=[" + filename + "]";
+                    "path=[" + path + "]";
                 throw new Exception (msg);
             }
             if (entries.Length > 1) {
@@ -493,15 +509,17 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///    or to the cvs directory.</param>
         /// <param name="filename">The name of the cvs file to fetch values.</param>
         /// <returns>A collection of <see cref="ICvsFile">Cvs files</see></returns>
-        public ICvsFile [] Fetch (String path, String filename) {
+        public ICvsFile [] Fetch (String path, Factory.FileType fileType) {
             String cvsDir = this.CombineCvsDir (path);
-            ICollection lines = this.ReadFromFile (cvsDir, filename);    
-            ArrayList entries = new ArrayList ();
             Factory factory = new Factory ();
+            String filename = factory.GetFilename (fileType);
+            ICollection lines = this.ReadFromFile (cvsDir, 
+                                                   filename);
+            ArrayList entries = new ArrayList ();
             
             foreach (String line in lines) {
                 entries.Add (factory.CreateCvsObject (cvsDir, 
-                                                      filename, 
+                                                      fileType, 
                                                       line));
             }
             

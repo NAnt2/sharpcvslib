@@ -57,13 +57,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     The contents that are going to be written to the file.
         /// </summary>        
         String FileContents {get;}
-        
+                
         /// <summary>
-        ///     Indicates whether this is a multiple entry cvs file or not.
+        ///     The type of file that this is.
         /// </summary>
-        /// <returns><code>true</code> if this file contains multiple lines
-        ///     holding cvs entries, <code>false</code> otherwise.</returns>
-        bool IsMultiEntry {get;}
+        Factory.FileType Type {get;}
                 
     }
 }

@@ -91,7 +91,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void AddRootTest () {
             String path = Path.Combine (TestConstants.LOCAL_PATH, 
                             TestConstants.MODULE);
-            this.AddCvsFileTest (path, this.ROOT_ENTRY, Root.FILE_NAME);
+            this.AddCvsFileTest (path, this.ROOT_ENTRY, Factory.FileType.Root);
         }
         
         /// <summary>
@@ -101,10 +101,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         [Test]
         public void AddRootTwiceTest () {
             String path = TestConstants.LOCAL_PATH;
-            this.AddCvsFileTest (path, this.ROOT_ENTRY, Root.FILE_NAME);
-            this.AddCvsFileTest (path, this.ROOT_ENTRY, Root.FILE_NAME);
+            this.AddCvsFileTest (path, this.ROOT_ENTRY, Factory.FileType.Root);
+            this.AddCvsFileTest (path, this.ROOT_ENTRY, Factory.FileType.Root);
             
-            this.verifyEntryCount (path, Root.FILE_NAME, 1);
+            this.verifyEntryCount (path, Factory.FileType.Root, 1);
         }
 
         /// <summary>
@@ -114,10 +114,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         [Test]       
         public void AddDiffRootTest () {
             String path = TestConstants.LOCAL_PATH;
-            this.AddCvsFileTest (path, this.ROOT_ENTRY, Root.FILE_NAME);
-            this.AddCvsFileTest (path, this.ROOT_ENTRY + "/changed", Root.FILE_NAME);
+            this.AddCvsFileTest (path, this.ROOT_ENTRY, Factory.FileType.Root);
+            this.AddCvsFileTest (path, this.ROOT_ENTRY + "/changed", 
+                                 Factory.FileType.Root);
             
-            this.verifyEntryCount (path, Root.FILE_NAME, 1);            
+            this.verifyEntryCount (path, Factory.FileType.Root, 1);            
         }
         
         /// <summary>
@@ -129,15 +130,17 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                             TestConstants.MODULE);
             this.AddCvsFileTest (path, 
                                  this.REPOSITORY_ENTRY, 
-                                 Repository.FILE_NAME);
+                                 Factory.FileType.Repository);
         }
         
         private void AddCvsFileTest (String path, 
                                      String line, 
-                                     String filename) {
+                                     Factory.FileType fileType) {
             Factory factory = new Factory ();
             
-            ICvsFile cvsEntry = factory.CreateCvsObject (path, filename, line);
+            ICvsFile cvsEntry = factory.CreateCvsObject (path, 
+                                                         fileType, 
+                                                         line);
             
             Manager manager = new Manager ();
             manager.Add (cvsEntry);
@@ -177,7 +180,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		    this.WriteTestEntries (path);
 		    		    
 		    this.verifyEntryCount (path,
-		                           Entry.FILE_NAME,
+		                           Factory.FileType.Entries,
 		                           this.cvsEntries.Length);
 		    
 		    string newEntry = 
@@ -186,7 +189,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		    manager.Add (new Entry (path, newEntry));
 		    
 		    this.verifyEntryCount (path,
-		                           Entry.FILE_NAME,
+		                           Factory.FileType.Entries,
 		                           this.cvsEntries.Length + 1);
 		    
 		}
@@ -221,10 +224,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		    Directory.CreateDirectory (entryCvsDir);
             this.AddCvsFileTest (entryDir, 
                                  this.REPOSITORY_ENTRY, 
-                                 Repository.FILE_NAME);
+                                 Factory.FileType.Repository);
 		    this.AddCvsFileTest (entryDir,
 		                         this.cvsEntries[0],
-		                         Entry.FILE_NAME);
+		                         Factory.FileType.Entries);
 		                         
 		    Entry entry = manager.CreateDirectoryEntry (entryDir);
 		    manager.Add (entry);
@@ -237,11 +240,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		/// <param name="path">The path to check for the entries in.</param>
 		/// <param name="entriesExpected">The number of entries expected.</param>
 		private void verifyEntryCount (String path,
-		                               String cvsFilename,
+		                               Factory.FileType fileType,
 		                               int entriesExpected) {
 		    Manager manager = new Manager ();
 		    ICvsFile[] currentEntries =
-		        manager.Fetch (path, cvsFilename);
+		        manager.Fetch (path, fileType);
 		    
 		    int entriesFound = currentEntries.Length;
 		    Assertion.Assert ("Should have found " + entriesExpected + 
@@ -265,7 +268,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		    this.WriteTestDirectoryEntries (rootDir);
 		    
 		    ICvsFile[] currentEntries = 
-		        manager.Fetch (rootDir, Entry.FILE_NAME);
+		        manager.Fetch (rootDir, Factory.FileType.Entries);
 		    
 		    int found = 0;
 		    foreach (Entry entry in currentEntries) {
@@ -334,7 +337,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		    this.WriteTestDirectoryEntries (rootDir);
             this.AddCvsFileTest (rootDir, 
                                  this.REPOSITORY_ENTRY, 
-                                 Repository.FILE_NAME);
+                                 Factory.FileType.Repository);
             working.FoldersToUpdate = manager.FetchFilesToUpdate (rootDir);
 		    
 		    Assertion.Assert ("Working folders count should be greater than 1.",
@@ -444,7 +447,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		    
 		    try
 		    {
-		        manager.Fetch (rootDir, Entry.FILE_NAME);
+		        manager.Fetch (rootDir, Factory.FileType.Entries);
 		    } catch (FileNotFoundException) {
 		        Assertion.Assert ("Should not be here, this should be trapped.", true);
 		    }
@@ -455,9 +458,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		/// </summary>
 		[TearDown]
 		public void TearDown () {
-//		    if (Directory.Exists (TestConstants.LOCAL_PATH)) {
-//    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
-//		    }
+		    if (Directory.Exists (TestConstants.LOCAL_PATH)) {
+    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    }
 		}
 		
 		/// <summary>
@@ -499,16 +502,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		                              System.TimeZone.CurrentTimeZone.IsDaylightSavingTime 
 		                                  (DateTime.Now) + "]");
 
-
-            if (System.TimeZone.CurrentTimeZone.IsDaylightSavingTime (DateTime.Now)) {
-    		    Assertion.AssertEquals (entry.TimeStamp, 
-    		                            File.GetLastWriteTime(filenameAndPath).AddHours (1));
-            }
-            else {
-    		    Assertion.AssertEquals (entry.TimeStamp, 
-    		                            File.GetLastWriteTime(filenameAndPath));
-            }
-		    
+            // TODO: This is a bad test, however the DateTime.ToUniversalTime () method
+            //    is broken in .net 1.0
+		    Assertion.AssertEquals (entry.TimeStamp, 
+		                            File.GetLastWriteTime(filenameAndPath).Subtract (System.TimeZone.CurrentTimeZone.GetUtcOffset (entry.TimeStamp)));
+ 		    
 		}
 
 

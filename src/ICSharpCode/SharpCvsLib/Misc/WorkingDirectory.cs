@@ -256,7 +256,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		        LOGGER.Debug (msg);
 		    }
 		    ArrayList entryCollection = 
-		        new ArrayList (this.manager.Fetch (directory, Entry.FILE_NAME));
+		        new ArrayList (this.manager.Fetch (directory, Factory.FileType.Entries));
 			Entry[] entries = (Entry[])entryCollection.ToArray (typeof (Entry));
 		    // TODO: Remove this line -- Entry.RetrieveEntries(directory);
 			if (entries != null && entries.Length > 0) {
