@@ -95,14 +95,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             set {this.description = value;}
         }
 
-        /// <summary>
-        /// <code>true</code> if the command is implemented, <code>false</code> otherwise.
-        /// </summary>
-        public bool Implemented {
-            get {return this.implemented;}
-            set {this.implemented = value;}
-        }
-
         /// <summary>Create a new command.</summary>
         /// <param name="first">Primary command name.</param>
         /// <param name="nick1">First alternate name for the command.</param>

@@ -101,7 +101,8 @@ Thanks for using the command line tool.";
                 commandMenu.Append(String.Format("        {0,-12}{1}",
                     command.CommandName, command.Description));
 
-                if (!command.Implemented) {
+                if (null == 
+                    CommandParserFactory.GetCommandParser(command.CommandName)) {
                     commandMenu.Append (" (NOT IMPLEMENTED)");
                 }
                 commandMenu.Append(Environment.NewLine);
@@ -164,7 +165,7 @@ Thanks for using the command line tool.";
                     string syn_output = String.Format("        {0,-11}  {1} {2}",
                                                       command.First, command.Nick1, command.Nick2);
                     msg.Append (syn_output);
-                    if (!command.Implemented) {
+                    if (CommandParserFactory.GetCommandParser(command.CommandName) == null) {
                         msg.Append (" (NOT IMPLEMENTED)");
                     }
                     msg.Append (Environment.NewLine);

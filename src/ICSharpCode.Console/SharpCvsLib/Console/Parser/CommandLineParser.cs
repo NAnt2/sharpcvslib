@@ -390,11 +390,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "dir":
                     case "list":
                     case "ls":
-                        factory = 
-                            new CommandParserFactory("ls", arguments, 
-                            this.cvsRoot, this.currentWorkingDirectory);
-
-                        parser = factory.GetCommandParser();
+                        parser = CommandParserFactory.GetCommandParser("ls");
                         i = arguments.Length;
                         command = parser.CreateCommand();
                         this.currentWorkingDirectory = 
@@ -481,11 +477,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "status":
                         string[] commandArgs = new string[arguments.Length - i];
                         Array.Copy(arguments, i, commandArgs, 0, arguments.Length - i);
-                        factory = 
-                            new CommandParserFactory("status", commandArgs, 
-                            this.cvsRoot, this.currentWorkingDirectory);
-
-                        parser = factory.GetCommandParser();
+                        parser = 
+                            CommandParserFactory.GetCommandParser("status");
                         i = arguments.Length;
                         command = parser.CreateCommand();
                         this.currentWorkingDirectory = 
@@ -526,12 +519,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             updateCommand.CurrentWorkingDirectory;
                         break;
                     case "xml":
-                        factory = 
-                            new CommandParserFactory("xml", arguments, 
-                            this.cvsRoot, this.currentWorkingDirectory);
-
-                        // TODO: Move this outside of case statement when all commands use same pattern
-                        parser = factory.GetCommandParser();
+                        parser  = CommandParserFactory.GetCommandParser("xml");
                         i = arguments.Length;
                         command = parser.CreateCommand();
                         this.currentWorkingDirectory = 
@@ -581,10 +569,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         if (i+1 < arguments.Length) {
                             i++;
                             string command = arguments[i];
-                            CommandParserFactory factory = 
-                                new CommandParserFactory(command, arguments, this.cvsRoot, 
-                                this.currentWorkingDirectory);
-                            ICommandParser commandParser = factory.GetCommandParser ();
+                            ICommandParser commandParser =
+                                CommandParserFactory.GetCommandParser(command);
                             System.Console.WriteLine(commandParser.Usage);
                             return true;
                         } else {

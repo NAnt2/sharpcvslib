@@ -107,13 +107,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         }
 
         /// <summary>
-        /// The add command is implemented in the library and commandline parser.
-        /// </summary>
-        public override bool Implemented {
-            get {return true;}
-        }
-
-        /// <summary>
         /// Create the command object that will be used to act on the repository.
         /// </summary>
         /// <returns>The command object that will be used to act on the
