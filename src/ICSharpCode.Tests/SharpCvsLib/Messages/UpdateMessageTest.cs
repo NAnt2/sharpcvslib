@@ -39,53 +39,53 @@ using NUnit.Framework;
 
 using ICSharpCode.SharpCvsLib.Messages;
 
-namespace ICSharpCode.SharpCvsLib.Messages { 
+namespace ICSharpCode.SharpCvsLib.Messages {
+
+/// <summary>
+///     Ensures the content of the update message are consistent with other
+///         command line cvs clients.
+/// </summary>
+[TestFixture]
+public class UpdateMessageTest {
+    private const String MODULE = "Sharpcvslib";
+    private const String REPOSITORY = "sharpcvslib";
+    private const String FILENAME = "theFile.txt";
 
     /// <summary>
-    ///     Ensures the content of the update message are consistent with other
-    ///         command line cvs clients.
+    ///     Test that the message output is formatted correctly if there
+    ///         are no slashes on the end of the seperate values.
     /// </summary>
-    [TestFixture]
-    public class UpdateMessageTest {
-        private const String MODULE = "Sharpcvslib";
-        private const String REPOSITORY = "sharpcvslib";
-        private const String FILENAME = "theFile.txt";
-        
-        /// <summary>
-        ///     Test that the message output is formatted correctly if there
-        ///         are no slashes on the end of the seperate values.
-        /// </summary>
-        [Test]
-        public void MessageFormattedCorrectlyNoSlashes () { 
-            UpdateMessage message = new UpdateMessage ();
-            message.Module = MODULE;
-            message.Repository = REPOSITORY;
-            message.Filename = FILENAME;
-            
-            String cvsMessage = "U " + MODULE + "/" + REPOSITORY + 
-                                "/" + FILENAME;
-            Assertion.AssertEquals ("Expecting result=[" + cvsMessage + "]",
-                              message.Message, cvsMessage);
-        }
-        
-        /// <summary>
-        ///     Test that the message is formatted correctly if there are slashes
-        ///         on the end of the input values.
-        /// </summary>
-        [Test]
-        public void MessageFormattedCorrectlyWithSlashes () {
-            UpdateMessage message = new UpdateMessage ();
-            message.Module = MODULE + "/";
-            message.Repository = REPOSITORY + "/";
-            message.Filename = FILENAME + "/";
-            
-            String cvsMessage = "U " + MODULE + "/" + REPOSITORY + 
-                                "/" + FILENAME;
-            
-            System.Console.WriteLine ("made=[" + cvsMessage + "]");
-            System.Console.WriteLine ("generated=[" + message.Message + "]");
-            Assertion.AssertEquals ("Expecting result=[" + cvsMessage + "]",
-                              message.Message, cvsMessage);
-        }
-    }    
+    [Test]
+    public void MessageFormattedCorrectlyNoSlashes () {
+        UpdateMessage message = new UpdateMessage ();
+        message.Module = MODULE;
+        message.Repository = REPOSITORY;
+        message.Filename = FILENAME;
+
+        String cvsMessage = "U " + MODULE + "/" + REPOSITORY +
+                            "/" + FILENAME;
+        Assertion.AssertEquals ("Expecting result=[" + cvsMessage + "]",
+                                message.Message, cvsMessage);
+    }
+
+    /// <summary>
+    ///     Test that the message is formatted correctly if there are slashes
+    ///         on the end of the input values.
+    /// </summary>
+    [Test]
+    public void MessageFormattedCorrectlyWithSlashes () {
+        UpdateMessage message = new UpdateMessage ();
+        message.Module = MODULE + "/";
+        message.Repository = REPOSITORY + "/";
+        message.Filename = FILENAME + "/";
+
+        String cvsMessage = "U " + MODULE + "/" + REPOSITORY +
+                            "/" + FILENAME;
+
+        System.Console.WriteLine ("made=[" + cvsMessage + "]");
+        System.Console.WriteLine ("generated=[" + message.Message + "]");
+        Assertion.AssertEquals ("Expecting result=[" + cvsMessage + "]",
+                                message.Message, cvsMessage);
+    }
+}
 }

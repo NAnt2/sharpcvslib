@@ -1,5 +1,5 @@
 #region "Copyright"
-// LogRequest.cs 
+// LogRequest.cs
 // Copyright (C) 2001 Mike Krueger
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
@@ -25,49 +25,49 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
+namespace ICSharpCode.SharpCvsLib.Requests {
 
-	/// <summary>
-	/// Response expected: yes. 
-	/// Actually do a cvs command. This uses any previous Argument, Directory, Entry, 
-	/// or Modified requests, if they have been sent. The last Directory sent specifies 
-	/// the working directory at the time of the operation. No provision is made for any 
-	/// input from the user. This means that ci must use a -m argument if it wants to specify 
-	/// a log message. 
-	/// 
-    /// Usage: cvs server [-lRhtNb] [-r[revisions]] [-d dates] [-s states]
-    /// [-w[logins]] [files...]
-    ///         -l      Local directory only, no recursion.
-    ///         -R      Only print name of RCS file.
-    ///         -h      Only print header.
-    ///         -t      Only print header and descriptive text.
-    ///         -N      Do not list tags.
-    ///         -b      Only list revisions on the default branch.
-    ///         -r[revisions]   Specify revision(s)s to list.
-    ///         -d dates        Specify dates (D1 &gt; D2 for range, D for latest before).
-    ///         -s states       Only list revisions with specified states.
-    ///         -w[logins]      Only list revisions checked in by specified logins.
-    /// (Specify the --help global option for a list of other help options)	
-    ///
-	/// </summary>
-	public class LogRequest : AbstractRequest
-	{
-        /// <summary>
-        /// Request a log be produced for the operation.
-        /// </summary>
-		public override string RequestString {
-			get {
-				return "log\n";
-			}
-		}
-		
-        /// <summary>
-        /// <code>true</code>, a response is expected.
-        /// </summary>
-		public override bool IsResponseExpected {
-			get {
-				return true;
-			}
-		}
-	}
+/// <summary>
+/// Response expected: yes.
+/// Actually do a cvs command. This uses any previous Argument, Directory, Entry,
+/// or Modified requests, if they have been sent. The last Directory sent specifies
+/// the working directory at the time of the operation. No provision is made for any
+/// input from the user. This means that ci must use a -m argument if it wants to specify
+/// a log message.
+///
+/// Usage: cvs server [-lRhtNb] [-r[revisions]] [-d dates] [-s states]
+/// [-w[logins]] [files...]
+///         -l      Local directory only, no recursion.
+///         -R      Only print name of RCS file.
+///         -h      Only print header.
+///         -t      Only print header and descriptive text.
+///         -N      Do not list tags.
+///         -b      Only list revisions on the default branch.
+///         -r[revisions]   Specify revision(s)s to list.
+///         -d dates        Specify dates (D1 &gt; D2 for range, D for latest before).
+///         -s states       Only list revisions with specified states.
+///         -w[logins]      Only list revisions checked in by specified logins.
+/// (Specify the --help global option for a list of other help options)
+///
+/// </summary>
+public class LogRequest : AbstractRequest
+{
+    /// <summary>
+    /// Request a log be produced for the operation.
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "log\n";
+        }
+    }
+
+    /// <summary>
+    /// <code>true</code>, a response is expected.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return true;
+        }
+    }
+}
 }

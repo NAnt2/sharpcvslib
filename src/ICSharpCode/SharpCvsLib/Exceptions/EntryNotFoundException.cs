@@ -27,7 +27,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Clayton Harbour 
+//    Author:     Clayton Harbour
 #endregion
 
 using System;
@@ -38,28 +38,28 @@ using System.Globalization;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Exceptions {
-    
+
+/// <summary>
+///     This exception is thrown if there is no entry matching the specifed
+///         criteria.
+/// </summary>
+public class EntryNotFoundException : Exception {
+
     /// <summary>
-    ///     This exception is thrown if there is no entry matching the specifed
-    ///         criteria.
+    ///     Constructor.
     /// </summary>
-    public class EntryNotFoundException : Exception {
-        
-        /// <summary>
-        ///     Constructor.
-        /// </summary>
-        public EntryNotFoundException () {
-            
-        }
-        
-        /// <summary>
-        ///     Constructor.
-        /// </summary>
-        /// <param name="message">Additional information to pass on in the 
-        ///     exception.</param>
-        public EntryNotFoundException (String message) : base (message) {
-        }
-        
+    public EntryNotFoundException () {
+
     }
+
+    /// <summary>
+    ///     Constructor.
+    /// </summary>
+    /// <param name="message">Additional information to pass on in the
+    ///     exception.</param>
+public EntryNotFoundException (String message) : base (message) {
+    }
+
+}
 
 }

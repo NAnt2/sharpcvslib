@@ -1,5 +1,5 @@
 #region "Copyright"
-// RetreiveFilelistCommand.cs 
+// RetreiveFilelistCommand.cs
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -35,31 +35,31 @@ using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
 
-namespace ICSharpCode.SharpCvsLib.Commands { 
-	
+namespace ICSharpCode.SharpCvsLib.Commands {
+
+/// <summary>
+/// Retrieve a list of files from the repository.
+/// </summary>
+public class RetreiveFilelistCommand : ICommand
+{
     /// <summary>
-    /// Retrieve a list of files from the repository.
+    /// Constructor.
     /// </summary>
-	public class RetreiveFilelistCommand : ICommand
-	{
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-		public RetreiveFilelistCommand()
-		{
-		}
-		
-        /// <summary>
-        /// Do the dirty work.
-        /// </summary>
-        /// <param name="connection"></param>
-		public void Execute(ICommandConnection connection)
-		{
-			connection.SubmitRequest(new ArgumentRequest("-s"));
-			connection.SubmitRequest(new ArgumentRequest("-r"));
-			connection.SubmitRequest(new ArgumentRequest("0"));
-			connection.SubmitRequest(new ArgumentRequest("./"));
-			connection.SubmitRequest(new RDiffRequest());
-		}
-	}
+    public RetreiveFilelistCommand()
+    {
+    }
+
+    /// <summary>
+    /// Do the dirty work.
+    /// </summary>
+    /// <param name="connection"></param>
+    public void Execute(ICommandConnection connection)
+    {
+        connection.SubmitRequest(new ArgumentRequest("-s"));
+        connection.SubmitRequest(new ArgumentRequest("-r"));
+        connection.SubmitRequest(new ArgumentRequest("0"));
+        connection.SubmitRequest(new ArgumentRequest("./"));
+        connection.SubmitRequest(new RDiffRequest());
+    }
+}
 }

@@ -49,60 +49,60 @@ using NUnit.Framework;
 namespace ICSharpCode.SharpCvsLib.Console.Parser
 {
 
-	/// <summary>
-	///     Test the command line args parameters for valid ones 
-	///         and test invalid ones.
-	/// </summary>
-	[TestFixture]
-	public class CommandLineParserTest{
-		/// <summary>
-		///     Constructory for test case.
-		/// </summary>
-		public CommandLineParserTest (){ 
-		}
-        
-		/// <summary>
-		///     Create a CommandLineParser object.
-		///       
-		/// </summary>
-		[Test]
-		public void MakeCommandParserTest (){
-			String[] args = {"--help"};
-			// Test Creating a CommandLineParser object
-			CommandLineParser newCommandLineParser = new CommandLineParser( args);
-			Assertion.AssertNotNull ("Should have a command object.", newCommandLineParser);
-			newCommandLineParser.Execute();
+/// <summary>
+///     Test the command line args parameters for valid ones
+///         and test invalid ones.
+/// </summary>
+[TestFixture]
+public class CommandLineParserTest{
+    /// <summary>
+    ///     Constructory for test case.
+    /// </summary>
+    public CommandLineParserTest (){
+    }
 
-			String[] coargs = {"-d", ":ext:skyward@cvs.sourceforge.net:/cvsroot/sharpcvslib", 
-								  "co", "sharpcvslib"};
-			// Test processing checkout command with CommandLineParser object
-			newCommandLineParser = new CommandLineParser( coargs);
-			Assertion.AssertNotNull ("Should have a command object.", newCommandLineParser);
-			newCommandLineParser.Execute();
-		}
+    /// <summary>
+    ///     Create a CommandLineParser object.
+    ///
+    /// </summary>
+    [Test]
+    public void MakeCommandParserTest (){
+        String[] args = {"--help"};
+        // Test Creating a CommandLineParser object
+        CommandLineParser newCommandLineParser = new CommandLineParser( args);
+        Assertion.AssertNotNull ("Should have a command object.", newCommandLineParser);
+        newCommandLineParser.Execute();
 
-        /// <summary>
-        /// Test that the -d option parameter is connected to the cvsroot, to keep
-        ///     the implementation similar to cvs/ cvsnt.
-        ///     
-        ///     Correct
-        ///     <code>
-        ///         cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/sharpcvslib login
-        ///     </code>
-        ///     Incorrect:
-        ///     <code>
-        ///         cvs -d :pserver:anonymous:cvs.sf.net:/cvsroot/sharpcvslib login
-        ///     </code>
-        /// </summary>
-        [Test]
-        public void MinusDOptionConnectedToCvsRoot () {
-            String[] args = {"-d:pserver:anonymous:cvs.sf.net:/cvsroot/sharpcvslib", "login"};
-            CommandLineParser parser = new CommandLineParser (args);
-            try {
-                parser.Execute ();
-            } catch {
-                Assertion.Fail ("Should not throw an exception, valid parameters.");
-            }
+        String[] coargs = {"-d", ":ext:skyward@cvs.sourceforge.net:/cvsroot/sharpcvslib",
+                           "co", "sharpcvslib"};
+        // Test processing checkout command with CommandLineParser object
+        newCommandLineParser = new CommandLineParser( coargs);
+        Assertion.AssertNotNull ("Should have a command object.", newCommandLineParser);
+        newCommandLineParser.Execute();
+    }
+
+    /// <summary>
+    /// Test that the -d option parameter is connected to the cvsroot, to keep
+    ///     the implementation similar to cvs/ cvsnt.
+    ///
+    ///     Correct
+    ///     <code>
+    ///         cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/sharpcvslib login
+    ///     </code>
+    ///     Incorrect:
+    ///     <code>
+    ///         cvs -d :pserver:anonymous:cvs.sf.net:/cvsroot/sharpcvslib login
+    ///     </code>
+    /// </summary>
+    [Test]
+    public void MinusDOptionConnectedToCvsRoot () {
+        String[] args = {"-d:pserver:anonymous:cvs.sf.net:/cvsroot/sharpcvslib", "login"};
+        CommandLineParser parser = new CommandLineParser (args);
+        try {
+            parser.Execute ();
+        } catch {
+            Assertion.Fail ("Should not throw an exception, valid parameters.");
         }
-	}
+    }
+}
 }

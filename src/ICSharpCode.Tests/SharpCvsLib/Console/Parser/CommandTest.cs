@@ -49,36 +49,36 @@ using NUnit.Framework;
 namespace ICSharpCode.SharpCvsLib.Console.Parser
 {
 
-	/// <summary>
-	///     Test the command line args parameters for valid ones 
-	///         and test invalid ones.
-	/// </summary>
-	[TestFixture]
-	public class CommandTest 
-	{
-		/// <summary>
-		///     Constructory for test case.
-		/// </summary>
-		public CommandTest () { 
-		}
-        
-		/// <summary>
-		///     Create a Command object.
-		///       
-		/// </summary>
-		[Test]
-		public void MakeCommandTest () {
-			// Test Creating a Command object
-			Command newCommand = new Command( "one", "two", "three");
+/// <summary>
+///     Test the command line args parameters for valid ones
+///         and test invalid ones.
+/// </summary>
+[TestFixture]
+public class CommandTest
+{
+    /// <summary>
+    ///     Constructory for test case.
+    /// </summary>
+    public CommandTest () {
+    }
 
-			// Check the command object against string literals
-			AssertCommandEquals (newCommand, "one", "two", "three");
-		}
-		private void AssertCommandEquals (Command com,
-			string prime, string nick1, string nick2) {
-			Assertion.AssertEquals (prime, com.First);
-			Assertion.AssertEquals (nick1, com.Nick1);
-			Assertion.AssertEquals (nick2, com.Nick2);
-		}
-	}
+    /// <summary>
+    ///     Create a Command object.
+    ///
+    /// </summary>
+    [Test]
+    public void MakeCommandTest () {
+        // Test Creating a Command object
+        Command newCommand = new Command( "one", "two", "three");
+
+        // Check the command object against string literals
+        AssertCommandEquals (newCommand, "one", "two", "three");
+    }
+    private void AssertCommandEquals (Command com,
+                                      string prime, string nick1, string nick2) {
+        Assertion.AssertEquals (prime, com.First);
+        Assertion.AssertEquals (nick1, com.Nick1);
+        Assertion.AssertEquals (nick2, com.Nick2);
+    }
+}
 }

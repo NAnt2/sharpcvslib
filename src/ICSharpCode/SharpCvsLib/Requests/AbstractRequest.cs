@@ -1,5 +1,5 @@
 #region "Copyright"
-// AbstractRequest.cs 
+// AbstractRequest.cs
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -26,75 +26,75 @@
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Util;
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
-	
+namespace ICSharpCode.SharpCvsLib.Requests {
+
+/// <summary>
+/// To be implemented by server requests.  Requests are used
+///     by commands to communicate with the cvs server.
+/// </summary>
+public abstract class AbstractRequest : IRequest
+{
     /// <summary>
-    /// To be implemented by server requests.  Requests are used
-    ///     by commands to communicate with the cvs server.
+    /// The string to send to the server.
     /// </summary>
-	public abstract class AbstractRequest : IRequest
-	{
-        /// <summary>
-        /// The string to send to the server.
-        /// </summary>
-		public abstract string RequestString {
-			get;
-		}
-		
-        /// <summary>
-        /// Indicates whether a response is expected from
-        ///     this request.  <code>true</code> if a response
-        ///     is expected, <code>false</code> otherwise.
-        /// </summary>
-		public abstract bool IsResponseExpected {
-			get;
-		}
-		
-        /// <summary>
-        /// Indicates whether the response modifies the input
-        ///     stream.  <code>true</code> if the input stream
-        ///     is modified, <code>false</code> otherwise.
-        /// </summary>
-		public virtual bool DoesModifyInputStream {
-			get {
-				return false;
-			}
-		}
-		
-        /// <summary>
-        /// Indicates whether the response modifies the cvs 
-        ///     connection.  <code>true</code> if the connection
-        ///     is modified, <code>false</code> otherwise.
-        /// </summary>
-		public virtual bool DoesModifyConnection {
-			get {
-				return false;
-			}
-		}
-		
-        /// <summary>
-        /// Implement this command if your request does modify the 
-        ///     input cvs server connection.
-        /// </summary>
-        /// <param name="connection"></param>
-		public virtual void ModifyConnection(IConnection connection)
-		{
-			
-		}
-		
-		/// <summary>
-		/// Converts the object values into a human readable string.
-		/// </summary>
-		/// <returns>A string representation of the object.</returns>
-		public override string ToString () {
-		    ToStringFormatter formatter = 
-		        new ToStringFormatter ("Abstract Request");
-		    formatter.AddProperty ("DoesModifyConnection", this.DoesModifyConnection);
-            formatter.AddProperty ("DoesModifyInputStream", this.DoesModifyInputStream);
-            formatter.AddProperty ("IsResponseExpected", this.IsResponseExpected);
-            formatter.AddProperty ("RequestString", this.RequestString);
-		    
-		    return formatter.ToString ();
-		}
-	}
+    public abstract string RequestString {
+        get;
+    }
+
+    /// <summary>
+    /// Indicates whether a response is expected from
+    ///     this request.  <code>true</code> if a response
+    ///     is expected, <code>false</code> otherwise.
+    /// </summary>
+    public abstract bool IsResponseExpected {
+        get;
+    }
+
+    /// <summary>
+    /// Indicates whether the response modifies the input
+    ///     stream.  <code>true</code> if the input stream
+    ///     is modified, <code>false</code> otherwise.
+    /// </summary>
+    public virtual bool DoesModifyInputStream {
+        get {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Indicates whether the response modifies the cvs
+    ///     connection.  <code>true</code> if the connection
+    ///     is modified, <code>false</code> otherwise.
+    /// </summary>
+    public virtual bool DoesModifyConnection {
+        get {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Implement this command if your request does modify the
+    ///     input cvs server connection.
+    /// </summary>
+    /// <param name="connection"></param>
+    public virtual void ModifyConnection(IConnection connection)
+    {
+
+    }
+
+    /// <summary>
+    /// Converts the object values into a human readable string.
+    /// </summary>
+    /// <returns>A string representation of the object.</returns>
+    public override string ToString () {
+        ToStringFormatter formatter =
+            new ToStringFormatter ("Abstract Request");
+        formatter.AddProperty ("DoesModifyConnection", this.DoesModifyConnection);
+        formatter.AddProperty ("DoesModifyInputStream", this.DoesModifyInputStream);
+        formatter.AddProperty ("IsResponseExpected", this.IsResponseExpected);
+        formatter.AddProperty ("RequestString", this.RequestString);
+
+        return formatter.ToString ();
+    }
+}
 }

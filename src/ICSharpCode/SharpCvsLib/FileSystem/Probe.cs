@@ -36,120 +36,120 @@ using System.Collections;
 using System.IO;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
-    /// <summary>
-    /// Takes a single file or a collection of files and creates a new
-    ///     list of files based on the following rules:
-    ///         1) If a single file is specified then a check is performed to 
-    ///             determine if the file exists.  
-    ///                 a) If the file does not exist then the NonExistingFiles 
-    ///                     collection is populated.
-    ///                 b) If the file doe exist then the ExistingFile collection
-    ///                     is populated.
-    ///         2) If a collection of files is specified, WITHOUT a directory
-    ///             then a non-recursive search is performed.  The ExistingFiles and
-    ///             NonExistingFiles collections are populated.
-    ///         3) If a collection of files is specified that contains a directory,
-    ///             or a directory is specified then a recursive search is performed
-    ///             to populate the ExistingFiles and NonExistingFiles collection.
-    /// </summary>
-    public class Probe {
-        
-        const String ALL = "*";
-        ArrayList nonExistingFiles;
-        ArrayList existingFiles;
-        ICollection originalFiles;
-        
-        /// <summary>Files that do not exist on the filesystem.</summary>
-        public ICollection NonExistingFiles {
-            get {return this.nonExistingFiles;}
-        }
-        
-        /// <summary>Filest that exist on the filesystem.</summary>
-        public ICollection ExistingFiles {
-            get {return this.existingFiles;}
-        }
-        
-        /// <summary>
-        /// Optionally specify the original directory to being probing.  If the 
-        ///     collection of OriginalFiles is not null then an exception is thrown
-        ///     if there is an attemp to set this property.
-        /// </summary>
-        /// <exception name="ArgumentException">If the OriginalFiles collection
-        ///     is non-null before an attempt is made to use this method.</exception>
-        public String OriginalDirectory {
-            set {
-                if (null != originalFiles) {
-                    String msg = "Unable to specify a directory when already probing a collection of files.";
-                    throw new ArgumentException (msg);
-                }
-                ArrayList originalDirectory = new ArrayList ();
-                originalDirectory.Add (value);
-                this.originalFiles = originalDirectory;
-            }
-                
-        }
-        /// <summary>Original list of files that will be sorted.</summary>
-        public ICollection OriginalFiles {
-            get {return this.originalFiles;}
-            set {this.originalFiles = value;}
-        }
-        
-        /// <summary>
-        /// Initialize the existing and non-existing file collections.
-        /// </summary>
-        public Probe () {
-            nonExistingFiles = new ArrayList ();
-            existingFiles = new ArrayList ();
-        }
-        
-        /// <summary>
-        /// Begin searching the list of files and categorizing them into existing
-        ///     or non-existing.
-        /// </summary>
-        /// <exception>IllegalArgumentException if the or</exception>
-		public void Execute () {
-		    if (this.originalFiles.Count < 1) {
-		        // TODO: Create a custom exception.
-		        throw new Exception ("No files to search.");
-		    }
-		    foreach (String file in this.originalFiles) {
-		        if (Path.GetDirectoryName (file) == Path.GetFileName (file)) {
-		            this.GetFiles (file);
-		        } else {
-		            SortFile (file);
-		        }
-		    }
-		}
+/// <summary>
+/// Takes a single file or a collection of files and creates a new
+///     list of files based on the following rules:
+///         1) If a single file is specified then a check is performed to
+///             determine if the file exists.
+///                 a) If the file does not exist then the NonExistingFiles
+///                     collection is populated.
+///                 b) If the file doe exist then the ExistingFile collection
+///                     is populated.
+///         2) If a collection of files is specified, WITHOUT a directory
+///             then a non-recursive search is performed.  The ExistingFiles and
+///             NonExistingFiles collections are populated.
+///         3) If a collection of files is specified that contains a directory,
+///             or a directory is specified then a recursive search is performed
+///             to populate the ExistingFiles and NonExistingFiles collection.
+/// </summary>
+public class Probe {
 
-        /// <summary>
-        /// Sort the file into <code>Existing</code> if the file exists on the 
-        ///     client's filesystem; otherwise sort the file as 
-        ///     <code>Non-Existing</code>.
-        /// </summary>
-        private void SortFile (String file) {
-            if (File.Exists (file)) {
-                this.existingFiles.Add (file);
+    const String ALL = "*";
+    ArrayList nonExistingFiles;
+    ArrayList existingFiles;
+    ICollection originalFiles;
+
+    /// <summary>Files that do not exist on the filesystem.</summary>
+    public ICollection NonExistingFiles {
+        get {return this.nonExistingFiles;}
+    }
+
+    /// <summary>Filest that exist on the filesystem.</summary>
+    public ICollection ExistingFiles {
+        get {return this.existingFiles;}
+    }
+
+    /// <summary>
+    /// Optionally specify the original directory to being probing.  If the
+    ///     collection of OriginalFiles is not null then an exception is thrown
+    ///     if there is an attemp to set this property.
+    /// </summary>
+    /// <exception name="ArgumentException">If the OriginalFiles collection
+    ///     is non-null before an attempt is made to use this method.</exception>
+    public String OriginalDirectory {
+        set {
+            if (null != originalFiles) {
+            String msg = "Unable to specify a directory when already probing a collection of files.";
+            throw new ArgumentException (msg);
+            }
+            ArrayList originalDirectory = new ArrayList ();
+            originalDirectory.Add (value);
+            this.originalFiles = originalDirectory;
+        }
+
+    }
+    /// <summary>Original list of files that will be sorted.</summary>
+    public ICollection OriginalFiles {
+        get {return this.originalFiles;}
+        set {this.originalFiles = value;}
+    }
+
+    /// <summary>
+    /// Initialize the existing and non-existing file collections.
+    /// </summary>
+    public Probe () {
+        nonExistingFiles = new ArrayList ();
+        existingFiles = new ArrayList ();
+    }
+
+    /// <summary>
+    /// Begin searching the list of files and categorizing them into existing
+    ///     or non-existing.
+    /// </summary>
+    /// <exception>IllegalArgumentException if the or</exception>
+    public void Execute () {
+        if (this.originalFiles.Count < 1) {
+            // TODO: Create a custom exception.
+            throw new Exception ("No files to search.");
+        }
+        foreach (String file in this.originalFiles) {
+            if (Path.GetDirectoryName (file) == Path.GetFileName (file)) {
+                this.GetFiles (file);
             } else {
-                this.nonExistingFiles.Add (file);
+                SortFile (file);
             }
         }
-        
-        /// <summary>
-        /// Perform a recursive search through the current directory specified.
-        ///     Sort all files into existing or non-existing categories.
-        /// </summary>
-        /// <param name="currentDirectory">A directory to begin this current
-        ///     recursive level search.</param>
-		private void GetFiles(String currentDirectory) {
-			String[] files = Directory.GetFiles(currentDirectory, ALL);
-		    foreach (String file in files) {
-			    this.SortFile (file);
-			}
-			
-			String[] directories = Directory.GetDirectories(currentDirectory);
-		    foreach (String directory in directories) {
-				GetFiles(directory);
-			}
-		}
     }
+
+    /// <summary>
+    /// Sort the file into <code>Existing</code> if the file exists on the
+    ///     client's filesystem; otherwise sort the file as
+    ///     <code>Non-Existing</code>.
+    /// </summary>
+    private void SortFile (String file) {
+        if (File.Exists (file)) {
+            this.existingFiles.Add (file);
+        } else {
+            this.nonExistingFiles.Add (file);
+        }
+    }
+
+    /// <summary>
+    /// Perform a recursive search through the current directory specified.
+    ///     Sort all files into existing or non-existing categories.
+    /// </summary>
+    /// <param name="currentDirectory">A directory to begin this current
+    ///     recursive level search.</param>
+    private void GetFiles(String currentDirectory) {
+        String[] files = Directory.GetFiles(currentDirectory, ALL);
+        foreach (String file in files) {
+            this.SortFile (file);
+        }
+
+        String[] directories = Directory.GetDirectories(currentDirectory);
+        foreach (String directory in directories) {
+            GetFiles(directory);
+        }
+    }
+}
 }

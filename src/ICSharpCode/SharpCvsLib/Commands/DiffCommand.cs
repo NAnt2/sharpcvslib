@@ -1,5 +1,5 @@
 #region "Copyright"
-// DiffCommand.cs 
+// DiffCommand.cs
 // Copyright (C) 2002 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
+//    Author:     Mike Krueger,
 //                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
@@ -39,108 +39,108 @@ using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.FileSystem;
 
-namespace ICSharpCode.SharpCvsLib.Commands { 
-	
+namespace ICSharpCode.SharpCvsLib.Commands {
+
+/// <summary>
+/// Diff command
+/// </summary>
+public class DiffCommand : ICommand
+{
+    private WorkingDirectory workingdirectory;
+    private string directory;
+    private Entry entry;
+
+    private bool isIgnoringCase          = false;
+    private bool isIgnoringAllWhitespace = false;
+    private bool isIgnoringBlankLines    = false;
+    private bool isIgnoringSpaceChange   = false;
+
+    /// <summary>
+    /// Indicator for ignore case
+    /// </summary>
+    public bool IsIgnoringCase {
+        get {
+            return isIgnoringCase;
+        }
+        set {
+            isIgnoringCase = value;
+        }
+    }
+
+    /// <summary>
+    /// Indicator for ignoring whitespece
+    /// </summary>
+    public bool IsIgnoringAllWhitespace {
+        get {
+            return isIgnoringAllWhitespace;
+        }
+        set {
+            isIgnoringAllWhitespace = value;
+        }
+    }
+
+    /// <summary>
+    /// Indicator for ignoring blank lines
+    /// </summary>
+    public bool IsIgnoringBlankLines {
+        get {
+            return isIgnoringBlankLines;
+        }
+        set {
+            isIgnoringBlankLines = value;
+        }
+    }
+
+    /// <summary>
+    /// Indicator for ignoring space change.
+    /// </summary>
+    public bool IsIgnoringSpaceChange {
+        get {
+            return isIgnoringSpaceChange;
+        }
+        set {
+            isIgnoringSpaceChange = value;
+        }
+    }
+
     /// <summary>
     /// Diff command
     /// </summary>
-	public class DiffCommand : ICommand
-	{
-		private WorkingDirectory workingdirectory;
-		private string directory;
-		private Entry entry;
-		
-		private bool isIgnoringCase          = false;
-		private bool isIgnoringAllWhitespace = false;
-		private bool isIgnoringBlankLines    = false;
-		private bool isIgnoringSpaceChange   = false;
+    /// <param name="workingdirectory"></param>
+    /// <param name="directory"></param>
+    /// <param name="entry"></param>
+    public DiffCommand(WorkingDirectory workingdirectory, string directory, Entry entry)
+    {
+        this.workingdirectory    = workingdirectory;
+        this.directory = directory;
+        this.entry = entry;
+    }
 
-        /// <summary>
-        /// Indicator for ignore case
-        /// </summary>
-		public bool IsIgnoringCase {
-			get {
-				return isIgnoringCase;
-			}
-			set {
-				isIgnoringCase = value;
-			}
-		}
-		
-        /// <summary>
-        /// Indicator for ignoring whitespece
-        /// </summary>
-		public bool IsIgnoringAllWhitespace {
-			get {
-				return isIgnoringAllWhitespace;
-			}
-			set {
-				isIgnoringAllWhitespace = value;
-			}
-		}
-		
-        /// <summary>
-        /// Indicator for ignoring blank lines
-        /// </summary>
-		public bool IsIgnoringBlankLines {
-			get {
-				return isIgnoringBlankLines;
-			}
-			set {
-				isIgnoringBlankLines = value;
-			}
-		}
-		
-        /// <summary>
-        /// Indicator for ignoring space change.
-        /// </summary>
-		public bool IsIgnoringSpaceChange {
-			get {
-				return isIgnoringSpaceChange;
-			}
-			set {
-				isIgnoringSpaceChange = value;
-			}
-		}
+    /// <summary>
+    /// Execute the diff command.
+    /// </summary>
+    /// <param name="connection"></param>
+    public void Execute(ICommandConnection connection)
+    {
+        connection.SubmitRequest(new DirectoryRequest(".",
+                                 workingdirectory.CvsRoot.CvsRepository +
+                                 directory));
 
-        /// <summary>
-        /// Diff command
-        /// </summary>
-        /// <param name="workingdirectory"></param>
-        /// <param name="directory"></param>
-        /// <param name="entry"></param>
-		public DiffCommand(WorkingDirectory workingdirectory, string directory, Entry entry)
-		{
-			this.workingdirectory    = workingdirectory;
-			this.directory = directory;
-			this.entry = entry;
-		}
-		
-        /// <summary>
-        /// Execute the diff command.
-        /// </summary>
-        /// <param name="connection"></param>
-		public void Execute(ICommandConnection connection)
-		{
-			connection.SubmitRequest(new DirectoryRequest(".", 
-                           workingdirectory.CvsRoot.CvsRepository + 
-                           directory));
-            
-            if (IsIgnoringCase) {
-                connection.SubmitRequest(new ArgumentRequest("-i"));
-            }
-            if (IsIgnoringAllWhitespace) {
-                connection.SubmitRequest(new ArgumentRequest("-w"));
-            }
-            if (IsIgnoringBlankLines) {
-                connection.SubmitRequest(new ArgumentRequest("-B"));
-            }
-            if (IsIgnoringSpaceChange) {
-                connection.SubmitRequest(new ArgumentRequest("-b"));
-            }
-			
-			connection.SubmitRequest(new ArgumentRequest(entry.Name));
-			connection.SubmitRequest(new DiffRequest());
-		}
-	}
+        if (IsIgnoringCase) {
+            connection.SubmitRequest(new ArgumentRequest("-i"));
+        }
+        if (IsIgnoringAllWhitespace) {
+            connection.SubmitRequest(new ArgumentRequest("-w"));
+        }
+        if (IsIgnoringBlankLines) {
+            connection.SubmitRequest(new ArgumentRequest("-B"));
+        }
+        if (IsIgnoringSpaceChange) {
+            connection.SubmitRequest(new ArgumentRequest("-b"));
+        }
+
+        connection.SubmitRequest(new ArgumentRequest(entry.Name));
+        connection.SubmitRequest(new DiffRequest());
+    }
+}
 }

@@ -1,5 +1,5 @@
 #region "Copyright"
-// PServerAuthRequest.cs 
+// PServerAuthRequest.cs
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -28,61 +28,61 @@ using ICSharpCode.SharpCvsLib.Misc;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
-	
-	/// <summary>
-	/// this isn't an official request, this is the authorization for the 
-	/// pserver protocol.
-	/// </summary>
-	public class PServerAuthRequest : AbstractRequest
-	{
-		private string cvsroot;
-		private string username;
-		private string password;
-	    
-	    private readonly ILog LOGGER = 
-	        LogManager.GetLogger (typeof (PServerAuthRequest));
-		
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="cvsroot"></param>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-		public PServerAuthRequest(string cvsroot, string username, string password)
-		{
-			this.cvsroot  = cvsroot;
-			this.username = username;
-			this.password = password;
-		}
-    	
-        /// <summary>
-        /// Authorization for the pserver protocol.
-        /// </summary>
-		public override string RequestString {
-			get {
-			    if (LOGGER.IsDebugEnabled) {
-			        String msg = "Password Scrambled=[" +
-                                  PasswordScrambler.Scramble (password) +
-                                  "]";
+namespace ICSharpCode.SharpCvsLib.Requests {
 
-			        LOGGER.Debug (msg);
-			    }
-				return "BEGIN AUTH REQUEST\n" + 
-						cvsroot + "\n" +
-						username + "\n" +
-						PasswordScrambler.Scramble(password) + "\n" +
-				       "END AUTH REQUEST\n";
-			}
-		}
-		
-        /// <summary>
-        /// <code>false</code>, a response is not expected.
-        /// </summary>
-		public override bool IsResponseExpected {
-			get {
-				return false;
-			}
-		}
-	}
+/// <summary>
+/// this isn't an official request, this is the authorization for the
+/// pserver protocol.
+/// </summary>
+public class PServerAuthRequest : AbstractRequest
+{
+    private string cvsroot;
+    private string username;
+    private string password;
+
+    private readonly ILog LOGGER =
+        LogManager.GetLogger (typeof (PServerAuthRequest));
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="cvsroot"></param>
+    /// <param name="username"></param>
+    /// <param name="password"></param>
+    public PServerAuthRequest(string cvsroot, string username, string password)
+    {
+        this.cvsroot  = cvsroot;
+        this.username = username;
+        this.password = password;
+    }
+
+    /// <summary>
+    /// Authorization for the pserver protocol.
+    /// </summary>
+    public override string RequestString {
+        get {
+            if (LOGGER.IsDebugEnabled) {
+            String msg = "Password Scrambled=[" +
+                         PasswordScrambler.Scramble (password) +
+                             "]";
+
+                LOGGER.Debug (msg);
+            }
+            return "BEGIN AUTH REQUEST\n" +
+                   cvsroot + "\n" +
+                   username + "\n" +
+                   PasswordScrambler.Scramble(password) + "\n" +
+                   "END AUTH REQUEST\n";
+        }
+    }
+
+    /// <summary>
+    /// <code>false</code>, a response is not expected.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return false;
+        }
+    }
+}
 }

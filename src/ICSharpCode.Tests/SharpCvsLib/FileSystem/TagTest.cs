@@ -45,74 +45,74 @@ using NUnit.Framework;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
 
+/// <summary>
+///     Test the tag file and its properties.
+/// </summary>
+[TestFixture]
+public class TagTest {
+    private TestSettings settings = new TestSettings ();
+
+    private readonly String TAG_ENTRY1 =
+        "TVer1.1";
+    private readonly String TAG_ENTRY2 =
+        "D15 sep 2003 10:05:17";
+    private readonly String TAG_FILE_NAME = "Tag";
     /// <summary>
-    ///     Test the tag file and its properties.
+    ///     Constructor for test case.
     /// </summary>
-    [TestFixture]
-    public class TagTest {
-        private TestSettings settings = new TestSettings ();
-        
-        private readonly String TAG_ENTRY1 = 
-            "TVer1.1";
-        private readonly String TAG_ENTRY2 = 
-            "D15 sep 2003 10:05:17";
-        private readonly String TAG_FILE_NAME = "Tag";
-        /// <summary>
-        ///     Constructor for test case.
-        /// </summary>
-        public TagTest () {
-            
-        }
-        
-        /// <summary>
-        ///     Ensure that the values the tag is initialized with 
-        ///         can be determined.
-        /// </summary>
-        [Test]
-        public void CreateTagTest () {
-            String fullPath = this.settings.Config.LocalPath;
-            Tag tag = new Tag (fullPath, this.TAG_ENTRY1);
-            
-            String cvsPath = Path.Combine (fullPath, "CVS");
-            Assertion.AssertNotNull ("Path not set/returned", tag.Path);
-            Assertion.AssertEquals ("Path not equal", fullPath, tag.Path);
-            Assertion.AssertNotNull ("FileContents not equal", tag.FileContents);
-            Assertion.AssertEquals ("FileContents not set/returned", "N" + this.TAG_ENTRY1.Substring (1), tag.FileContents);
-            Assertion.AssertEquals ("Filename not correct", this.TAG_FILE_NAME, tag.Filename);
-            Assertion.AssertEquals ("Type not correct", Factory.FileType.Tag, tag.Type);
-            Assertion.Assert ("IsMultiLined not correct", tag.IsMultiLined == false);
-        }
-        
-        /// <summary>
-        ///     Test that the equals method correctly identifies two tag objects
-        ///         as equal.
-        /// </summary>
-        [Test]
-        public void EqualsTest () {
-            String cvsPath = Path.Combine (this.settings.Config.LocalPath, 
-                                           this.settings.Config.Module);
-            Tag tagSame1 = new Tag (cvsPath, this.TAG_ENTRY1);
-            Tag tagSame2 = new Tag (cvsPath, this.TAG_ENTRY1);
-            Tag tagDiff1 = new Tag (cvsPath, this.TAG_ENTRY2);
-            
-            Assertion.Assert (tagSame1.Equals (tagSame1));
-            Assertion.Assert (tagSame1.Equals (tagSame2));
-            Assertion.Assert (tagSame2.Equals (tagSame1));
-            
-            Assertion.Assert (!tagDiff1.Equals (tagSame1));
-            Assertion.Assert (!tagDiff1.Equals (tagSame2));
-            Assertion.Assert (!tagSame1.Equals (tagDiff1));
-            Assertion.Assert (!tagSame2.Equals (tagDiff1));
-        }
-        
-        /// <summary>
-        ///     Clean up any test directories, etc.
-        /// </summary>
-        [TearDown]
-        public void TearDown () {
-		    if (Directory.Exists (this.settings.Config.LocalPath)) {
-    		    Directory.Delete (this.settings.Config.LocalPath, true);
-		    }            
-        }        
+    public TagTest () {
+
     }
+
+    /// <summary>
+    ///     Ensure that the values the tag is initialized with
+    ///         can be determined.
+    /// </summary>
+    [Test]
+    public void CreateTagTest () {
+        String fullPath = this.settings.Config.LocalPath;
+        Tag tag = new Tag (fullPath, this.TAG_ENTRY1);
+
+        String cvsPath = Path.Combine (fullPath, "CVS");
+        Assertion.AssertNotNull ("Path not set/returned", tag.Path);
+        Assertion.AssertEquals ("Path not equal", fullPath, tag.Path);
+        Assertion.AssertNotNull ("FileContents not equal", tag.FileContents);
+        Assertion.AssertEquals ("FileContents not set/returned", "N" + this.TAG_ENTRY1.Substring (1), tag.FileContents);
+        Assertion.AssertEquals ("Filename not correct", this.TAG_FILE_NAME, tag.Filename);
+        Assertion.AssertEquals ("Type not correct", Factory.FileType.Tag, tag.Type);
+        Assertion.Assert ("IsMultiLined not correct", tag.IsMultiLined == false);
+    }
+
+    /// <summary>
+    ///     Test that the equals method correctly identifies two tag objects
+    ///         as equal.
+    /// </summary>
+    [Test]
+    public void EqualsTest () {
+        String cvsPath = Path.Combine (this.settings.Config.LocalPath,
+                                       this.settings.Config.Module);
+        Tag tagSame1 = new Tag (cvsPath, this.TAG_ENTRY1);
+        Tag tagSame2 = new Tag (cvsPath, this.TAG_ENTRY1);
+        Tag tagDiff1 = new Tag (cvsPath, this.TAG_ENTRY2);
+
+        Assertion.Assert (tagSame1.Equals (tagSame1));
+        Assertion.Assert (tagSame1.Equals (tagSame2));
+        Assertion.Assert (tagSame2.Equals (tagSame1));
+
+        Assertion.Assert (!tagDiff1.Equals (tagSame1));
+        Assertion.Assert (!tagDiff1.Equals (tagSame2));
+        Assertion.Assert (!tagSame1.Equals (tagDiff1));
+        Assertion.Assert (!tagSame2.Equals (tagDiff1));
+    }
+
+    /// <summary>
+    ///     Clean up any test directories, etc.
+    /// </summary>
+    [TearDown]
+    public void TearDown () {
+        if (Directory.Exists (this.settings.Config.LocalPath)) {
+            Directory.Delete (this.settings.Config.LocalPath, true);
+        }
+    }
+}
 }

@@ -31,29 +31,29 @@
 
 using System;
 
-namespace ICSharpCode.SharpCvsLib.Exceptions{ 
-	
-    /// <summary>
-    /// Authentication failed exception is thrown when the 
-    ///     credentials specified do not match those required to 
-    ///     gain access to the files on the cvs server.
-    /// </summary>
-	public class AuthenticationException : Exception
-	{
-        /// <summary>
-        /// Default Constructor.
-        /// </summary>
-		public AuthenticationException()
-		{
-		}
+namespace ICSharpCode.SharpCvsLib.Exceptions{
 
-        /// <summary>
-        /// Specify a message to help trace the source of the 
-        ///     exception.
-        /// </summary>
-        /// <param name="msg"></param>
-		public AuthenticationException(string msg) : base(msg)
-		{
-		}
-	}
+/// <summary>
+/// Authentication failed exception is thrown when the
+///     credentials specified do not match those required to
+///     gain access to the files on the cvs server.
+/// </summary>
+public class AuthenticationException : Exception
+{
+    /// <summary>
+    /// Default Constructor.
+    /// </summary>
+    public AuthenticationException()
+    {
+    }
+
+    /// <summary>
+    /// Specify a message to help trace the source of the
+    ///     exception.
+    /// </summary>
+    /// <param name="msg"></param>
+public AuthenticationException(string msg) : base(msg)
+    {
+    }
+}
 }

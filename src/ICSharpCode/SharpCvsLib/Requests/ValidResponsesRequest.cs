@@ -1,5 +1,5 @@
 #region "Copyright"
-// ValidResponsesRequest.cs 
+// ValidResponsesRequest.cs
 // Copyright (C) 2001 Mike Krueger
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
@@ -25,31 +25,31 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
-	
-	/// <summary>
-	/// Response expected: no. 
-	/// Tell the server what responses the client will accept. request-list is a space 
-	/// separated list of tokens. 
-	/// </summary>
-	public class ValidResponsesRequest : AbstractRequest
-	{
-        /// <summary>
-        /// List of valid request responses.
-        /// </summary>
-		public override string RequestString {
-			get {
-		        return "Valid-responses ok error Valid-requests Checked-in New-entry Checksum Copy-file Updated Created Update-existing Merged Patched Rcs-diff Mode Mod-time Removed Remove-entry Set-static-directory Clear-static-directory Set-sticky Clear-sticky Template Set-checkin-prog Set-update-prog Notified Module-expansion Wrapper-rcsOption M Mbinary E F MT\n";
-			}
-		}
-		
-        /// <summary>
-        /// Determine if a response is expected from this request
-        /// </summary>
-		public override bool IsResponseExpected {
-			get {
-				return false;
-			}
-		}
-	}
+namespace ICSharpCode.SharpCvsLib.Requests {
+
+/// <summary>
+/// Response expected: no.
+/// Tell the server what responses the client will accept. request-list is a space
+/// separated list of tokens.
+/// </summary>
+public class ValidResponsesRequest : AbstractRequest
+{
+    /// <summary>
+    /// List of valid request responses.
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "Valid-responses ok error Valid-requests Checked-in New-entry Checksum Copy-file Updated Created Update-existing Merged Patched Rcs-diff Mode Mod-time Removed Remove-entry Set-static-directory Clear-static-directory Set-sticky Clear-sticky Template Set-checkin-prog Set-update-prog Notified Module-expansion Wrapper-rcsOption M Mbinary E F MT\n";
+        }
+    }
+
+    /// <summary>
+    /// Determine if a response is expected from this request
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return false;
+        }
+    }
+}
 }

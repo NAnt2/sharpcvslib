@@ -34,32 +34,32 @@ using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Streams;
 
 namespace ICSharpCode.SharpCvsLib.Client {
-	
+
+/// <summary>
+/// Connection interface.
+/// </summary>
+public interface IConnection
+{
     /// <summary>
-    /// Connection interface.
+    /// Cvs input stream.
     /// </summary>
-	public interface IConnection
-	{
-        /// <summary>
-        /// Cvs input stream.
-        /// </summary>
-		CvsStream InputStream {
-			get;
-			set;
-		}
-		
-        /// <summary>
-        /// Cvs output stream.
-        /// </summary>
-		CvsStream OutputStream {
-			get;
-			set;
-		}
-		
-        /// <summary>
-        /// Submit the request to the cvs server.
-        /// </summary>
-        /// <param name="request"></param>
-		void SubmitRequest(IRequest request);
-	}
+    CvsStream InputStream {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// Cvs output stream.
+    /// </summary>
+    CvsStream OutputStream {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// Submit the request to the cvs server.
+    /// </summary>
+    /// <param name="request"></param>
+    void SubmitRequest(IRequest request);
+}
 }

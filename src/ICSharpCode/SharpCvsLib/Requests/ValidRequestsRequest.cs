@@ -1,5 +1,5 @@
 #region "Copyright"
-// ValidRequestsRequest.cs 
+// ValidRequestsRequest.cs
 // Copyright (C) 2001 Mike Krueger
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
@@ -25,29 +25,29 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
-	
-	/// <summary>
-	/// Response expected: yes. Ask the server to send back a Valid-requests response. 
-	/// </summary>
-	public class ValidRequestsRequest : AbstractRequest
-	{
-        /// <summary>
-        /// The valid request string
-        /// </summary>
-		public override string RequestString {
-			get {
-				return "valid-requests\n";
-			}
-		}
-		
-        /// <summary>
-        /// Indicator specifying if the response is respected.
-        /// </summary>
-		public override bool IsResponseExpected {
-			get {
-				return true;
-			}
-		}
-	}
+namespace ICSharpCode.SharpCvsLib.Requests {
+
+/// <summary>
+/// Response expected: yes. Ask the server to send back a Valid-requests response.
+/// </summary>
+public class ValidRequestsRequest : AbstractRequest
+{
+    /// <summary>
+    /// The valid request string
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "valid-requests\n";
+        }
+    }
+
+    /// <summary>
+    /// Indicator specifying if the response is respected.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return true;
+        }
+    }
+}
 }

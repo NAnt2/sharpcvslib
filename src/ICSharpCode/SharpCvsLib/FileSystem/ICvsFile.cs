@@ -38,43 +38,43 @@ using System.Globalization;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.FileSystem { 
+namespace ICSharpCode.SharpCvsLib.FileSystem {
+
+/// <summary>
+///     Interface for all cvs files.  Allows the file system manager to store
+///         files that contain cvs information such as:
+///             <code>Entries</code>
+///             <code>Repository</code>
+///             <code>Root</code>
+/// </summary>
+public interface ICvsFile {
+    /// <summary>
+    ///     The name of the file.  This will be a constant for each
+    ///         type of file (i.e. Repository, Entry, etc.).
+    /// </summary>
+    String Filename {get;}
+    /// <summary>
+    ///     The path to the folder above the CVS directory.  The
+    ///         CVS directory will be appended to this path by
+    ///         the manager.
+    /// </summary>
+    String Path {get;}
 
     /// <summary>
-    ///     Interface for all cvs files.  Allows the file system manager to store
-    ///         files that contain cvs information such as:
-    ///             <code>Entries</code>
-    ///             <code>Repository</code>
-    ///             <code>Root</code>
+    ///     The contents that are going to be written to the file.
     /// </summary>
-    public interface ICvsFile {
-        /// <summary>
-        ///     The name of the file.  This will be a constant for each
-        ///         type of file (i.e. Repository, Entry, etc.).
-        /// </summary>
-        String Filename {get;}
-        /// <summary>
-        ///     The path to the folder above the CVS directory.  The
-        ///         CVS directory will be appended to this path by
-        ///         the manager.
-        /// </summary>
-        String Path {get;}
-        
-        /// <summary>
-        ///     The contents that are going to be written to the file.
-        /// </summary>        
-        String FileContents {get;}
-                
-        /// <summary>
-        ///     The type of file that this is.
-        /// </summary>
-        Factory.FileType Type {get;}
-        
-        /// <summary>
-        ///     Indicates whether the cvs file can contain multiple lines
-        ///         or if it can only contain a one line entry.
-        /// </summary>
-        bool IsMultiLined {get;}
-                
-    }
+    String FileContents {get;}
+
+    /// <summary>
+    ///     The type of file that this is.
+    /// </summary>
+    Factory.FileType Type {get;}
+
+    /// <summary>
+    ///     Indicates whether the cvs file can contain multiple lines
+    ///         or if it can only contain a one line entry.
+    /// </summary>
+    bool IsMultiLined {get;}
+
+}
 }

@@ -39,60 +39,60 @@ using ICSharpCode.SharpCvsLib.Client;
 
 namespace ICSharpCode.SharpCvsLib.Console.Commands{
 
+/// <summary>
+/// Check out module files from a cvs repository.
+/// </summary>
+public class CheckoutCommand{
+    private ICommand getCommand;
+    private WorkingDirectory workingDirectory;
+    private string cocvsroot;
+    private string repository;
+
     /// <summary>
     /// Check out module files from a cvs repository.
     /// </summary>
-    public class CheckoutCommand{
-        private ICommand getCommand;
-        private WorkingDirectory workingDirectory;
-        private string cocvsroot;
-        private string repository;
-
-        /// <summary>
-        /// Check out module files from a cvs repository.
-        /// </summary>
-        /// <param name="cvsroot">User information</param>
-        /// <param name="repositoryName">Repository</param>
-        public CheckoutCommand(string cvsroot, string repositoryName){
-            cocvsroot = cvsroot;
-            repository = repositoryName;
+    /// <param name="cvsroot">User information</param>
+    /// <param name="repositoryName">Repository</param>
+    public CheckoutCommand(string cvsroot, string repositoryName){
+        cocvsroot = cvsroot;
+        repository = repositoryName;
+    }
+    /// <summary>
+    /// Process the checkout command with cvs library API calls
+    /// </summary>
+    public void Execute () {
+        string password = "";
+        try{
+            // create CvsRoot object parameter
+            CvsRoot root = new CvsRoot(cocvsroot);
+            // need CvsRoot object and two strings to
+            //create new WorkingDirectory object parameter
+            // CvsRoot cvsroot,
+            // string localdirectory, < use current directory >
+            //string repositoryname) < name of the module> example is sharpcvslib
+            // ++++++++++++ process coOptions +++++++++++++++
+            string localDirectory = Environment.CurrentDirectory;
+            workingDirectory = new WorkingDirectory( root,
+                               localDirectory, repository);
+            // Create new CheckoutModuleCommand object
+            getCommand = new CheckoutModuleCommand(workingDirectory);
         }
-        /// <summary>
-        /// Process the checkout command with cvs library API calls
-        /// </summary>
-        public void Execute () {
-            string password = "";
+        catch{
+        }
+
+        // Create CVSServerConnection object that has the ICommandConnection
+        CVSServerConnection serverConn = new CVSServerConnection();
+        try{
+            // try connecting with empty password for anonymous users
+            serverConn.Connect(workingDirectory, password);
+        }
+        catch{
             try{
-                // create CvsRoot object parameter 
-                CvsRoot root = new CvsRoot(cocvsroot);
-                // need CvsRoot object and two strings to 
-                //create new WorkingDirectory object parameter
-                // CvsRoot cvsroot,
-                // string localdirectory, < use current directory >
-                //string repositoryname) < name of the module> example is sharpcvslib
-                // ++++++++++++ process coOptions +++++++++++++++
-                string localDirectory = Environment.CurrentDirectory;
-                workingDirectory = new WorkingDirectory( root, 
-                    localDirectory, repository);
-                // Create new CheckoutModuleCommand object  
-                getCommand = new CheckoutModuleCommand(workingDirectory);
-            }
-            catch{
-            }
-            
-            // Create CVSServerConnection object that has the ICommandConnection
-            CVSServerConnection serverConn = new CVSServerConnection();
-            try{
-                // try connecting with empty password for anonymous users
+                //string scrambledpassword;
+                // check to connect with password from .cvspass file
+                // check for .cvspass file and get password
+                //password = PasswordScrambler.Descramble(scrambledpassword);
                 serverConn.Connect(workingDirectory, password);
-            }
-            catch{
-                try{
-                    //string scrambledpassword;
-                    // check to connect with password from .cvspass file
-                    // check for .cvspass file and get password
-                    //password = PasswordScrambler.Descramble(scrambledpassword);
-                    serverConn.Connect(workingDirectory, password);
                 }
                 catch{
                     // prompt user for password by using login command?
@@ -102,7 +102,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
             }
             // run the execute checkout command on cvs repository.
             getCommand.Execute(serverConn);
-            serverConn.Close();
-        }
+        serverConn.Close();
     }
+}
 }

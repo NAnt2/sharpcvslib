@@ -36,95 +36,95 @@ using System.Text;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Messages { 
+namespace ICSharpCode.SharpCvsLib.Messages {
+
+/// <summary>
+///     Used to handle a cvs server message.
+/// </summary>
+public class UpdateMessage : IMessage {
 
     /// <summary>
-    ///     Used to handle a cvs server message.
+    ///     Specify that this action is an update to the cvs file.
     /// </summary>
-    public class UpdateMessage : IMessage {
-        
-        /// <summary>
-        ///     Specify that this action is an update to the cvs file.
-        /// </summary>
-        public const String ACTION = "U";
-        private String module;
-        private String repository;
-        private String filename;
-        
-        private readonly ILog LOGGER = 
-            LogManager.GetLogger (typeof (UpdateMessage));
-        
-        /// <summary>
-        ///     Constructor.
-        /// </summary>
-        public UpdateMessage () {
-            
-        }
-                
-        /// <summary>
-        ///     The module component of the message.
-        /// </summary>
-        public String Module {
-            get {return this.module;}
-            set {this.module = value;}
-        }
-        
-        /// <summary>
-        ///     The repository or relative path component of the message.
-        /// </summary>
-        public String Repository {
-            get {return this.repository;}
-            set {this.repository = value;}
-        }
-        
-        /// <summary>
-        ///     The filename component of the message.
-        /// </summary>
-        public String Filename {
-            get {return this.filename;}
-            set {this.filename = value;}
-        }
-        
-        /// <summary>
-        ///     Format the variables entered into an update message.
-        /// </summary>
-        public String Message {
-            get {
-                String [] strings = {ACTION,
-                                     this.Module,
-                                     this.Repository, 
-                                     this.Filename};
-                return this.Combine (strings);
-            }
-        }
-        
-        /// <summary>
-        ///     Similar to Path.Combine however only uses a forward slash.
-        /// 
-        ///     Combine two strings, adding a <code>/</code> if there is not
-        ///         one at the end of the first string.
-        /// </summary>
-        /// <param name="strings">The array of strings to combine.</param>
-        private String Combine (String[] strings) {
-            StringBuilder sb = new StringBuilder ();
-            foreach (String theString in strings) {
-                sb.Append (theString);
-                
-                if (theString.Equals (ACTION)) {
-                    sb.Append (" ");
-                }
-                else if (strings[strings.Length -1].Equals (theString) &&
-                         theString.EndsWith ("/")) {
-                    sb.Remove (sb.Length - 1, 1);
-                 }
-                else if (!strings[strings.Length -1].Equals (theString)) {
-                    if (!theString.EndsWith ("/")) {
-                        sb.Append ("/");
-                    }
-                }
-            }
-            return sb.ToString ();
-        }
+    public const String ACTION = "U";
+    private String module;
+    private String repository;
+    private String filename;
+
+    private readonly ILog LOGGER =
+        LogManager.GetLogger (typeof (UpdateMessage));
+
+    /// <summary>
+    ///     Constructor.
+    /// </summary>
+    public UpdateMessage () {
 
     }
+
+    /// <summary>
+    ///     The module component of the message.
+    /// </summary>
+    public String Module {
+        get {return this.module;}
+        set {this.module = value;}
+    }
+
+    /// <summary>
+    ///     The repository or relative path component of the message.
+    /// </summary>
+    public String Repository {
+        get {return this.repository;}
+        set {this.repository = value;}
+    }
+
+    /// <summary>
+    ///     The filename component of the message.
+    /// </summary>
+    public String Filename {
+        get {return this.filename;}
+        set {this.filename = value;}
+    }
+
+    /// <summary>
+    ///     Format the variables entered into an update message.
+    /// </summary>
+    public String Message {
+        get {
+            String [] strings = {ACTION,
+                                 this.Module,
+                                 this.Repository,
+                                 this.Filename};
+            return this.Combine (strings);
+        }
+    }
+
+    /// <summary>
+    ///     Similar to Path.Combine however only uses a forward slash.
+    ///
+    ///     Combine two strings, adding a <code>/</code> if there is not
+    ///         one at the end of the first string.
+    /// </summary>
+    /// <param name="strings">The array of strings to combine.</param>
+    private String Combine (String[] strings) {
+        StringBuilder sb = new StringBuilder ();
+        foreach (String theString in strings) {
+            sb.Append (theString);
+
+            if (theString.Equals (ACTION)) {
+                sb.Append (" ");
+            }
+            else if (strings[strings.Length -1].Equals (theString) &&
+                     theString.EndsWith ("/")) {
+                sb.Remove (sb.Length - 1, 1);
+            }
+            else if (!strings[strings.Length -1].Equals (theString)) {
+                if (!theString.EndsWith ("/")) {
+                    sb.Append ("/");
+                }
+            }
+        }
+        return sb.ToString ();
+    }
+
+}
 }

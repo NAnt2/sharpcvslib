@@ -32,23 +32,23 @@
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
+namespace ICSharpCode.SharpCvsLib.Responses {
+
+/// <summary>
+/// Response interface.
+/// </summary>
+public interface IResponse
+{
     /// <summary>
-    /// Response interface.
+    /// processes this response
     /// </summary>
-	public interface IResponse
-	{
-	    /// <summary>
-	    /// processes this response
-	    /// </summary>
-	    void Process(CvsStream cvsStream, IResponseServices services);
-		
-		/// <summary>
-		/// return true if this response cancels the transaction.
-		/// </summary>
-		bool IsTerminating {
-			get;
-		}
-	}
+    void Process(CvsStream cvsStream, IResponseServices services);
+
+    /// <summary>
+    /// return true if this response cancels the transaction.
+    /// </summary>
+    bool IsTerminating {
+        get;
+    }
+}
 }

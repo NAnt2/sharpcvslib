@@ -35,49 +35,49 @@ using System;
 using System.IO;
 
 namespace ICSharpCode.SharpCvsLib.Tests.Util {
+/// <summary>
+/// Utility for encapsulating the various path manipulation, temp directory
+///     creation for the unit tests.
+/// </summary>
+public class PathUtil {
+
+    private static readonly String PROJECT_TEST_PATH =
+        Path.Combine (Path.GetTempPath (), "sharpcvslib-tests");
     /// <summary>
-    /// Utility for encapsulating the various path manipulation, temp directory
-    ///     creation for the unit tests.
+    /// Private constructor, only static methods in this class.
     /// </summary>
-    public class PathUtil {
-        
-        private static readonly String PROJECT_TEST_PATH = 
-            Path.Combine (Path.GetTempPath (), "sharpcvslib-tests");
-        /// <summary>
-        /// Private constructor, only static methods in this class.
-        /// </summary>
-        private PathUtil () { 
+    private PathUtil () {
+    }
+
+    /// <summary>
+    /// Get a handle to a temporary file on the hard drive.
+    ///     Use a guid value for the sub path.
+    /// </summary>
+    public static String GetTempPath () {
+        return GetTempPath (null);
+    }
+    /// <summary>
+    /// Get a handle to a temporary file on the hard drive.  Using the name
+    ///     of the calling object to create the path, or if that is null
+    ///     then use a guid value for the sub path.
+    /// </summary>
+    /// <param name="callingObject">A reference to the calling object,
+    ///     if this is <code>null</code> then the string value of a
+    ///     GUID is used.</param>
+    public static String GetTempPath (object callingObject) {
+        String subPath;
+        try {
+            subPath = callingObject.GetType ().Name;
+        } catch (NullReferenceException) {
+            subPath = Guid.NewGuid ().ToString ();
         }
 
-        /// <summary>
-        /// Get a handle to a temporary file on the hard drive.  
-        ///     Use a guid value for the sub path.
-        /// </summary>
-        public static String GetTempPath () {
-            return GetTempPath (null);
+        String fullPath = Path.Combine (PROJECT_TEST_PATH, subPath);
+        if (!Directory.Exists (fullPath)) {
+            Directory.CreateDirectory (fullPath);
         }
-        /// <summary>
-        /// Get a handle to a temporary file on the hard drive.  Using the name
-        ///     of the calling object to create the path, or if that is null 
-        ///     then use a guid value for the sub path.
-        /// </summary>      
-        /// <param name="callingObject">A reference to the calling object, 
-        ///     if this is <code>null</code> then the string value of a 
-        ///     GUID is used.</param>  
-        public static String GetTempPath (object callingObject) {
-            String subPath;
-            try {
-                subPath = callingObject.GetType ().Name;
-            } catch (NullReferenceException) {
-                subPath = Guid.NewGuid ().ToString ();
-            }
-            
-            String fullPath = Path.Combine (PROJECT_TEST_PATH, subPath);
-            if (!Directory.Exists (fullPath)) {
-                Directory.CreateDirectory (fullPath);
-            }
-            return fullPath;
-        }
+        return fullPath;
     }
-    
+}
+
 }

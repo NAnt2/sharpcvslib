@@ -1,5 +1,5 @@
 #region "Copyright"
-// StatusRequest.cs 
+// StatusRequest.cs
 // Copyright (C) 2001 Mike Krueger
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
@@ -25,34 +25,34 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
+namespace ICSharpCode.SharpCvsLib.Requests {
 
-	/// <summary>
-	/// Response expected: yes. 
-	/// Actually do a cvs command. This uses any previous Argument, Directory, Entry, 
-	/// or Modified requests, if they have been sent. The last Directory sent specifies 
-	/// the working directory at the time of the operation. No provision is made for any 
-	/// input from the user. This means that ci must use a -m argument if it wants to specify 
-	/// a log message. 
-	/// </summary>
-	public class StatusRequest : AbstractRequest
-	{
-        /// <summary>
-        /// Request a status on a previous entry.
-        /// </summary>
-		public override string RequestString {
-			get {
-				return "status\n";
-			}
-		}
-		
-        /// <summary>
-        /// <code>true</code>, a response is expected.
-        /// </summary>
-		public override bool IsResponseExpected {
-			get {
-				return true;
-			}
-		}
-	}
+/// <summary>
+/// Response expected: yes.
+/// Actually do a cvs command. This uses any previous Argument, Directory, Entry,
+/// or Modified requests, if they have been sent. The last Directory sent specifies
+/// the working directory at the time of the operation. No provision is made for any
+/// input from the user. This means that ci must use a -m argument if it wants to specify
+/// a log message.
+/// </summary>
+public class StatusRequest : AbstractRequest
+{
+    /// <summary>
+    /// Request a status on a previous entry.
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "status\n";
+        }
+    }
+
+    /// <summary>
+    /// <code>true</code>, a response is expected.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return true;
+        }
+    }
+}
 }

@@ -28,7 +28,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
+//    Author:     Mike Krueger,
 //                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
@@ -42,67 +42,67 @@ using ICSharpCode.SharpCvsLib.Streams;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
+namespace ICSharpCode.SharpCvsLib.Responses {
+
+/// <summary>
+/// Handle a clear static directory response.
+///
+/// from: http://www.loria.fr/~molli/cvs/doc/cvsclient_5.html
+///    Clear-static-directory pathname \n
+///
+/// This instructs the client to un-set the Entries.Static flag,
+/// which it should then send back to the server in a Static-directory
+/// request whenever the directory is operated on. pathname ends in a
+/// slash; its purpose is to specify a directory, not a file within a
+/// directory.
+///
+/// </summary>
+public class ClearStaticDirectoryResponse : IResponse
+{
+    private readonly ILog LOGGER =
+        LogManager.GetLogger (typeof (ClearStaticDirectoryResponse));
     /// <summary>
-    /// Handle a clear static directory response.
-    /// 
-    /// from: http://www.loria.fr/~molli/cvs/doc/cvsclient_5.html
-    ///    Clear-static-directory pathname \n
-    /// 
-    /// This instructs the client to un-set the Entries.Static flag, 
-    /// which it should then send back to the server in a Static-directory 
-    /// request whenever the directory is operated on. pathname ends in a 
-    /// slash; its purpose is to specify a directory, not a file within a 
-    /// directory.
-    /// 
+    /// Process a clear static directory response.
     /// </summary>
-	public class ClearStaticDirectoryResponse : IResponse
-	{
-	    private readonly ILog LOGGER = 
-	        LogManager.GetLogger (typeof (ClearStaticDirectoryResponse));
-        /// <summary>
-        /// Process a clear static directory response.
-        /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-	    public void Process(CvsStream cvsStream, IResponseServices services)
-	    {
-            string localPath      = cvsStream.ReadLine();
-            string reposPath = cvsStream.ReadLine();
-// TODO: Remove this code, cvs file creation is moving all into the manager class.
-//	        PathTranslator pathTranslator = 
-//	            new PathTranslator (services.Repository,
-//	                                reposPath);
-	        if (LOGGER.IsDebugEnabled) {
-	            StringBuilder msg = new StringBuilder ();
-	            msg.Append ("\nClear static directory response.  ");
-	            msg.Append ("\n\tlocalPath=[").Append (localPath).Append ("]");
-                msg.Append ("\n\treposPath=[").Append (reposPath).Append ("]");
-//	            msg.Append ("\n\tpathTranslator=[").Append (pathTranslator).Append ("]");
-	            LOGGER.Debug (msg);
-	        }
-	        Manager manager = new Manager ();
-//	        Factory factory = new Factory ();
-//	        ICvsFile repository = factory.CreateCvsObject (pathTranslator.LocalPath, 
-//	                                                       Factory.FileType.Repository,
-//	                                                       pathTranslator.RelativePath);
-//	        
-//	        ICvsFile root = factory.CreateCvsObject (pathTranslator.LocalPath,
-//	                                                 Factory.FileType.Root,
-//	                                                 services.Repository.CvsRoot.ToString ());
-		    manager.AddRepository (services.Repository, localPath, reposPath);
-		    manager.AddRoot (services.Repository, localPath, reposPath);
-	        
-	    }
-	    
-        /// <summary>
-        /// Return true if this response cancels the transaction
-        /// </summary>
-		public bool IsTerminating {
-			get {
-				return false;
-			}
-		}
-	}
+    /// <param name="cvsStream"></param>
+    /// <param name="services"></param>
+    public void Process(CvsStream cvsStream, IResponseServices services)
+    {
+        string localPath      = cvsStream.ReadLine();
+        string reposPath = cvsStream.ReadLine();
+        // TODO: Remove this code, cvs file creation is moving all into the manager class.
+        //	        PathTranslator pathTranslator =
+        //	            new PathTranslator (services.Repository,
+        //	                                reposPath);
+        if (LOGGER.IsDebugEnabled) {
+            StringBuilder msg = new StringBuilder ();
+            msg.Append ("\nClear static directory response.  ");
+            msg.Append ("\n\tlocalPath=[").Append (localPath).Append ("]");
+            msg.Append ("\n\treposPath=[").Append (reposPath).Append ("]");
+            //	            msg.Append ("\n\tpathTranslator=[").Append (pathTranslator).Append ("]");
+            LOGGER.Debug (msg);
+        }
+        Manager manager = new Manager ();
+        //	        Factory factory = new Factory ();
+        //	        ICvsFile repository = factory.CreateCvsObject (pathTranslator.LocalPath,
+        //	                                                       Factory.FileType.Repository,
+        //	                                                       pathTranslator.RelativePath);
+        //
+        //	        ICvsFile root = factory.CreateCvsObject (pathTranslator.LocalPath,
+        //	                                                 Factory.FileType.Root,
+        //	                                                 services.Repository.CvsRoot.ToString ());
+        manager.AddRepository (services.Repository, localPath, reposPath);
+        manager.AddRoot (services.Repository, localPath, reposPath);
+
+    }
+
+    /// <summary>
+    /// Return true if this response cancels the transaction
+    /// </summary>
+    public bool IsTerminating {
+        get {
+            return false;
+        }
+    }
+}
 }

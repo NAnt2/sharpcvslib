@@ -42,84 +42,84 @@ using log4net;
 
 // TODO: Change to internalize helpers (remove)
 [assembly: log4net.Config.DOMConfigurator(
-  ConfigFileExtension="config", Watch=true)]
+     ConfigFileExtension="config", Watch=true)]
 
 namespace ICSharpCode.SharpCvsLib.Client {
 
+/// <summary>
+///     Tests the connection class.  Tests a successful connection and the
+///         recovery after an unsuccessful connection attempt.
+/// </summary>
+[TestFixture]
+public class CVSServerConnectionTest {
+    private ILog LOGGER = LogManager.GetLogger (typeof (CVSServerConnectionTest));
+    private TestSettings settings = new TestSettings ();
+
+    private int messageCounter;
+
     /// <summary>
-    ///     Tests the connection class.  Tests a successful connection and the
-    ///         recovery after an unsuccessful connection attempt.
+    ///     Constructor.
     /// </summary>
-    [TestFixture]
-    public class CVSServerConnectionTest {
-        private ILog LOGGER = LogManager.GetLogger (typeof (CVSServerConnectionTest));
-        private TestSettings settings = new TestSettings ();
-        
-        private int messageCounter;
-        
-        /// <summary>
-        ///     Constructor.
-        /// </summary>
-        public CVSServerConnectionTest () {
-        }
-        
-        /// <summary>
-        ///     Makes a connection to a cvs server using parameters that 
-        ///         should work.
-        /// </summary>
-        [Test]
-        public void MakeConnection_Good () {
-            messageCounter = 0;
-            LOGGER.Debug ("Settings=[" + this.settings.Config + "]");
-            System.Threading.Thread.Sleep (500);
-            CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
-            WorkingDirectory working = 
-                new WorkingDirectory (root, 
-                                        this.settings.Config.LocalPath, 
-                                        this.settings.Config.Module);
-
-            CVSServerConnection connection = new CVSServerConnection ();
-            Assertion.AssertNotNull ("Should have a connection object.", connection);
-            
-            connection.InputStream.RequestMessage.MessageEvent += 
-                new EncodedMessage.MessageHandler (this.WriteMessage);
-            connection.InputStream.ResponseMessage.MessageEvent += 
-                new EncodedMessage.MessageHandler (this.WriteMessage);
-                
-            connection.Connect (working, this.settings.Config.ValidPassword);
-            Assertion.Assert (messageCounter > 0);
-        }
-        
-        private void WriteMessage (String message) {
-            messageCounter++;
-            LOGGER.Debug ("Delegated message: " + message);
-        }
-
-        /// <summary>
-        ///     Try to make a connection to the cvs server using bad parameters.
-        ///         These should fail.
-        /// </summary>
-        [Test]
-        public void MakeConnection_Bad () {
-            LOGGER.Debug ("Settings=[" + this.settings.Config + "]");
-            System.Threading.Thread.Sleep (500);
-            CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
-            root.User = "some_other_user";
-            WorkingDirectory working = 
-                new WorkingDirectory (root, 
-                                        this.settings.Config.LocalPath, 
-                                        this.settings.Config.Module);
-
-            CVSServerConnection connection = new CVSServerConnection ();
-            Assertion.AssertNotNull ("Should have a connection object.", connection);
-            
-            try {
-                connection.Connect (working, this.settings.Config.InvalidPassword);
-                Assertion.Assert ("Connection should have failed and this code " +
-                                  "should not be reached.", true == false);
-            } catch (Exception) {
-                Assertion.Assert ("Connection failed, this is a good thing.", true == true);
-            }   
-        }        
+    public CVSServerConnectionTest () {
     }
+
+    /// <summary>
+    ///     Makes a connection to a cvs server using parameters that
+    ///         should work.
+    /// </summary>
+    [Test]
+    public void MakeConnection_Good () {
+        messageCounter = 0;
+        LOGGER.Debug ("Settings=[" + this.settings.Config + "]");
+        System.Threading.Thread.Sleep (500);
+        CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
+        WorkingDirectory working =
+            new WorkingDirectory (root,
+                                  this.settings.Config.LocalPath,
+                                  this.settings.Config.Module);
+
+        CVSServerConnection connection = new CVSServerConnection ();
+        Assertion.AssertNotNull ("Should have a connection object.", connection);
+
+        connection.InputStream.RequestMessage.MessageEvent +=
+            new EncodedMessage.MessageHandler (this.WriteMessage);
+        connection.InputStream.ResponseMessage.MessageEvent +=
+            new EncodedMessage.MessageHandler (this.WriteMessage);
+
+        connection.Connect (working, this.settings.Config.ValidPassword);
+        Assertion.Assert (messageCounter > 0);
+    }
+
+    private void WriteMessage (String message) {
+        messageCounter++;
+        LOGGER.Debug ("Delegated message: " + message);
+    }
+
+    /// <summary>
+    ///     Try to make a connection to the cvs server using bad parameters.
+    ///         These should fail.
+    /// </summary>
+    [Test]
+    public void MakeConnection_Bad () {
+        LOGGER.Debug ("Settings=[" + this.settings.Config + "]");
+        System.Threading.Thread.Sleep (500);
+        CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
+        root.User = "some_other_user";
+        WorkingDirectory working =
+            new WorkingDirectory (root,
+                                  this.settings.Config.LocalPath,
+                                  this.settings.Config.Module);
+
+        CVSServerConnection connection = new CVSServerConnection ();
+        Assertion.AssertNotNull ("Should have a connection object.", connection);
+
+        try {
+            connection.Connect (working, this.settings.Config.InvalidPassword);
+            Assertion.Assert ("Connection should have failed and this code " +
+                              "should not be reached.", true == false);
+        } catch (Exception) {
+            Assertion.Assert ("Connection failed, this is a good thing.", true == true);
+        }
+    }
+}
 }

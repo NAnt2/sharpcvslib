@@ -1,5 +1,5 @@
 #region Copyright
-// Entry.cs 
+// Entry.cs
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -44,324 +44,324 @@ using log4net;
 
 using ICSharpCode.SharpCvsLib.Util;
 
-namespace ICSharpCode.SharpCvsLib.FileSystem { 
-	
+namespace ICSharpCode.SharpCvsLib.FileSystem {
+
+/// <summary>
+/// Rcs entry.
+/// </summary>
+public class Entry : ICvsFile
+{
+    private ILog LOGGER = LogManager.GetLogger (typeof (Entry));
+
     /// <summary>
-    /// Rcs entry.
+    /// Indicator specifying if this is a new entry or not.
+    ///     The default value is <code>true</code>.
     /// </summary>
-	public class Entry : ICvsFile
-	{
-	    private ILog LOGGER = LogManager.GetLogger (typeof (Entry));
-	    
-        /// <summary>
-        /// Indicator specifying if this is a new entry or not.
-        ///     The default value is <code>true</code>.
-        /// </summary>
-		public bool   NewEntry  = true;
-		
-		private bool   isDir       = false;
-		private string name        = null;
-		private string revision    = "1.1.1.1";
-		private DateTime timestamp = DateTime.Now;
-		
-		private string conflict    = null; 
-		private string options     = null;
-		private string tag         = null;
-		private string date        = null;
-	    
-	    private string cvsEntry;
-	    
-	    private Tag tagFile        = null;
+    public bool   NewEntry  = true;
+
+    private bool   isDir       = false;
+    private string name        = null;
+    private string revision    = "1.1.1.1";
+    private DateTime timestamp = DateTime.Now;
+
+    private string conflict    = null;
+    private string options     = null;
+    private string tag         = null;
+    private string date        = null;
+
+    private string cvsEntry;
+
+    private Tag tagFile        = null;
 
 
-		/// <summary>
-		///     The name of the entries file.
-		/// </summary>
-		public const String FILE_NAME = "Entries";
-	    private String path;
-	    
-		/// <summary>
-		///     The name of the file to write to.
-		/// </summary>
-		public String Filename {
-		    get {return Entry.FILE_NAME;}
-		}
-		
-		/// <summary>
-		///     The path to the folder above the cvs folder.
-		/// </summary>
-		public String Path {
-		    get {return this.path;}
-		}
-				
-        /// <summary>
-        /// Timestamp for the file.
-        /// </summary>
-		public DateTime TimeStamp {
-			get {return timestamp;}
-			set {timestamp = value;}
-		}
-				
-        /// <summary>
-        /// String indicating a conflict with the server and
-        ///     client files (if any).
-        /// </summary>
-		public string  Conflict {
-			get {return conflict;}
-			set {conflict = value;}
-		}
-		
-        /// <summary>
-        /// Date of the revision.
-        /// </summary>
-		public string Date {
-			get {return date;}
-			set {
-			    date = value;
-			    SetTimeStamp();
-			}
-		}
-		
-        /// <summary>
-        /// Sticky tag for the file (if any).
-        /// </summary>
-		public string Tag {
-			get {return tag;}
-			set {tag = value;}
-		}
+    /// <summary>
+    ///     The name of the entries file.
+    /// </summary>
+    public const String FILE_NAME = "Entries";
+    private String path;
 
-        /// <summary>
-        /// TODO: figure out what this is for.
-        /// </summary>
-		public string Options {
-			get {return options;}
-			set {options = value;}
-		}
+    /// <summary>
+    ///     The name of the file to write to.
+    /// </summary>
+    public String Filename {
+        get {return Entry.FILE_NAME;}
+    }
 
-        /// <summary>
-        /// The revision number for the file.
-        /// </summary>
-		public string Revision {
-			get {return revision;}
-			set {revision = value;}
-		}
-		
-        /// <summary>
-        /// The name of the file or directory.
-        /// </summary>
-		public string Name {
-			get {return name;}
-			set {name = value;}
-			 
-		}
+    /// <summary>
+    ///     The path to the folder above the cvs folder.
+    /// </summary>
+    public String Path {
+        get {return this.path;}
+    }
 
-        /// <summary>
-        /// <code>true</code> if the item is a directory, <code>false</code>
-        ///     otherwise.
-        /// </summary>
-		public bool IsDirectory {
-			get {return isDir;			}
-			set {isDir = value;}
-		}
-		
-        /// <summary>
-        /// <code>true</code> if the options tag specifies the file
-        ///     is binary (i.e. has the option <code>-kb</code> specified).
-        /// </summary>
-		public bool IsBinaryFile {
-			get {return options == "-kb";}
-			set {options = value ? "-kb" : null;}
-		}
-				
-        /// <summary>
-        /// Outputs the formatted cvs entry.
-        /// </summary>
-        /// <returns>The formatted cvs entry.</returns>
-		public String FileContents
-		{
-		    get {
-    			string str = "";
-    			if (isDir) {
-    				str += "D";
-    			} 
-    			str += "/";
-    			if (name != null) {
-    				str += name + "/";
-    				if (revision != null) {
-    					str += revision;
-    				}
-    				str += "/";
-    				
-    				if (date != null && 
-    				    date != String.Empty &&
-    				    !this.IsDirectory) {
-    				    String dateString;
-    				    // TODO: Determine if this should be pulled out into a seperate class.
-					    dateString = 
-					        DateParser.GetCvsDateString (this.TimeStamp);
-    					str += dateString;
-    				}
-    				
-    				if (conflict != null) {
-    					str += "+" + conflict;
-    				}
-    				
-    				str += "/";
-    				
-    				if (options != null) {
-    					str += options;
-    				}
-    				
-    				str += "/";
-    				if (tag != null) {
-    					str += tag;
-    				} else if (date != null) {
-    					str += date;
-    				}
-    			}
+    /// <summary>
+    /// Timestamp for the file.
+    /// </summary>
+    public DateTime TimeStamp {
+        get {return timestamp;}
+        set {timestamp = value;}
+    }
 
-    			return str;
-		    }
-		}		
-				
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-		public Entry()
-		{
-		}
-		
-        /// <summary>
-        ///     The entry class converts a cvs entry string into an 
-        ///         entry object by parsing the string into the various
-        ///         components.
-        /// </summary>
-        /// <param name="path">The local path to the cvs file.</param>
-        /// <param name="line">The cvs entry string.</param>
-		public Entry(String path, String line)
-		{
-		    this.cvsEntry = line;
-			Parse(line);
-			NewEntry = false;
-		    this.path = path;
-		}
-		
-        /// <summary>
-        /// Set the file timestamp.
-        /// </summary>
-		public void SetTimeStamp()
-		{
-		    this.timestamp = DateParser.ParseCvsDate (date);
-			if (LOGGER.IsDebugEnabled) {
-			    StringBuilder msg = new StringBuilder ();
-			    msg.Append ("timestamp=[").Append (timestamp).Append ("]");
-			    msg.Append ("date=[").Append (date).Append ("]");
-			    LOGGER.Debug (msg);
-			}
-		}
-				
-        /// <summary>
-        /// Parses the cvs entries file.
-        /// </summary>
-        /// <param name="line"></param>
-		public void Parse(string line)
-		{		    
-		    if (LOGGER.IsDebugEnabled) {
-		        String msg = "cvsEntry=[" + line + "]";
-		        LOGGER.Debug (msg);
-		    }
-		    
-			if (line.StartsWith("D/")) {
-				this.isDir = true;
-				line = line.Substring(1);
-			    this.name = "";
-			}
-			string[] tokens = line.Split( new char[] { '/' });
-			if (tokens.Length < 6 && !this.isDir) {
-				throw new ArgumentException("not enough tokens in entry line (#" + 
-				                            tokens.Length + ")\n" + line);
-			}
-			else if (tokens.Length > 6) {
-			    throw new ArgumentException ("Too many tokens in entry line." +
-			                                 "tokens.Length=[" + tokens.Length + "]" +
-			                                 "line=[" + line + "]");
-			}
-									
-    		name      = tokens[1];
-			if (!this.isDir) {
-    			revision  = tokens[2];
-    			date      = tokens[3];			    
+    /// <summary>
+    /// String indicating a conflict with the server and
+    ///     client files (if any).
+    /// </summary>
+    public string  Conflict {
+        get {return conflict;}
+        set {conflict = value;}
+    }
 
-    			int conflictIndex = date.IndexOf('+');
-    			
-    			if (conflictIndex > 0) {
-    				Conflict = date.Substring(conflictIndex + 1);
-    				date = date.Substring(0, conflictIndex);
-	        	}
-    			SetTimeStamp();
-    			options   = tokens[4];
-    			tag       = tokens[5];
-			    
-			}
-		}		
-		
-		/// <summary>
-		///     Determine if the two objects are equal.
-		/// </summary>
-		public override bool Equals (object obj) {
-		    if (obj is Entry) {
-		        Entry that = (Entry)obj;
-		        if (that.GetHashCode ().Equals (this.GetHashCode ())) {
-		            return true;
-		        }
-		    }
-		    return false;
-		}
-		
-		/// <summary>
-		///     Override the hashcode.  This is a combination of the entry
-		///         name and the path to the entry file.
-		/// </summary>
-		public override int GetHashCode () {
-		    return this.Name.GetHashCode ();
-		}
-		
-		/// <summary>
-		///     Return a human readable string that represents the entry object.
-		/// </summary>
-		/// <returns>A human readable string that represents the entry object.</returns>
-		public override String ToString () {
-		    return this.FileContents;
-		}
-		
-		/// <summary>The type of file that this is.</summary>
-		public Factory.FileType Type {get {return Factory.FileType.Entries;}}
-	
-        /// <summary>Indicates whether the file can contain multiple
-        /// lines.</summary>
-        /// <returns><code>true</code> if the file can contain multiple
-        /// lines; <code>false</code> otherwise.</returns>
-        public bool IsMultiLined {
-            get {return true;}
+    /// <summary>
+    /// Date of the revision.
+    /// </summary>
+    public string Date {
+        get {return date;}
+        set {
+            date = value;
+            SetTimeStamp();
         }
-        
-        /// <summary>
-        ///     Holds information on a tag file if there is a 
-        ///         <code>sticky-tag</code> in the cvs directory.  If there
-        ///         is no tag in the cvs directory then this value is null.
-        /// </summary>
-        public Tag TagFile {
-            get {return this.tagFile;}
-            set {this.tagFile = value;}
+    }
+
+    /// <summary>
+    /// Sticky tag for the file (if any).
+    /// </summary>
+    public string Tag {
+        get {return tag;}
+        set {tag = value;}
+    }
+
+    /// <summary>
+    /// TODO: figure out what this is for.
+    /// </summary>
+    public string Options {
+        get {return options;}
+        set {options = value;}
+    }
+
+    /// <summary>
+    /// The revision number for the file.
+    /// </summary>
+    public string Revision {
+        get {return revision;}
+        set {revision = value;}
+    }
+
+    /// <summary>
+    /// The name of the file or directory.
+    /// </summary>
+    public string Name {
+        get {return name;}
+        set {name = value;}
+
+    }
+
+    /// <summary>
+    /// <code>true</code> if the item is a directory, <code>false</code>
+    ///     otherwise.
+    /// </summary>
+    public bool IsDirectory {
+        get {return isDir;			}
+        set {isDir = value;}
+    }
+
+    /// <summary>
+    /// <code>true</code> if the options tag specifies the file
+    ///     is binary (i.e. has the option <code>-kb</code> specified).
+    /// </summary>
+    public bool IsBinaryFile {
+        get {return options == "-kb";}
+    set {options = value ? "-kb" : null;}
+    }
+
+    /// <summary>
+    /// Outputs the formatted cvs entry.
+    /// </summary>
+    /// <returns>The formatted cvs entry.</returns>
+    public String FileContents
+    {
+        get {
+            string str = "";
+            if (isDir) {
+            str += "D";
         }
-        
-        /// <summary>
-        ///     <code>true</code> if the cvs entry contains a 
-        ///         <code>sticky-tag</code>; otherwise <code>false</code>.
-        /// </summary>
-        public bool HasTag {
-            get {return null == this.Tag;}
+        str += "/";
+        if (name != null) {
+            str += name + "/";
+            if (revision != null) {
+                    str += revision;
+                }
+                str += "/";
+
+                if (date != null &&
+                        date != String.Empty &&
+                        !this.IsDirectory) {
+                    String dateString;
+                    // TODO: Determine if this should be pulled out into a seperate class.
+                    dateString =
+                        DateParser.GetCvsDateString (this.TimeStamp);
+                    str += dateString;
+                }
+
+                if (conflict != null) {
+                    str += "+" + conflict;
+                }
+
+                str += "/";
+
+                if (options != null) {
+                    str += options;
+                }
+
+                str += "/";
+                if (tag != null) {
+                    str += tag;
+                } else if (date != null) {
+                    str += date;
+                }
+            }
+
+            return str;
         }
-        
-	}
+    }
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    public Entry()
+    {
+    }
+
+    /// <summary>
+    ///     The entry class converts a cvs entry string into an
+    ///         entry object by parsing the string into the various
+    ///         components.
+    /// </summary>
+    /// <param name="path">The local path to the cvs file.</param>
+    /// <param name="line">The cvs entry string.</param>
+    public Entry(String path, String line)
+    {
+        this.cvsEntry = line;
+        Parse(line);
+        NewEntry = false;
+        this.path = path;
+    }
+
+    /// <summary>
+    /// Set the file timestamp.
+    /// </summary>
+    public void SetTimeStamp()
+    {
+        this.timestamp = DateParser.ParseCvsDate (date);
+        if (LOGGER.IsDebugEnabled) {
+            StringBuilder msg = new StringBuilder ();
+            msg.Append ("timestamp=[").Append (timestamp).Append ("]");
+            msg.Append ("date=[").Append (date).Append ("]");
+            LOGGER.Debug (msg);
+        }
+    }
+
+    /// <summary>
+    /// Parses the cvs entries file.
+    /// </summary>
+    /// <param name="line"></param>
+    public void Parse(string line)
+    {
+        if (LOGGER.IsDebugEnabled) {
+            String msg = "cvsEntry=[" + line + "]";
+            LOGGER.Debug (msg);
+        }
+
+        if (line.StartsWith("D/")) {
+            this.isDir = true;
+            line = line.Substring(1);
+            this.name = "";
+        }
+        string[] tokens = line.Split( new char[] { '/' });
+        if (tokens.Length < 6 && !this.isDir) {
+            throw new ArgumentException("not enough tokens in entry line (#" +
+                                        tokens.Length + ")\n" + line);
+        }
+        else if (tokens.Length > 6) {
+            throw new ArgumentException ("Too many tokens in entry line." +
+                                         "tokens.Length=[" + tokens.Length + "]" +
+                                         "line=[" + line + "]");
+        }
+
+        name      = tokens[1];
+        if (!this.isDir) {
+            revision  = tokens[2];
+            date      = tokens[3];
+
+            int conflictIndex = date.IndexOf('+');
+
+            if (conflictIndex > 0) {
+                Conflict = date.Substring(conflictIndex + 1);
+                date = date.Substring(0, conflictIndex);
+            }
+            SetTimeStamp();
+            options   = tokens[4];
+            tag       = tokens[5];
+
+        }
+    }
+
+    /// <summary>
+    ///     Determine if the two objects are equal.
+    /// </summary>
+    public override bool Equals (object obj) {
+        if (obj is Entry) {
+            Entry that = (Entry)obj;
+            if (that.GetHashCode ().Equals (this.GetHashCode ())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    ///     Override the hashcode.  This is a combination of the entry
+    ///         name and the path to the entry file.
+    /// </summary>
+    public override int GetHashCode () {
+        return this.Name.GetHashCode ();
+    }
+
+    /// <summary>
+    ///     Return a human readable string that represents the entry object.
+    /// </summary>
+    /// <returns>A human readable string that represents the entry object.</returns>
+    public override String ToString () {
+        return this.FileContents;
+    }
+
+    /// <summary>The type of file that this is.</summary>
+    public Factory.FileType Type {get {return Factory.FileType.Entries;}}
+
+    /// <summary>Indicates whether the file can contain multiple
+    /// lines.</summary>
+    /// <returns><code>true</code> if the file can contain multiple
+    /// lines; <code>false</code> otherwise.</returns>
+    public bool IsMultiLined {
+        get {return true;}
+    }
+
+    /// <summary>
+    ///     Holds information on a tag file if there is a
+    ///         <code>sticky-tag</code> in the cvs directory.  If there
+    ///         is no tag in the cvs directory then this value is null.
+    /// </summary>
+    public Tag TagFile {
+        get {return this.tagFile;}
+        set {this.tagFile = value;}
+    }
+
+    /// <summary>
+    ///     <code>true</code> if the cvs entry contains a
+    ///         <code>sticky-tag</code>; otherwise <code>false</code>.
+    /// </summary>
+    public bool HasTag {
+        get {return null == this.Tag;}
+    }
+
+}
 }

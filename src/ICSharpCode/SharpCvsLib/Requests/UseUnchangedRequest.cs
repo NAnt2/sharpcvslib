@@ -1,5 +1,5 @@
 #region "Copyright"
-// UseUnchangedRequest.cs 
+// UseUnchangedRequest.cs
 // Copyright (C) 2001 Mike Krueger
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
@@ -25,32 +25,32 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
+namespace ICSharpCode.SharpCvsLib.Requests {
 
-	/// <summary>
-	/// Response expected: no. 
-	/// To specify the version of the protocol described in this document, 
-	/// servers must support this request (although it need not do anything) 
-	/// and clients must issue it. 
-	/// </summary>
-	public class UseUnchangedRequest : AbstractRequest
-	{
-        /// <summary>
-        /// Specifies the version of the protocol described in this document.
-        /// </summary>
-		public override string RequestString {
-			get {
-				return "UseUnchanged\n";
-			}
-		}
-		
-        /// <summary>
-        /// Indicator specifying if the response is respected.
-        /// </summary>
-		public override bool IsResponseExpected {
-			get {
-				return false;
-			}
-		}
-	}
+/// <summary>
+/// Response expected: no.
+/// To specify the version of the protocol described in this document,
+/// servers must support this request (although it need not do anything)
+/// and clients must issue it.
+/// </summary>
+public class UseUnchangedRequest : AbstractRequest
+{
+    /// <summary>
+    /// Specifies the version of the protocol described in this document.
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "UseUnchanged\n";
+        }
+    }
+
+    /// <summary>
+    /// Indicator specifying if the response is respected.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return false;
+        }
+    }
+}
 }

@@ -28,7 +28,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
+//    Author:     Mike Krueger,
 //                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
@@ -44,116 +44,116 @@ using ICSharpCode.SharpCvsLib.Streams;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
+namespace ICSharpCode.SharpCvsLib.Responses {
+
+/// <summary>
+/// Command:
+///     Created pathname \n
+///
+///     This is just like Updated and takes the same additional
+///     data, but is used only if no Entry, Modified, or Unchanged
+///     request has been sent for the file in question. The
+///     distinction between Created and Update-existing is so that
+///     the client can give an error message in several cases:
+///         (1) there is a file in the working directory,
+///             but not one for which Entry, Modified, or Unchanged
+///             was sent (for example, a file which was ignored,
+///             or a file for which Questionable was sent),
+///         (2) there is a file in the working directory whose name
+///             differs from the one mentioned in Created in ways that
+///             the client is unable to use to distinguish files.
+///             For example, the client is case-insensitive and the names
+///             differ only in case.
+/// </summary>
+public class CreatedResponse : IResponse
+{
+    private readonly ILog LOGGER =
+        LogManager.GetLogger (typeof (CreatedResponse));
+
     /// <summary>
-    /// Command:
-    ///     Created pathname \n
-    /// 
-    ///     This is just like Updated and takes the same additional 
-    ///     data, but is used only if no Entry, Modified, or Unchanged 
-    ///     request has been sent for the file in question. The 
-    ///     distinction between Created and Update-existing is so that 
-    ///     the client can give an error message in several cases: 
-    ///         (1) there is a file in the working directory, 
-    ///             but not one for which Entry, Modified, or Unchanged 
-    ///             was sent (for example, a file which was ignored, 
-    ///             or a file for which Questionable was sent), 
-    ///         (2) there is a file in the working directory whose name 
-    ///             differs from the one mentioned in Created in ways that 
-    ///             the client is unable to use to distinguish files. 
-    ///             For example, the client is case-insensitive and the names 
-    ///             differ only in case.
+    /// Process a created file response.
     /// </summary>
-	public class CreatedResponse : IResponse
-	{
-	    private readonly ILog LOGGER = 
-	        LogManager.GetLogger (typeof (CreatedResponse));
-	    
-        /// <summary>
-        /// Process a created file response.
-        /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-	    public void Process(CvsStream cvsStream, IResponseServices services)
-	    {
-	        Manager manager = new Manager ();
-	        
-			String localPath = cvsStream.ReadLine();
-	        String reposPath = cvsStream.ReadLine ();
-	        
-			String entry     = cvsStream.ReadLine();
-			String flags     = cvsStream.ReadLine();
-			String sizeStr   = cvsStream.ReadLine();
-	        
-	        PathTranslator orgPath = 
-	            new PathTranslator (services.Repository, reposPath);
-			String localPathAndFilename = orgPath.LocalPathAndFilename;
-	        String directory = orgPath.LocalPath;
+    /// <param name="cvsStream"></param>
+    /// <param name="services"></param>
+    public void Process(CvsStream cvsStream, IResponseServices services)
+    {
+        Manager manager = new Manager ();
 
-			bool compress = sizeStr[0] == 'z';
-			
-			if (LOGGER.IsDebugEnabled) {
-			    String msg = "In created response process.  " +
-			        "orgPath=[" + orgPath.ToString () + "]" +
-			        "localPathAndFilename=[" + localPathAndFilename + "]" +
-			        "directory=[" + directory + "]" +
-			        "entry=[" + entry + "]" +
-			        "flags=[" + flags + "]" +
-			        "sizestr=[" + sizeStr + "]";
-			    LOGGER.Debug (msg);
-			}
-			
-			if (compress) {
-				sizeStr = sizeStr.Substring(1);
-			}
-			
-			int size  = Int32.Parse(sizeStr);
+        String localPath = cvsStream.ReadLine();
+        String reposPath = cvsStream.ReadLine ();
 
-			if (!Directory.Exists(orgPath.LocalPath)) {
-				Directory.CreateDirectory(orgPath.LocalPath);
-			}
-			
-			
-			if (services.NextFile != null && services.NextFile.Length > 0) {
-				localPathAndFilename = services.NextFile;
-				services.NextFile = null;
-			}
-			
-			Entry e = manager.AddEntry (services.Repository, 
-			                            localPath, 
-			                            reposPath, 
-			                            entry);
-			
-			if (e.IsBinaryFile) {
-				services.UncompressedFileHandler.ReceiveBinaryFile(cvsStream, 
-				                                                   localPathAndFilename, 
-				                                                   size);
-			} else {
-				services.UncompressedFileHandler.ReceiveTextFile(cvsStream, 
-				                                                 localPathAndFilename, 
-				                                                 size);				
-			}
-			
-			e.Date = services.NextFileDate;
-			services.NextFileDate = null;
-			
-	        manager.SetFileTimeStamp (localPathAndFilename, e.TimeStamp);
-	        
-	        UpdateMessage message = new UpdateMessage ();
-	        message.Module = services.Repository.WorkingDirectoryName;
-	        message.Repository =  orgPath.RelativePath;
-	        message.Filename = e.Name;
-	        services.SendMessage (message.Message);
-	    }
-	    
-        /// <summary>
-        /// Return true if this response cancels the transaction
-        /// </summary>
-		public bool IsTerminating {
-			get {
-				return false;
-			}
-		}
-	}
+        String entry     = cvsStream.ReadLine();
+        String flags     = cvsStream.ReadLine();
+        String sizeStr   = cvsStream.ReadLine();
+
+        PathTranslator orgPath =
+            new PathTranslator (services.Repository, reposPath);
+        String localPathAndFilename = orgPath.LocalPathAndFilename;
+        String directory = orgPath.LocalPath;
+
+        bool compress = sizeStr[0] == 'z';
+
+        if (LOGGER.IsDebugEnabled) {
+            String msg = "In created response process.  " +
+                         "orgPath=[" + orgPath.ToString () + "]" +
+                         "localPathAndFilename=[" + localPathAndFilename + "]" +
+                         "directory=[" + directory + "]" +
+                         "entry=[" + entry + "]" +
+                         "flags=[" + flags + "]" +
+                         "sizestr=[" + sizeStr + "]";
+            LOGGER.Debug (msg);
+        }
+
+        if (compress) {
+            sizeStr = sizeStr.Substring(1);
+        }
+
+        int size  = Int32.Parse(sizeStr);
+
+        if (!Directory.Exists(orgPath.LocalPath)) {
+            Directory.CreateDirectory(orgPath.LocalPath);
+        }
+
+
+        if (services.NextFile != null && services.NextFile.Length > 0) {
+            localPathAndFilename = services.NextFile;
+            services.NextFile = null;
+        }
+
+        Entry e = manager.AddEntry (services.Repository,
+                                    localPath,
+                                    reposPath,
+                                    entry);
+
+        if (e.IsBinaryFile) {
+            services.UncompressedFileHandler.ReceiveBinaryFile(cvsStream,
+                    localPathAndFilename,
+                    size);
+        } else {
+            services.UncompressedFileHandler.ReceiveTextFile(cvsStream,
+                    localPathAndFilename,
+                    size);
+        }
+
+        e.Date = services.NextFileDate;
+        services.NextFileDate = null;
+
+        manager.SetFileTimeStamp (localPathAndFilename, e.TimeStamp);
+
+        UpdateMessage message = new UpdateMessage ();
+        message.Module = services.Repository.WorkingDirectoryName;
+        message.Repository =  orgPath.RelativePath;
+        message.Filename = e.Name;
+        services.SendMessage (message.Message);
+    }
+
+    /// <summary>
+    /// Return true if this response cancels the transaction
+    /// </summary>
+    public bool IsTerminating {
+        get {
+            return false;
+        }
+    }
+}
 }

@@ -1,5 +1,5 @@
 #region "Copyright"
-// ICommand.cs 
+// ICommand.cs
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -31,18 +31,18 @@
 
 using ICSharpCode.SharpCvsLib.Client;
 
-namespace ICSharpCode.SharpCvsLib.Commands { 
-	
+namespace ICSharpCode.SharpCvsLib.Commands {
+
+/// <summary>
+/// Interface to be implemented by cvs commands.
+/// </summary>
+public interface ICommand
+{
     /// <summary>
-    /// Interface to be implemented by cvs commands.
+    /// Implement the functions of the cvs command.
     /// </summary>
-	public interface ICommand
-	{
-        /// <summary>
-        /// Implement the functions of the cvs command.
-        /// </summary>
-        /// <param name="connection"></param>
-		void Execute(ICommandConnection connection);
-	}
+    /// <param name="connection"></param>
+    void Execute(ICommandConnection connection);
+}
 }
 

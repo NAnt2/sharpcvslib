@@ -29,55 +29,55 @@
 // exception statement from your version.
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
+namespace ICSharpCode.SharpCvsLib.Responses {
+
+/// <summary>
+/// Factory method for instanciating the correct response handler
+///     for the cvs response.
+/// </summary>
+public sealed class ResponseFactory
+{
     /// <summary>
-    /// Factory method for instanciating the correct response handler
-    ///     for the cvs response.
+    /// Create the response object based on the response string.
     /// </summary>
-	public sealed class ResponseFactory
-	{
-        /// <summary>
-        /// Create the response object based on the response string.
-        /// </summary>
-        /// <param name="responseStr"></param>
-        /// <returns></returns>
-		public static IResponse CreateResponse(string responseStr)
-		{
-			switch (responseStr) {
-				case "M":
-					return new MessageResponse();
-				case "E":
-					return new ErrorMessageResponse();
-				case "MT":
-					return new MessageTaggedResponse();
-				case "Checked-in":
-					return new CheckedInResponse();
-				case "Mod-time":
-					return new ModTimeResponse();
-				case "ok":
-					return new OkResponse();
-				case "error":
-					return new ErrorResponse();
-				case "Updated":
-					return new UpdatedResponse();
-				case "Created":
-					return new CreatedResponse();
-				case "Module-expansion":
-					return new ModuleExpansionResponse();
-				case "Clear-sticky":
-					return new ClearStickyResponse();
-				case "Set-static-directory":
-					return new SetStaticDirectoryResponse();
-				case "Clear-static-directory":
-					return new ClearStaticDirectoryResponse();
-				case "Valid-requests":
-					return new ValidRequestsResponse();
-			    case "Set-sticky":
-			        return new SetStickyResponse ();
-				default:
-					return null;
-			}
-		}
-	}
+    /// <param name="responseStr"></param>
+    /// <returns></returns>
+    public static IResponse CreateResponse(string responseStr)
+    {
+        switch (responseStr) {
+        case "M":
+            return new MessageResponse();
+        case "E":
+            return new ErrorMessageResponse();
+        case "MT":
+            return new MessageTaggedResponse();
+        case "Checked-in":
+            return new CheckedInResponse();
+        case "Mod-time":
+            return new ModTimeResponse();
+        case "ok":
+            return new OkResponse();
+        case "error":
+            return new ErrorResponse();
+        case "Updated":
+            return new UpdatedResponse();
+        case "Created":
+            return new CreatedResponse();
+        case "Module-expansion":
+            return new ModuleExpansionResponse();
+        case "Clear-sticky":
+            return new ClearStickyResponse();
+        case "Set-static-directory":
+            return new SetStaticDirectoryResponse();
+        case "Clear-static-directory":
+            return new ClearStaticDirectoryResponse();
+        case "Valid-requests":
+            return new ValidRequestsResponse();
+        case "Set-sticky":
+            return new SetStickyResponse ();
+        default:
+            return null;
+        }
+    }
+}
 }

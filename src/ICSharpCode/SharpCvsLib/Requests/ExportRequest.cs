@@ -1,5 +1,5 @@
 #region "Copyright"
-// ExportRequest.cs 
+// ExportRequest.cs
 // Copyright (C) 2001 Mike Krueger
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
@@ -25,30 +25,30 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
+namespace ICSharpCode.SharpCvsLib.Requests {
+
+/// <summary>
+/// Request that the server export the module.
+///     TODO: Add cvs documentation for this as well.
+/// </summary>
+public class ExportRequest : AbstractRequest
+{
+    /// <summary>
+    /// Request to export the cvs module.
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "export\n";
+        }
+    }
 
     /// <summary>
-    /// Request that the server export the module.
-    ///     TODO: Add cvs documentation for this as well.
+    /// <code>true</code>, response is expected.
     /// </summary>
-	public class ExportRequest : AbstractRequest
-	{
-        /// <summary>
-        /// Request to export the cvs module.
-        /// </summary>
-		public override string RequestString {
-			get {
-				return "export\n";
-			}
-		}
-		
-        /// <summary>
-        /// <code>true</code>, response is expected.
-        /// </summary>
-		public override bool IsResponseExpected {
-			get {
-				return true;
-			}
-		}
-	}
+    public override bool IsResponseExpected {
+        get {
+            return true;
+        }
+    }
+}
 }

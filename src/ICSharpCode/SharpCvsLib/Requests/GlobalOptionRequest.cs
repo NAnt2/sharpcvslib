@@ -1,5 +1,5 @@
 #region "Copyright"
-// GlobalOptionRequest.cs 
+// GlobalOptionRequest.cs
 // Copyright (C) 2001 Mike Krueger
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
@@ -25,44 +25,44 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
-	
-	/// <summary>
-	/// Response expected: no. 
-	/// Transmit one of the global options `-q', `-Q', `-l', `-t', `-r', or `-n'. 
-	/// option must be one of those strings, no variations (such as combining of options) 
-	/// are allowed. For graceful handling of valid-requests, it is probably better to make 
-	/// new global options separate requests, rather than trying to add them to this request. 
-	/// </summary>
-	public class GlobalOptionRequest : AbstractRequest
-	{
-    	private string option;
-    
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="option"></param>
-	    public GlobalOptionRequest(string option)
-    	{
-        	this.option = option;
-    	}
-    
-        /// <summary>
-        /// Send in the option specified.
-        /// </summary>
-		public override string RequestString {
-			get {
-				return "Global_option " + option + "\n";
-			}
-		}
-		
-        /// <summary>
-        /// <code>false</code>, a response is not expected.
-        /// </summary>
-		public override bool IsResponseExpected {
-			get {
-				return false;
-			}
-		}
-	}
+namespace ICSharpCode.SharpCvsLib.Requests {
+
+/// <summary>
+/// Response expected: no.
+/// Transmit one of the global options `-q', `-Q', `-l', `-t', `-r', or `-n'.
+/// option must be one of those strings, no variations (such as combining of options)
+/// are allowed. For graceful handling of valid-requests, it is probably better to make
+/// new global options separate requests, rather than trying to add them to this request.
+/// </summary>
+public class GlobalOptionRequest : AbstractRequest
+{
+    private string option;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="option"></param>
+    public GlobalOptionRequest(string option)
+    {
+        this.option = option;
+    }
+
+    /// <summary>
+    /// Send in the option specified.
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "Global_option " + option + "\n";
+        }
+    }
+
+    /// <summary>
+    /// <code>false</code>, a response is not expected.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return false;
+        }
+    }
+}
 }

@@ -35,113 +35,113 @@ using System.Text;
 
 using ICSharpCode.SharpCvsLib.Streams;
 
-namespace ICSharpCode.SharpCvsLib.FileHandler { 
-	
-	/// <summary>
-	/// Implements the uncompressed file handler
-	/// </summary>
-	public class UncompressedFileHandler : IFileHandler
-	{
-        /// <summary>
-        /// Send a text file to the cvs server.
-        /// </summary>
-        /// <param name="outStream"></param>
-        /// <param name="fileName"></param>
-	    public virtual void SendTextFile(CvsStream outStream, string fileName)
-	    {
-	    	// convert operating system linefeeds (\r\n) to UNIX style 
-	    	// linefeeds (\n)
-	    	string tmpFileName = Path.GetTempFileName();
-	    	FileStream tmpFile = File.Create(tmpFileName);
-			
-			StreamReader fs = File.OpenText(fileName);
-			while (true) {
-				string line = fs.ReadLine();
-				if (line == null) {
-					break;
-				}
-				
-				byte[] buf = new byte[line.Length];
-				Encoding.ASCII.GetBytes(line.ToCharArray(), 0, line.Length, buf, 0);
-				tmpFile.Write(buf, 0, buf.Length);
-				tmpFile.WriteByte((byte)'\n');
-			}
-	    	tmpFile.Close();
-			fs.Close();
-	    	
-	    	// send converted file like a binary file
-	    	SendBinaryFile(outStream, tmpFileName);
-	    	
-	    	// delete temp file
-	    	File.Delete(tmpFileName);
-	    }
-	    
-        /// <summary>
-        /// Receive a text file from the cvs server.
-        /// </summary>
-        /// <param name="inputStream">Input stream from the cvs server.</param>
-        /// <param name="fileName">The name of the file to be created.</param>
-        /// <param name="length">The number of bytes the file contains.</param>
-	    public virtual void ReceiveTextFile(CvsStream inputStream, string fileName, int length)
-	    {
-			byte[] buffer = new byte[length];
-			
-			inputStream.ReadBlock(buffer, length);
-			
-			// write to a temp file
-	    	string tmpFileName = Path.GetTempFileName();
-	    	FileStream tmpFile = File.Create(tmpFileName);
-			tmpFile.Write(buffer, 0, length);
-			tmpFile.Close();
-	    	
-	    	StreamReader tmpTxtFile = File.OpenText(tmpFileName);
-			StreamWriter fs = File.CreateText(fileName);
-			while (true) {
-				string line = tmpTxtFile.ReadLine();
-				if (line == null) {
-					break;
-				}
-				fs.WriteLine(line);
-			}
-			tmpTxtFile.Close();
-	    	fs.Close();
-	    	
-			// delete temp file
-	    	File.Delete(tmpFileName);
-	    }
-	    
-		/// <summary>
-		/// Send a binary file to the cvs server.
-		/// </summary>
-		/// <param name="outStream">Writable stream to the cvs server.</param>
-		/// <param name="fileName">The name of the file to stream across.</param>
-	    public virtual void SendBinaryFile(CvsStream outStream, string fileName)
-	    {
-			FileStream fs = File.OpenRead(fileName);
-			byte[] data = new byte[fs.Length];
-			fs.Read(data, 0, data.Length);
-			fs.Close();
-	    	
-	    	outStream.SendString(data.Length.ToString() + "\n");
-	    	outStream.Write(data);
-	    }
-	    
-        /// <summary>
-        /// Receive a binary file from the cvs server.
-        /// </summary>
-        /// <param name="inputStream"></param>
-        /// <param name="fileName"></param>
-        /// <param name="length"></param>
-	    public virtual void ReceiveBinaryFile(CvsStream inputStream, string fileName, int length)
-	    {
-			byte[] buffer = new byte[length];
-			
-			inputStream.ReadBlock(buffer, length);
-			
-			FileStream fs = System.IO.File.Create(fileName);
-			fs.Write(buffer, 0, length);
-			fs.Close();
-	    }
-	}
+namespace ICSharpCode.SharpCvsLib.FileHandler {
+
+/// <summary>
+/// Implements the uncompressed file handler
+/// </summary>
+public class UncompressedFileHandler : IFileHandler
+{
+    /// <summary>
+    /// Send a text file to the cvs server.
+    /// </summary>
+    /// <param name="outStream"></param>
+    /// <param name="fileName"></param>
+    public virtual void SendTextFile(CvsStream outStream, string fileName)
+    {
+        // convert operating system linefeeds (\r\n) to UNIX style
+        // linefeeds (\n)
+        string tmpFileName = Path.GetTempFileName();
+        FileStream tmpFile = File.Create(tmpFileName);
+
+        StreamReader fs = File.OpenText(fileName);
+        while (true) {
+            string line = fs.ReadLine();
+            if (line == null) {
+                break;
+            }
+
+            byte[] buf = new byte[line.Length];
+            Encoding.ASCII.GetBytes(line.ToCharArray(), 0, line.Length, buf, 0);
+            tmpFile.Write(buf, 0, buf.Length);
+            tmpFile.WriteByte((byte)'\n');
+        }
+        tmpFile.Close();
+        fs.Close();
+
+        // send converted file like a binary file
+        SendBinaryFile(outStream, tmpFileName);
+
+        // delete temp file
+        File.Delete(tmpFileName);
+    }
+
+    /// <summary>
+    /// Receive a text file from the cvs server.
+    /// </summary>
+    /// <param name="inputStream">Input stream from the cvs server.</param>
+    /// <param name="fileName">The name of the file to be created.</param>
+    /// <param name="length">The number of bytes the file contains.</param>
+    public virtual void ReceiveTextFile(CvsStream inputStream, string fileName, int length)
+    {
+        byte[] buffer = new byte[length];
+
+        inputStream.ReadBlock(buffer, length);
+
+        // write to a temp file
+        string tmpFileName = Path.GetTempFileName();
+        FileStream tmpFile = File.Create(tmpFileName);
+        tmpFile.Write(buffer, 0, length);
+        tmpFile.Close();
+
+        StreamReader tmpTxtFile = File.OpenText(tmpFileName);
+        StreamWriter fs = File.CreateText(fileName);
+        while (true) {
+            string line = tmpTxtFile.ReadLine();
+            if (line == null) {
+                break;
+            }
+            fs.WriteLine(line);
+        }
+        tmpTxtFile.Close();
+        fs.Close();
+
+        // delete temp file
+        File.Delete(tmpFileName);
+    }
+
+    /// <summary>
+    /// Send a binary file to the cvs server.
+    /// </summary>
+    /// <param name="outStream">Writable stream to the cvs server.</param>
+    /// <param name="fileName">The name of the file to stream across.</param>
+    public virtual void SendBinaryFile(CvsStream outStream, string fileName)
+    {
+        FileStream fs = File.OpenRead(fileName);
+        byte[] data = new byte[fs.Length];
+        fs.Read(data, 0, data.Length);
+        fs.Close();
+
+        outStream.SendString(data.Length.ToString() + "\n");
+        outStream.Write(data);
+    }
+
+    /// <summary>
+    /// Receive a binary file from the cvs server.
+    /// </summary>
+    /// <param name="inputStream"></param>
+    /// <param name="fileName"></param>
+    /// <param name="length"></param>
+    public virtual void ReceiveBinaryFile(CvsStream inputStream, string fileName, int length)
+    {
+        byte[] buffer = new byte[length];
+
+        inputStream.ReadBlock(buffer, length);
+
+        FileStream fs = System.IO.File.Create(fileName);
+        fs.Write(buffer, 0, length);
+        fs.Close();
+    }
+}
 }
 

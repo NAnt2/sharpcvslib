@@ -1,5 +1,5 @@
 #region "Copyright"
-// StatusCommand.cs 
+// StatusCommand.cs
 // Copyright (C) 2002 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
+//    Author:     Mike Krueger,
 //                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
@@ -39,43 +39,43 @@ using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.FileSystem;
 
-namespace ICSharpCode.SharpCvsLib.Commands { 
-	
+namespace ICSharpCode.SharpCvsLib.Commands {
+
+/// <summary>
+/// Status command.
+///     TODO: Figure out what this is used for.
+/// </summary>
+public class StatusCommand : ICommand
+{
+    private WorkingDirectory workingdirectory;
+    private string directory;
+    private Entry entry;
+
     /// <summary>
-    /// Status command.
-    ///     TODO: Figure out what this is used for.
+    /// Constructor.
     /// </summary>
-	public class StatusCommand : ICommand
-	{
-		private WorkingDirectory workingdirectory;
-		private string directory;
-		private Entry entry;
-		
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="workingdirectory"></param>
-        /// <param name="directory"></param>
-        /// <param name="entry"></param>
-		public StatusCommand(WorkingDirectory workingdirectory, string directory, Entry entry)
-		{
-			this.workingdirectory    = workingdirectory;
-			this.directory = directory;
-			this.entry = entry;
-		}
-		
-        /// <summary>
-        /// Do the dirty work.
-        /// </summary>
-        /// <param name="connection"></param>
-		public void Execute(ICommandConnection connection)
-		{
-			connection.SubmitRequest(new DirectoryRequest(".", 
-                            workingdirectory.CvsRoot.CvsRepository + 
-                            directory));
-		    
-			connection.SubmitRequest(new ArgumentRequest(entry.Name));
-			connection.SubmitRequest(new StatusRequest());
-		}
-	}
+    /// <param name="workingdirectory"></param>
+    /// <param name="directory"></param>
+    /// <param name="entry"></param>
+    public StatusCommand(WorkingDirectory workingdirectory, string directory, Entry entry)
+    {
+        this.workingdirectory    = workingdirectory;
+        this.directory = directory;
+        this.entry = entry;
+    }
+
+    /// <summary>
+    /// Do the dirty work.
+    /// </summary>
+    /// <param name="connection"></param>
+    public void Execute(ICommandConnection connection)
+    {
+        connection.SubmitRequest(new DirectoryRequest(".",
+                                 workingdirectory.CvsRoot.CvsRepository +
+                                 directory));
+
+        connection.SubmitRequest(new ArgumentRequest(entry.Name));
+        connection.SubmitRequest(new StatusRequest());
+    }
+}
 }

@@ -1,5 +1,5 @@
 #region "Copyright"
-// ArgumentxRequest.cs 
+// ArgumentxRequest.cs
 // Copyright (C) 2001 Mike Krueger
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
@@ -25,40 +25,40 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
-	
-	/// <summary>
-	/// Response expected: no. Append \n followed by text to the current argument being saved
-	/// </summary>
-	public class ArgumentxRequest : AbstractRequest
-	{
-    	private string arg;
-    
-        /// <summary>
-        /// TODO: Figure out what this is for.
-        /// </summary>
-        /// <param name="arg"></param>
-	    public ArgumentxRequest(string arg)
-    	{
-        	this.arg = arg;
-    	}
-    
-        /// <summary>
-        /// TODO: Figure out what this is for.
-        /// </summary>
-		public override string RequestString {
-			get {
-				return "Argumentx " + arg + "\n";
-			}
-		}
-		
-        /// <summary>
-        /// <code>false</code>, response is not expected.
-        /// </summary>
-		public override bool IsResponseExpected {
-			get {
-				return false;
-			}
-		}
-	}
+namespace ICSharpCode.SharpCvsLib.Requests {
+
+/// <summary>
+/// Response expected: no. Append \n followed by text to the current argument being saved
+/// </summary>
+public class ArgumentxRequest : AbstractRequest
+{
+    private string arg;
+
+    /// <summary>
+    /// TODO: Figure out what this is for.
+    /// </summary>
+    /// <param name="arg"></param>
+    public ArgumentxRequest(string arg)
+    {
+        this.arg = arg;
+    }
+
+    /// <summary>
+    /// TODO: Figure out what this is for.
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "Argumentx " + arg + "\n";
+        }
+    }
+
+    /// <summary>
+    /// <code>false</code>, response is not expected.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return false;
+        }
+    }
+}
 }

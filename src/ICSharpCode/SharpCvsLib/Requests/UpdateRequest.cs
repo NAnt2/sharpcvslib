@@ -1,5 +1,5 @@
 #region "Copyright"
-// UpdateRequest.cs 
+// UpdateRequest.cs
 // Copyright (C) 2001 Mike Krueger
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
@@ -25,34 +25,34 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
-	
-	/// <summary>
-	/// Response expected: yes. 
-	/// Actually do a cvs update command. This uses any previous Argument, Directory, Entry, 
-	/// or Modified requests, if they have been sent. The last Directory sent specifies the 
-	/// working directory at the time of the operation. The -I option is not used--files which 
-	/// the client can decide whether to ignore are not mentioned and the client sends the 
-	/// Questionable request for others. 
-	/// </summary>
-	public class UpdateRequest : AbstractRequest
-	{
-        /// <summary>
-        /// Request an update to the files/ directories specified.
-        /// </summary>
-		public override string RequestString {
-			get {
-				return "update\n";
-			}
-		}
-		
-        /// <summary>
-        /// Response expected: <code>true</code>.
-        /// </summary>
-		public override bool IsResponseExpected {
-			get {
-				return true;
-			}
-		}
-	}
+namespace ICSharpCode.SharpCvsLib.Requests {
+
+/// <summary>
+/// Response expected: yes.
+/// Actually do a cvs update command. This uses any previous Argument, Directory, Entry,
+/// or Modified requests, if they have been sent. The last Directory sent specifies the
+/// working directory at the time of the operation. The -I option is not used--files which
+/// the client can decide whether to ignore are not mentioned and the client sends the
+/// Questionable request for others.
+/// </summary>
+public class UpdateRequest : AbstractRequest
+{
+    /// <summary>
+    /// Request an update to the files/ directories specified.
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "update\n";
+        }
+    }
+
+    /// <summary>
+    /// Response expected: <code>true</code>.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return true;
+        }
+    }
+}
 }

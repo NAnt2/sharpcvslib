@@ -49,32 +49,32 @@ using NUnit.Framework;
 namespace ICSharpCode.SharpCvsLib.Console.Commands
 {
 
-	/// <summary>
-	///     Test the LoginCommand object for valid ones 
-	///         and test invalid ones.
-	/// </summary>
-	[TestFixture]
-	public class LoginCommandTest 
-	{
-		/// <summary>
-		///     Constructory for test case.
-		/// </summary>
-		public LoginCommandTest () 
-		{ 
-		}
-        
-		/// <summary>
-		///     Create a LoginCommand object.
-		///       
-		/// </summary>
-		[Test]
-		public void MakeLoginCommandTest () 
-		{
-			String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-			// Test Creating a CommandLineParser object
-			LoginCommand command = new LoginCommand(root);
-			Assertion.AssertNotNull ("Should have a command object.", command);
-			command.Execute();
-		}
-	}
+/// <summary>
+///     Test the LoginCommand object for valid ones
+///         and test invalid ones.
+/// </summary>
+[TestFixture]
+public class LoginCommandTest
+{
+    /// <summary>
+    ///     Constructory for test case.
+    /// </summary>
+    public LoginCommandTest ()
+    {
+    }
+
+    /// <summary>
+    ///     Create a LoginCommand object.
+    ///
+    /// </summary>
+    [Test]
+    public void MakeLoginCommandTest ()
+    {
+        String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
+        // Test Creating a CommandLineParser object
+        LoginCommand command = new LoginCommand(root);
+        Assertion.AssertNotNull ("Should have a command object.", command);
+        command.Execute();
+    }
+}
 }

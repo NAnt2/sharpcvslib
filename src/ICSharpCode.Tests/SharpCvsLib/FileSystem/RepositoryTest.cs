@@ -45,98 +45,98 @@ using NUnit.Framework;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
 
+/// <summary>
+///     Test the repository file parses the input string correctly
+///         and assigns the correct values to the properties.
+/// </summary>
+[TestFixture]
+public class RepositoryTest {
+    private TestSettings settings = new TestSettings ();
+    private readonly String RELATIVE_PATH = "src";
+    private readonly String REPOSITORY_ENTRY1 = "sharpcvslib/src";
+    private readonly String REPOSITORY_ENTRY2 = "sharpcvslib/doc";
+    private readonly String REPOSITORY_FILE_NAME = "Repository";
     /// <summary>
-    ///     Test the repository file parses the input string correctly
-    ///         and assigns the correct values to the properties.
+    ///     Constructor for test case.
     /// </summary>
-    [TestFixture]
-    public class RepositoryTest {
-        private TestSettings settings = new TestSettings ();
-        private readonly String RELATIVE_PATH = "src";
-        private readonly String REPOSITORY_ENTRY1 = "sharpcvslib/src";
-        private readonly String REPOSITORY_ENTRY2 = "sharpcvslib/doc";
-        private readonly String REPOSITORY_FILE_NAME = "Repository";
-        /// <summary>
-        ///     Constructor for test case.
-        /// </summary>
-        public RepositoryTest () {
-            
-        }
-        
-        /// <summary>
-        ///     Ensure that the values the repository is initialized with 
-        ///         can be determined.
-        /// </summary>
-        [Test]
-        public void CreateRepositoryTest () {
-            String fullPath = 
-                Path.Combine (this.settings.Config.LocalPath, RELATIVE_PATH);
-            Repository repos = new Repository (fullPath, 
-                                               this.REPOSITORY_ENTRY1);
-            
-            String cvsPath = Path.Combine (fullPath, "CVS");
-            Assertion.Assert ("Path not set/returned", repos.Path.Equals (fullPath));
-            Assertion.Assert ("FileContents not set/returned", repos.FileContents.Equals (this.REPOSITORY_ENTRY1));
-            Assertion.Assert ("Filename not correct", repos.Filename.Equals (this.REPOSITORY_FILE_NAME));
-            Assertion.Assert ("Type not correct", repos.Type == Factory.FileType.Repository);
-            Assertion.Assert ("IsMultiLined not correct", repos.IsMultiLined == false);
-        }
-        
-        /// <summary>
-        ///     Test that the equals method correctly identifies two repository objects
-        ///         as equal.
-        /// </summary>
-        [Test]
-        public void EqualsTest () {
-            String cvsPath = Path.Combine (this.settings.Config.LocalPath, 
-                                           this.settings.Config.Module);
-            Repository reposSame1 = new Repository (cvsPath, this.REPOSITORY_ENTRY1);
-            Repository reposSame2 = new Repository (cvsPath, this.REPOSITORY_ENTRY1);
-            Repository reposDiff1 = new Repository (cvsPath, this.REPOSITORY_ENTRY2);
-            
-            Assertion.Assert (reposSame1.Equals (reposSame1));
-            Assertion.Assert (reposSame1.Equals (reposSame2));
-            Assertion.Assert (reposSame2.Equals (reposSame1));
-            
-            Assertion.Assert (!reposDiff1.Equals (reposSame1));
-            Assertion.Assert (!reposDiff1.Equals (reposSame2));
-            Assertion.Assert (!reposSame1.Equals (reposDiff1));
-            Assertion.Assert (!reposSame2.Equals (reposDiff1));
-        }
-        
-        /// <summary>
-        /// The slashes in a cvs repository file are stripped off.  This
-        ///     means that the repository + the entry from the entries file
-        ///     equal the relative server path for the file in the repository 
-        ///     when the two are concatentated.
-        /// </summary>
-        [Test]
-        public void NoSlashAtEnd () {
-            String fullPath = 
-                Path.Combine (this.settings.Config.LocalPath, this.settings.Config.Module);
-            
-            String repositoryEntryWithSlash = this.REPOSITORY_ENTRY1 + "/";
-            
-            Assertion.Assert ("We just added a slash, there should be a slash.", 
-                              repositoryEntryWithSlash.EndsWith ("/"));
-            Repository repos = new Repository (fullPath, 
-                                               repositoryEntryWithSlash);
-            
-            Assertion.Assert ("Slash should be stripped off.", 
-                              !repos.FileContents.EndsWith ("/"));
-            Assertion.Assert ("FileContents should equal module name.  FileContents=[" +
-                              repos.FileContents + "]",
-                              repos.FileContents.Equals ("sharpcvslib/src"));
-        }
-        
-        /// <summary>
-        ///     Clean up any test directories, etc.
-        /// </summary>
-        [TearDown]
-        public void TearDown () {
-		    if (Directory.Exists (this.settings.Config.LocalPath)) {
-    		    Directory.Delete (this.settings.Config.LocalPath, true);
-		    }            
+    public RepositoryTest () {
+
+    }
+
+    /// <summary>
+    ///     Ensure that the values the repository is initialized with
+    ///         can be determined.
+    /// </summary>
+    [Test]
+    public void CreateRepositoryTest () {
+        String fullPath =
+            Path.Combine (this.settings.Config.LocalPath, RELATIVE_PATH);
+        Repository repos = new Repository (fullPath,
+                                           this.REPOSITORY_ENTRY1);
+
+        String cvsPath = Path.Combine (fullPath, "CVS");
+        Assertion.Assert ("Path not set/returned", repos.Path.Equals (fullPath));
+        Assertion.Assert ("FileContents not set/returned", repos.FileContents.Equals (this.REPOSITORY_ENTRY1));
+        Assertion.Assert ("Filename not correct", repos.Filename.Equals (this.REPOSITORY_FILE_NAME));
+        Assertion.Assert ("Type not correct", repos.Type == Factory.FileType.Repository);
+        Assertion.Assert ("IsMultiLined not correct", repos.IsMultiLined == false);
+    }
+
+    /// <summary>
+    ///     Test that the equals method correctly identifies two repository objects
+    ///         as equal.
+    /// </summary>
+    [Test]
+    public void EqualsTest () {
+        String cvsPath = Path.Combine (this.settings.Config.LocalPath,
+                                       this.settings.Config.Module);
+        Repository reposSame1 = new Repository (cvsPath, this.REPOSITORY_ENTRY1);
+        Repository reposSame2 = new Repository (cvsPath, this.REPOSITORY_ENTRY1);
+        Repository reposDiff1 = new Repository (cvsPath, this.REPOSITORY_ENTRY2);
+
+        Assertion.Assert (reposSame1.Equals (reposSame1));
+        Assertion.Assert (reposSame1.Equals (reposSame2));
+        Assertion.Assert (reposSame2.Equals (reposSame1));
+
+        Assertion.Assert (!reposDiff1.Equals (reposSame1));
+        Assertion.Assert (!reposDiff1.Equals (reposSame2));
+        Assertion.Assert (!reposSame1.Equals (reposDiff1));
+        Assertion.Assert (!reposSame2.Equals (reposDiff1));
+    }
+
+    /// <summary>
+    /// The slashes in a cvs repository file are stripped off.  This
+    ///     means that the repository + the entry from the entries file
+    ///     equal the relative server path for the file in the repository
+    ///     when the two are concatentated.
+    /// </summary>
+    [Test]
+    public void NoSlashAtEnd () {
+        String fullPath =
+            Path.Combine (this.settings.Config.LocalPath, this.settings.Config.Module);
+
+        String repositoryEntryWithSlash = this.REPOSITORY_ENTRY1 + "/";
+
+        Assertion.Assert ("We just added a slash, there should be a slash.",
+                          repositoryEntryWithSlash.EndsWith ("/"));
+        Repository repos = new Repository (fullPath,
+                                           repositoryEntryWithSlash);
+
+        Assertion.Assert ("Slash should be stripped off.",
+                          !repos.FileContents.EndsWith ("/"));
+        Assertion.Assert ("FileContents should equal module name.  FileContents=[" +
+                          repos.FileContents + "]",
+                          repos.FileContents.Equals ("sharpcvslib/src"));
+    }
+
+    /// <summary>
+    ///     Clean up any test directories, etc.
+    /// </summary>
+    [TearDown]
+    public void TearDown () {
+        if (Directory.Exists (this.settings.Config.LocalPath)) {
+            Directory.Delete (this.settings.Config.LocalPath, true);
         }
     }
+}
 }

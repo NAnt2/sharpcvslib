@@ -47,30 +47,30 @@ using NUnit.Framework;
 
 namespace ICSharpCode.SharpCvsLib.Console.Commands
 {
-	/// <summary>
-	///     Test the checkout command object for valid ones 
-	///         and test invalid ones.
-	/// </summary>
-	[TestFixture]
-	public class CheckoutCommandTest{
-		/// <summary>
-		///     Constructory for test case.
-		/// </summary>
-		public CheckoutCommandTest (){ 
-		}
-        
-		/// <summary>
-		///     Create a CheckoutCommand object.
-		///       
-		/// </summary>
-		[Test]
-		public void MakeCheckoutCommandTest (){
-			String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-			String repository = "sharpcvslib";
-			// Test Creating a CheckoutCommand object
-			CheckoutCommand newCheckoutCommand = new CheckoutCommand(root, repository);
-			Assertion.AssertNotNull ("Should have a command object.", newCheckoutCommand);
-			newCheckoutCommand.Execute();
-		}
-	}
+/// <summary>
+///     Test the checkout command object for valid ones
+///         and test invalid ones.
+/// </summary>
+[TestFixture]
+public class CheckoutCommandTest{
+    /// <summary>
+    ///     Constructory for test case.
+    /// </summary>
+    public CheckoutCommandTest (){
+    }
+
+    /// <summary>
+    ///     Create a CheckoutCommand object.
+    ///
+    /// </summary>
+    [Test]
+    public void MakeCheckoutCommandTest (){
+        String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
+        String repository = "sharpcvslib";
+        // Test Creating a CheckoutCommand object
+        CheckoutCommand newCheckoutCommand = new CheckoutCommand(root, repository);
+        Assertion.AssertNotNull ("Should have a command object.", newCheckoutCommand);
+        newCheckoutCommand.Execute();
+    }
+}
 }

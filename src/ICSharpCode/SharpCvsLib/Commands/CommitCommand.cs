@@ -1,5 +1,5 @@
 #region "Copyright"
-// CommitCommand.cs 
+// CommitCommand.cs
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
+//    Author:     Mike Krueger,
 //                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
@@ -44,106 +44,106 @@ using ICSharpCode.SharpCvsLib.FileSystem;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Commands { 
-	
-    /// <summary>
-    /// Commit command
-    /// </summary>
-	public class CommitCommand2 : ICommand
-	{
-	    private readonly ILog LOGGER = LogManager.GetLogger (typeof (CommitCommand2));
-		private WorkingDirectory workingdirectory;
-		private string  logmessage;
-		private string  vendor  = "vendor";
-		private string  release = "release";
-		
-        /// <summary>
-        /// Log message
-        /// </summary>
-		public string LogMessage {
-			get {
-				return logmessage;
-			}
-			set {
-				logmessage = value;
-			}
-		}
-		
-        /// <summary>
-        /// Vendor string
-        /// </summary>
-		public string VendorString {
-			get {
-				return vendor;
-			}
-			set {
-				vendor = value;
-			}
-		}
-		
-        /// <summary>
-        /// Release String
-        /// </summary>
-		public string ReleaseString {
-			get {
-				return release;
-			}
-			set {
-				release = value;
-			}
-		}
-		
-        /// <summary>
-        /// Commit command two constructor
-        /// </summary>
-        /// <param name="workingdirectory"></param>
-		public CommitCommand2(WorkingDirectory workingdirectory)
-		{
-			this.workingdirectory = workingdirectory;
-		}
+namespace ICSharpCode.SharpCvsLib.Commands {
 
-		/// <summary>
-		/// Execute the commit command
-		/// </summary>
-		/// <param name="connection">Cvs server connection</param>
-		public void Execute(ICommandConnection connection)
-		{
-			connection.SubmitRequest(new CaseRequest());
-			connection.SubmitRequest(new ArgumentRequest("-m"));
-			connection.SubmitRequest(new ArgumentRequest("LOG MESSAGE"));
-			StringCollection files = new StringCollection();
-		    if (LOGGER.IsDebugEnabled) {
-			    LOGGER.Debug("workdir cvs repository : " + 
-			                 workingdirectory.CvsRoot.CvsRepository);
-		    }
-			foreach (DictionaryEntry folder in workingdirectory.Folders) {
-				foreach (Entry entry  in ((Folder)folder.Value).Entries) {
-					if (!entry.IsDirectory) {
-						DateTime old = entry.TimeStamp;
-						entry.TimeStamp = entry.TimeStamp;
-						
-						string path = Path.Combine (workingdirectory.CvsRoot.CvsRepository,
-						                folder.Key.ToString());
-						
-						string fileName = Path.Combine (path,entry.Name);
-						
-						if (File.GetLastAccessTime(fileName) != entry.TimeStamp) {
-							connection.SubmitRequest(new DirectoryRequest(".", path));
-							connection.SubmitRequest(new EntryRequest(entry));
-							connection.SubmitRequest(new ModifiedRequest(entry.Name));
-							files.Add(entry.Name);
-							connection.SendFile(fileName, entry.IsBinaryFile);
-						}
-						
-						entry.TimeStamp = old;
-					}
-				}
-			}
-//			connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository));
-			foreach (string file in files) {
-				connection.SubmitRequest(new ArgumentRequest(file));
-			}
-			connection.SubmitRequest(new CommitRequest());
-		}
-	}
+/// <summary>
+/// Commit command
+/// </summary>
+public class CommitCommand2 : ICommand
+{
+    private readonly ILog LOGGER = LogManager.GetLogger (typeof (CommitCommand2));
+    private WorkingDirectory workingdirectory;
+    private string  logmessage;
+    private string  vendor  = "vendor";
+    private string  release = "release";
+
+    /// <summary>
+    /// Log message
+    /// </summary>
+    public string LogMessage {
+        get {
+            return logmessage;
+        }
+        set {
+            logmessage = value;
+        }
+    }
+
+    /// <summary>
+    /// Vendor string
+    /// </summary>
+    public string VendorString {
+        get {
+            return vendor;
+        }
+        set {
+            vendor = value;
+        }
+    }
+
+    /// <summary>
+    /// Release String
+    /// </summary>
+    public string ReleaseString {
+        get {
+            return release;
+        }
+        set {
+            release = value;
+        }
+    }
+
+    /// <summary>
+    /// Commit command two constructor
+    /// </summary>
+    /// <param name="workingdirectory"></param>
+    public CommitCommand2(WorkingDirectory workingdirectory)
+    {
+        this.workingdirectory = workingdirectory;
+    }
+
+    /// <summary>
+    /// Execute the commit command
+    /// </summary>
+    /// <param name="connection">Cvs server connection</param>
+    public void Execute(ICommandConnection connection)
+    {
+        connection.SubmitRequest(new CaseRequest());
+        connection.SubmitRequest(new ArgumentRequest("-m"));
+        connection.SubmitRequest(new ArgumentRequest("LOG MESSAGE"));
+        StringCollection files = new StringCollection();
+        if (LOGGER.IsDebugEnabled) {
+            LOGGER.Debug("workdir cvs repository : " +
+                         workingdirectory.CvsRoot.CvsRepository);
+        }
+        foreach (DictionaryEntry folder in workingdirectory.Folders) {
+            foreach (Entry entry  in ((Folder)folder.Value).Entries) {
+                if (!entry.IsDirectory) {
+                    DateTime old = entry.TimeStamp;
+                    entry.TimeStamp = entry.TimeStamp;
+
+                    string path = Path.Combine (workingdirectory.CvsRoot.CvsRepository,
+                                                folder.Key.ToString());
+
+                    string fileName = Path.Combine (path,entry.Name);
+
+                    if (File.GetLastAccessTime(fileName) != entry.TimeStamp) {
+                        connection.SubmitRequest(new DirectoryRequest(".", path));
+                        connection.SubmitRequest(new EntryRequest(entry));
+                        connection.SubmitRequest(new ModifiedRequest(entry.Name));
+                        files.Add(entry.Name);
+                        connection.SendFile(fileName, entry.IsBinaryFile);
+                    }
+
+                    entry.TimeStamp = old;
+                }
+            }
+        }
+        //			connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository));
+        foreach (string file in files) {
+            connection.SubmitRequest(new ArgumentRequest(file));
+        }
+        connection.SubmitRequest(new CommitRequest());
+    }
+}
 }

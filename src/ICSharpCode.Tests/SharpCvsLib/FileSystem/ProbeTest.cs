@@ -40,54 +40,54 @@ using NUnit.Framework;
 using ICSharpCode.SharpCvsLib.Tests.Util;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
+/// <summary>
+/// Test the file system probe finds and returns the correct number of
+///     existing and non-existing files given the list of original files.
+/// </summary>
+public class ProbeTest {
+
     /// <summary>
-    /// Test the file system probe finds and returns the correct number of
-    ///     existing and non-existing files given the list of original files.
+    /// Create the test files.
     /// </summary>
-    public class ProbeTest {
-
-        /// <summary>
-        /// Create the test files.
-        /// </summary>        
-        [SetUp]
-        public void SetUp () {
-        }
-
-        /// <summary>
-        /// Remove the test files.
-        /// </summary>
-        [TearDown]        
-        public void TearDown () {
-        }
-        
-        /// <summary>
-        /// Tests that probe works correctly with only files specified 
-        ///     (i.e. no recursion).
-        /// </summary>
-        public void TestNoCvsFiles () {
-            String searchDir = Path.GetTempPath ();
-            Probe probe = new Probe ();
-            probe.OriginalDirectory = searchDir;
-            
-            probe.Execute ();
-        }
-        
-        /// <summary>
-        /// Creates a number of "regular" test files and returns a Collection of the 
-        ///     paths to the files.
-        /// </summary>
-        /// <param name="numberOfFiles">The number of files to create.</param>
-        /// <returns>A collection of path variables that represent the location
-        ///     on the file system of the new test files.</returns>
-        private ICollection CreateTestFiles (int numberOfFiles) {
-            ArrayList filePaths = new ArrayList ();
-            for (int i = 0; i < numberOfFiles; i++) {
-                String newFileName = Guid.NewGuid ().ToString ();
-                String newFilePath = 
-                    Path.Combine (PathUtil.GetTempPath (this), newFileName);
-                filePaths.Add (newFilePath);
-            }
-            return filePaths;
-        }
+    [SetUp]
+    public void SetUp () {
     }
+
+    /// <summary>
+    /// Remove the test files.
+    /// </summary>
+    [TearDown]
+    public void TearDown () {
+    }
+
+    /// <summary>
+    /// Tests that probe works correctly with only files specified
+    ///     (i.e. no recursion).
+    /// </summary>
+    public void TestNoCvsFiles () {
+        String searchDir = Path.GetTempPath ();
+        Probe probe = new Probe ();
+        probe.OriginalDirectory = searchDir;
+
+        probe.Execute ();
+    }
+
+    /// <summary>
+    /// Creates a number of "regular" test files and returns a Collection of the
+    ///     paths to the files.
+    /// </summary>
+    /// <param name="numberOfFiles">The number of files to create.</param>
+    /// <returns>A collection of path variables that represent the location
+    ///     on the file system of the new test files.</returns>
+    private ICollection CreateTestFiles (int numberOfFiles) {
+        ArrayList filePaths = new ArrayList ();
+        for (int i = 0; i < numberOfFiles; i++) {
+            String newFileName = Guid.NewGuid ().ToString ();
+            String newFilePath =
+                Path.Combine (PathUtil.GetTempPath (this), newFileName);
+            filePaths.Add (newFilePath);
+        }
+        return filePaths;
+    }
+}
 }

@@ -1,5 +1,5 @@
 #region "Copyright"
-// CvsRoot.cs 
+// CvsRoot.cs
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -31,108 +31,108 @@
 
 using System;
 
-namespace ICSharpCode.SharpCvsLib.Misc { 
-	
+namespace ICSharpCode.SharpCvsLib.Misc {
+
+/// <summary>
+/// Class to encapsulate the properties of the cvsroot for the
+///     repository you are communicating with.
+/// </summary>
+public class CvsRoot
+{
+    private string protocol         = String.Empty;
+    private string user             = String.Empty;
+    private string host             = String.Empty;
+    private string cvsrepository    = String.Empty;
+
     /// <summary>
-    /// Class to encapsulate the properties of the cvsroot for the
-    ///     repository you are communicating with.
+    /// The protocol to use when communicating with the server.
+    ///     <ol>
+    ///         <li>pserver</li>
+    ///         <li>ssh</li>
+    ///         <li>ext</li>
+    ///     </ol>
     /// </summary>
-	public class CvsRoot
-	{
-		private string protocol         = String.Empty;
-		private string user             = String.Empty;
-		private string host             = String.Empty;
-		private string cvsrepository    = String.Empty;
-		
-        /// <summary>
-        /// The protocol to use when communicating with the server.
-        ///     <ol>
-        ///         <li>pserver</li>
-        ///         <li>ssh</li>
-        ///         <li>ext</li>
-        ///     </ol>
-        /// </summary>
-		public string Protocol {
-			get {
-				return protocol;
-			}
-			set {
-				protocol = value;
-			}
-		}
-		
-        /// <summary>
-        /// User name used to access the repository.
-        /// </summary>
-		public string User {
-			get {
-				return user;
-			}
-			set {
-				user = value;
-			}
-		}
-		
-        /// <summary>
-        /// Host running the repository.
-        /// </summary>
-		public string Host {
-			get {
-				return host;
-			}
-			set {
-				host = value;
-			}
-		}
-		
-        /// <summary>
-        /// Module to use in command.
-        /// </summary>
-		public string CvsRepository {
-			get {
-				return cvsrepository;
-			}
-			set {
-				cvsrepository = value;
-			}
-		}
-		
-        /// <summary>
-        /// Constructor.  Parses a cvsroot variable passed in as
-        ///     a string into the different properties that make it
-        ///     up.
-        /// </summary>
-        /// <param name="cvsroot"></param>
-		public CvsRoot(string cvsroot)
-		{
-			int s1 = cvsroot.IndexOf(':', 1)  + 1;
-			if (s1 == 0 || cvsroot[0] != ':')
-				throw new ArgumentException("cvsroot doesn't start with :");
-			
-			int s2 = cvsroot.IndexOf('@', s1) + 1;
-			if (s2 == 0)
-				throw new ArgumentException("no username given");
-			
-			int s3 = cvsroot.IndexOf(':', s2) + 1;
-			if (s3 == 0)
-				throw new ArgumentException("no host given");
-				
-			protocol      = cvsroot.Substring(1, s1 - 2);
-			user          = cvsroot.Substring(s1, s2 - s1 - 1);
-			host          = cvsroot.Substring(s2, s3 - s2 - 1);
-			cvsrepository = cvsroot.Substring(s3);
-			
-			if (protocol.Length == 0 || user.Length == 0 || host.Length == 0 || cvsrepository.Length == 0)
-				throw new ArgumentException("invalid cvsroot given");
-		}
-		
-        /// <summary>
-        /// Convert CvsRoot object to a human readable format.
-        /// </summary>
-        /// <returns></returns>
-		public override string ToString()
-		{
-			return ':' + protocol + ':' + user + '@' + host + ':' + cvsrepository;
-		}
-	}
+    public string Protocol {
+        get {
+            return protocol;
+        }
+        set {
+            protocol = value;
+        }
+    }
+
+    /// <summary>
+    /// User name used to access the repository.
+    /// </summary>
+    public string User {
+        get {
+            return user;
+        }
+        set {
+            user = value;
+        }
+    }
+
+    /// <summary>
+    /// Host running the repository.
+    /// </summary>
+    public string Host {
+        get {
+            return host;
+        }
+        set {
+            host = value;
+        }
+    }
+
+    /// <summary>
+    /// Module to use in command.
+    /// </summary>
+    public string CvsRepository {
+        get {
+            return cvsrepository;
+        }
+        set {
+            cvsrepository = value;
+        }
+    }
+
+    /// <summary>
+    /// Constructor.  Parses a cvsroot variable passed in as
+    ///     a string into the different properties that make it
+    ///     up.
+    /// </summary>
+    /// <param name="cvsroot"></param>
+    public CvsRoot(string cvsroot)
+    {
+        int s1 = cvsroot.IndexOf(':', 1)  + 1;
+        if (s1 == 0 || cvsroot[0] != ':')
+            throw new ArgumentException("cvsroot doesn't start with :");
+
+        int s2 = cvsroot.IndexOf('@', s1) + 1;
+        if (s2 == 0)
+            throw new ArgumentException("no username given");
+
+        int s3 = cvsroot.IndexOf(':', s2) + 1;
+        if (s3 == 0)
+            throw new ArgumentException("no host given");
+
+        protocol      = cvsroot.Substring(1, s1 - 2);
+        user          = cvsroot.Substring(s1, s2 - s1 - 1);
+        host          = cvsroot.Substring(s2, s3 - s2 - 1);
+        cvsrepository = cvsroot.Substring(s3);
+
+        if (protocol.Length == 0 || user.Length == 0 || host.Length == 0 || cvsrepository.Length == 0)
+            throw new ArgumentException("invalid cvsroot given");
+    }
+
+    /// <summary>
+    /// Convert CvsRoot object to a human readable format.
+    /// </summary>
+    /// <returns></returns>
+    public override string ToString()
+    {
+        return ':' + protocol + ':' + user + '@' + host + ':' + cvsrepository;
+    }
+}
 }

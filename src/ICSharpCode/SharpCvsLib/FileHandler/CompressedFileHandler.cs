@@ -36,69 +36,69 @@ using System.Text;
 using ICSharpCode.SharpZipLib.GZip;
 using ICSharpCode.SharpCvsLib.Streams;
 
-namespace ICSharpCode.SharpCvsLib.FileHandler { 
-	
-	/// <summary>
-	/// Implements a compressed file handler
-	/// </summary>
-	public class CompressedFileHandler : UncompressedFileHandler // WARNING : untested class :)
-	{
-        /// <summary>
-        /// Upload a text file to the cvs server.
-        /// </summary>
-        /// <param name="outStream"></param>
-        /// <param name="fileName"></param>
-	    public override void SendTextFile(CvsStream outStream, string fileName)
-	    {
-	    	base.SendTextFile(outStream, fileName); // because it depends ond SendBinaryFile this is OK
-	    }
-	    
-        /// <summary>
-        /// Receive a text file from the cvs server.
-        /// </summary>
-        /// <param name="inputStream"></param>
-        /// <param name="fileName"></param>
-        /// <param name="length"></param>
-	    public override void ReceiveTextFile(CvsStream inputStream, string fileName, int length)
-	    {
-	    	Stream oldStream  = inputStream.BaseStream;
-	    	inputStream.BaseStream = new GZipInputStream(inputStream.BaseStream);
-	    	base.ReceiveTextFile(inputStream, fileName, length);
-	    	inputStream.BaseStream = oldStream;
-	    }
-	    
-		/// <summary>
-		/// Send a binary file to the cvs server.
-		/// </summary>
-		/// <param name="outStream"></param>
-		/// <param name="fileName"></param>
-	    public override void SendBinaryFile(CvsStream outStream, string fileName)
-	    {
-			FileStream fs = File.OpenRead(fileName);
-			byte[] data = new byte[fs.Length];
-			fs.Read(data, 0, data.Length);
-			fs.Close();
-	    	
-	    	Stream oldStream  = outStream.BaseStream;
-	    	outStream.BaseStream = new GZipOutputStream(outStream.BaseStream);
-	    	
-	    	outStream.SendString("z" + data.Length.ToString() + "\n");
-	    	outStream.Write(data);
-	    	outStream.BaseStream = oldStream;
-	    }
-	    
-        /// <summary>
-        /// Receive a binary file from the cvs server.
-        /// </summary>
-        /// <param name="inputStream"></param>
-        /// <param name="fileName"></param>
-        /// <param name="length"></param>
-	    public override void ReceiveBinaryFile(CvsStream inputStream, string fileName, int length)
-	    {
-	    	Stream oldStream  = inputStream.BaseStream;
-	    	inputStream.BaseStream = new GZipInputStream(inputStream.BaseStream);
-	    	base.ReceiveBinaryFile(inputStream, fileName, length);
-	    	inputStream.BaseStream = oldStream;
-	    }
-	}
+namespace ICSharpCode.SharpCvsLib.FileHandler {
+
+/// <summary>
+/// Implements a compressed file handler
+/// </summary>
+public class CompressedFileHandler : UncompressedFileHandler // WARNING : untested class :)
+{
+    /// <summary>
+    /// Upload a text file to the cvs server.
+    /// </summary>
+    /// <param name="outStream"></param>
+    /// <param name="fileName"></param>
+    public override void SendTextFile(CvsStream outStream, string fileName)
+    {
+        base.SendTextFile(outStream, fileName); // because it depends ond SendBinaryFile this is OK
+    }
+
+    /// <summary>
+    /// Receive a text file from the cvs server.
+    /// </summary>
+    /// <param name="inputStream"></param>
+    /// <param name="fileName"></param>
+    /// <param name="length"></param>
+    public override void ReceiveTextFile(CvsStream inputStream, string fileName, int length)
+    {
+        Stream oldStream  = inputStream.BaseStream;
+        inputStream.BaseStream = new GZipInputStream(inputStream.BaseStream);
+        base.ReceiveTextFile(inputStream, fileName, length);
+        inputStream.BaseStream = oldStream;
+    }
+
+    /// <summary>
+    /// Send a binary file to the cvs server.
+    /// </summary>
+    /// <param name="outStream"></param>
+    /// <param name="fileName"></param>
+    public override void SendBinaryFile(CvsStream outStream, string fileName)
+    {
+        FileStream fs = File.OpenRead(fileName);
+        byte[] data = new byte[fs.Length];
+        fs.Read(data, 0, data.Length);
+        fs.Close();
+
+        Stream oldStream  = outStream.BaseStream;
+        outStream.BaseStream = new GZipOutputStream(outStream.BaseStream);
+
+        outStream.SendString("z" + data.Length.ToString() + "\n");
+        outStream.Write(data);
+        outStream.BaseStream = oldStream;
+    }
+
+    /// <summary>
+    /// Receive a binary file from the cvs server.
+    /// </summary>
+    /// <param name="inputStream"></param>
+    /// <param name="fileName"></param>
+    /// <param name="length"></param>
+    public override void ReceiveBinaryFile(CvsStream inputStream, string fileName, int length)
+    {
+        Stream oldStream  = inputStream.BaseStream;
+        inputStream.BaseStream = new GZipInputStream(inputStream.BaseStream);
+        base.ReceiveBinaryFile(inputStream, fileName, length);
+        inputStream.BaseStream = oldStream;
+    }
+}
 }

@@ -1,5 +1,5 @@
 #region "Copyright"
-// ImportRequest.cs 
+// ImportRequest.cs
 // Copyright (C) 2001 Mike Krueger
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
@@ -25,30 +25,30 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
-	
+namespace ICSharpCode.SharpCvsLib.Requests {
+
+/// <summary>
+/// Request to import a module.
+///     TODO: Add nice documentation like the other requests.
+/// </summary>
+public class ImportRequest : AbstractRequest
+{
     /// <summary>
     /// Request to import a module.
-    ///     TODO: Add nice documentation like the other requests.
     /// </summary>
-	public class ImportRequest : AbstractRequest
-	{
-        /// <summary>
-        /// Request to import a module.
-        /// </summary>
-		public override string RequestString {
-			get {
-				return "import\n";
-			}
-		}
-		
-        /// <summary>
-        /// <code>true</code>, a response is expected.
-        /// </summary>
-		public override bool IsResponseExpected {
-			get {
-				return true;
-			}
-		}
-	}
+    public override string RequestString {
+        get {
+            return "import\n";
+        }
+    }
+
+    /// <summary>
+    /// <code>true</code>, a response is expected.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return true;
+        }
+    }
+}
 }

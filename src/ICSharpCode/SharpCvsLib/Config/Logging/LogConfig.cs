@@ -36,19 +36,19 @@ using System.Xml;
 using System.Xml.Serialization;
 
 namespace ICSharpCode.SharpCvsLib.Config.Logging {
+/// <summary>
+/// Logging configuration settings.
+/// </summary>
+public class LogConfig {
+    private Debug debugLog;
+
     /// <summary>
-    /// Logging configuration settings.
+    /// Configuration for the debugging log.
     /// </summary>
-    public class LogConfig {
-        private Debug debugLog;        
-    
-        /// <summary>
-        /// Configuration for the debugging log.
-        /// </summary>
-        [XmlElement ("debug-log", typeof (Debug))]
-        public Debug DebugLog {
-            get {return this.debugLog;}
-            set {this.debugLog = value;}
-        }
+    [XmlElement ("debug-log", typeof (Debug))]
+    public Debug DebugLog {
+        get {return this.debugLog;}
+        set {this.debugLog = value;}
     }
+}
 }

@@ -1,5 +1,5 @@
 #region "Copyright"
-// LogCommand.cs 
+// LogCommand.cs
 // Copyright (C) 2002 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
+//    Author:     Mike Krueger,
 //                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
@@ -39,107 +39,107 @@ using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.FileSystem;
 
-namespace ICSharpCode.SharpCvsLib.Commands { 
-	
-    /// <summary>
-    /// Log command.
-    ///     TODO: Figure out what this is for.
-    /// </summary>
-	public class LogCommand : ICommand
-	{
-		private WorkingDirectory workingdirectory;
-		private string directory;
-		private Entry entry;
-		
-		private bool defaultBranch     = false;
-		private bool headerAndDescOnly = false;
-		private bool headerOnly        = false;
-		private bool noTags            = false;
-		
-        /// <summary>
-        /// The default branch to use for the module.
-        /// </summary>
-		public bool DefaultBranch {
-			get {
-				return defaultBranch;
-			}
-			set {
-				defaultBranch = value;
-			}
-		}
-		
-        /// <summary>
-        /// TODO: Figure out what this is used for.
-        /// </summary>
-		public bool HeaderAndDescOnly {
-			get {
-				return headerAndDescOnly;
-			}
-			set {
-				headerAndDescOnly = value;
-			}
-		}
-		
-        /// <summary>
-        /// TODO: Figure out what this is used for.
-        /// </summary>
-		public bool HeaderOnly {
-			get {
-				return headerOnly;
-			}
-			set {
-				headerOnly = value;
-			}
-		}
-		
-        /// <summary>
-        /// TODO: Figure out what this is used for.
-        /// </summary>
-		public bool NoTags {
-			get {
-				return noTags;
-			}
-			set {
-				noTags = value;
-			}
-		}
-		
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="workingdirectory"></param>
-        /// <param name="directory"></param>
-        /// <param name="entry"></param>
-		public LogCommand(WorkingDirectory workingdirectory, string directory, Entry entry)
-		{
-			this.workingdirectory    = workingdirectory;
-			this.directory = directory;
-			this.entry = entry;
-		}
+namespace ICSharpCode.SharpCvsLib.Commands {
 
-        /// <summary>
-        /// Do the dirty work.
-        /// </summary>
-        /// <param name="connection"></param>
-		public void Execute(ICommandConnection connection)
-		{
-			connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository + directory));
-            
-            if (defaultBranch) {
-				connection.SubmitRequest(new ArgumentRequest("-b"));
-            }
-            if (headerAndDescOnly) {
-				connection.SubmitRequest(new ArgumentRequest("-t"));
-            }
-            if (headerOnly) {
-				connection.SubmitRequest(new ArgumentRequest("-h"));
-            }
-            if (noTags) {
-				connection.SubmitRequest(new ArgumentRequest("-N"));
-            }
-			
-			connection.SubmitRequest(new ArgumentRequest(entry.Name));
-			connection.SubmitRequest(new LogRequest());
-		}
-	}
+/// <summary>
+/// Log command.
+///     TODO: Figure out what this is for.
+/// </summary>
+public class LogCommand : ICommand
+{
+    private WorkingDirectory workingdirectory;
+    private string directory;
+    private Entry entry;
+
+    private bool defaultBranch     = false;
+    private bool headerAndDescOnly = false;
+    private bool headerOnly        = false;
+    private bool noTags            = false;
+
+    /// <summary>
+    /// The default branch to use for the module.
+    /// </summary>
+    public bool DefaultBranch {
+        get {
+            return defaultBranch;
+        }
+        set {
+            defaultBranch = value;
+        }
+    }
+
+    /// <summary>
+    /// TODO: Figure out what this is used for.
+    /// </summary>
+    public bool HeaderAndDescOnly {
+        get {
+            return headerAndDescOnly;
+        }
+        set {
+            headerAndDescOnly = value;
+        }
+    }
+
+    /// <summary>
+    /// TODO: Figure out what this is used for.
+    /// </summary>
+    public bool HeaderOnly {
+        get {
+            return headerOnly;
+        }
+        set {
+            headerOnly = value;
+        }
+    }
+
+    /// <summary>
+    /// TODO: Figure out what this is used for.
+    /// </summary>
+    public bool NoTags {
+        get {
+            return noTags;
+        }
+        set {
+            noTags = value;
+        }
+    }
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="workingdirectory"></param>
+    /// <param name="directory"></param>
+    /// <param name="entry"></param>
+    public LogCommand(WorkingDirectory workingdirectory, string directory, Entry entry)
+    {
+        this.workingdirectory    = workingdirectory;
+        this.directory = directory;
+        this.entry = entry;
+    }
+
+    /// <summary>
+    /// Do the dirty work.
+    /// </summary>
+    /// <param name="connection"></param>
+    public void Execute(ICommandConnection connection)
+    {
+        connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository + directory));
+
+        if (defaultBranch) {
+            connection.SubmitRequest(new ArgumentRequest("-b"));
+        }
+        if (headerAndDescOnly) {
+            connection.SubmitRequest(new ArgumentRequest("-t"));
+        }
+        if (headerOnly) {
+            connection.SubmitRequest(new ArgumentRequest("-h"));
+        }
+        if (noTags) {
+            connection.SubmitRequest(new ArgumentRequest("-N"));
+        }
+
+        connection.SubmitRequest(new ArgumentRequest(entry.Name));
+        connection.SubmitRequest(new LogRequest());
+    }
+}
 }

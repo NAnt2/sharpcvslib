@@ -40,61 +40,61 @@ using ICSharpCode.SharpCvsLib.Streams;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
-    /// <summary>
-    /// "Set-static-directory pathname \n"
-    /// 
-    ///     This instructs the client to set the Entries.Static flag, 
-    ///     which it should then send back to the server in a 
-    ///     Static-directory request whenever the directory is operated on. 
-    ///     Pathname ends in a slash; its purpose is to specify a directory, 
-    ///     not a file within a directory.
-    /// 
-    /// </summary>
-	public class SetStaticDirectoryResponse : IResponse
-	{
-    	private ILog LOGGER = 
-    	    LogManager.GetLogger (typeof (SetStaticDirectoryResponse));
+namespace ICSharpCode.SharpCvsLib.Responses {
+/// <summary>
+/// "Set-static-directory pathname \n"
+///
+///     This instructs the client to set the Entries.Static flag,
+///     which it should then send back to the server in a
+///     Static-directory request whenever the directory is operated on.
+///     Pathname ends in a slash; its purpose is to specify a directory,
+///     not a file within a directory.
+///
+/// </summary>
+public class SetStaticDirectoryResponse : IResponse
+{
+    private ILog LOGGER =
+        LogManager.GetLogger (typeof (SetStaticDirectoryResponse));
 
-        /// <summary>
-        /// Process the response stream.
-        /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-	    public void Process(CvsStream cvsStream, IResponseServices services)
-	    {
-            string localPath      = cvsStream.ReadLine();
-            string repositoryPath = cvsStream.ReadLine();
-	        
-	        if (LOGGER.IsDebugEnabled) {
-	            StringBuilder msg = new StringBuilder ();
-	            msg.Append ("localPath=[").Append (localPath).Append ("]");
-	            msg.Append ("repositoryPath=[").Append (repositoryPath).Append ("]");
-	            LOGGER.Debug (msg);
-	        }
-	        PathTranslator pathTranslator = 
-	            new PathTranslator (services.Repository,
-	                                repositoryPath);
-	        if (LOGGER.IsDebugEnabled) {
-	            LOGGER.Debug (pathTranslator.ToString ());
-	        }
-	        LOGGER.Debug ("directory exitsts=[" + Directory.Exists (pathTranslator.LocalPath) + "]");
-	        if (!Directory.Exists (pathTranslator.LocalPath)) {
-	            LOGGER.Debug ("Creating directory=[" + pathTranslator.LocalPath + "]");
-	            if (!(pathTranslator.LocalPath == null && pathTranslator.LocalPath == String.Empty)) {
-    	            Directory.CreateDirectory (pathTranslator.LocalPath);
-	            }
-	        }
-	    	// TODO : make something useful with this request
-	    }
-	    
-        /// <summary>
-        /// Indicator stating whether the response is terminating or not.
-        /// </summary>
-		public bool IsTerminating {
-			get {
-				return false;
-			}
-		}
-	}
+    /// <summary>
+    /// Process the response stream.
+    /// </summary>
+    /// <param name="cvsStream"></param>
+    /// <param name="services"></param>
+    public void Process(CvsStream cvsStream, IResponseServices services)
+    {
+        string localPath      = cvsStream.ReadLine();
+        string repositoryPath = cvsStream.ReadLine();
+
+        if (LOGGER.IsDebugEnabled) {
+            StringBuilder msg = new StringBuilder ();
+            msg.Append ("localPath=[").Append (localPath).Append ("]");
+            msg.Append ("repositoryPath=[").Append (repositoryPath).Append ("]");
+            LOGGER.Debug (msg);
+        }
+        PathTranslator pathTranslator =
+            new PathTranslator (services.Repository,
+                                repositoryPath);
+        if (LOGGER.IsDebugEnabled) {
+            LOGGER.Debug (pathTranslator.ToString ());
+        }
+        LOGGER.Debug ("directory exitsts=[" + Directory.Exists (pathTranslator.LocalPath) + "]");
+        if (!Directory.Exists (pathTranslator.LocalPath)) {
+            LOGGER.Debug ("Creating directory=[" + pathTranslator.LocalPath + "]");
+            if (!(pathTranslator.LocalPath == null && pathTranslator.LocalPath == String.Empty)) {
+                Directory.CreateDirectory (pathTranslator.LocalPath);
+            }
+        }
+        // TODO : make something useful with this request
+    }
+
+    /// <summary>
+    /// Indicator stating whether the response is terminating or not.
+    /// </summary>
+    public bool IsTerminating {
+        get {
+            return false;
+        }
+    }
+}
 }

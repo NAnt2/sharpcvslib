@@ -1,5 +1,5 @@
 #region "Copyright"
-// IRequest.cs 
+// IRequest.cs
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -25,38 +25,38 @@
 
 using ICSharpCode.SharpCvsLib.Client;
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
-	
+namespace ICSharpCode.SharpCvsLib.Requests {
+
+/// <summary>
+/// Interface for handling requests to the cvs server.
+/// </summary>
+public interface IRequest
+{
     /// <summary>
-    /// Interface for handling requests to the cvs server.
+    /// Request string
     /// </summary>
-	public interface IRequest
-	{
-        /// <summary>
-        /// Request string
-        /// </summary>
-		string RequestString {
-			get;
-		}
-		
-        /// <summary>
-        /// Indicator specifying if the response is expected or not.
-        /// </summary>
-		bool IsResponseExpected {
-			get;
-		}
-		
-        /// <summary>
-        /// Indicator specifying if the response modifies the connection.
-        /// </summary>
-		bool DoesModifyConnection {
-			get;
-		}
-		
-        /// <summary>
-        /// Modify the connection
-        /// </summary>
-        /// <param name="connection"></param>
-		void ModifyConnection(IConnection connection);
-	}
+    string RequestString {
+        get;
+    }
+
+    /// <summary>
+    /// Indicator specifying if the response is expected or not.
+    /// </summary>
+    bool IsResponseExpected {
+        get;
+    }
+
+    /// <summary>
+    /// Indicator specifying if the response modifies the connection.
+    /// </summary>
+    bool DoesModifyConnection {
+        get;
+    }
+
+    /// <summary>
+    /// Modify the connection
+    /// </summary>
+    /// <param name="connection"></param>
+    void ModifyConnection(IConnection connection);
+}
 }

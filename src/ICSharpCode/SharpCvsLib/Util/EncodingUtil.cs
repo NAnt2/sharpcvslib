@@ -35,54 +35,54 @@ using System;
 using System.Text;
 
 namespace ICSharpCode.SharpCvsLib.Util {
-    
+
+/// <summary>
+/// Wraps the encoding class so that there is a consistant strategy throughout
+///     the application.
+/// </summary>
+public class EncodingUtil {
+
     /// <summary>
-    /// Wraps the encoding class so that there is a consistant strategy throughout
-    ///     the application.
+    /// Private constructor, all methods are static.
     /// </summary>
-    public class EncodingUtil {
-        
-        /// <summary>
-        /// Private constructor, all methods are static.
-        /// </summary>
-        private EncodingUtil () {
-            
-        }
-        
-        private static Encoding DefaultEncoding {
-            get {return Encoding.Unicode;}
-        }
-        
-        /// <summary>
-        /// Converts the byte stream to a Unicode array of charaters and then reads
-        ///     the specified number of characters from the initial offset point.
-        /// </summary>
-        /// <param name="array">A byte array that contains the data to convert.</param>
-        /// <param name="offset">A point to start reading from the array.</param>
-        /// <param name="count">The number of bytes to read from the array.</param>
-        public static String GetString (byte[] array, int offset, int count) {
-            Encoding encoding = DefaultEncoding;
-            return encoding.GetString (array, offset, count);
-        }
-        
-        /// <summary>
-        /// Converts the byte value to a String using the default encoding.
-        /// </summary>
-        /// <param name="val">A byte value to convert to a String.</param>
-        public static String GetString (byte val) {
-            Encoding encoding = DefaultEncoding;
-            byte[] array = {val};
-            return encoding.GetString (array);
-        }
-        
-        /// <summary>
-        /// Get the string value of the integer by converting it back to a byte
-        ///     first.
-        /// </summary>
-        /// <param name="val">A byte value that has been cast to an integer
-        ///     by the Stream.ReadByte() method.</param>
-        public static String GetString (int val) {
-            return EncodingUtil.GetString (System.Convert.ToByte(val));
-        }
+    private EncodingUtil () {
+
     }
+
+    private static Encoding DefaultEncoding {
+        get {return Encoding.Unicode;}
+    }
+
+    /// <summary>
+    /// Converts the byte stream to a Unicode array of charaters and then reads
+    ///     the specified number of characters from the initial offset point.
+    /// </summary>
+    /// <param name="array">A byte array that contains the data to convert.</param>
+    /// <param name="offset">A point to start reading from the array.</param>
+    /// <param name="count">The number of bytes to read from the array.</param>
+    public static String GetString (byte[] array, int offset, int count) {
+        Encoding encoding = DefaultEncoding;
+        return encoding.GetString (array, offset, count);
+    }
+
+    /// <summary>
+    /// Converts the byte value to a String using the default encoding.
+    /// </summary>
+    /// <param name="val">A byte value to convert to a String.</param>
+    public static String GetString (byte val) {
+        Encoding encoding = DefaultEncoding;
+        byte[] array = {val};
+        return encoding.GetString (array);
+    }
+
+    /// <summary>
+    /// Get the string value of the integer by converting it back to a byte
+    ///     first.
+    /// </summary>
+    /// <param name="val">A byte value that has been cast to an integer
+    ///     by the Stream.ReadByte() method.</param>
+    public static String GetString (int val) {
+        return EncodingUtil.GetString (System.Convert.ToByte(val));
+    }
+}
 }

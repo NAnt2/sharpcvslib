@@ -62,7 +62,7 @@ style=kr
 #            a +<equals> 2;
 #            break;
 #    }
-indent-switches
+#indent-switches
 
 # Indent 'case XXX:' lines so that they are flush with the comand lines under them.
 #
@@ -99,7 +99,7 @@ indent-switches
 #            break;
 #        }
 #    }
-indent-cases
+#indent-cases
 
 
 # Add extra indentation to namespaces.
@@ -127,7 +127,44 @@ indent-cases
 #                virtual ~Foo();
 #        };
 #    }
-indent-namespaces
+#indent-namespaces
+
+# Attach the closing brackets to the if/ else blocks
+# 
+# -a OR --brackets=attach
+# Attach brackets to their pre-block statements ( i.e. Java , K&R style ).
+# 
+#     if (isFoo){
+#         bar();
+#     } else {
+#         anotherBar();
+#     }
+# 
+#brackets=attach
+
+# --break-blocks
+# Pad empty lines around header blocks (e.g. 'if', 'while'...).
+# 
+#     isFoo = true;
+#     if (isFoo) {
+#         bar();
+#     } else {
+#         anotherBar();
+#     }
+#     isBar = false;
+# 
+#     becomes:
+# 
+#     isFoo = true;
+# 
+#     if (isFoo) {
+#         bar();
+#     } else {
+#         anotherBar();
+#     }
+# 
+#     isBar = false; 
+break-blocks
 
 # Insert space padding around operators only.
 #

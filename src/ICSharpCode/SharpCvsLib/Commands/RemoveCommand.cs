@@ -1,5 +1,5 @@
 #region "Copyright"
-// RemoveCommand.cs 
+// RemoveCommand.cs
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
+//    Author:     Mike Krueger,
 //                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
@@ -40,44 +40,44 @@ using ICSharpCode.SharpCvsLib.Client;
 
 using ICSharpCode.SharpCvsLib.FileSystem;
 
-namespace ICSharpCode.SharpCvsLib.Commands { 
-	
-    /// <summary>
-    /// Command to remove an item from the cvs repository.
-    /// </summary>
-	public class RemoveCommand : ICommand
-	{
-		private WorkingDirectory workingdirectory;
-		private string directory;
-		private Entry entry;
-		
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="workingdirectory"></param>
-        /// <param name="directory"></param>
-        /// <param name="entry"></param>
-		public RemoveCommand(WorkingDirectory workingdirectory, 
-		                    string directory,
-		                    Entry entry)
-		{
-			this.workingdirectory    = workingdirectory;
-			this.directory = directory;
-			this.entry = entry;
-		}
+namespace ICSharpCode.SharpCvsLib.Commands {
 
-        /// <summary>
-        /// Do the dirty work.
-        /// </summary>
-        /// <param name="connection"></param>
-		public void Execute(ICommandConnection connection)
-		{
-			connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository + directory));
-			connection.SubmitRequest(new EntryRequest(entry));
-			connection.SubmitRequest(new RemoveRequest());
-			connection.SubmitRequest(new ArgumentRequest("-m"));
-			connection.SubmitRequest(new ArgumentRequest("Remove"));
-			connection.SubmitRequest(new CommitRequest());
-		}
-	}
+/// <summary>
+/// Command to remove an item from the cvs repository.
+/// </summary>
+public class RemoveCommand : ICommand
+{
+    private WorkingDirectory workingdirectory;
+    private string directory;
+    private Entry entry;
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="workingdirectory"></param>
+    /// <param name="directory"></param>
+    /// <param name="entry"></param>
+    public RemoveCommand(WorkingDirectory workingdirectory,
+                         string directory,
+                         Entry entry)
+    {
+        this.workingdirectory    = workingdirectory;
+        this.directory = directory;
+        this.entry = entry;
+    }
+
+    /// <summary>
+    /// Do the dirty work.
+    /// </summary>
+    /// <param name="connection"></param>
+    public void Execute(ICommandConnection connection)
+    {
+        connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository + directory));
+        connection.SubmitRequest(new EntryRequest(entry));
+        connection.SubmitRequest(new RemoveRequest());
+        connection.SubmitRequest(new ArgumentRequest("-m"));
+        connection.SubmitRequest(new ArgumentRequest("Remove"));
+        connection.SubmitRequest(new CommitRequest());
+    }
+}
 }

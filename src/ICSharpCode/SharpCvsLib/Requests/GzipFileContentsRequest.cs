@@ -1,5 +1,5 @@
 #region "Copyright"
-// GzipFileContentsRequest.cs 
+// GzipFileContentsRequest.cs
 // Copyright (C) 2001 Mike Krueger
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
@@ -25,48 +25,48 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
+namespace ICSharpCode.SharpCvsLib.Requests {
+
+/// <summary>
+/// Zip the file contents before sending them to the server.
+/// </summary>
+public class GzipFileContents : AbstractRequest
+{
+    private int level;
 
     /// <summary>
-    /// Zip the file contents before sending them to the server.
+    /// Constructor.  Default zip level is 9.
     /// </summary>
-	public class GzipFileContents : AbstractRequest
-	{
-    	private int level;
-    	
-        /// <summary>
-        /// Constructor.  Default zip level is 9.
-        /// </summary>
-    	public GzipFileContents() : this(9)
-    	{
-    	}
-    	
-        /// <summary>
-        /// Constructor taking the zip level to apply to the file
-        ///     before sending.
-        /// </summary>
-        /// <param name="level"></param>
-    	public GzipFileContents(int level)
-    	{
-    		this.level = level;
-    	}
-		
-        /// <summary>
-        /// Request the contents be zipped before transmitting.
-        /// </summary>
-		public override string RequestString {
-			get {
-				return "gzip-file-contents " + level + "\n";
-			}
-		}
-		
-        /// <summary>
-        /// <code>false</code>, a response is not expected.
-        /// </summary>
-		public override bool IsResponseExpected {
-			get {
-				return false;
-			}
-		}
-	}
+public GzipFileContents() : this(9)
+    {
+    }
+
+    /// <summary>
+    /// Constructor taking the zip level to apply to the file
+    ///     before sending.
+    /// </summary>
+    /// <param name="level"></param>
+    public GzipFileContents(int level)
+    {
+        this.level = level;
+    }
+
+    /// <summary>
+    /// Request the contents be zipped before transmitting.
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "gzip-file-contents " + level + "\n";
+        }
+    }
+
+    /// <summary>
+    /// <code>false</code>, a response is not expected.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return false;
+        }
+    }
+}
 }

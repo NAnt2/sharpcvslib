@@ -38,107 +38,107 @@ using System.Globalization;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.FileSystem { 
-	
+namespace ICSharpCode.SharpCvsLib.FileSystem {
+
+/// <summary>
+/// Information about the repository file.  This file is used to identify
+///     the relative path (from the cvsroot) of the file in the cvs
+///     repository.  Combined with the entry from the cvs entries file
+///     this provides the relative path to the file on the cvs server.
+/// </summary>
+public class Repository : ICvsFile {
+    private ILog LOGGER = LogManager.GetLogger (typeof (Repository));
+
     /// <summary>
-    /// Information about the repository file.  This file is used to identify
-    ///     the relative path (from the cvsroot) of the file in the cvs 
-    ///     repository.  Combined with the entry from the cvs entries file
-    ///     this provides the relative path to the file on the cvs server.
+    ///     The name of the repository file.
     /// </summary>
-	public class Repository : ICvsFile {
-	    private ILog LOGGER = LogManager.GetLogger (typeof (Repository));
-	    
-	    /// <summary>
-	    ///     The name of the repository file.
-	    /// </summary>
-	    public const String FILE_NAME = "Repository";
-	    private String path;
-	    private String fileContents;
-	    
-	    /// <summary>
-	    ///     Create a new repository object taking the path to the
-	    ///         folder above the CVS directory and the line to enter
-	    ///         into the repository file.
-	    /// 
-	    ///     The repository file stores the relative path to the directory
-	    ///         from the server's perspective.
-	    /// </summary>
-	    /// <param name="path">The path to the directory above the CVS directory.</param>
-	    /// <param name="line">The line to enter into the repository file.</param>
-	    public Repository (String path, String line) {
-	        this.path = path;
-	        this.fileContents = this.Parse (line);
-	    }
-	    
-	    /// <summary>
-	    ///     Format the string as a repository entry.  Remove any trailing 
-	    ///         slashes from the line.
-	    /// </summary>
-	    protected String Parse (String line) {
-	        if (line.EndsWith ("/")) {
-	            return line.Substring (0, line.Length - 1);
-	        }
-	        return line;
-	    }
-	    
-	    /// <summary>
-	    ///     The name of this file should correspond to the name required
-	    ///         for a cvs repository.
-	    /// </summary>
-	    public String Filename {
-	        get {return Repository.FILE_NAME;}
-	    }
-	    
-	    /// <summary>
-	    ///     This is the path to the root folder, the folder above the 
-	    ///         cvs folder.  The cvs folder is then applied to this path
-	    ///         by the file manager.
-	    /// </summary>
-	    public String Path {
-	        get {return this.path;}
-	    }
-	    
-	    /// <summary>
-	    ///     The contents to be written to the cvs file.
-	    /// </summary>
-	    public String FileContents {
-	        get {return this.fileContents;}
-	    }
+    public const String FILE_NAME = "Repository";
+    private String path;
+    private String fileContents;
 
-        /// <summary>
-        ///     Determines if the objects are equal based on the file contents
-        ///         
-        /// </summary>	
-        /// <param name="obj">The object to compare.</param>    
-	    public override bool Equals (object obj) {
-	        if (obj is Repository) {
-	            Repository that = (Repository)obj;
-	            if (that.GetHashCode ().Equals (this.GetHashCode ())) {
-	                return true;
-	            }
-	        }
-            return false;
-	    }
-	    
-	    /// <summary>
-	    ///     Another object will be unique if id identifies the same
-	    ///         file contents as this file.
-	    /// </summary>
-	    public override int GetHashCode () {
-	        return this.FileContents.GetHashCode ();
-	    }
-	    
-		/// <summary>The type of file that this is.</summary>
-		public Factory.FileType Type {get {return Factory.FileType.Repository;}}
+    /// <summary>
+    ///     Create a new repository object taking the path to the
+    ///         folder above the CVS directory and the line to enter
+    ///         into the repository file.
+    ///
+    ///     The repository file stores the relative path to the directory
+    ///         from the server's perspective.
+    /// </summary>
+    /// <param name="path">The path to the directory above the CVS directory.</param>
+    /// <param name="line">The line to enter into the repository file.</param>
+    public Repository (String path, String line) {
+        this.path = path;
+        this.fileContents = this.Parse (line);
+    }
 
-        /// <summary>Indicates whether the file can contain multiple
-        /// lines.</summary>
-        /// <returns><code>true</code> if the file can contain multiple
-        /// lines; <code>false</code> otherwise.</returns>
-        public bool IsMultiLined {
-            get {return false;}
+    /// <summary>
+    ///     Format the string as a repository entry.  Remove any trailing
+    ///         slashes from the line.
+    /// </summary>
+    protected String Parse (String line) {
+        if (line.EndsWith ("/")) {
+            return line.Substring (0, line.Length - 1);
         }
-	    
-	}
+        return line;
+    }
+
+    /// <summary>
+    ///     The name of this file should correspond to the name required
+    ///         for a cvs repository.
+    /// </summary>
+    public String Filename {
+        get {return Repository.FILE_NAME;}
+    }
+
+    /// <summary>
+    ///     This is the path to the root folder, the folder above the
+    ///         cvs folder.  The cvs folder is then applied to this path
+    ///         by the file manager.
+    /// </summary>
+    public String Path {
+        get {return this.path;}
+    }
+
+    /// <summary>
+    ///     The contents to be written to the cvs file.
+    /// </summary>
+    public String FileContents {
+        get {return this.fileContents;}
+    }
+
+    /// <summary>
+    ///     Determines if the objects are equal based on the file contents
+    ///
+    /// </summary>
+    /// <param name="obj">The object to compare.</param>
+    public override bool Equals (object obj) {
+        if (obj is Repository) {
+            Repository that = (Repository)obj;
+            if (that.GetHashCode ().Equals (this.GetHashCode ())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    ///     Another object will be unique if id identifies the same
+    ///         file contents as this file.
+    /// </summary>
+    public override int GetHashCode () {
+        return this.FileContents.GetHashCode ();
+    }
+
+    /// <summary>The type of file that this is.</summary>
+    public Factory.FileType Type {get {return Factory.FileType.Repository;}}
+
+    /// <summary>Indicates whether the file can contain multiple
+    /// lines.</summary>
+    /// <returns><code>true</code> if the file can contain multiple
+    /// lines; <code>false</code> otherwise.</returns>
+    public bool IsMultiLined {
+        get {return false;}
+    }
+
+}
 }

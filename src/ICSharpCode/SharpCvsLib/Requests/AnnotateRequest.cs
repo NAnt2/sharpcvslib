@@ -1,5 +1,5 @@
 #region "Copyright"
-// AnnotateRequest.cs 
+// AnnotateRequest.cs
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -23,42 +23,42 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
+namespace ICSharpCode.SharpCvsLib.Requests {
 
-	/// <summary>
-	/// Response expected: yes. 
-	/// Actually do a cvs command. This uses any previous Argument, Directory, Entry, 
-	/// or Modified requests, if they have been sent. The last Directory sent specifies 
-	/// the working directory at the time of the operation. No provision is made for any 
-	/// input from the user. This means that ci must use a -m argument if it wants to specify 
-	/// a log message. 
-    /// Usage: cvs server [-lRf] [-r rev|-D date] [files...]
-    ///        -l      Local directory only, no recursion.
-    ///        -R      Process directories recursively.
-    ///        -f      Use head revision if tag/date not found.
-    ///        -r rev  Annotate file as of specified revision/tag.
-    ///        -D date Annotate file as of specified date.
-    ///(Specify the --help global option for a list of other help options)	 * *
-    ///
-	/// </summary>
-	public class AnnotateRequest : AbstractRequest
-	{
-        /// <summary>
-        /// Send a request to the server for a cvs blame report.
-        /// </summary>
-		public override string RequestString {
-			get {
-				return "annotate\n";
-			}
-		}
-		
-        /// <summary>
-        /// <code>true</code>, a response is expected from this command.
-        /// </summary>
-		public override bool IsResponseExpected {
-			get {
-				return true;
-			}
-		}
-	}
+/// <summary>
+/// Response expected: yes.
+/// Actually do a cvs command. This uses any previous Argument, Directory, Entry,
+/// or Modified requests, if they have been sent. The last Directory sent specifies
+/// the working directory at the time of the operation. No provision is made for any
+/// input from the user. This means that ci must use a -m argument if it wants to specify
+/// a log message.
+/// Usage: cvs server [-lRf] [-r rev|-D date] [files...]
+///        -l      Local directory only, no recursion.
+///        -R      Process directories recursively.
+///        -f      Use head revision if tag/date not found.
+///        -r rev  Annotate file as of specified revision/tag.
+///        -D date Annotate file as of specified date.
+///(Specify the --help global option for a list of other help options)	 * *
+///
+/// </summary>
+public class AnnotateRequest : AbstractRequest
+{
+    /// <summary>
+    /// Send a request to the server for a cvs blame report.
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "annotate\n";
+        }
+    }
+
+    /// <summary>
+    /// <code>true</code>, a response is expected from this command.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return true;
+        }
+    }
+}
 }

@@ -32,32 +32,32 @@
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
+namespace ICSharpCode.SharpCvsLib.Responses {
+
+/// <summary>
+/// Handles a response from the server containing the modified
+///     time.
+/// </summary>
+public class ModTimeResponse : IResponse
+{
     /// <summary>
-    /// Handles a response from the server containing the modified
-    ///     time.
+    /// Process the server response.
     /// </summary>
-	public class ModTimeResponse : IResponse
-	{
-        /// <summary>
-        /// Process the server response.
-        /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-	    public void Process(CvsStream cvsStream, IResponseServices services)
-	    {
-	    	string date = cvsStream.ReadLine();
-	    	services.NextFileDate = date;
-	    }
-	    
-        /// <summary>
-        /// Response terminates transaction: <code>false</code>.
-        /// </summary>
-		public bool IsTerminating {
-			get {
-				return false;
-			}
-		}
-	}
+    /// <param name="cvsStream"></param>
+    /// <param name="services"></param>
+    public void Process(CvsStream cvsStream, IResponseServices services)
+    {
+        string date = cvsStream.ReadLine();
+        services.NextFileDate = date;
+    }
+
+    /// <summary>
+    /// Response terminates transaction: <code>false</code>.
+    /// </summary>
+    public bool IsTerminating {
+        get {
+            return false;
+        }
+    }
+}
 }

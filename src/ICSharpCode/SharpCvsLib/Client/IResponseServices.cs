@@ -28,7 +28,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
+//    Author:     Mike Krueger,
 //                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
@@ -37,63 +37,63 @@ using ICSharpCode.SharpCvsLib.FileHandler;
 using ICSharpCode.SharpCvsLib.FileSystem;
 
 
-namespace ICSharpCode.SharpCvsLib.Client { 
-	
+namespace ICSharpCode.SharpCvsLib.Client {
+
+/// <summary>
+/// Response services interface.
+/// </summary>
+public interface IResponseServices
+{
     /// <summary>
-    /// Response services interface.
+    /// Convert the path to a winnt path.
     /// </summary>
-	public interface IResponseServices
-	{
-        /// <summary>
-        /// Convert the path to a winnt path.
-        /// </summary>
-        /// <param name="localPath"></param>
-        /// <param name="repository"></param>
-        /// <returns></returns>
-	    string ConvertPath(string localPath, string repository);
-		
-        /// <summary>
-        /// Send message
-        /// </summary>
-        /// <param name="msg"></param>
-		void   SendMessage(string msg);
-		
-        /// <summary>
-        /// Set entry.
-        /// </summary>
-        /// <param name="localFile"></param>
-        /// <param name="entry"></param>
-		void   SetEntry(string localFile, Entry entry);
-		
-        /// <summary>
-        /// The repository object, contains information about
-        ///     cvsroot, working directory, etc.
-        /// </summary>
-		WorkingDirectory Repository {
-			get;
-		}
-		
-        /// <summary>
-        /// The next file date.
-        /// </summary>
-		string NextFileDate {
-			get;
-			set;
-		}
-		
-        /// <summary>
-        /// The next file.
-        /// </summary>
-		string NextFile {
-			get;
-			set;
-		}
-		
-        /// <summary>
-        /// Handler for uncompressed files.
-        /// </summary>
-		IFileHandler UncompressedFileHandler {
-			get;
-		}
-	}
+    /// <param name="localPath"></param>
+    /// <param name="repository"></param>
+    /// <returns></returns>
+    string ConvertPath(string localPath, string repository);
+
+    /// <summary>
+    /// Send message
+    /// </summary>
+    /// <param name="msg"></param>
+    void   SendMessage(string msg);
+
+    /// <summary>
+    /// Set entry.
+    /// </summary>
+    /// <param name="localFile"></param>
+    /// <param name="entry"></param>
+    void   SetEntry(string localFile, Entry entry);
+
+    /// <summary>
+    /// The repository object, contains information about
+    ///     cvsroot, working directory, etc.
+    /// </summary>
+    WorkingDirectory Repository {
+        get;
+    }
+
+    /// <summary>
+    /// The next file date.
+    /// </summary>
+    string NextFileDate {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// The next file.
+    /// </summary>
+    string NextFile {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// Handler for uncompressed files.
+    /// </summary>
+    IFileHandler UncompressedFileHandler {
+        get;
+    }
+}
 }

@@ -1,5 +1,5 @@
 #region "Copyright"
-// UploadFileRequest.cs 
+// UploadFileRequest.cs
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -25,45 +25,45 @@
 
 using System.IO;
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
-	
+namespace ICSharpCode.SharpCvsLib.Requests {
+
+/// <summary>
+/// Upload a file to the repository.
+/// </summary>
+public class UploadFileRequest : AbstractRequest
+{
+    private string filename;
+
     /// <summary>
-    /// Upload a file to the repository.
+    /// Constructor.
     /// </summary>
-	public class UploadFileRequest : AbstractRequest
-	{
-    	private string filename;
-    
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="filename">The name of the file to upload.</param>
-	    public UploadFileRequest(string filename)
-    	{
-        	this.filename = filename;
-    	}
-    
-        /// <summary>
-        /// Upload the file to the server.
-        /// </summary>
-		public override string RequestString {
-			get {
-				FileStream fs = File.OpenRead(filename);
-				byte[] data = new byte[fs.Length];
-				fs.Read(data, 0, data.Length);
-				fs.Close();
-				
-				return data.Length.ToString() + "\n" + System.Text.Encoding.ASCII.GetString(data);
-			}
-		}
-		
-        /// <summary>
-        /// Response expected: <code>false</code>.
-        /// </summary>
-		public override bool IsResponseExpected {
-			get {
-				return false;
-			}
-		}
-	}
+    /// <param name="filename">The name of the file to upload.</param>
+    public UploadFileRequest(string filename)
+    {
+        this.filename = filename;
+    }
+
+    /// <summary>
+    /// Upload the file to the server.
+    /// </summary>
+    public override string RequestString {
+        get {
+            FileStream fs = File.OpenRead(filename);
+            byte[] data = new byte[fs.Length];
+            fs.Read(data, 0, data.Length);
+            fs.Close();
+
+            return data.Length.ToString() + "\n" + System.Text.Encoding.ASCII.GetString(data);
+        }
+    }
+
+    /// <summary>
+    /// Response expected: <code>false</code>.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return false;
+        }
+    }
+}
 }

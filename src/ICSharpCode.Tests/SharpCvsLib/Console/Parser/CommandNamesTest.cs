@@ -49,42 +49,42 @@ using NUnit.Framework;
 namespace ICSharpCode.SharpCvsLib.Console.Parser
 {
 
-	/// <summary>
-	///     Test that the commandNames object is created successfully 
-	///       
-	/// </summary>
-	[TestFixture]
-	public class CommandNamesTest 
-	{
-		/// <summary>
-		///     Constructory for test case.
-		/// </summary>
-		public CommandNamesTest () 
-		{ 
-		}
-        
-		/// <summary>
-		///     Create a CommandNames object.
-		///       
-		/// </summary>
-		[Test]
-		public void MakeTest () 
-		{
-			// Test Creating a Command object
-			CommandNames commands  = new CommandNames();
+/// <summary>
+///     Test that the commandNames object is created successfully
+///
+/// </summary>
+[TestFixture]
+public class CommandNamesTest
+{
+    /// <summary>
+    ///     Constructory for test case.
+    /// </summary>
+    public CommandNamesTest ()
+    {
+    }
 
-			// Check the first command object 
-			AssertCommandEquals (commands.Commands[0], "add", "ad", "new");
+    /// <summary>
+    ///     Create a CommandNames object.
+    ///
+    /// </summary>
+    [Test]
+    public void MakeTest ()
+    {
+        // Test Creating a Command object
+        CommandNames commands  = new CommandNames();
 
-			// Check the last command object
-			AssertCommandEquals (commands.Commands[commands.Commands.GetLength(0) - 1], "watchers", null, null);
-		}
-		private void AssertCommandEquals (Command com,
-			string prime, string nick1, string nick2) 
-		{
-			Assertion.AssertEquals (prime, com.First);
-			Assertion.AssertEquals (nick1, com.Nick1);
-			Assertion.AssertEquals (nick2, com.Nick2);
-		}
-	}
+        // Check the first command object
+        AssertCommandEquals (commands.Commands[0], "add", "ad", "new");
+
+        // Check the last command object
+        AssertCommandEquals (commands.Commands[commands.Commands.GetLength(0) - 1], "watchers", null, null);
+    }
+    private void AssertCommandEquals (Command com,
+                                      string prime, string nick1, string nick2)
+    {
+        Assertion.AssertEquals (prime, com.First);
+        Assertion.AssertEquals (nick1, com.Nick1);
+        Assertion.AssertEquals (nick2, com.Nick2);
+    }
+}
 }

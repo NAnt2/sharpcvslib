@@ -44,109 +44,109 @@ using NUnit.Framework;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
 
-    /// <summary>
-    ///     Test the FileSystem Factory.
-    /// </summary>
-    [TestFixture]
-    public class FactoryTest {
-        private TestSettings settings = new TestSettings ();
-        
-        private const String ENTRY_FILE_NAME = "Entries";
-        private const String REPOSITORY_FILE_NAME = "Repository";
-        private const String ROOT_FILE_NAME = "Root";
-        private const String TAG_FILE_NAME = "Tag";
-        
-        private const String ENTRY_LINE = 
-    	        "/CvsFileManagerTest.cs/1.1/Tue May 13 05:10:17 2003//"; 
-        private const String REPOSITORY_LINE = "sharpcvslib/src";
-        private const String ROOT_LINE = 
-            ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-        private const String TAG_LINE = 
-            "TVer1.1";
+/// <summary>
+///     Test the FileSystem Factory.
+/// </summary>
+[TestFixture]
+public class FactoryTest {
+    private TestSettings settings = new TestSettings ();
 
-        // TODO: Find out if there is any reason why the Factory class
-        // does not have static methods
-        private Factory factory = new Factory();
-        
-        /// <summary>
-        ///     Constructor for test case.
-        /// </summary>
-        public FactoryTest () {
-            
-        }
-        
-        /// <summary>
-        ///     Check factory creation of an Entry.
-        /// </summary>
-        [Test]
-        public void CreateEntryTest () {
-            String fullPath = this.settings.Config.LocalPath;
-            
-            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Entries, ENTRY_LINE);
-            Assertion.Assert (cvsFile is Entry);
-            Assertion.Assert (cvsFile.Path.Equals (fullPath));
-            Assertion.Assert (cvsFile.FileContents.Equals (ENTRY_LINE));
-        }
-        
-        /// <summary>
-        ///     Check factory creation of a Repository.
-        /// </summary>
-        [Test]
-        public void CreateRepositoryTest () {
-            String fullPath = this.settings.Config.LocalPath;
-            
-            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Repository, REPOSITORY_LINE);
-            Assertion.Assert (cvsFile is Repository);
-            Assertion.AssertEquals (fullPath, cvsFile.Path);
-            Assertion.AssertEquals (REPOSITORY_LINE, cvsFile.FileContents);
-        }
-        
-        /// <summary>
-        ///     Check factory creation of a Root.
-        /// </summary>
-        [Test]
-        public void CreateRootTest () {
-            String fullPath = this.settings.Config.LocalPath;
-            
-            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Root, ROOT_LINE);
-            Assertion.Assert (cvsFile is Root);
-            Assertion.AssertEquals (fullPath, cvsFile.Path);
-            Assertion.AssertEquals (ROOT_LINE, cvsFile.FileContents);
-        }
-        
-        /// <summary>
-        ///     Check factory creation of a Tag.
-        /// </summary>
-        [Test]
-        public void CreateTagTest () {
-            String fullPath = this.settings.Config.LocalPath;
-            
-            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Tag, TAG_LINE);
-            Assertion.Assert (cvsFile is Tag);
-            Assertion.AssertEquals (fullPath, cvsFile.Path);
-            Assertion.AssertEquals ("N" + TAG_LINE.Substring (1), 
-                                    cvsFile.FileContents);
-        }
-        
-        /// <summary>
-        ///     Check file type to filename mapping.
-        /// </summary>
-        [Test]
-        public void CheckFilenamesTest () {
-            Assertion.Assert (factory.GetFilename (Factory.FileType.Entries).Equals (ENTRY_FILE_NAME));
-            Assertion.Assert (factory.GetFilename (Factory.FileType.Repository).Equals (REPOSITORY_FILE_NAME));
-            Assertion.Assert (factory.GetFilename (Factory.FileType.Root).Equals (ROOT_FILE_NAME));
-            Assertion.Assert (factory.GetFilename (Factory.FileType.Tag).Equals (TAG_FILE_NAME));
-        }
-        
-        /// <summary>
-        ///     Clean up any test directories, etc.
-        /// </summary>
-        [TearDown]
-        public void TearDown () {
-		    if (Directory.Exists (this.settings.Config.LocalPath)) {
-    		    Directory.Delete (this.settings.Config.LocalPath, true);
-		    }            
-        }        
+    private const String ENTRY_FILE_NAME = "Entries";
+    private const String REPOSITORY_FILE_NAME = "Repository";
+    private const String ROOT_FILE_NAME = "Root";
+    private const String TAG_FILE_NAME = "Tag";
+
+    private const String ENTRY_LINE =
+        "/CvsFileManagerTest.cs/1.1/Tue May 13 05:10:17 2003//";
+    private const String REPOSITORY_LINE = "sharpcvslib/src";
+    private const String ROOT_LINE =
+        ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
+    private const String TAG_LINE =
+        "TVer1.1";
+
+    // TODO: Find out if there is any reason why the Factory class
+    // does not have static methods
+    private Factory factory = new Factory();
+
+    /// <summary>
+    ///     Constructor for test case.
+    /// </summary>
+    public FactoryTest () {
+
     }
+
+    /// <summary>
+    ///     Check factory creation of an Entry.
+    /// </summary>
+    [Test]
+    public void CreateEntryTest () {
+        String fullPath = this.settings.Config.LocalPath;
+
+        ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Entries, ENTRY_LINE);
+        Assertion.Assert (cvsFile is Entry);
+        Assertion.Assert (cvsFile.Path.Equals (fullPath));
+        Assertion.Assert (cvsFile.FileContents.Equals (ENTRY_LINE));
+    }
+
+    /// <summary>
+    ///     Check factory creation of a Repository.
+    /// </summary>
+    [Test]
+    public void CreateRepositoryTest () {
+        String fullPath = this.settings.Config.LocalPath;
+
+        ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Repository, REPOSITORY_LINE);
+        Assertion.Assert (cvsFile is Repository);
+        Assertion.AssertEquals (fullPath, cvsFile.Path);
+        Assertion.AssertEquals (REPOSITORY_LINE, cvsFile.FileContents);
+    }
+
+    /// <summary>
+    ///     Check factory creation of a Root.
+    /// </summary>
+    [Test]
+    public void CreateRootTest () {
+        String fullPath = this.settings.Config.LocalPath;
+
+        ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Root, ROOT_LINE);
+        Assertion.Assert (cvsFile is Root);
+        Assertion.AssertEquals (fullPath, cvsFile.Path);
+        Assertion.AssertEquals (ROOT_LINE, cvsFile.FileContents);
+    }
+
+    /// <summary>
+    ///     Check factory creation of a Tag.
+    /// </summary>
+    [Test]
+    public void CreateTagTest () {
+        String fullPath = this.settings.Config.LocalPath;
+
+        ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Tag, TAG_LINE);
+        Assertion.Assert (cvsFile is Tag);
+        Assertion.AssertEquals (fullPath, cvsFile.Path);
+        Assertion.AssertEquals ("N" + TAG_LINE.Substring (1),
+                                cvsFile.FileContents);
+    }
+
+    /// <summary>
+    ///     Check file type to filename mapping.
+    /// </summary>
+    [Test]
+    public void CheckFilenamesTest () {
+        Assertion.Assert (factory.GetFilename (Factory.FileType.Entries).Equals (ENTRY_FILE_NAME));
+        Assertion.Assert (factory.GetFilename (Factory.FileType.Repository).Equals (REPOSITORY_FILE_NAME));
+        Assertion.Assert (factory.GetFilename (Factory.FileType.Root).Equals (ROOT_FILE_NAME));
+        Assertion.Assert (factory.GetFilename (Factory.FileType.Tag).Equals (TAG_FILE_NAME));
+    }
+
+    /// <summary>
+    ///     Clean up any test directories, etc.
+    /// </summary>
+    [TearDown]
+    public void TearDown () {
+        if (Directory.Exists (this.settings.Config.LocalPath)) {
+            Directory.Delete (this.settings.Config.LocalPath, true);
+        }
+    }
+}
 }

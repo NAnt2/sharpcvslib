@@ -36,41 +36,41 @@ using ICSharpCode.SharpCvsLib.Streams;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
+namespace ICSharpCode.SharpCvsLib.Responses {
+
+/// <summary>
+/// Message response.
+/// </summary>
+public class MessageResponse : IResponse
+{
+    bool terminating = false;
+    private readonly ILog LOGGER =
+        LogManager.GetLogger (typeof (MessageResponse));
+
     /// <summary>
-    /// Message response.
+    /// Process the message response.
     /// </summary>
-	public class MessageResponse : IResponse
-	{
-		bool terminating = false;
-		private readonly ILog LOGGER = 
-		    LogManager.GetLogger (typeof (MessageResponse));
-	    
-        /// <summary>
-        /// Process the message response.
-        /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-		public void Process(CvsStream cvsStream, IResponseServices services)
-		{
-			string message = cvsStream.ReadToEndOfLine();
-			terminating = message.Trim().ToUpper() == "OK";
-		    // Fire message event to the client app
-			services.SendMessage("M " + message);
-            String msg = "cvs server: M " + message;
-		    LOGGER.Debug (msg);
-		}
-		
-        /// <summary>
-        /// Indicator stating whether the response is terminating or not.
-        /// </summary>
-		public bool IsTerminating {
-			get {
-				return terminating;
-			}
-		}
-	}
+    /// <param name="cvsStream"></param>
+    /// <param name="services"></param>
+    public void Process(CvsStream cvsStream, IResponseServices services)
+    {
+        string message = cvsStream.ReadToEndOfLine();
+        terminating = message.Trim().ToUpper() == "OK";
+        // Fire message event to the client app
+        services.SendMessage("M " + message);
+        String msg = "cvs server: M " + message;
+        LOGGER.Debug (msg);
+    }
+
+    /// <summary>
+    /// Indicator stating whether the response is terminating or not.
+    /// </summary>
+    public bool IsTerminating {
+        get {
+            return terminating;
+        }
+    }
+}
 }
 
 

@@ -1,5 +1,5 @@
 #region "Copyright"
-// UnchangedRequest.cs 
+// UnchangedRequest.cs
 // Copyright (C) 2001 Mike Krueger
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
@@ -25,43 +25,43 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
+namespace ICSharpCode.SharpCvsLib.Requests {
 
-	/// <summary>
-	/// Response expected: no. 
-	/// Tell the server that filename has not been modified in the checked out directory. 
-	/// The name is relative to the most recent repository sent with Directory. 
-	/// </summary>
-	public class UnchangedRequest : AbstractRequest
-	{
-		private string filename;
-		
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="filename">The name of the file that has not been modified.</param>
-		public UnchangedRequest(string filename)
-		{
-			this.filename = filename;
-		}
-		
-        /// <summary>
-        /// Notify the server that the file has not been modified in the 
-        ///     checked out directory.
-        /// </summary>
-		public override string RequestString {
-			get {
-				return "Unchanged " + filename + "\n";
-			}
-		}
-		
-        /// <summary>
-        /// Response expected: <code>false</code>.
-        /// </summary>
-		public override bool IsResponseExpected {
-			get {
-				return false;
-			}
-		}
-	}
+/// <summary>
+/// Response expected: no.
+/// Tell the server that filename has not been modified in the checked out directory.
+/// The name is relative to the most recent repository sent with Directory.
+/// </summary>
+public class UnchangedRequest : AbstractRequest
+{
+    private string filename;
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="filename">The name of the file that has not been modified.</param>
+    public UnchangedRequest(string filename)
+    {
+        this.filename = filename;
+    }
+
+    /// <summary>
+    /// Notify the server that the file has not been modified in the
+    ///     checked out directory.
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "Unchanged " + filename + "\n";
+        }
+    }
+
+    /// <summary>
+    /// Response expected: <code>false</code>.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return false;
+        }
+    }
+}
 }

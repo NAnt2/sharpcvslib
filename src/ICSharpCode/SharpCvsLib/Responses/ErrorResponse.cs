@@ -36,37 +36,37 @@ using ICSharpCode.SharpCvsLib.Streams;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
+namespace ICSharpCode.SharpCvsLib.Responses {
+
+/// <summary>
+/// Handle an error response from the cvs server.
+/// </summary>
+public class ErrorResponse : IResponse
+{
+    private readonly ILog LOGGER =
+        LogManager.GetLogger (typeof (ErrorResponse));
     /// <summary>
-    /// Handle an error response from the cvs server.
+    /// Process an error response.
     /// </summary>
-	public class ErrorResponse : IResponse
-	{
-	    private readonly ILog LOGGER = 
-	        LogManager.GetLogger (typeof (ErrorResponse));
-        /// <summary>
-        /// Process an error response.
-        /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-	    public void Process(CvsStream cvsStream, IResponseServices services)
-	    {
-	    	string message = cvsStream.ReadLine();
-	        // TODO: Figure out if I should spit this out to the client.
-	    	//services.SendMessage("cvs server: Error " + error);
-            String msg = "cvs server: M " + message;
-	        LOGGER.Debug (msg);
-	        
-	    }
-	    
-        /// <summary>
-        /// Return true if this response cancels the transaction
-        /// </summary>
-		public bool IsTerminating {
-			get {
-				return true;
-			}
-		}
-	}
+    /// <param name="cvsStream"></param>
+    /// <param name="services"></param>
+    public void Process(CvsStream cvsStream, IResponseServices services)
+    {
+        string message = cvsStream.ReadLine();
+        // TODO: Figure out if I should spit this out to the client.
+        //services.SendMessage("cvs server: Error " + error);
+        String msg = "cvs server: M " + message;
+        LOGGER.Debug (msg);
+
+    }
+
+    /// <summary>
+    /// Return true if this response cancels the transaction
+    /// </summary>
+    public bool IsTerminating {
+        get {
+            return true;
+        }
+    }
+}
 }

@@ -40,52 +40,52 @@ using System;
 
 namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
-    /// <summary>Encapsulates the properties for a command.</summary>
-    public class Command {
-    
-        private String first;
-        private String nick1;
-        private String nick2;
-        
-        /// <summary>
-        /// Primary name for the command, the name to be used first.
-        /// </summary>
-        public String First {
-            get {return this.first;}
-        }
-        
-        /// <summary>
-        /// Nick/ synonym for the command.
-        /// </summary>
-        public String Nick1 {
-            get {return this.nick1;}
-        }
-        
-        /// <summary>
-        /// Nick/ synonym for the command
-        /// </summary>
-        public String Nick2 {
-            get {return this.nick2;}
-        }
-        
-        /// <summary>Create a new command.</summary>
-        /// <param name="first">Primary command name.</param>
-        /// <param name="nick1">First alternate name for the command.</param>
-        /// <param name="nick2">Second alternate name for the command.</param>
-        // TODO: Looks like they were using c# function pointers here, figure out if this is important or if we can cut them out.
-		// A call to the command will be needed when requesting help on the specific command.
-		// The -H option calls the command
-		public Command (string first, string nick1, string nick2) 
-		{  //  int f1, uint v1) 
-            this.first = first;
-            this.nick1 = nick1;
-            this.nick2 = nick2;
-            
-            //  func = f1;
-            //  attr = v1;
+/// <summary>Encapsulates the properties for a command.</summary>
+public class Command {
 
-        }
-            
+    private String first;
+    private String nick1;
+    private String nick2;
+
+    /// <summary>
+    /// Primary name for the command, the name to be used first.
+    /// </summary>
+    public String First {
+        get {return this.first;}
     }
+
+    /// <summary>
+    /// Nick/ synonym for the command.
+    /// </summary>
+    public String Nick1 {
+        get {return this.nick1;}
+    }
+
+    /// <summary>
+    /// Nick/ synonym for the command
+    /// </summary>
+    public String Nick2 {
+        get {return this.nick2;}
+    }
+
+    /// <summary>Create a new command.</summary>
+    /// <param name="first">Primary command name.</param>
+    /// <param name="nick1">First alternate name for the command.</param>
+    /// <param name="nick2">Second alternate name for the command.</param>
+    // TODO: Looks like they were using c# function pointers here, figure out if this is important or if we can cut them out.
+    // A call to the command will be needed when requesting help on the specific command.
+    // The -H option calls the command
+    public Command (string first, string nick1, string nick2)
+    {  //  int f1, uint v1)
+        this.first = first;
+        this.nick1 = nick1;
+        this.nick2 = nick2;
+
+        //  func = f1;
+        //  attr = v1;
+
+    }
+
+}
 
 }

@@ -31,35 +31,35 @@
 
 using System;
 
-namespace ICSharpCode.SharpCvsLib.Exceptions { 
-	
+namespace ICSharpCode.SharpCvsLib.Exceptions {
+
+/// <summary>
+/// Exception thrown when there is a problem communicating with
+///     the cvs server.
+///
+///     TODO: Figure out if this is correct...
+/// </summary>
+public class ExecuteShellException : Exception
+{
+    private string shell;
+
     /// <summary>
-    /// Exception thrown when there is a problem communicating with 
-    ///     the cvs server.
-    ///     
-    ///     TODO: Figure out if this is correct...
+    /// The shell command.
     /// </summary>
-	public class ExecuteShellException : Exception
-	{
-		private string shell;
-		
-        /// <summary>
-        /// The shell command.
-        /// </summary>
-		public string Shell {
-			get {
-				return shell;
-			}
-		}
-		
-        /// <summary>
-        /// Constructor, takes the shell command to help trace the
-        ///     source of the exception.
-        /// </summary>
-        /// <param name="shell"></param>
-		public ExecuteShellException(string shell) : base(shell)
-		{
-			this.shell = shell;
-		}
-	}
+    public string Shell {
+        get {
+            return shell;
+        }
+    }
+
+    /// <summary>
+    /// Constructor, takes the shell command to help trace the
+    ///     source of the exception.
+    /// </summary>
+    /// <param name="shell"></param>
+public ExecuteShellException(string shell) : base(shell)
+    {
+        this.shell = shell;
+    }
+}
 }

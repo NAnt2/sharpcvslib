@@ -1,5 +1,5 @@
 #region "Copyright"
-// CheckoutModuleCommand.cs 
+// CheckoutModuleCommand.cs
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -28,7 +28,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
+//    Author:     Mike Krueger,
 //                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
@@ -42,71 +42,71 @@ using ICSharpCode.SharpCvsLib.FileSystem;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Commands { 
+namespace ICSharpCode.SharpCvsLib.Commands {
+
+/// <summary>
+/// Checkout module command
+/// </summary>
+public class CheckoutModuleCommand : ICommand
+{
+    private WorkingDirectory workingDirectory;
+
+    private ILog LOGGER = LogManager.GetLogger (typeof (CheckoutModuleCommand));
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="workingDirectory"></param>
+    public CheckoutModuleCommand(WorkingDirectory workingDirectory)
+    {
+        this.workingDirectory    = workingDirectory;
+    }
 
     /// <summary>
-    /// Checkout module command
+    /// Execute checkout module command.
     /// </summary>
-    public class CheckoutModuleCommand : ICommand
+    /// <param name="connection">Server connection</param>
+    public void Execute(ICommandConnection connection)
     {
-        private WorkingDirectory workingDirectory;
+        workingDirectory.Clear();
 
-        private ILog LOGGER = LogManager.GetLogger (typeof (CheckoutModuleCommand));
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="workingDirectory"></param>
-        public CheckoutModuleCommand(WorkingDirectory workingDirectory)
-        {
-            this.workingDirectory    = workingDirectory;
+        connection.SubmitRequest(new CaseRequest());
+        connection.SubmitRequest(new ArgumentRequest(workingDirectory.ModuleName));
+
+        connection.SubmitRequest(new DirectoryRequest(".",
+                                 workingDirectory.CvsRoot.CvsRepository +
+                                 "/" + workingDirectory.ModuleName));
+
+        connection.SubmitRequest(new ExpandModulesRequest());
+
+        connection.SubmitRequest(
+            new ArgumentRequest(ArgumentRequest.Options.MODULE_NAME));
+
+        if (workingDirectory.HasRevision) {
+            connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.REVISION));
+            connection.SubmitRequest(new ArgumentRequest(workingDirectory.Revision));
+        }
+        if (workingDirectory.HasOverrideDirectory) {
+            connection.SubmitRequest (
+                new ArgumentRequest (ArgumentRequest.Options.OVERRIDE_DIRECTORY));
+            connection.SubmitRequest (
+                new ArgumentRequest (workingDirectory.OverrideDirectory));
         }
 
-        /// <summary>
-        /// Execute checkout module command.
-        /// </summary>
-        /// <param name="connection">Server connection</param>
-        public void Execute(ICommandConnection connection)
-        {
-            workingDirectory.Clear();
-            
-            connection.SubmitRequest(new CaseRequest());
-            connection.SubmitRequest(new ArgumentRequest(workingDirectory.ModuleName));
+        connection.SubmitRequest(new ArgumentRequest(workingDirectory.ModuleName));
 
-            connection.SubmitRequest(new DirectoryRequest(".", 
-                            workingDirectory.CvsRoot.CvsRepository + 
-                            "/" + workingDirectory.ModuleName));
+        connection.SubmitRequest(new DirectoryRequest(".",
+                                 workingDirectory.CvsRoot.CvsRepository +
+                                 "/" + workingDirectory.ModuleName));
 
-            connection.SubmitRequest(new ExpandModulesRequest());
-
-            connection.SubmitRequest(
-                new ArgumentRequest(ArgumentRequest.Options.MODULE_NAME));
-            
-            if (workingDirectory.HasRevision) {
-                connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.REVISION));
-                connection.SubmitRequest(new ArgumentRequest(workingDirectory.Revision));
-            }
-            if (workingDirectory.HasOverrideDirectory) {
-                connection.SubmitRequest (
-                    new ArgumentRequest (ArgumentRequest.Options.OVERRIDE_DIRECTORY));
-                connection.SubmitRequest (
-                    new ArgumentRequest (workingDirectory.OverrideDirectory));
-            }
-            
-            connection.SubmitRequest(new ArgumentRequest(workingDirectory.ModuleName));
-
-            connection.SubmitRequest(new DirectoryRequest(".", 
-                            workingDirectory.CvsRoot.CvsRepository + 
-                            "/" + workingDirectory.ModuleName));
-
-            connection.SubmitRequest(new CheckoutRequest());
-            Manager manager = new Manager ();
-            if (LOGGER.IsDebugEnabled) {
-                LOGGER.Debug ("looking for directories to add to the " + 
-                              "entries file in=[" +
-                             this.workingDirectory.WorkingPath + "]");
-            }
-            manager.AddDirectories (this.workingDirectory.WorkingPath);
-
+        connection.SubmitRequest(new CheckoutRequest());
+        Manager manager = new Manager ();
+        if (LOGGER.IsDebugEnabled) {
+            LOGGER.Debug ("looking for directories to add to the " +
+                          "entries file in=[" +
+                          this.workingDirectory.WorkingPath + "]");
         }
+        manager.AddDirectories (this.workingDirectory.WorkingPath);
+
     }
+}
 }

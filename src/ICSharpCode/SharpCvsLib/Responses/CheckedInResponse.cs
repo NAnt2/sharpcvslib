@@ -28,7 +28,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
+//    Author:     Mike Krueger,
 //                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
@@ -38,40 +38,40 @@ using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
+namespace ICSharpCode.SharpCvsLib.Responses {
+
+/// <summary>
+/// Handle a checked in response.
+/// </summary>
+public class CheckedInResponse : IResponse
+{
     /// <summary>
-    /// Handle a checked in response.
+    /// Process a checked in response.
     /// </summary>
-	public class CheckedInResponse : IResponse
-	{ 
-        /// <summary>
-        /// Process a checked in response.
-        /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-	    public void Process(CvsStream cvsStream, IResponseServices services)
-	    {
-            string localPath      = cvsStream.ReadLine();
-            string repositoryPath = cvsStream.ReadLine();
-            string entryLine      = cvsStream.ReadLine();
-            
-            string fileName = services.ConvertPath(localPath, repositoryPath);
-            Entry  entry = new Entry(fileName, entryLine);
-            
-            // TODO: Determine if this is needed or not.
-            //services.SetEntry(fileName, entry);
-	        Manager manager = new Manager ();
-	        manager.Add (entry);
-	    }
-	    
-        /// <summary>
-        /// Return true if this response cancels the transaction
-        /// </summary>
-		public bool IsTerminating {
-			get {
-				return false;
-			}
-		}
-	}
+    /// <param name="cvsStream"></param>
+    /// <param name="services"></param>
+    public void Process(CvsStream cvsStream, IResponseServices services)
+    {
+        string localPath      = cvsStream.ReadLine();
+        string repositoryPath = cvsStream.ReadLine();
+        string entryLine      = cvsStream.ReadLine();
+
+        string fileName = services.ConvertPath(localPath, repositoryPath);
+        Entry  entry = new Entry(fileName, entryLine);
+
+        // TODO: Determine if this is needed or not.
+        //services.SetEntry(fileName, entry);
+        Manager manager = new Manager ();
+        manager.Add (entry);
+    }
+
+    /// <summary>
+    /// Return true if this response cancels the transaction
+    /// </summary>
+    public bool IsTerminating {
+        get {
+            return false;
+        }
+    }
+}
 }

@@ -1,5 +1,5 @@
 #region "Copyright"
-// RemoveRequest.cs 
+// RemoveRequest.cs
 // Copyright (C) 2001 Mike Krueger
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
@@ -25,11 +25,11 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
+namespace ICSharpCode.SharpCvsLib.Requests {
 
-    /// <summary>
-    ///     Initialize a new request message event handler delegate.
-    /// </summary>
-    public delegate void RequestMessageEventHandler (object sender,
-                                                     RequestMessageEventArgs e);
+/// <summary>
+///     Initialize a new request message event handler delegate.
+/// </summary>
+public delegate void RequestMessageEventHandler (object sender,
+        RequestMessageEventArgs e);
 }

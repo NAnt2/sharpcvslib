@@ -34,31 +34,31 @@ using System;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
+namespace ICSharpCode.SharpCvsLib.Responses {
+
+/// <summary>
+/// Valid Request Response
+/// </summary>
+public class ValidRequestsResponse : IResponse
+{
     /// <summary>
-    /// Valid Request Response
+    /// Process the response stream.
     /// </summary>
-	public class ValidRequestsResponse : IResponse
-	{
-        /// <summary>
-        /// Process the response stream.
-        /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-	    public void Process(CvsStream cvsStream, IResponseServices services)
-	    {
-            string responses  = cvsStream.ReadLine();
-	    	// TODO : make something useful with this request
-	    }
-	    
-        /// <summary>
-        /// Indicator for a terminating response.
-        /// </summary>
-		public bool IsTerminating {
-			get {
-				return false;
-			}
-		}
-	}
+    /// <param name="cvsStream"></param>
+    /// <param name="services"></param>
+    public void Process(CvsStream cvsStream, IResponseServices services)
+    {
+        string responses  = cvsStream.ReadLine();
+        // TODO : make something useful with this request
+    }
+
+    /// <summary>
+    /// Indicator for a terminating response.
+    /// </summary>
+    public bool IsTerminating {
+        get {
+            return false;
+        }
+    }
+}
 }

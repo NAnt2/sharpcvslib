@@ -1,5 +1,5 @@
 #region "Copyright"
-// InitCommand.cs 
+// InitCommand.cs
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -35,31 +35,31 @@ using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
 
-namespace ICSharpCode.SharpCvsLib.Commands { 
-	
-    /// <summary>
-    /// Command to initialize a new cvs repository.
-    /// </summary>
-	public class InitCommand : ICommand
-	{
-		CvsRoot cvsroot;
-		
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="cvsroot"></param>
-		public InitCommand(CvsRoot cvsroot)
-		{
-			this.cvsroot    = cvsroot;
-		}
+namespace ICSharpCode.SharpCvsLib.Commands {
 
-        /// <summary>
-        /// Do the dirty work.
-        /// </summary>
-        /// <param name="connection"></param>
-		public void Execute(ICommandConnection connection)
-		{
-            connection.SubmitRequest(new InitRequest(cvsroot.CvsRepository));
-		}
-	}
+/// <summary>
+/// Command to initialize a new cvs repository.
+/// </summary>
+public class InitCommand : ICommand
+{
+    CvsRoot cvsroot;
+
+    /// <summary>
+    /// Constructor
+    /// </summary>
+    /// <param name="cvsroot"></param>
+    public InitCommand(CvsRoot cvsroot)
+    {
+        this.cvsroot    = cvsroot;
+    }
+
+    /// <summary>
+    /// Do the dirty work.
+    /// </summary>
+    /// <param name="connection"></param>
+    public void Execute(ICommandConnection connection)
+    {
+        connection.SubmitRequest(new InitRequest(cvsroot.CvsRepository));
+    }
+}
 }

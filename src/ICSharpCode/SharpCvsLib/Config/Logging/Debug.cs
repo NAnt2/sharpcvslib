@@ -36,54 +36,54 @@ using System.Xml;
 using System.Xml.Serialization;
 
 namespace ICSharpCode.SharpCvsLib.Config.Logging {
-    /// <summary>
-    /// Configuration settings for the sharpcvslib debug log.  These are used
-    ///     to configure the message delegates on the CvsStream class.
-    /// </summary>
-    public class Debug {
-        
-        private bool enabled;
-        private String requestFile = "out.log";
-        private String responseFile = "in.log";
-        
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        public Debug () {
-            
-        }
-        
-        /// <summary>
-        /// <code>true</code> if the debug log is enabled, 
-        ///     <code>false</code> otherwise.  If this is false nothing
-        ///     will be logged to the request and response files.
-        /// </summary>
-        [XmlElement ("enabled", typeof (bool))]
-        public bool Enabled {
-            get {return this.enabled;}
-            set {this.enabled = value;}
-        }
+/// <summary>
+/// Configuration settings for the sharpcvslib debug log.  These are used
+///     to configure the message delegates on the CvsStream class.
+/// </summary>
+public class Debug {
 
-        /// <summary>
-        /// Configure the name of the file that requests to the cvs 
-        ///     server are logged to.
-        /// </summary>
-        [XmlElement ("request-file", typeof (String))]
-        public String RequestFile {
-            get {return this.requestFile;}
-            set {this.requestFile = value;}
-        }
-        
-        /// <summary>
-        /// Configure the name of the file that responses from the cvs server
-        ///     are logged to.
-        /// </summary>
-        [XmlElement ("response-file", typeof (String))]
-        public String ResponseFile {
-            get {return this.responseFile;}
-            set {this.responseFile = value;}
-        }
-        
-        
+    private bool enabled;
+    private String requestFile = "out.log";
+    private String responseFile = "in.log";
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    public Debug () {
+
     }
+
+    /// <summary>
+    /// <code>true</code> if the debug log is enabled,
+    ///     <code>false</code> otherwise.  If this is false nothing
+    ///     will be logged to the request and response files.
+    /// </summary>
+    [XmlElement ("enabled", typeof (bool))]
+    public bool Enabled {
+        get {return this.enabled;}
+        set {this.enabled = value;}
+    }
+
+    /// <summary>
+    /// Configure the name of the file that requests to the cvs
+    ///     server are logged to.
+    /// </summary>
+    [XmlElement ("request-file", typeof (String))]
+    public String RequestFile {
+        get {return this.requestFile;}
+        set {this.requestFile = value;}
+    }
+
+    /// <summary>
+    /// Configure the name of the file that responses from the cvs server
+    ///     are logged to.
+    /// </summary>
+    [XmlElement ("response-file", typeof (String))]
+    public String ResponseFile {
+        get {return this.responseFile;}
+        set {this.responseFile = value;}
+    }
+
+
+}
 }

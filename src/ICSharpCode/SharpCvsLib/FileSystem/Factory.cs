@@ -39,103 +39,103 @@ using System.IO;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
-    
+
+/// <summary>
+///     Creates the cvs object necessary based on the filename.
+/// </summary>
+public class Factory {
+
     /// <summary>
-    ///     Creates the cvs object necessary based on the filename.
+    ///     Type of cvs file.
     /// </summary>
-    public class Factory {
-        
+    public enum FileType {
         /// <summary>
-        ///     Type of cvs file.
+        ///     Root file type.
         /// </summary>
-        public enum FileType {
-            /// <summary>
-            ///     Root file type.
-            /// </summary>
-            Root,
-            /// <summary>
-            ///     Repository file type.
-            /// </summary>
-            Repository,
-            /// <summary>
-            ///     The entries file type.
-            /// </summary>
-            Entries,
-            /// <summary>Used to specify specific repository revisions or
-            /// sticky tags.</summary>
-            Tag
+        Root,
+        /// <summary>
+        ///     Repository file type.
+        /// </summary>
+        Repository,
+        /// <summary>
+        ///     The entries file type.
+        /// </summary>
+        Entries,
+        /// <summary>Used to specify specific repository revisions or
+        /// sticky tags.</summary>
+        Tag
+    }
+    /// <summary>
+    ///     Constructor.
+    /// </summary>
+    public Factory () {
+
+    }
+
+    /// <summary>
+    ///     Create the cvs file based on the filename.  Returns the
+    ///         cvs file interface.
+    /// </summary>
+    public ICvsFile CreateCvsObject (String path,
+                                     FileType fileType,
+                                     String line) {
+        ICvsFile entry;
+        switch (fileType) {
+        case (FileType.Entries):
+                        entry = new Entry(path, line);
+            break;
+        case (FileType.Repository):
+                        entry = new Repository (path, line);
+            break;
+        case (FileType.Root):
+                        entry = new Root (path, line);
+            break;
+        case (FileType.Tag):
+                        entry = new Tag (path, line);
+            break;
+        default:
+            String msg = "Unable to create object.";
+            throw new Exception (msg);
+
         }
-        /// <summary>
-        ///     Constructor.
-        /// </summary>
-        public Factory () {
-            
-        }
-        
-        /// <summary>
-        ///     Create the cvs file based on the filename.  Returns the 
-        ///         cvs file interface.
-        /// </summary>
-        public ICvsFile CreateCvsObject (String path, 
-                                       FileType fileType, 
-                                       String line) {
-            ICvsFile entry;
-            switch (fileType) {
-                case (FileType.Entries):
-                    entry = new Entry(path, line);
-                    break;
-                case (FileType.Repository):
-                    entry = new Repository (path, line);
-                    break;
-                case (FileType.Root):
-                    entry = new Root (path, line);
-                    break;
-                case (FileType.Tag):
-                    entry = new Tag (path, line);
-                    break;
-                default:
-                    String msg = "Unable to create object.";
-                    throw new Exception (msg);
-                    
-            }
-            return entry;
-            
-        }
-        
-        /// <summary>
-        ///     Get the name of the file given the file type.
-        /// </summary>
-        /// <param name="fileType">The type of the file.</param>
-        /// <returns>The name of the cvs file.</returns>
-        public String GetFilename (FileType fileType) {
-            switch (fileType) {
-                case (FileType.Entries):
-                    return Entry.FILE_NAME;
-                case (FileType.Repository):
-                    return Repository.FILE_NAME;
-                case (FileType.Root):
-                    return Root.FILE_NAME;
-                case (FileType.Tag):
-                    return Tag.FILE_NAME;
-                default:
-                    String msg = "Unable to create object.";
-                    throw new Exception (msg);
-                    
-            }            
-        }
-        
-        /// <summary>
-        /// Get a folder collection that is filled with the given entries for the
-        ///     specified files.
-        /// </summary>
-        public ICollection GetFolders (String[] files) {
-            Probe probe = new Probe ();
-            probe.OriginalFiles = files;
-            probe.Execute ();
-            
-            ICollection allFiles = probe.ExistingFiles;
-            
-            throw new NotImplementedException ("Not finished");
+        return entry;
+
+    }
+
+    /// <summary>
+    ///     Get the name of the file given the file type.
+    /// </summary>
+    /// <param name="fileType">The type of the file.</param>
+    /// <returns>The name of the cvs file.</returns>
+public String GetFilename (FileType fileType) {
+        switch (fileType) {
+        case (FileType.Entries):
+                        return Entry.FILE_NAME;
+        case (FileType.Repository):
+                        return Repository.FILE_NAME;
+        case (FileType.Root):
+                        return Root.FILE_NAME;
+        case (FileType.Tag):
+                        return Tag.FILE_NAME;
+        default:
+            String msg = "Unable to create object.";
+            throw new Exception (msg);
+
         }
     }
+
+    /// <summary>
+    /// Get a folder collection that is filled with the given entries for the
+    ///     specified files.
+    /// </summary>
+public ICollection GetFolders (String[] files) {
+        Probe probe = new Probe ();
+        probe.OriginalFiles = files;
+        probe.Execute ();
+
+        ICollection allFiles = probe.ExistingFiles;
+
+        throw new NotImplementedException ("Not finished");
+    }
+}
 }

@@ -28,7 +28,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
+//    Author:     Mike Krueger,
 //                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
@@ -41,35 +41,35 @@ using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
-    /// <summary>
-    /// Handle a clear sticky tag response.
-    /// </summary>
-	public class ClearStickyResponse : IResponse
-	{
-	    private readonly ILog LOGGER = 
-	        LogManager.GetLogger (typeof (ClearStickyResponse));
-        /// <summary>
-        /// Process a clear sticky tag response.
-        /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-	    public void Process(CvsStream cvsStream, IResponseServices services)
-	    {
-            string localPath      = cvsStream.ReadLine();
-            string reposPath = cvsStream.ReadLine();
+namespace ICSharpCode.SharpCvsLib.Responses {
 
-            // TODO: Do something useful with this response.
-	    }
-	    
-        /// <summary>
-        /// Return true if this response cancels the transaction
-        /// </summary>
-		public bool IsTerminating {
-			get {
-				return false;
-			}
-		}
-	}
+/// <summary>
+/// Handle a clear sticky tag response.
+/// </summary>
+public class ClearStickyResponse : IResponse
+{
+    private readonly ILog LOGGER =
+        LogManager.GetLogger (typeof (ClearStickyResponse));
+    /// <summary>
+    /// Process a clear sticky tag response.
+    /// </summary>
+    /// <param name="cvsStream"></param>
+    /// <param name="services"></param>
+    public void Process(CvsStream cvsStream, IResponseServices services)
+    {
+        string localPath      = cvsStream.ReadLine();
+        string reposPath = cvsStream.ReadLine();
+
+        // TODO: Do something useful with this response.
+    }
+
+    /// <summary>
+    /// Return true if this response cancels the transaction
+    /// </summary>
+    public bool IsTerminating {
+        get {
+            return false;
+        }
+    }
+}
 }

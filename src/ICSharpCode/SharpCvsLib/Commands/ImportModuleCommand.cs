@@ -1,5 +1,5 @@
 #region Copyright
-// ImportModuleCommand.cs 
+// ImportModuleCommand.cs
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -43,118 +43,118 @@ using ICSharpCode.SharpCvsLib.FileSystem;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Commands { 
-    
+namespace ICSharpCode.SharpCvsLib.Commands {
+
+/// <summary>
+/// Import a module into the cvs repository
+/// </summary>
+public class ImportModuleCommand : ICommand
+{
+    private WorkingDirectory workingdirectory;
+    private string  logmessage;
+    private string  vendor  = "vendor";
+    private string  release = "release";
+
+    private readonly ILog LOGGER =
+        LogManager.GetLogger (typeof (ImportModuleCommand));
+
     /// <summary>
-    /// Import a module into the cvs repository
+    /// The log message returned by the cvs server.
     /// </summary>
-    public class ImportModuleCommand : ICommand
-    {
-        private WorkingDirectory workingdirectory;
-        private string  logmessage;
-        private string  vendor  = "vendor";
-        private string  release = "release";
-
-        private readonly ILog LOGGER = 
-            LogManager.GetLogger (typeof (ImportModuleCommand));
-        
-        /// <summary>
-        /// The log message returned by the cvs server.
-        /// </summary>
-        public string LogMessage {
-            get {
-                return logmessage;
-            }
-            set {
-                logmessage = value;
-            }
+    public string LogMessage {
+        get {
+            return logmessage;
         }
-        
-        /// <summary>
-        /// Vendor string.
-        /// </summary>
-        public string VendorString {
-            get {
-                return vendor;
-            }
-            set {
-                vendor = value;
-            }
-        }
-        
-        /// <summary>
-        /// Release string
-        /// </summary>
-        public string ReleaseString {
-            get {
-                return release;
-            }
-            set {
-                release = value;
-            }
-        }
-        
-        /// <summary>
-        /// Constructor for the import module command.
-        /// </summary>
-        /// <param name="workingdirectory"></param>
-        /// <param name="logmessage"></param>
-        public ImportModuleCommand(WorkingDirectory workingdirectory, string logmessage)
-        {
-            this.logmessage = logmessage;
-            this.workingdirectory = workingdirectory;
-        }
-
-        /// <summary>
-        /// Do the dirty work.
-        /// </summary>
-        /// <param name="connection"></param>
-        public void Execute(ICommandConnection connection)
-        {
-            connection.SubmitRequest(new CaseRequest());
-            connection.SubmitRequest(new ArgumentRequest("-b"));
-            connection.SubmitRequest(new ArgumentRequest("1.1.1"));
-            connection.SubmitRequest(new ArgumentRequest("-m"));
-            connection.SubmitRequest(new ArgumentRequest(logmessage));
-            connection.SubmitRequest(new ArgumentRequest(workingdirectory.WorkingDirectoryName));
-            connection.SubmitRequest(new ArgumentRequest(vendor));
-            connection.SubmitRequest(new ArgumentRequest(release));
-
-            System.Console.WriteLine("IMPORT START");
-            
-            foreach (DictionaryEntry folder in workingdirectory.Folders) {
-                foreach (Entry entry  in ((Folder)folder.Value).Entries) {
-                    DateTime old = entry.TimeStamp;
-                    entry.TimeStamp = entry.TimeStamp.ToUniversalTime();
-                    
-                    string path = workingdirectory.CvsRoot.CvsRepository +  "/" + workingdirectory.WorkingDirectoryName + folder.Key.ToString();
-                    string modulepath;
-                    
-                    if (folder.Key.ToString().Length < 1) {
-                        modulepath = ".";
-                    } else {
-                        modulepath = folder.Key.ToString().Substring(1);
-                    }
-                    
-                    connection.SubmitRequest(new DirectoryRequest(modulepath, path));
-                    connection.SubmitRequest(new ModifiedRequest(entry.Name));
-                    
-                    path = Path.Combine (workingdirectory.CvsRoot.CvsRepository, 
-                                         folder.Key.ToString());
-                    
-                                        
-                    string fileName = Path.Combine (path, entry.Name);
-                    connection.SendFile(fileName, entry.IsBinaryFile);
-                    
-                    entry.TimeStamp = old;
-                }
-            }
-            
-            connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository + "/" + workingdirectory.WorkingDirectoryName));
-            connection.SubmitRequest(new ImportRequest());
-            if (LOGGER.IsDebugEnabled) {
-                LOGGER.Debug ("IMPORT END");
-            }
+        set {
+            logmessage = value;
         }
     }
+
+    /// <summary>
+    /// Vendor string.
+    /// </summary>
+    public string VendorString {
+        get {
+            return vendor;
+        }
+        set {
+            vendor = value;
+        }
+    }
+
+    /// <summary>
+    /// Release string
+    /// </summary>
+    public string ReleaseString {
+        get {
+            return release;
+        }
+        set {
+            release = value;
+        }
+    }
+
+    /// <summary>
+    /// Constructor for the import module command.
+    /// </summary>
+    /// <param name="workingdirectory"></param>
+    /// <param name="logmessage"></param>
+    public ImportModuleCommand(WorkingDirectory workingdirectory, string logmessage)
+    {
+        this.logmessage = logmessage;
+        this.workingdirectory = workingdirectory;
+    }
+
+    /// <summary>
+    /// Do the dirty work.
+    /// </summary>
+    /// <param name="connection"></param>
+    public void Execute(ICommandConnection connection)
+    {
+        connection.SubmitRequest(new CaseRequest());
+        connection.SubmitRequest(new ArgumentRequest("-b"));
+        connection.SubmitRequest(new ArgumentRequest("1.1.1"));
+        connection.SubmitRequest(new ArgumentRequest("-m"));
+        connection.SubmitRequest(new ArgumentRequest(logmessage));
+        connection.SubmitRequest(new ArgumentRequest(workingdirectory.WorkingDirectoryName));
+        connection.SubmitRequest(new ArgumentRequest(vendor));
+        connection.SubmitRequest(new ArgumentRequest(release));
+
+        System.Console.WriteLine("IMPORT START");
+
+        foreach (DictionaryEntry folder in workingdirectory.Folders) {
+            foreach (Entry entry  in ((Folder)folder.Value).Entries) {
+                DateTime old = entry.TimeStamp;
+                entry.TimeStamp = entry.TimeStamp.ToUniversalTime();
+
+                string path = workingdirectory.CvsRoot.CvsRepository +  "/" + workingdirectory.WorkingDirectoryName + folder.Key.ToString();
+                string modulepath;
+
+                if (folder.Key.ToString().Length < 1) {
+                    modulepath = ".";
+                } else {
+                    modulepath = folder.Key.ToString().Substring(1);
+                }
+
+                connection.SubmitRequest(new DirectoryRequest(modulepath, path));
+                connection.SubmitRequest(new ModifiedRequest(entry.Name));
+
+                path = Path.Combine (workingdirectory.CvsRoot.CvsRepository,
+                                     folder.Key.ToString());
+
+
+                string fileName = Path.Combine (path, entry.Name);
+                connection.SendFile(fileName, entry.IsBinaryFile);
+
+                entry.TimeStamp = old;
+            }
+        }
+
+        connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository + "/" + workingdirectory.WorkingDirectoryName));
+        connection.SubmitRequest(new ImportRequest());
+        if (LOGGER.IsDebugEnabled) {
+            LOGGER.Debug ("IMPORT END");
+        }
+    }
+}
 }

@@ -36,36 +36,36 @@ using ICSharpCode.SharpCvsLib.Streams;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
+namespace ICSharpCode.SharpCvsLib.Responses {
+
+/// <summary>
+/// Message tagged response.
+/// </summary>
+public class MessageTaggedResponse : IResponse
+{
+    private readonly ILog LOGGER =
+        LogManager.GetLogger (typeof (MessageTaggedResponse));
     /// <summary>
-    /// Message tagged response.
+    /// Process the message tagged response.
     /// </summary>
-	public class MessageTaggedResponse : IResponse
-	{
-	    private readonly ILog LOGGER =
-	        LogManager.GetLogger (typeof (MessageTaggedResponse));
-        /// <summary>
-        /// Process the message tagged response.
-        /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-	    public void Process(CvsStream cvsStream, IResponseServices services)
-	    {
-	    	string message = cvsStream.ReadToEndOfLine();
-		    // Fire message event to the client app
-	    	services.SendMessage("MT " + message);
-            String msg = "cvs server: MT " + message;
-	        LOGGER.Debug (msg);
-	    }
-	    
-        /// <summary>
-        /// Indicator stating whether the response is terminating or not.
-        /// </summary>
-		public bool IsTerminating {
-			get {
-				return false;
-			}
-		}
-	}
+    /// <param name="cvsStream"></param>
+    /// <param name="services"></param>
+    public void Process(CvsStream cvsStream, IResponseServices services)
+    {
+        string message = cvsStream.ReadToEndOfLine();
+        // Fire message event to the client app
+        services.SendMessage("MT " + message);
+        String msg = "cvs server: MT " + message;
+        LOGGER.Debug (msg);
+    }
+
+    /// <summary>
+    /// Indicator stating whether the response is terminating or not.
+    /// </summary>
+    public bool IsTerminating {
+        get {
+            return false;
+        }
+    }
+}
 }

@@ -1,5 +1,5 @@
 #region "Copyright"
-// EncodedMessage.cs 
+// EncodedMessage.cs
 // Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
@@ -37,49 +37,49 @@ using System.Text;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Messages {
-	
-	/// <summary>
-	/// Class to handle messaging events.
-	/// </summary>
-	public class EncodedMessage {
-	    private ILog LOGGER = LogManager.GetLogger (typeof (EncodedMessage));
-        /// <summary>
-        /// A message handler that operates as an interface for a messaging event.
-        /// </summary>
-        /// <param name="message">A message to send to the implementing class.</param>
-    	public delegate void MessageHandler(string message);
-	    
-	    /// <summary>
-	    /// The message event handler that is used to channel messages to the
-	    ///     delegate and implementing classes.
-	    /// </summary>
-	    public event MessageHandler MessageEvent;
-	    
-	    /// <summary>
-	    /// Send a message to the delegate.
-	    /// </summary>
-	    /// <param name="message">The message to send to the delegate.</param>
-	    public void SendMessage (String message) {
-	        if (LOGGER.IsDebugEnabled) {
-	            StringBuilder msg = new StringBuilder ();
-	            msg.Append ("message=[").Append (message).Append ("]");
-	            msg.Append ("MessageEvent null=[").Append (null == MessageEvent).Append("]");
-	            LOGGER.Debug (msg);
-	        }
-	        if (null != MessageEvent) {
-	            MessageEvent(message);
-	        }
-	    }
-	    
-	    /// <summary>
-	    /// Send a message to the delegate.
-	    /// </summary>
-	    /// <param name="message">A message to send to the delegate.</param>
-	    public void SendMessage (StringBuilder message) {
-	        if (null != MessageEvent && null != message) {
-	            this.SendMessage (message.ToString ());
-	        }
-	    }
-	}
-    
+
+/// <summary>
+/// Class to handle messaging events.
+/// </summary>
+public class EncodedMessage {
+    private ILog LOGGER = LogManager.GetLogger (typeof (EncodedMessage));
+    /// <summary>
+    /// A message handler that operates as an interface for a messaging event.
+    /// </summary>
+    /// <param name="message">A message to send to the implementing class.</param>
+    public delegate void MessageHandler(string message);
+
+    /// <summary>
+    /// The message event handler that is used to channel messages to the
+    ///     delegate and implementing classes.
+    /// </summary>
+    public event MessageHandler MessageEvent;
+
+    /// <summary>
+    /// Send a message to the delegate.
+    /// </summary>
+    /// <param name="message">The message to send to the delegate.</param>
+    public void SendMessage (String message) {
+        if (LOGGER.IsDebugEnabled) {
+            StringBuilder msg = new StringBuilder ();
+            msg.Append ("message=[").Append (message).Append ("]");
+            msg.Append ("MessageEvent null=[").Append (null == MessageEvent).Append("]");
+            LOGGER.Debug (msg);
+        }
+        if (null != MessageEvent) {
+            MessageEvent(message);
+        }
+    }
+
+    /// <summary>
+    /// Send a message to the delegate.
+    /// </summary>
+    /// <param name="message">A message to send to the delegate.</param>
+    public void SendMessage (StringBuilder message) {
+        if (null != MessageEvent && null != message) {
+            this.SendMessage (message.ToString ());
+        }
+    }
+}
+
 }

@@ -36,36 +36,36 @@ using System;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Logs {
+/// <summary>
+/// Utility class for debugging cvs server responses.  Logging outputs are
+///     attempted in the following order:
+///     <ol>
+///         <li>log4net properties for Type in application config file.</li>
+///         <li>cvs.out file in the working folder of the assembly.</li>
+///         <li>console message</li>
+///     </ol>
+/// A failure at any level causes the program to attempt to log to another
+///     level.
+/// </summary>
+public class ResponseLog {
+
+    private readonly ILog LOGGER = LogManager.GetLogger (typeof (ResponseLog));
     /// <summary>
-    /// Utility class for debugging cvs server responses.  Logging outputs are 
-    ///     attempted in the following order:
-    ///     <ol>
-    ///         <li>log4net properties for Type in application config file.</li>
-    ///         <li>cvs.out file in the working folder of the assembly.</li>
-    ///         <li>console message</li>
-    ///     </ol>
-    /// A failure at any level causes the program to attempt to log to another 
-    ///     level.
+    /// Constructor.
+    ///
+    /// // TODO: Write a more useful description.
     /// </summary>
-    public class ResponseLog {
-        
-        private readonly ILog LOGGER = LogManager.GetLogger (typeof (ResponseLog));
-        /// <summary>
-        /// Constructor.
-        /// 
-        /// // TODO: Write a more useful description.
-        /// </summary>
-        public ResponseLog () {
-        }
-        
-        /// <summary>
-        /// Log the message.
-        /// 
-        /// // TODO: Write a more useful description.
-        /// </summary>
-        /// <param name="message">A message to output to the log.</param>
-        public void Log (String message) {
-            LOGGER.Debug (message);
-        }
+    public ResponseLog () {
     }
+
+    /// <summary>
+    /// Log the message.
+    ///
+    /// // TODO: Write a more useful description.
+    /// </summary>
+    /// <param name="message">A message to output to the log.</param>
+    public void Log (String message) {
+        LOGGER.Debug (message);
+    }
+}
 }

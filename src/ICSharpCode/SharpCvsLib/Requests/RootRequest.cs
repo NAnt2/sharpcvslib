@@ -1,5 +1,5 @@
 #region "Copyright"
-// RootRequest.cs 
+// RootRequest.cs
 // Copyright (C) 2001 Mike Krueger
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
@@ -25,47 +25,47 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-namespace ICSharpCode.SharpCvsLib.Requests { 
+namespace ICSharpCode.SharpCvsLib.Requests {
 
-	/// <summary>
-	/// Response expected: no. Tell the server which CVSROOT to use. 
-	/// Note that pathname is a local directory and not a fully qualified 
-	/// CVSROOT variable. pathname must already exist; if creating a new root, 
-	/// use the init request, not Root. pathname does not include the hostname 
-	/// of the server, how to access the server, etc.; by the time the CVS 
-	/// protocol is in use, connection, authentication, etc., are already taken care of. 
-	/// The Root request must be sent only once, and it must be sent before any requests 
-	/// other than Valid-responses, valid-requests, UseUnchanged, or init. 
-	/// </summary>
-	public class RootRequest : AbstractRequest
-	{
-		private string cvsroot;
-		
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="cvsroot">The cvsroot to use.</param>
-		public RootRequest(string cvsroot)
-		{
-			this.cvsroot = cvsroot;
-		}
-		
-        /// <summary>
-        /// Specify which cvsroot the server should use.
-        /// </summary>
-		public override string RequestString {
-			get {
-				return "Root " + cvsroot + "\n";
-			}
-		}
-		
-        /// <summary>
-        /// <code>false</code>, a response is not expected.
-        /// </summary>
-		public override bool IsResponseExpected {
-			get {
-				return false;
-			}
-		}
-	}
+/// <summary>
+/// Response expected: no. Tell the server which CVSROOT to use.
+/// Note that pathname is a local directory and not a fully qualified
+/// CVSROOT variable. pathname must already exist; if creating a new root,
+/// use the init request, not Root. pathname does not include the hostname
+/// of the server, how to access the server, etc.; by the time the CVS
+/// protocol is in use, connection, authentication, etc., are already taken care of.
+/// The Root request must be sent only once, and it must be sent before any requests
+/// other than Valid-responses, valid-requests, UseUnchanged, or init.
+/// </summary>
+public class RootRequest : AbstractRequest
+{
+    private string cvsroot;
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="cvsroot">The cvsroot to use.</param>
+    public RootRequest(string cvsroot)
+    {
+        this.cvsroot = cvsroot;
+    }
+
+    /// <summary>
+    /// Specify which cvsroot the server should use.
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "Root " + cvsroot + "\n";
+        }
+    }
+
+    /// <summary>
+    /// <code>false</code>, a response is not expected.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return false;
+        }
+    }
+}
 }
