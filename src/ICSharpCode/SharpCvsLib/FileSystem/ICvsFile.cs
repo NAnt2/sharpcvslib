@@ -39,42 +39,54 @@ using System.Globalization;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
-
-/// <summary>
-///     Interface for all cvs files.  Allows the file system manager to store
-///         files that contain cvs information such as:
-///             <code>Entries</code>
-///             <code>Repository</code>
-///             <code>Root</code>
-/// </summary>
-public interface ICvsFile {
     /// <summary>
-    ///     The name of the file.  This will be a constant for each
-    ///         type of file (i.e. Repository, Entry, etc.).
+    ///     Interface for all cvs files.  Allows the file system manager to store
+    ///         files that contain cvs information such as:
+    ///             <code>Entries</code>
+    ///             <code>Repository</code>
+    ///             <code>Root</code>
     /// </summary>
-    String Filename {get;}
-    /// <summary>
-    ///     The path to the folder above the CVS directory.  The
-    ///         CVS directory will be appended to this path by
-    ///         the manager.
-    /// </summary>
-    String Path {get;}
+    public interface ICvsFile {
+        /// <summary>
+        ///     The name of the file.  This will be a constant for each
+        ///         type of file (i.e. Repository, Entry, etc.).
+        /// </summary>
+        String Filename {get;}
 
-    /// <summary>
-    ///     The contents that are going to be written to the file.
-    /// </summary>
-    String FileContents {get;}
+        /// <summary>
+        /// Get the path to the directory above the cvs file.  In most cases
+        ///     this will be the same as full path, with the exception that an 
+        ///     entry will have a FullPath containing the file that the entry is
+        ///     controlling.
+        /// </summary>
+        String Path {get;}
+        /// <summary>
+        /// The full path to the file that the file that this CVS object is managing.
+        ///     In most cases FullPath will equal Path, with the exception of Entry
+        ///     files that are not directories.
+        /// </summary>
+        String FullPath {get;}
 
-    /// <summary>
-    ///     The type of file that this is.
-    /// </summary>
-    Factory.FileType Type {get;}
+        /// <summary>
+        ///     The contents that are going to be written to the file.
+        /// </summary>
+        String FileContents {get;set;}
 
-    /// <summary>
-    ///     Indicates whether the cvs file can contain multiple lines
-    ///         or if it can only contain a one line entry.
-    /// </summary>
-    bool IsMultiLined {get;}
+        /// <summary>
+        ///     The type of file that this is.
+        /// </summary>
+        Factory.FileType Type {get;}
 
-}
+        /// <summary>
+        ///     Indicates whether the cvs file can contain multiple lines
+        ///         or if it can only contain a one line entry.
+        /// </summary>
+        bool IsMultiLined {get;}
+
+        /// <summary>
+        /// Parse the line entry from the management file.
+        /// </summary>
+        /// <param name="line">The line entry to parse.</param>
+        void Parse (String line);
+    }
 }

@@ -42,20 +42,47 @@ namespace ICSharpCode.SharpCvsLib.Config.Logging {
     /// </summary>
     public class Debug {
 
-        private bool enabled = true;
-        private String requestFile = "out.log";
-        private String responseFile = "in.log";
+        /// <summary>
+        /// Specifies the default file that is used to log request data to if debug
+        ///     logging is enabled.
+        /// </summary>
+        public const String DEFAULT_REQUEST_FILE = "in.txt";
+        /// <summary>
+        /// Specifies the default file that responses should be logged t if debug
+        ///     logging is enabled.
+        /// </summary>
+        public const String DEFAULT_RESPONSE_FILE = "out.txt";
+        /// <summary>
+        /// Indicates whether the stack trace will be logged with the request/ response
+        ///     message.
+        /// </summary>
+        public const bool DEFAULT_LOG_STACK_TRACE = false;
+        /// <summary>
+        /// Indicates whether debug logging will be enabled by default or not.
+        /// </summary>
+        public const bool DEFAULT_ENABLED = true;
+
+        private bool enabled;
+        private String requestFile;
+        private String responseFile;
+        private bool logStackTrace;
 
         /// <summary>
         /// Constructor.
         /// </summary>
         public Debug () {
+            this.enabled = DEFAULT_ENABLED;
+            this.requestFile = DEFAULT_REQUEST_FILE;
+            this.responseFile = DEFAULT_RESPONSE_FILE;
+            this.logStackTrace = DEFAULT_LOG_STACK_TRACE;
         }
 
         /// <summary>
         /// <code>true</code> if the debug log is enabled,
         ///     <code>false</code> otherwise.  If this is false nothing
         ///     will be logged to the request and response files.
+        ///     
+        ///     This is set to <code>DEFAULT_ENABLED</code>
         /// </summary>
         [XmlElement ("enabled", typeof (bool))]
         public bool Enabled {
@@ -66,6 +93,8 @@ namespace ICSharpCode.SharpCvsLib.Config.Logging {
         /// <summary>
         /// Configure the name of the file that requests to the cvs
         ///     server are logged to.
+        ///     
+        ///     This is set to <code>DEFAULT_REQUEST_FILE</code> by default.
         /// </summary>
         [XmlElement ("request-file", typeof (String))]
         public String RequestFile {
@@ -76,11 +105,26 @@ namespace ICSharpCode.SharpCvsLib.Config.Logging {
         /// <summary>
         /// Configure the name of the file that responses from the cvs server
         ///     are logged to.
+        ///     
+        ///     This is set to <code>DEFAULT_RESPONSE_FILE</code> by default.
         /// </summary>
         [XmlElement ("response-file", typeof (String))]
         public String ResponseFile {
             get {return this.responseFile;}
             set {this.responseFile = value;}
+        }
+
+        /// <summary>
+        /// Indicate whether a stack trace should be logged in the in/ out log as
+        ///     well as the message to the server.  This will give a better indication
+        ///     of what is sending the message and driving the application behavior.
+        ///     
+        ///     This is set to <code>DEFAULT_LOG_STACK_TRACE</code> by default.
+        /// </summary>
+        [XmlElement ("log-stack-trace", typeof(bool))]
+        public bool LogStackTrace {
+            get {return this.logStackTrace;}
+            set {this.logStackTrace = value;}
         }
 
         /// <summary>
@@ -93,6 +137,7 @@ namespace ICSharpCode.SharpCvsLib.Config.Logging {
             formatter.AddProperty("Enabled", this.Enabled);
             formatter.AddProperty("RequestFile", this.RequestFile);
             formatter.AddProperty("ResponseFile", this.ResponseFile);
+            formatter.AddProperty("LogStackTrace", this.LogStackTrace);
             return formatter.ToString();
         }
     }

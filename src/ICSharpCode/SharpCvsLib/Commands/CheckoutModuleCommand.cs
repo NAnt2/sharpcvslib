@@ -63,8 +63,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// Execute checkout module command.
         /// </summary>
         /// <param name="connection">Server connection</param>
-        public void Execute(ICommandConnection connection)
-        {
+        public void Execute(ICommandConnection connection) {
             workingDirectory.Clear();
 
             connection.SubmitRequest(new CaseRequest());
@@ -101,13 +100,13 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                                     "/" + workingDirectory.ModuleName));
 
             connection.SubmitRequest(new CheckoutRequest());
-            Manager manager = new Manager ();
+            Manager manager = new Manager (connection.Repository.WorkingPath);
             if (LOGGER.IsDebugEnabled) {
                 LOGGER.Debug ("looking for directories to add to the " +
                             "entries file in=[" +
                             this.workingDirectory.WorkingPath + "]");
             }
-            manager.AddDirectories (this.workingDirectory.WorkingPath);
+            //manager.AddDirectories (this.workingDirectory.WorkingPath);
 
         }
     }

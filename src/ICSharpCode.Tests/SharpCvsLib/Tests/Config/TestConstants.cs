@@ -41,7 +41,8 @@ public class TestConstants {
     ///     The local path for the test.
     /// </summary>
     public static readonly String LOCAL_PATH =
-        Path.Combine (Path.GetTempPath (), "sharpcvslib-tests/");
+        Path.Combine (Path.GetTempPath (), "sharpcvslib-tests" + 
+        Path.DirectorySeparatorChar);
     /// <summary>
     ///     Cvs root to use for test cases.
     /// </summary>

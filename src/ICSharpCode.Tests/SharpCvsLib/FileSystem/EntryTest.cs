@@ -32,7 +32,8 @@ using System;
 using System.Collections;
 using System.IO;
 
-using ICSharpCode.SharpCvsLib.Config.Tests;
+using ICSharpCode.SharpCvsLib.Tests;
+using ICSharpCode.SharpCvsLib.Tests.Config;
 
 using log4net;
 using NUnit.Framework;
@@ -48,33 +49,52 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///
     /// </summary>
     [TestFixture]
-    public class EntryTest	{
+    public class EntryTest : AbstractTest {
         private ILog LOGGER =
             LogManager.GetLogger (typeof(EntryTest));
 
-        private TestSettings settings = new TestSettings ();
+        private SharpCvsLibTestsConfig settings = 
+            SharpCvsLibTestsConfig.GetInstance();
+
         /// <summary>
         ///     Test entry 1: Standard checkout file.
         /// </summary>
         public const String CHECKOUT_ENTRY =
             "/CvsFileManagerTest.cs/1.1/Tue May 13 05:10:17 2003//";
         /// <summary>
+        /// Test entry filename 1.
+        /// </summary>
+        public const String CHECKOUT_ENTRY_FILENAME = "CvsFileManagerTest.cs";
+        /// <summary>
         ///     Test entry 2: Date in RFC1123 format.
         /// </summary>
         public const String CHECKOUT_ENTRY_2 =
             "/EntryTest.cs/1.1/03 Jan 2003 04:07:36 -0000//";
+        /// <summary>
+        /// Test entry filename 2.
+        /// </summary>
+        public const String CHECKOUT_ENTRY_2_FILENAME = "EntryTest.cs";
         private const String NORMALISED_ENTRY_2 =
             "/EntryTest.cs/1.1/Fri Jan 3 04:07:36 2003//";
+        private const String NORMALISED_ENTRY_2_FILENAME = "EntryTest.cs";
         /// <summary>
         ///     Test entry 3: Checkout file with conflict, binary flag and tag.
         /// </summary>
         public const String CHECKOUT_ENTRY_3 =
             "/ICSharpCode.SharpZipLib.dll/1.2/Sat Jun 21 03:22:02 2003+Sat Jun 21 03:22:03 2003/-kb/TV1.0";
         /// <summary>
+        /// Test entry 3 filename.
+        /// </summary>
+        public const String CHECKOUT_ENTRY_3_FILENAME = "ICSharpCode.SharpZipLib.dll";
+        /// <summary>
         ///     Test entry 4: Subdirectory.
         /// </summary>
         public const String DIR_ENTRY =
             "D/ICSharpCode.Tests////";
+        /// <summary>
+        ///     Test entry 4 directory name.
+        /// </summary>
+        public const String DIR_ENTRY_DIRNAME = "ICSharpCode.Tests";
         /// <summary>
         ///     Test entry 5: Too many arguments in entry.
         /// </summary>
@@ -98,15 +118,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// Constructor for customer db test.
         /// </summary>
         public EntryTest () {
-        }
-
-        /// <summary>
-        ///     Perform setup operations for the test.  Create a new
-        ///         file manager object.
-        /// </summary>
-        [SetUp]
-        public void SetUp () {
-            this.manager = new Manager ();
+            this.manager = new Manager (Path.Combine(this.settings.LocalPath, this.settings.Module));
         }
 
         /// <summary>
@@ -124,12 +136,14 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void TestParseCheckoutEntry () {
             Entry entry = new Entry (this.settings.Config.LocalPath, CHECKOUT_ENTRY);
 
-            Assertion.Assert (entry.Path.Equals (this.settings.Config.LocalPath));
+            Assertion.AssertEquals (this.settings.Config.LocalPath, entry.Path);
+            Assertion.AssertEquals (Path.Combine (this.settings.Config.LocalPath, CHECKOUT_ENTRY_FILENAME), 
+                entry.FullPath);
             Assertion.Assert (entry.Filename.Equals (ENTRY_FILE_NAME));
 
-            Assertion.Assert (entry.Name.Equals ("CvsFileManagerTest.cs"));
-            Assertion.Assert (entry.Revision.Equals ("1.1"));
-            Assertion.Assert (entry.Date.Equals ("Tue May 13 05:10:17 2003"));
+            Assertion.AssertEquals ("CvsFileManagerTest.cs", entry.Name);
+            Assertion.AssertEquals ("1.1", entry.Revision);
+            Assertion.AssertEquals ("Tue May 13 05:10:17 2003", entry.Date);
             Assertion.Assert (entry.Conflict == null);
             Assertion.Assert (entry.Options.Equals (""));
             Assertion.Assert (entry.Tag.Equals (""));
@@ -155,6 +169,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Entry entry = new Entry (this.settings.Config.LocalPath, CHECKOUT_ENTRY_2);
 
             Assertion.Assert (entry.Path.Equals (this.settings.Config.LocalPath));
+            Assertion.Assert (entry.FullPath.Equals (
+                Path.Combine(this.settings.Config.LocalPath, CHECKOUT_ENTRY_2_FILENAME)));
+            Assertion.Assert (entry.FullPath.Equals (Path.Combine(this.settings.Config.LocalPath, entry.Name)));
             Assertion.Assert (entry.Filename.Equals (ENTRY_FILE_NAME));
 
             Assertion.Assert (entry.Name.Equals ("EntryTest.cs"));
@@ -187,6 +204,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Entry entry = new Entry (this.settings.Config.LocalPath, CHECKOUT_ENTRY_3);
 
             Assertion.Assert (entry.Name.Equals ("ICSharpCode.SharpZipLib.dll"));
+            Assertion.Assert (entry.FullPath.Equals (
+                Path.Combine(this.settings.Config.LocalPath, CHECKOUT_ENTRY_3_FILENAME)));
             Assertion.Assert (entry.Revision.Equals ("1.2"));
             Assertion.Assert (entry.Date.Equals ("Sat Jun 21 03:22:02 2003"));
             Assertion.Assert (entry.Conflict.Equals ("Sat Jun 21 03:22:03 2003"));
@@ -209,7 +228,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         [Test]
         public void TestParseDirEntry () {
             Entry entry = new Entry (this.settings.Config.LocalPath, DIR_ENTRY);
-
+            Assertion.AssertEquals(Path.Combine(this.settings.Config.LocalPath, DIR_ENTRY_DIRNAME),
+                entry.FullPath);
             Assertion.Assert (entry.IsDirectory == true);
 
         }
@@ -218,21 +238,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// Test too many args.
         /// </summary>
         [Test]
-        [ExpectedException(typeof(ArgumentException))]
+        [ExpectedException(typeof(EntryParseException))]
         public void TestTooManyArgsEntry () {
             Entry entry = new Entry (this.settings.Config.LocalPath, INVALID_ENTRY_1);
         }
-
-        /// <summary>
-        ///     Clean up any test directories, etc.
-        /// </summary>
-        [TearDown]
-        public void TearDown () {
-            if (Directory.Exists (this.settings.Config.LocalPath)) {
-                Directory.Delete (this.settings.Config.LocalPath, true);
-            }
-        }
-
     }
 }
 

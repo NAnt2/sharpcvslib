@@ -73,29 +73,79 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         /// <summary>
-        ///     Create the cvs file based on the filename.  Returns the
-        ///         cvs file interface.
+        /// Create a cvs management object for the given path.  The path specified
+        ///     should be the folder above the cvs directory.  The name of the file
+        ///     and full path is then derived from the cvs line in the case of an
+        ///     Entries line, or in the case of a single line cvs management file
+        ///     (i.e. Root, Repository, etc.) the object being managed is the
+        ///     entire directory.
+        /// </summary>
+        /// <param name="path">The path to the folder above the cvs directory.</param>
+        /// <param name="fileName">The name of the cvs file that is being modified/
+        ///     created.</param>
+        /// <param name="line">The line to add to the file.</param>
+        /// <returns>A new cvs file that contains properties for the different
+        ///     elements in the line.</returns>
+        /// <exception cref="UnsupportedFileTypeException">If the cvs filetype specified
+        ///     is unknown.</exception>
+        /// <example>
+        ///     The following will produce an entries file 
+        ///         (directory seperator character may be different):
+        ///         
+        ///         path            = c:/dev/sharpcvslib
+        ///         fileName        = Entries
+        ///         line            = /SharpCvsLib.build/1.1///
+        ///         
+        ///     With the following information:
+        ///         FileContents    = /SharpCvsLib.build/1.1///
+        ///         FileName        = Entries
+        ///         FullPath        = c:/dev/sharpcvslib/SharpCvsLib.build
+        ///         IsMultiLined    = true
+        ///         Path            = c:/dev/sharpcvslib/
+        ///         
+        ///     NOTE:
+        ///     <ul>
+        ///         <li>The path seperator may face the other way</li>
+        ///         <li>There will be an ending path seperator after every directory,
+        ///             as in the path.</li>
+        ///     </ul>
+        /// </example>
+        public ICvsFile CreateCvsObject (String path, String fileName, String line) {
+            FileType fileType = this.GetFileType(fileName);
+            return this.CreateCvsObject(path, fileType, line);
+        }
+
+        /// <summary>
+        /// Create the cvs file based on the filename.  Returns the
+        ///     cvs file interface.
         /// </summary>
         public ICvsFile CreateCvsObject (String path,
                                         FileType fileType,
                                         String line) {
             ICvsFile entry;
             switch (fileType) {
-            case (FileType.Entries):
-                            entry = new Entry(path, line);
-                break;
-            case (FileType.Repository):
-                            entry = new Repository (path, line);
-                break;
-            case (FileType.Root):
-                            entry = new Root (path, line);
-                break;
-            case (FileType.Tag):
-                            entry = new Tag (path, line);
-                break;
-            default:
-                String msg = "Unable to create object.";
-                throw new Exception (msg);
+                case (FileType.Entries): {
+                    entry = new Entry(path, line);
+                    break;
+                }
+                case (FileType.Repository):{
+                    entry = new Repository (path, line);
+                    break;
+                }
+                case (FileType.Root):{
+                    entry = new Root (path, line);
+                    break;
+                }
+                case (FileType.Tag):{
+                    entry = new Tag (path, line);
+                    break;
+                }
+                default:{
+                    StringBuilder msg = new StringBuilder();
+                    msg.Append("Unknown file type specified.");
+                    msg.Append("fileType=[").Append(fileType.ToString()).Append("]");
+                    throw new UnsupportedFileTypeException (msg.ToString());
+                }
 
             }
             return entry;
@@ -109,18 +159,52 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <returns>The name of the cvs file.</returns>
         public String GetFilename (FileType fileType) {
             switch (fileType) {
-            case (FileType.Entries):
-                            return Entry.FILE_NAME;
-            case (FileType.Repository):
-                            return Repository.FILE_NAME;
-            case (FileType.Root):
-                            return Root.FILE_NAME;
-            case (FileType.Tag):
-                            return Tag.FILE_NAME;
-            default:
-                String msg = "Unable to create object.";
-                throw new Exception (msg);
+                case (FileType.Entries):{
+                    return Entry.FILE_NAME;
+                }
+                case (FileType.Repository):{
+                    return Repository.FILE_NAME;
+                }
+                case (FileType.Root):{
+                    return Root.FILE_NAME;
+                }
+                case (FileType.Tag):{
+                    return Tag.FILE_NAME;
+                }
+                default:{
+                    StringBuilder msg = new StringBuilder();
+                    msg.Append("Unknown file type specified.");
+                    msg.Append("fileType=[").Append(fileType.ToString()).Append("]");
+                    throw new UnsupportedFileTypeException (msg.ToString());
+                }
+            }
+        }
 
+        /// <summary>
+        /// Derive the file type from the name of the cvs file.
+        /// </summary>
+        /// <param name="name">The name of the cvs file.</param>
+        /// <returns>The type of the file.</returns>
+        public FileType GetFileType (String name) {
+            switch (name) {
+                case (Entry.FILE_NAME): {
+                    return FileType.Entries;
+                }
+                case (Repository.FILE_NAME): {
+                    return FileType.Repository;
+                }
+                case (Root.FILE_NAME): {
+                    return FileType.Root;
+                }
+                case (Tag.FILE_NAME): {
+                    return FileType.Tag;
+                }
+                default: {
+                    StringBuilder msg = new StringBuilder();
+                    msg.Append("Unknown file type specified.");
+                    msg.Append("name=[").Append(name).Append("]");
+                    throw new UnsupportedFileTypeException (msg.ToString());
+                }
             }
         }
     }

@@ -40,21 +40,21 @@ using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 
-using ICSharpCode.SharpCvsLib.Config.Tests;
 using ICSharpCode.SharpCvsLib.Console.Parser;
+
+using ICSharpCode.SharpCvsLib.Tests.Config;
 
 using log4net;
 using NUnit.Framework;
 
 namespace ICSharpCode.SharpCvsLib.Console.Commands {
-
     /// <summary>
     ///     Test the LoginCommand object for valid ones
     ///         and test invalid ones.
     /// </summary>
     [TestFixture]
     public class LoginCommandTest {
-        private TestSettings settings = new TestSettings();
+        private SharpCvsLibTestsConfig settings = SharpCvsLibTestsConfig.GetInstance();
         private readonly ILog LOGGER = LogManager.GetLogger(typeof(LoginCommandTest));
         /// <summary>
         ///     Constructory for test case.

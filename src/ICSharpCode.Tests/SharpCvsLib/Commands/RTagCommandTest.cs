@@ -39,7 +39,7 @@ using log4net;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib.Misc;
-using ICSharpCode.SharpCvsLib.Config.Tests;
+using ICSharpCode.SharpCvsLib.Tests.Config;
 
 namespace ICSharpCode.SharpCvsLib.Commands {
 	/// <summary>
@@ -48,7 +48,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 	[TestFixture]
 	public class RTagCommandTest {
 
-        private TestSettings settings = new TestSettings ();
+        private SharpCvsLibTestsConfig settings = SharpCvsLibTestsConfig.GetInstance();
         private const String TEST_TAG_1 = "TEST_1";
 
         /// <summary>

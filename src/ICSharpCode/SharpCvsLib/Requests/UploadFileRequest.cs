@@ -25,45 +25,46 @@
 
 using System.IO;
 
+using ICSharpCode.SharpCvsLib.Config;
+
 namespace ICSharpCode.SharpCvsLib.Requests {
 
-/// <summary>
-/// Upload a file to the repository.
-/// </summary>
-public class UploadFileRequest : AbstractRequest
-{
-    private string filename;
-
     /// <summary>
-    /// Constructor.
+    /// Upload a file to the repository.
     /// </summary>
-    /// <param name="filename">The name of the file to upload.</param>
-    public UploadFileRequest(string filename)
-    {
-        this.filename = filename;
-    }
+    public class UploadFileRequest : AbstractRequest {
+        private string filename;
+        private SharpCvsLibConfig settings = SharpCvsLibConfig.GetInstance();
 
-    /// <summary>
-    /// Upload the file to the server.
-    /// </summary>
-    public override string RequestString {
-        get {
-            FileStream fs = File.OpenRead(filename);
-            byte[] data = new byte[fs.Length];
-            fs.Read(data, 0, data.Length);
-            fs.Close();
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="filename">The name of the file to upload.</param>
+        public UploadFileRequest(string filename) {
+            this.filename = filename;
+        }
 
-            return data.Length.ToString() + "\n" + System.Text.Encoding.ASCII.GetString(data);
+        /// <summary>
+        /// Upload the file to the server.
+        /// </summary>
+        public override string RequestString {
+            get {
+                FileStream fs = File.OpenRead(filename);
+                byte[] data = new byte[fs.Length];
+                fs.Read(data, 0, data.Length);
+                fs.Close();
+
+                return data.Length.ToString() + "\n" + this.settings.Encoding.GetString(data);
+            }
+        }
+
+        /// <summary>
+        /// Response expected: <code>false</code>.
+        /// </summary>
+        public override bool IsResponseExpected {
+            get {
+                return false;
+            }
         }
     }
-
-    /// <summary>
-    /// Response expected: <code>false</code>.
-    /// </summary>
-    public override bool IsResponseExpected {
-        get {
-            return false;
-        }
-    }
-}
 }

@@ -39,14 +39,13 @@ using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 
-using ICSharpCode.SharpCvsLib.Config.Tests;
+using ICSharpCode.SharpCvsLib.Tests.Config;
 using ICSharpCode.SharpCvsLib.Console.Parser;
 
 using log4net;
 using NUnit.Framework;
 
 namespace ICSharpCode.SharpCvsLib.Console.Commands {
-    
     /// <summary>
     ///     Test the update command object for valid ones
     ///         and test invalid ones.
@@ -54,7 +53,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
     [TestFixture]
     public class UpdateCommandTest {
 
-        private TestSettings settings = new TestSettings();
+        private SharpCvsLibTestsConfig settings = 
+            SharpCvsLibTestsConfig.GetInstance();
         private readonly ILog LOGGER = LogManager.GetLogger(typeof(UpdateCommandTest));
         /// <summary>
         ///     Constructory for test case.

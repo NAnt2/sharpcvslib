@@ -33,29 +33,27 @@ using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
-
-/// <summary>
-/// Handle the cvs server "Ok" response.
-/// </summary>
-public class OkResponse : IResponse
-{
     /// <summary>
-    /// All good response
+    ///     ok \n
+    ///         The command completed successfully.
     /// </summary>
-    /// <param name="cvsStream"></param>
-    /// <param name="services"></param>
-    public void Process(CvsStream cvsStream, IResponseServices services)
-    {
-        // TODO: Do something useful with this stream.
-    }
+    public class OkResponse : IResponse {
+        /// <summary>
+        /// Process an ok response from the server.
+        /// 
+        ///     TODO: Do something useful with this response.
+        /// </summary>
+        /// <param name="cvsStream"></param>
+        /// <param name="services"></param>
+        public void Process(CvsStream cvsStream, IResponseServices services) {
+            // TODO: Do something useful with this stream.
+        }
 
-    /// <summary>
-    /// Indicator stating whether the response is terminating or not.
-    /// </summary>
-    public bool IsTerminating {
-        get {
-            return true;
+        /// <summary>
+        /// Indicator stating whether the response is terminating or not.
+        /// </summary>
+        public bool IsTerminating {
+            get {return true;}
         }
     }
-}
 }

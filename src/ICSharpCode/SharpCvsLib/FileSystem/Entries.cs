@@ -49,16 +49,17 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         /// <summary>
         /// Create a new instance of the entries class.
         /// </summary>
-		public Entries() {
+		public Entries() : base() {
+
 		}
 
         /// <summary>
         /// Set the entry to the given location.  The path to the entry on the filesystem
         ///     is the key for the entry.
         /// </summary>
-        public Entry this[int relativePath] {
-            get { return ((Entry)(Dictionary[relativePath])); }
-            set { Dictionary[relativePath] = value; }
+        public Entry this[String fullPath] {
+            get { return ((Entry)(Dictionary[fullPath])); }
+            set { Dictionary[fullPath] = value; }
         }
 
         /// <summary>
@@ -88,6 +89,20 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         /// <returns></returns>
         public bool Contains(String path) {
             return Dictionary.Contains(path);
+        }
+
+        /// <summary>
+        /// Render the entries collection as a human readable string.
+        /// </summary>
+        /// <returns></returns>
+        public override String ToString() {
+            ICSharpCode.SharpCvsLib.Util.ToStringFormatter formatter = new
+                ICSharpCode.SharpCvsLib.Util.ToStringFormatter("Entries");
+            foreach (DictionaryEntry entry in Dictionary) {
+                formatter.AddProperty("Entry key", entry.Key);
+                formatter.AddProperty("Entry value", entry.Value);
+            }
+            return formatter.ToString();
         }
 	}
 }

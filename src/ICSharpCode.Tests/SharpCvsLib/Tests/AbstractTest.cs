@@ -37,23 +37,31 @@ using NUnit.Framework;
 
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Commands;
+using ICSharpCode.SharpCvsLib.Config;
 using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib.Misc;
-using ICSharpCode.SharpCvsLib.Config.Tests;
+using ICSharpCode.SharpCvsLib.Tests.Config;
 
-namespace ICSharpCode.SharpCvsLib.Tests
-{
+using log4net;
+
+// TODO: Change to internalize helpers (remove)
+[assembly: log4net.Config.DOMConfigurator(
+ConfigFileExtension="config", Watch=true)]
+
+namespace ICSharpCode.SharpCvsLib.Tests {
 	/// <summary>
 	/// Abstract test is used to perform common setup and teardown routines for
 	///     tests.
 	/// </summary>
 	public class AbstractTest {
-        private TestSettings settings = new TestSettings ();
+        private SharpCvsLibTestsConfig settings = 
+            SharpCvsLibTestsConfig.GetInstance();
+        private readonly ILog LOGGER = LogManager.GetLogger(typeof(AbstractTest));
 
         /// <summary>
         /// Settings that are used for the tests.
         /// </summary>
-        public TestSettings Settings {
+        public SharpCvsLibTestsConfig Settings {
             get {return this.settings;}
         }
 
@@ -69,6 +77,8 @@ namespace ICSharpCode.SharpCvsLib.Tests
         /// </summary>
         [SetUp]
         public void SetUp () {
+            LOGGER.Debug("Test settings: " + this.Settings);
+            LOGGER.Debug("Application settings: " + SharpCvsLibConfig.GetInstance());
             this.GetTempPath();
         }
 

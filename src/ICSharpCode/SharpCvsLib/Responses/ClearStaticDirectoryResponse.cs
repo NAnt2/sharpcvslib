@@ -43,66 +43,59 @@ using ICSharpCode.SharpCvsLib.Streams;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
-
-/// <summary>
-/// Handle a clear static directory response.
-///
-/// from: http://www.loria.fr/~molli/cvs/doc/cvsclient_5.html
-///    Clear-static-directory pathname \n
-///
-/// This instructs the client to un-set the Entries.Static flag,
-/// which it should then send back to the server in a Static-directory
-/// request whenever the directory is operated on. pathname ends in a
-/// slash; its purpose is to specify a directory, not a file within a
-/// directory.
-///
-/// </summary>
-public class ClearStaticDirectoryResponse : IResponse
-{
-    private readonly ILog LOGGER =
-        LogManager.GetLogger (typeof (ClearStaticDirectoryResponse));
     /// <summary>
-    /// Process a clear static directory response.
+    /// Handle a clear static directory response.
+    ///
+    /// from: http://www.loria.fr/~molli/cvs/doc/cvsclient_5.html
+    ///    Clear-static-directory pathname \n
+    ///
+    /// This instructs the client to un-set the Entries.Static flag,
+    /// which it should then send back to the server in a Static-directory
+    /// request whenever the directory is operated on. pathname ends in a
+    /// slash; its purpose is to specify a directory, not a file within a
+    /// directory.
+    ///
     /// </summary>
-    /// <param name="cvsStream"></param>
-    /// <param name="services"></param>
-    public void Process(CvsStream cvsStream, IResponseServices services)
-    {
-        string localPath      = cvsStream.ReadLine();
-        string reposPath = cvsStream.ReadLine();
-        // TODO: Remove this code, cvs file creation is moving all into the manager class.
-        //	        PathTranslator pathTranslator =
-        //	            new PathTranslator (services.Repository,
-        //	                                reposPath);
-        if (LOGGER.IsDebugEnabled) {
-            StringBuilder msg = new StringBuilder ();
-            msg.Append ("\nClear static directory response.  ");
-            msg.Append ("\n\tlocalPath=[").Append (localPath).Append ("]");
-            msg.Append ("\n\treposPath=[").Append (reposPath).Append ("]");
-            //	            msg.Append ("\n\tpathTranslator=[").Append (pathTranslator).Append ("]");
-            LOGGER.Debug (msg);
+    public class ClearStaticDirectoryResponse : IResponse {
+        private readonly ILog LOGGER =
+            LogManager.GetLogger (typeof (ClearStaticDirectoryResponse));
+        /// <summary>
+        /// Process a clear static directory response.
+        /// </summary>
+        /// <param name="cvsStream"></param>
+        /// <param name="services"></param>
+        public void Process(CvsStream cvsStream, IResponseServices services) {
+            string localPath      = cvsStream.ReadLine();
+            string reposPath = cvsStream.ReadLine();
+
+            Manager manager = new Manager (services.Repository.WorkingPath);
+            manager.AddRepository (services.Repository, localPath, reposPath);
+            manager.AddRoot (services.Repository, localPath, reposPath);
+            PathTranslator pathTranslator = new PathTranslator (services.Repository, reposPath);
+
+            Entry entry = Entry.CreateEntry(pathTranslator.LocalPathAndFilename);
+            // the root module directory does not get a cvs Entries line.
+            if (!services.Repository.WorkingPath.Equals(pathTranslator.LocalPathAndFilename)) {
+                manager.AddEntry(services.Repository, localPath, reposPath, entry.FileContents);
+            }
+
+            if (LOGGER.IsDebugEnabled) {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append ("\n Clear static directory response.  ");
+                msg.Append ("\n\t localPath=[").Append (localPath).Append ("]");
+                msg.Append ("\n\t reposPath=[").Append (reposPath).Append ("]");
+                msg.Append ("\n\t entry=[").Append(entry).Append("]");
+                msg.Append("\n\t entry.FullPath=[").Append(entry.FullPath).Append("]");
+                msg.Append("\n\t entry.Path=[").Append(entry.Path).Append("]");
+                LOGGER.Debug (msg);
+            }
         }
-        Manager manager = new Manager ();
-        //	        Factory factory = new Factory ();
-        //	        ICvsFile repository = factory.CreateCvsObject (pathTranslator.LocalPath,
-        //	                                                       Factory.FileType.Repository,
-        //	                                                       pathTranslator.RelativePath);
-        //
-        //	        ICvsFile root = factory.CreateCvsObject (pathTranslator.LocalPath,
-        //	                                                 Factory.FileType.Root,
-        //	                                                 services.Repository.CvsRoot.ToString ());
-        manager.AddRepository (services.Repository, localPath, reposPath);
-        manager.AddRoot (services.Repository, localPath, reposPath);
 
-    }
-
-    /// <summary>
-    /// Return true if this response cancels the transaction
-    /// </summary>
-    public bool IsTerminating {
-        get {
-            return false;
+        /// <summary>
+        /// Return true if this response cancels the transaction
+        /// </summary>
+        public bool IsTerminating {
+            get {return false;}
         }
     }
-}
 }

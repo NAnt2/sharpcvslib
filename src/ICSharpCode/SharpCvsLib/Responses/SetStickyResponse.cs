@@ -39,57 +39,49 @@ using ICSharpCode.SharpCvsLib.Streams;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
-
-/// <summary>
-/// Set-sticky pathname \n
-///    Additional data: tagspec \n. Tell the client to set a sticky tag
-///    or date, which should be supplied with the Sticky request for future
-///    operations. pathname ends in a slash; its purpose is to specify a
-///    directory, not a file within a directory. The client should store
-///    tagspec and pass it back to the server as-is, to allow for future
-///    expansion. The first character of tagspec is `T' for a tag, `D' for
-///    a date, or something else for future expansion. The remainder of
-///    tagspec contains the actual tag or date.
-/// </summary>
-public class SetStickyResponse : IResponse {
-
-    private ILog LOGGER =
-        LogManager.GetLogger (typeof (SetStickyResponse));
-
     /// <summary>
-    /// Process the response stream.
+    /// Set-sticky pathname \n
+    ///    Additional data: tagspec \n. Tell the client to set a sticky tag
+    ///    or date, which should be supplied with the Sticky request for future
+    ///    operations. pathname ends in a slash; its purpose is to specify a
+    ///    directory, not a file within a directory. The client should store
+    ///    tagspec and pass it back to the server as-is, to allow for future
+    ///    expansion. The first character of tagspec is `T' for a tag, `D' for
+    ///    a date, or something else for future expansion. The remainder of
+    ///    tagspec contains the actual tag or date.
     /// </summary>
-    /// <param name="cvsStream"></param>
-    /// <param name="services"></param>
-    public void Process(CvsStream cvsStream, IResponseServices services)
-    {
-        string localPath      = cvsStream.ReadLine();
-        string repositoryPath = cvsStream.ReadLine();
-        string stickyTag      = cvsStream.ReadLine();
+    public class SetStickyResponse : IResponse {
 
-        PathTranslator orgPath   =
-            new PathTranslator (services.Repository, repositoryPath);
+        private ILog LOGGER =
+            LogManager.GetLogger (typeof (SetStickyResponse));
 
-        string localPathAndFilename = orgPath.LocalPathAndFilename;
-        string directory = orgPath.LocalPath;
+        /// <summary>
+        /// Process the response stream.
+        /// </summary>
+        /// <param name="cvsStream"></param>
+        /// <param name="services"></param>
+        public void Process(CvsStream cvsStream, IResponseServices services) {
+            string localPath      = cvsStream.ReadLine();
+            string repositoryPath = cvsStream.ReadLine();
+            string stickyTag      = cvsStream.ReadLine();
 
-        if (LOGGER.IsDebugEnabled) {
+            PathTranslator orgPath   =
+                new PathTranslator (services.Repository, repositoryPath);
+
+            string localPathAndFilename = orgPath.LocalPathAndFilename;
+            string directory = orgPath.LocalPath;
+
+            Manager manager = 
+                new Manager (services.Repository.WorkingPath);
+            manager.AddTag (services.Repository, localPath, repositoryPath, stickyTag);
 
         }
-        Tag tag = new Tag (directory, stickyTag);
-        Manager manager = new Manager ();
-        manager.Add (tag);
 
-    }
-
-    /// <summary>
-    /// Indicator stating whether the response is terminating or not.
-    /// </summary>
-    public bool IsTerminating {
-        get {
-            return false;
+        /// <summary>
+        /// Indicator stating whether the response is terminating or not.
+        /// </summary>
+        public bool IsTerminating {
+            get {return false;}
         }
     }
-}
-
 }

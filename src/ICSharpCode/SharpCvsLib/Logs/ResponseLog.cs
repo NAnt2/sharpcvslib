@@ -32,40 +32,60 @@
 #endregion
 
 using System;
+using System.Text;
+
+using ICSharpCode.SharpCvsLib.Config;
 
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Logs {
-/// <summary>
-/// Utility class for debugging cvs server responses.  Logging outputs are
-///     attempted in the following order:
-///     <ol>
-///         <li>log4net properties for Type in application config file.</li>
-///         <li>cvs.out file in the working folder of the assembly.</li>
-///         <li>console message</li>
-///     </ol>
-/// A failure at any level causes the program to attempt to log to another
-///     level.
-/// </summary>
-public class ResponseLog {
-
-    private readonly ILog LOGGER = LogManager.GetLogger (typeof (ResponseLog));
     /// <summary>
-    /// Constructor.
-    ///
-    /// // TODO: Write a more useful description.
+    /// Utility class for debugging cvs server responses.  Logging outputs are
+    ///     attempted in the following order:
+    ///     <ol>
+    ///         <li>log4net properties for Type in application config file.</li>
+    ///         <li>cvs.out file in the working folder of the assembly.</li>
+    ///         <li>console message</li>
+    ///     </ol>
+    /// A failure at any level causes the program to attempt to log to another
+    ///     level.
     /// </summary>
-    public ResponseLog () {
-    }
+    public class ResponseLog {
+        private SharpCvsLibConfig settings;
+        private readonly ILog LOGGER = LogManager.GetLogger (typeof (ResponseLog));
+        /// <summary>
+        /// Constructor.
+        ///
+        /// // TODO: Write a more useful description.
+        /// </summary>
+        public ResponseLog () {
+            this.settings = SharpCvsLibConfig.GetInstance();
+        }
 
-    /// <summary>
-    /// Log the message.
-    ///
-    /// // TODO: Write a more useful description.
-    /// </summary>
-    /// <param name="message">A message to output to the log.</param>
-    public void Log (String message) {
-        LOGGER.Debug (message);
+        private static String duplicateResponseChecker;
+        /// <summary>
+        /// Log the message.
+        ///
+        /// // TODO: Write a more useful description.
+        /// </summary>
+        /// <param name="message">A message to output to the log.</param>
+        public void Log (String message) {
+            if (null != message || String.Empty != message) {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append(message);
+                if (this.settings.Log.DebugLog.LogStackTrace) {
+                    msg.Append("\n Stack Trace:");
+                    msg.Append(Environment.StackTrace);
+                }
+
+                if (message.Equals(duplicateResponseChecker)) {
+                    LOGGER.Debug("duplicate logging call.  stack trace=[" + Environment.StackTrace + "]");
+                    duplicateResponseChecker = message;
+                } else if (null == duplicateResponseChecker || String.Empty == duplicateResponseChecker) {
+                    duplicateResponseChecker = message;
+                }
+                LOGGER.Debug(msg);
+            }
+        }
     }
-}
 }

@@ -1,6 +1,5 @@
-#region "Copyright"
-//
-// Copyright (C) 2003 Steve Kenzell
+#region Copyright
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,60 +27,47 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Steve Kenzell</author>
-//    <author>Clayton Harbour</author>
+//    Author:     Clayton Harbour
 #endregion
+
 using System;
-using System.Collections;
-using System.IO;
-using System.Diagnostics;
 
-using ICSharpCode.SharpCvsLib;
-using ICSharpCode.SharpCvsLib.Client;
-using ICSharpCode.SharpCvsLib.Misc;
-
-using ICSharpCode.SharpCvsLib.Console.Parser;
-
-using log4net;
-using NUnit.Framework;
-
-namespace ICSharpCode.SharpCvsLib.Console.Parser {
+namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
-    ///     Test that the commandNames object is created successfully
-    ///
+    ///     This exception is thrown if there is no entry matching the specifed
+    ///         criteria.
     /// </summary>
-    [TestFixture]
-    public class CommandNamesTest
-    {
-        /// <summary>
-        ///     Constructory for test case.
-        /// </summary>
-        public CommandNamesTest ()
-        {
-        }
+    public class DuplicateEntryException : Exception {
 
         /// <summary>
-        ///     Create a CommandNames object.
-        ///
+        /// Occurs if a duplicate entry has found it's way into the Entries file.
+        ///     This is an indication that something has corrupted the cvs repository.
         /// </summary>
-        [Test]
-        public void MakeTest ()
-        {
-            // Test Creating a Command object
-            CommandNames commands  = new CommandNames();
+        public DuplicateEntryException () {
 
-            // Check the first command object
-            AssertCommandEquals (commands.Commands[0], "add", "ad", "new");
+        }
 
-            // Check the last command object
-            AssertCommandEquals (commands.Commands[commands.Commands.GetLength(0) - 1], "watchers", null, null);
+        /// <summary>
+        /// Occurs if a duplicate entry has found it's way into the Entries file.
+        ///     This is an indication that something has corrupted the cvs repository.
+        /// </summary>
+        /// <param name="message">Additional information to pass on in the
+        ///     exception.</param>
+        public DuplicateEntryException (String message) : base (message) {
         }
-        private void AssertCommandEquals (Command com,
-                                        string prime, string nick1, string nick2)
-        {
-            Assertion.AssertEquals (prime, com.First);
-            Assertion.AssertEquals (nick1, com.Nick1);
-            Assertion.AssertEquals (nick2, com.Nick2);
+
+        /// <summary>
+        /// Occurs if a duplicate entry has found it's way into the Entries file.
+        ///     This is an indication that something has corrupted the cvs repository.
+        /// </summary>
+        /// <param name="message">A message that will be helpful for someone
+        ///     resolving the issue with the library.</param>
+        /// <param name="e">An exception that has caused this error, or has
+        ///     led to this error.</param>
+        public DuplicateEntryException (String message, Exception e) : base (message, e) {
+
         }
+
     }
+
 }

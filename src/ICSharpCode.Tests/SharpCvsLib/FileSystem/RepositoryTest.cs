@@ -38,7 +38,7 @@ using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 
-using ICSharpCode.SharpCvsLib.Config.Tests;
+using ICSharpCode.SharpCvsLib.Tests.Config;
 
 using log4net;
 using NUnit.Framework;
@@ -50,7 +50,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// </summary>
     [TestFixture]
     public class RepositoryTest {
-        private TestSettings settings = new TestSettings ();
+        private SharpCvsLibTestsConfig settings = 
+            SharpCvsLibTestsConfig.GetInstance();
+
         private readonly String RELATIVE_PATH = "src";
         private readonly String REPOSITORY_ENTRY1 = "sharpcvslib/src";
         private readonly String REPOSITORY_ENTRY2 = "sharpcvslib/doc";

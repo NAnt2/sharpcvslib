@@ -29,52 +29,50 @@ using System;
 
 namespace ICSharpCode.SharpCvsLib.Requests {
 
-/// <summary>
-/// Response expected: no.
-/// Transmit one of the global options `-q', `-Q', `-l', `-t', `-r', or `-n'.
-/// option must be one of those strings, no variations (such as combining of options)
-/// are allowed. For graceful handling of valid-requests, it is probably better to make
-/// new global options separate requests, rather than trying to add them to this request.
-/// </summary>
-public class GlobalOptionRequest : AbstractRequest
-{
-    private string option;
-
     /// <summary>
-    /// Options that are available globally.
+    /// Response expected: no.
+    /// Transmit one of the global options `-q', `-Q', `-l', `-t', `-r', or `-n'.
+    /// option must be one of those strings, no variations (such as combining of options)
+    /// are allowed. For graceful handling of valid-requests, it is probably better to make
+    /// new global options separate requests, rather than trying to add them to this request.
     /// </summary>
-    public class Options {
+    public class GlobalOptionRequest : AbstractRequest {
+        private string option;
+
         /// <summary>
-        /// Suppress the cvs chatter.
+        /// Options that are available globally.
         /// </summary>
-        public const String QUIET = "-q";
-    }
+        public class Options {
+            /// <summary>
+            /// Suppress the cvs chatter.
+            /// </summary>
+            public const String QUIET = "-q";
+        }
 
-    /// <summary>
-    /// Constructor
-    /// </summary>
-    /// <param name="option"></param>
-    public GlobalOptionRequest(string option)
-    {
-        this.option = option;
-    }
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="option"></param>
+        public GlobalOptionRequest(string option) {
+            this.option = option;
+        }
 
-    /// <summary>
-    /// Send in the option specified.
-    /// </summary>
-    public override string RequestString {
-        get {
-            return "Global_option " + option + "\n";
+        /// <summary>
+        /// Send in the option specified.
+        /// </summary>
+        public override string RequestString {
+            get {
+                return "Global_option " + option + "\n";
+            }
+        }
+
+        /// <summary>
+        /// <code>false</code>, a response is not expected.
+        /// </summary>
+        public override bool IsResponseExpected {
+            get {
+                return false;
+            }
         }
     }
-
-    /// <summary>
-    /// <code>false</code>, a response is not expected.
-    /// </summary>
-    public override bool IsResponseExpected {
-        get {
-            return false;
-        }
-    }
-}
 }

@@ -32,13 +32,16 @@
 #endregion
 
 using System;
+using System.Configuration;
+using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
 using ICSharpCode.SharpCvsLib.Config.Logging;
 
-namespace ICSharpCode.SharpCvsLib.Config {
+using log4net;
 
+namespace ICSharpCode.SharpCvsLib.Config {
     /// <summary>
     ///     Holds the core configuration settings for sharpcvslib.
     /// </summary>
@@ -48,11 +51,18 @@ namespace ICSharpCode.SharpCvsLib.Config {
         /// The default port that a cvs server listens on.
         /// </summary>
         public const int DEFAULT_PORT = 2401;
+        /// <summary>
+        /// The default encoding type for the application.
+        /// </summary>
+        private static Encoding DEFAULT_ENCODING = Encoding.ASCII;
+
         private const int DEFAULT_TIMEOUT = 1000;
         private const int DEFAULT_AUTH_SLEEP = 1000;
         private const string DEFAULT_SHELL = "ssh";
         private const string VAR_CVS_RSH = "CVS_RSH";
 
+        private static readonly ILog LOGGER = 
+            LogManager.GetLogger(typeof(SharpCvsLibConfig));
         /// <summary>
         /// The cvs connection type
         ///     <ol>
@@ -123,6 +133,20 @@ namespace ICSharpCode.SharpCvsLib.Config {
         }
 
         /// <summary>
+        /// The encoding to use for streams.
+        /// </summary>
+        public Encoding Encoding {
+            get {return SharpCvsLibConfig.DEFAULT_ENCODING;}
+        }
+
+        /// <summary>
+        /// The default encoding to use for streams.
+        /// </summary>
+        public static Encoding DefaultEncoding {
+            get {return SharpCvsLibConfig.DEFAULT_ENCODING;}
+        }
+
+        /// <summary>
         /// Create a new instance of the logging configuration.
         /// </summary>
         public SharpCvsLibConfig () {
@@ -142,6 +166,26 @@ namespace ICSharpCode.SharpCvsLib.Config {
             formatter.AddProperty("Verbose", this.Verbose);
 
             return formatter.ToString();
+        }
+
+        /// <summary>
+        /// Get a new instance of the configuration settings.  If the configuration
+        ///     file cannot be loaded then use default configuration settings.
+        /// </summary>
+        /// <returns>The configuration settings contained in the configuration file,
+        ///     or if that cannot be loaded then default configurations are
+        ///     returned.</returns>
+        public static SharpCvsLibConfig GetInstance () {
+            SharpCvsLibConfig config;
+            try {
+                config =
+                    (SharpCvsLibConfig)ConfigurationSettings.GetConfig
+                    (SharpCvsLibConfigHandler.APP_CONFIG_SECTION);
+            } catch (Exception e) {
+                LOGGER.Error(e);
+                config = new SharpCvsLibConfig();
+            }
+            return config;
         }
     }
 }

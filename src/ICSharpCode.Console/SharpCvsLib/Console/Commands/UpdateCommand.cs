@@ -111,7 +111,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 if (!date.Equals(DateTime.MinValue)) {
                     currentWorkingDirectory.Date = date;
                 }
-                Manager manager = new Manager();
+                Manager manager = new Manager(currentWorkingDirectory.WorkingPath);
                 currentWorkingDirectory.FoldersToUpdate =
                     manager.FetchFilesToUpdate (Path.Combine (localDirectory, repository));
                 // Create new UpdateCommand2 object

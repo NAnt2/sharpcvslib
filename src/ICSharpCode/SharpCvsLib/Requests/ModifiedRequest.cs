@@ -26,45 +26,40 @@
 #endregion
 
 namespace ICSharpCode.SharpCvsLib.Requests {
-
-/// <summary>
-/// Response expected: no.
-/// Additional data: mode, \n, file transmission.
-/// Send the server a copy of one locally modified file.
-/// filename is relative to the most recent repository sent with Directory.
-/// If the user is operating on only some files in a directory, only those
-/// files need to be included. This can also be sent without Entry, if there
-/// is no entry for the file.
-/// </summary>
-public class ModifiedRequest : AbstractRequest
-{
-    private string file;
-
     /// <summary>
-    /// Constructor
+    /// Response expected: no.
+    /// Additional data: mode, \n, file transmission.
+    /// Send the server a copy of one locally modified file.
+    /// filename is relative to the most recent repository sent with Directory.
+    /// If the user is operating on only some files in a directory, only those
+    /// files need to be included. This can also be sent without Entry, if there
+    /// is no entry for the file.
     /// </summary>
-    /// <param name="file">The name of the file that has been modified.</param>
-    public ModifiedRequest(string file)
-    {
-        this.file = file;
-    }
+    public class ModifiedRequest : AbstractRequest {
+        private string file;
 
-    /// <summary>
-    /// Send a modified file to the repository.
-    /// </summary>
-    public override string RequestString {
-        get {
-            return "Modified " + file + "\n" + "u=rw,g=r,o=r\n";
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="file">The name of the file that has been modified.</param>
+        public ModifiedRequest(string file) {
+            this.file = file;
+        }
+
+        /// <summary>
+        /// Send a modified file to the repository.
+        /// </summary>
+        public override string RequestString {
+            get {
+                return "Modified " + file + "\n" + "u=rw,g=rw,o=rw\n";
+            }
+        }
+
+        /// <summary>
+        /// <code>false</code>, a response is not expected.
+        /// </summary>
+        public override bool IsResponseExpected {
+            get {return false;}
         }
     }
-
-    /// <summary>
-    /// <code>false</code>, a response is not expected.
-    /// </summary>
-    public override bool IsResponseExpected {
-        get {
-            return false;
-        }
-    }
-}
 }

@@ -302,6 +302,20 @@ public class OtherRequestsTest {
     }
 
     /// <summary>
+    ///     Tests the 'init' request.
+    /// </summary>
+    [Test]
+    public void IsModifiedRequestTest() {
+        IRequest request = new IsModifiedRequest("test.cs");
+
+        // TODO: ModifiedRequest does not allow you to specify the mode!
+        MyAssertStringEquals(request.RequestString, "Is-modified", "test.cs");
+        Assertion.Assert(!request.IsResponseExpected);
+
+        Assertion.Assert(!request.DoesModifyConnection);
+    }
+
+    /// <summary>
     ///     Tests the 'log' request.
     /// </summary>
     [Test]

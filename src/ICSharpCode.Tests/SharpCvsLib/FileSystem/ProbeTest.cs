@@ -35,6 +35,8 @@ using System;
 using System.Collections;
 using System.IO;
 
+using log4net;
+
 using NUnit.Framework;
 
 using ICSharpCode.SharpCvsLib.Tests.Util;
@@ -48,20 +50,24 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// </summary>
     [TestFixture]
     public class ProbeTest : AbstractTest {
-
+        private readonly ILog LOGGER = LogManager.GetLogger(typeof(ProbeTest));
         /// <summary>
         /// Tests that probe works correctly with only files specified
         ///     (i.e. no recursion).
         /// </summary>
         [Test]
         public void TestNoCvsFiles () {
-            String searchDir = Path.GetTempPath ();
+            String searchDir = this.GetTempPath();
             Probe probe = new Probe ();
             probe.Start = searchDir;
 
             probe.Execute();
             Assertion.AssertNotNull(probe.Files);
-            Assertion.Assert(probe.Files.Count == 0);
+            foreach (String file in probe.Files) {
+                LOGGER.Debug ("file=[" + file + "]");
+            }
+            Assertion.Assert("File count=[" + probe.Files.Count.ToString() + "]", 
+                probe.Files.Count == 0);
         }
 
         /// <summary>

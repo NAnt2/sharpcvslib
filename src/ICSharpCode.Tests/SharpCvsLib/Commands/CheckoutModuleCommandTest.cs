@@ -39,293 +39,280 @@ using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Exceptions;
-using ICSharpCode.SharpCvsLib.Config.Tests;
+
+using ICSharpCode.SharpCvsLib.Tests;
+using ICSharpCode.SharpCvsLib.Tests.Config;
 
 using log4net;
 using NUnit.Framework;
 
 namespace ICSharpCode.SharpCvsLib.Commands {
-/// <summary>
-///     Test that checkout module command fetches files from the
-///         remote repository.  All files are not verified, only
-///         a select few are checked.  After the files are checked
-///         the entries are verified in the <code>CVS/Entries</code>
-///         folder.
-/// </summary>
-[TestFixture]
-public class CheckoutModuleCommandTest  {
-    string rootDir;
-    string checkFile;
-
-    private TestSettings settings = new TestSettings ();
-
-    Manager manager;
-
-    private ILog LOGGER =
-        LogManager.GetLogger (typeof(CheckoutModuleCommandTest));
-
     /// <summary>
-    /// Constructor for customer db test.
+    ///     Test that checkout module command fetches files from the
+    ///         remote repository.  All files are not verified, only
+    ///         a select few are checked.  After the files are checked
+    ///         the entries are verified in the <code>CVS/Entries</code>
+    ///         folder.
     /// </summary>
-    public CheckoutModuleCommandTest () {
-    }
+    [TestFixture]
+    public class CheckoutModuleCommandTest : AbstractTest  {
+        string rootDir;
+        string checkFile;
 
-    /// <summary>
-    ///
-    /// </summary>
-    [SetUp]
-    public void SetUp () {
-        this.rootDir =
-            Path.Combine (this.settings.Config.LocalPath,
-                          this.settings.Config.Module);
-        this.checkFile =
-            Path.Combine (rootDir, this.settings.Config.TargetFile);
-        this.manager = new Manager ();
-    }
+        private SharpCvsLibTestsConfig settings = 
+            SharpCvsLibTestsConfig.GetInstance();
 
-    /// <summary>
-    ///     Remove the local path directory that we were testing with.
-    /// </summary>
-    [TearDown]
-    public void TearDown () {
-        this.CleanTempDirectory ();
-    }
+        Manager manager;
 
+        private ILog LOGGER =
+            LogManager.GetLogger (typeof(CheckoutModuleCommandTest));
 
-    /// <summary>
-    ///     Test that a checkout with all parameters is successful.
-    /// </summary>
-    [Test]
-    public void CheckoutTest () {
-        this.Checkout ();
+        /// <summary>
+        /// Constructor for customer db test.
+        /// </summary>
+        public CheckoutModuleCommandTest () {
+            this.rootDir =
+                Path.Combine (this.settings.Config.LocalPath,
+                this.settings.Config.Module);
+            this.checkFile =
+                Path.Combine (rootDir, this.settings.Config.TargetFile);
+            this.manager = new Manager (rootDir);
+        }
 
-        Assertion.Assert ("Should have found the check file.  file=[" +
-                          checkFile + "]", File.Exists (checkFile));
+        /// <summary>
+        ///     Test that a checkout with all parameters is successful.
+        /// </summary>
+        [Test]
+        public void CheckoutTest () {
+            this.Checkout ();
 
-        ICvsFile[] entries =
-            manager.Fetch (rootDir, Factory.FileType.Entries);
-        int foundFileEntry = 0;
-        int foundDirectoryEntry = 0;
+            Assertion.Assert ("Should have found the check file.  file=[" +
+                            checkFile + "]", File.Exists (checkFile));
 
-        foreach (ICvsFile cvsEntry in entries) {
-            Entry entry = (Entry)cvsEntry;
-            System.Console.WriteLine ("entry=[" + entry + "]");
-            if (entry.Name.Equals (this.settings.Config.TargetFile)) {
-                foundFileEntry++;
+            ICvsFile[] entries =
+                manager.Fetch (rootDir, Factory.FileType.Entries);
+            int foundFileEntry = 0;
+            int foundDirectoryEntry = 0;
+
+            foreach (ICvsFile cvsEntry in entries) {
+                Entry entry = (Entry)cvsEntry;
+                System.Console.WriteLine ("entry=[" + entry + "]");
+                if (entry.Name.Equals (this.settings.Config.TargetFile)) {
+                    foundFileEntry++;
+                }
+
+                if (entry.Name.Equals (this.settings.Config.TargetDirectory)) {
+                    foundDirectoryEntry++;
+                }
             }
 
-            if (entry.Name.Equals (this.settings.Config.TargetDirectory)) {
-                foundDirectoryEntry++;
+            Assertion.Assert ("Build file should have a cvs entry.", foundFileEntry == 1);
+            Assertion.Assert (this.settings.Config.TargetDirectory + " directory should have a cvs entry.", foundDirectoryEntry == 1);
+            Assertion.Assert ("Should not have a cvs directory above module path.",
+                            !Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)));
+            Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
+                            !Directory.Exists (Path.Combine (this.settings.Config.Module, manager.CVS)));
+
+
+        }
+
+        /// <summary>
+        ///     Test that specifying a revision produces a checkout of the specific
+        ///     revision tag and creates a tag file in the cvs folder.
+        /// </summary>
+        [Test]
+        public void CheckoutRevisionTest_Revision_1 () {
+            this.CheckoutRevisionTest (this.settings.Config.Tag1,
+                                    this.settings.Config.Content1);
+        }
+
+        /// <summary>
+        ///     Test that specifying a revision produces a checkout of the specific
+        ///     revision tag and creates a tag file in the cvs folder.
+        /// </summary>
+        [Test]
+        public void CheckoutRevisionTest_Revision_2 () {
+            this.CheckoutRevisionTest (this.settings.Config.Tag2,
+                                    this.settings.Config.Content2);
+        }
+
+        /// <summary>
+        ///     Test that specifying a revision produces a checkout of the specific
+        ///     revision tag and creates a tag file in the cvs folder.
+        /// </summary>
+        /// <param name="revision">The revision tag to checkout.</param>
+        /// <param name="expectedContent">The file contents that are expected.</param>
+        private void CheckoutRevisionTest (String revision, String expectedContent) {
+            this.Checkout (revision, null);
+            Assertion.Assert ("Should have found the check file.  file=[" +
+                            checkFile + "]", File.Exists (checkFile));
+
+            ICvsFile[] entries =
+                manager.Fetch (rootDir, Factory.FileType.Entries);
+            int foundFileEntry = 0;
+            int foundDirectoryEntry = 0;
+
+            foreach (ICvsFile cvsEntry in entries) {
+                Entry entry = (Entry)cvsEntry;
+                System.Console.WriteLine ("entry=[" + entry + "]");
+                if (entry.Name.Equals (this.settings.Config.TargetFile)) {
+                    foundFileEntry++;
+                }
+
+                if (entry.Name.Equals (this.settings.Config.TargetDirectory)) {
+                    foundDirectoryEntry++;
+                }
+            }
+
+            Assertion.Assert ("Build file should have a cvs entry.", foundFileEntry == 1);
+            Assertion.Assert (this.settings.Config.TargetDirectory + " directory should have a cvs entry.", foundDirectoryEntry == 1);
+            Assertion.Assert ("Should not have a cvs directory above module path.",
+                            !Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)));
+            Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
+                            !Directory.Exists (Path.Combine (this.settings.Config.Module, manager.CVS)));
+
+            String tagFile =
+                Path.Combine (Path.Combine (this.settings.Config.Module, manager.CVS), Tag.FILE_NAME);
+            Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
+                            !Directory.Exists (tagFile));
+
+            AssertFileContentsEqualString (checkFile, expectedContent);
+        }
+
+        /// <summary>
+        ///     Assert that the expected file contents match the contents actually
+        ///         in the given file.
+        /// </summary>
+        public static void AssertFileContentsEqualString (String filename, String expectedContent) {
+            StreamReader reader = new StreamReader (filename);
+            String actualContent = reader.ReadToEnd ();
+
+            // Note the read to end method appends a carriage return (^M)/ line feed (^F)
+            //    to the string read so this is removed manually:
+            actualContent = actualContent.Substring (0, actualContent.Length -2);
+            reader.Close ();
+            Assertion.AssertEquals ("Files should be equal.",
+                                    expectedContent,
+                                    actualContent);
+        }
+
+
+        /// <summary>
+        ///     Test that specifying a revision produces a checkout of the specific
+        ///     revision tag and creates a tag file in the cvs folder.
+        /// </summary>
+        [Test]
+        public void CheckoutOverrideDirectoryTest () {
+            this.rootDir =
+                Path.Combine (this.settings.Config.LocalPath, this.settings.Config.OverrideDirectory);
+            this.checkFile =
+                Path.Combine (rootDir, this.settings.Config.TargetFile);
+
+            this.Checkout (null, this.settings.Config.OverrideDirectory);
+            Assertion.Assert ("Should have found the check file.  file=[" +
+                            checkFile + "]", File.Exists (checkFile));
+
+            ICvsFile[] entries =
+                manager.Fetch (rootDir, Factory.FileType.Entries);
+            int foundFileEntry = 0;
+            int foundDirectoryEntry = 0;
+
+            foreach (ICvsFile cvsEntry in entries) {
+                Entry entry = (Entry)cvsEntry;
+                System.Console.WriteLine ("entry=[" + entry + "]");
+                if (entry.Name.Equals (this.settings.Config.TargetFile)) {
+                    foundFileEntry++;
+                }
+
+                if (entry.Name.Equals (this.settings.Config.TargetDirectory)) {
+                    foundDirectoryEntry++;
+                }
+            }
+
+            Assertion.Assert ("Build file should have a cvs entry.", foundFileEntry == 1);
+            Assertion.Assert (this.settings.Config.TargetDirectory + " directory should have a cvs entry.", foundDirectoryEntry == 1);
+            Assertion.Assert ("Should not have a cvs directory above module path.",
+                            !Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)));
+            Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
+                            !Directory.Exists (Path.Combine (this.settings.Config.Module, manager.CVS)));
+
+            String tagFile =
+                Path.Combine (Path.Combine (this.settings.Config.Module, manager.CVS), Tag.FILE_NAME);
+            Assertion.Assert ("Should not have a cvs directory and tag file in the current execution path.  ",
+                            !Directory.Exists (tagFile));
+        }
+
+        /// <summary>
+        ///     Check if the temporary directory exists.  If it does then
+        ///         remove the directory.
+        /// </summary>
+        private void CleanTempDirectory () {
+            if (Directory.Exists(this.settings.Config.LocalPath)) {
+                Directory.Delete (this.settings.Config.LocalPath, true);
             }
         }
 
-        Assertion.Assert ("Build file should have a cvs entry.", foundFileEntry == 1);
-        Assertion.Assert (this.settings.Config.TargetDirectory + " directory should have a cvs entry.", foundDirectoryEntry == 1);
-        Assertion.Assert ("Should not have a cvs directory above module path.",
-                          !Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)));
-        Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
-                          !Directory.Exists (Path.Combine (this.settings.Config.Module, manager.CVS)));
-
-
-    }
-
-    /// <summary>
-    ///     Test that specifying a revision produces a checkout of the specific
-    ///     revision tag and creates a tag file in the cvs folder.
-    /// </summary>
-    [Test]
-    public void CheckoutRevisionTest_Revision_1 () {
-        this.CheckoutRevisionTest (this.settings.Config.Tag1,
-                                   this.settings.Config.Content1);
-    }
-
-    /// <summary>
-    ///     Test that specifying a revision produces a checkout of the specific
-    ///     revision tag and creates a tag file in the cvs folder.
-    /// </summary>
-    [Test]
-    public void CheckoutRevisionTest_Revision_2 () {
-        this.CheckoutRevisionTest (this.settings.Config.Tag2,
-                                   this.settings.Config.Content2);
-    }
-
-    /// <summary>
-    ///     Test that specifying a revision produces a checkout of the specific
-    ///     revision tag and creates a tag file in the cvs folder.
-    /// </summary>
-    /// <param name="revision">The revision tag to checkout.</param>
-    /// <param name="expectedContent">The file contents that are expected.</param>
-    private void CheckoutRevisionTest (String revision, String expectedContent) {
-        this.Checkout (revision, null);
-        Assertion.Assert ("Should have found the check file.  file=[" +
-                          checkFile + "]", File.Exists (checkFile));
-
-        ICvsFile[] entries =
-            manager.Fetch (rootDir, Factory.FileType.Entries);
-        int foundFileEntry = 0;
-        int foundDirectoryEntry = 0;
-
-        foreach (ICvsFile cvsEntry in entries) {
-            Entry entry = (Entry)cvsEntry;
-            System.Console.WriteLine ("entry=[" + entry + "]");
-            if (entry.Name.Equals (this.settings.Config.TargetFile)) {
-                foundFileEntry++;
-            }
-
-            if (entry.Name.Equals (this.settings.Config.TargetDirectory)) {
-                foundDirectoryEntry++;
-            }
+        /// <summary>
+        ///     Perform a checkout command.
+        /// </summary>
+        public void Checkout () {
+            this.Checkout (null);
         }
 
-        Assertion.Assert ("Build file should have a cvs entry.", foundFileEntry == 1);
-        Assertion.Assert (this.settings.Config.TargetDirectory + " directory should have a cvs entry.", foundDirectoryEntry == 1);
-        Assertion.Assert ("Should not have a cvs directory above module path.",
-                          !Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)));
-        Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
-                          !Directory.Exists (Path.Combine (this.settings.Config.Module, manager.CVS)));
+        /// <summary>
+        ///     Perform a checkout command using the values in the
+        ///         The revision tag
+        ///         (if specified) is also used to select the code
+        ///         to checkout.
+        /// </summary>
+        /// <param name="revision">The specific revision of the module
+        ///     to checkout from the repository.  If <code>null</code>
+        ///     is specified then the default revision, usually the
+        ///     <code>HEAD</code> is checked out.</param>
+        /// <param name="overrideDirectory">The override directory to
+        ///     checkout the repository to.  If <code>null</code>
+        ///     is specified then the directory is not overridden
+        ///     and the module name is used.</param>
+        public void Checkout (String revision, String overrideDirectory) {
+            CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
+            WorkingDirectory working =
+                new WorkingDirectory (root,
+                                    this.settings.Config.LocalPath,
+                                    this.settings.Config.Module);
 
-        String tagFile =
-            Path.Combine (Path.Combine (this.settings.Config.Module, manager.CVS), Tag.FILE_NAME);
-        Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
-                          !Directory.Exists (tagFile));
+            System.Console.WriteLine (this.settings.Config.LocalPath);
 
-        AssertFileContentsEqualString (checkFile, expectedContent);
-    }
+            working.Revision = revision;
+            working.OverrideDirectory = overrideDirectory;
 
-    /// <summary>
-    ///     Assert that the expected file contents match the contents actually
-    ///         in the given file.
-    /// </summary>
-    public static void AssertFileContentsEqualString (String filename, String expectedContent) {
-        StreamReader reader = new StreamReader (filename);
-        String actualContent = reader.ReadToEnd ();
+            CVSServerConnection connection = new CVSServerConnection ();
+            Assertion.AssertNotNull ("Should have a connection object.", connection);
 
-        // Note the read to end method appends a carriage return (^M)/ line feed (^F)
-        //    to the string read so this is removed manually:
-        actualContent = actualContent.Substring (0, actualContent.Length -2);
-        reader.Close ();
-        Assertion.AssertEquals ("Files should be equal.",
-                                expectedContent,
-                                actualContent);
-    }
+            ICommand command = new CheckoutModuleCommand (working);
+            Assertion.AssertNotNull ("Should have a command object.", command);
 
-
-    /// <summary>
-    ///     Test that specifying a revision produces a checkout of the specific
-    ///     revision tag and creates a tag file in the cvs folder.
-    /// </summary>
-    [Test]
-    public void CheckoutOverrideDirectoryTest () {
-        this.rootDir =
-            Path.Combine (this.settings.Config.LocalPath, this.settings.Config.OverrideDirectory);
-        this.checkFile =
-            Path.Combine (rootDir, this.settings.Config.TargetFile);
-
-        this.Checkout (null, this.settings.Config.OverrideDirectory);
-        Assertion.Assert ("Should have found the check file.  file=[" +
-                          checkFile + "]", File.Exists (checkFile));
-
-        ICvsFile[] entries =
-            manager.Fetch (rootDir, Factory.FileType.Entries);
-        int foundFileEntry = 0;
-        int foundDirectoryEntry = 0;
-
-        foreach (ICvsFile cvsEntry in entries) {
-            Entry entry = (Entry)cvsEntry;
-            System.Console.WriteLine ("entry=[" + entry + "]");
-            if (entry.Name.Equals (this.settings.Config.TargetFile)) {
-                foundFileEntry++;
+            try {
+                connection.Connect (working, this.settings.Config.ValidPassword);
+            } catch (AuthenticationException) {
+                Assertion.Assert ("Failed to authenticate with server.", true);
             }
 
-            if (entry.Name.Equals (this.settings.Config.TargetDirectory)) {
-                foundDirectoryEntry++;
-            }
+            command.Execute (connection);
+            connection.Close ();
         }
 
-        Assertion.Assert ("Build file should have a cvs entry.", foundFileEntry == 1);
-        Assertion.Assert (this.settings.Config.TargetDirectory + " directory should have a cvs entry.", foundDirectoryEntry == 1);
-        Assertion.Assert ("Should not have a cvs directory above module path.",
-                          !Directory.Exists (Path.Combine (this.settings.Config.LocalPath, manager.CVS)));
-        Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
-                          !Directory.Exists (Path.Combine (this.settings.Config.Module, manager.CVS)));
-
-        String tagFile =
-            Path.Combine (Path.Combine (this.settings.Config.Module, manager.CVS), Tag.FILE_NAME);
-        Assertion.Assert ("Should not have a cvs directory and tag file in the current execution path.  ",
-                          !Directory.Exists (tagFile));
-    }
-
-    /// <summary>
-    ///     Check if the temporary directory exists.  If it does then
-    ///         remove the directory.
-    /// </summary>
-    private void CleanTempDirectory () {
-        if (Directory.Exists(this.settings.Config.LocalPath)) {
-            Directory.Delete (this.settings.Config.LocalPath, true);
-        }
-    }
-
-    /// <summary>
-    ///     Perform a checkout command.
-    /// </summary>
-    public void Checkout () {
-        this.Checkout (null);
-    }
-
-    /// <summary>
-    ///     Perform a checkout command using the values in the
-    ///         The revision tag
-    ///         (if specified) is also used to select the code
-    ///         to checkout.
-    /// </summary>
-    /// <param name="revision">The specific revision of the module
-    ///     to checkout from the repository.  If <code>null</code>
-    ///     is specified then the default revision, usually the
-    ///     <code>HEAD</code> is checked out.</param>
-    /// <param name="overrideDirectory">The override directory to
-    ///     checkout the repository to.  If <code>null</code>
-    ///     is specified then the directory is not overridden
-    ///     and the module name is used.</param>
-    public void Checkout (String revision, String overrideDirectory) {
-        CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
-        WorkingDirectory working =
-            new WorkingDirectory (root,
-                                  this.settings.Config.LocalPath,
-                                  this.settings.Config.Module);
-
-        System.Console.WriteLine (this.settings.Config.LocalPath);
-
-        working.Revision = revision;
-        working.OverrideDirectory = overrideDirectory;
-
-        CVSServerConnection connection = new CVSServerConnection ();
-        Assertion.AssertNotNull ("Should have a connection object.", connection);
-
-        ICommand command = new CheckoutModuleCommand (working);
-        Assertion.AssertNotNull ("Should have a command object.", command);
-
-        try {
-            connection.Connect (working, this.settings.Config.ValidPassword);
-        } catch (AuthenticationException) {
-            Assertion.Assert ("Failed to authenticate with server.", true);
+        /// <summary>
+        ///     Perform a checkout command.  The revision tag
+        ///         (if specified) is also used to select the code
+        ///         to checkout.
+        /// </summary>
+        /// <param name="revision">The specific revision of the module
+        ///     to checkout from the repository.  If <code>null</code>
+        ///     is specified then the default revision, usually the
+        ///     <code>HEAD</code> is checked out.</param>
+        public void Checkout (String revision) {
+            this.Checkout (revision, null);
         }
 
-        command.Execute (connection);
-        connection.Close ();
     }
-
-    /// <summary>
-    ///     Perform a checkout command.  The revision tag
-    ///         (if specified) is also used to select the code
-    ///         to checkout.
-    /// </summary>
-    /// <param name="revision">The specific revision of the module
-    ///     to checkout from the repository.  If <code>null</code>
-    ///     is specified then the default revision, usually the
-    ///     <code>HEAD</code> is checked out.</param>
-    public void Checkout (String revision) {
-        this.Checkout (revision, null);
-    }
-
-}
 }

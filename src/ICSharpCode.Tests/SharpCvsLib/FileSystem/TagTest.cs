@@ -38,7 +38,7 @@ using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 
-using ICSharpCode.SharpCvsLib.Config.Tests;
+using ICSharpCode.SharpCvsLib.Tests.Config;
 
 using log4net;
 using NUnit.Framework;
@@ -49,7 +49,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// </summary>
     [TestFixture]
     public class TagTest {
-        private TestSettings settings = new TestSettings ();
+        private SharpCvsLibTestsConfig settings = 
+            SharpCvsLibTestsConfig.GetInstance();
 
         private readonly String TAG_ENTRY1 =
             "TVer1.1";

@@ -39,90 +39,116 @@ using System.Globalization;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
-/// <summary>
-///     Value object for the <code>Tag</code> cvs file.  The root file
-///         holds the cvsroot string.  The cvsroot is a string value
-///         which has the following information:
-///             <ol>
-///                 <li>protocol</li>
-///                 <li>user@servername.domainname</li>
-///                 <li>server repository directory</li>
-///             </ol>
-///         seperated by a colan(<code>:</code>).
-///
-///     eg)     :pserver:anonymous@linux.sporadicism.com:/home/cvs/src/
-/// </summary>
-public class Tag : ICvsFile {
-
     /// <summary>
-    ///     The name of the root file.
+    ///     Value object for the <code>Tag</code> cvs file.  The root file
+    ///         holds the cvsroot string.  The cvsroot is a string value
+    ///         which has the following information:
+    ///             <ol>
+    ///                 <li>protocol</li>
+    ///                 <li>user@servername.domainname</li>
+    ///                 <li>server repository directory</li>
+    ///             </ol>
+    ///         seperated by a colan(<code>:</code>).
+    ///
+    ///     eg)     :pserver:anonymous@linux.sporadicism.com:/home/cvs/src/
     /// </summary>
-    public const String FILE_NAME = "Tag";
-    private String path;
-    private String fileContents;
+    public class Tag : AbstractCvsFile, ICvsFile {
 
-    /// <summary>
-    ///     The name of the cvs file that the object represents.
-    /// </summary>
-    public String Filename {
-        get {return Tag.FILE_NAME;}
-    }
+        /// <summary>
+        ///     The name of the root file.
+        /// </summary>
+        public const String FILE_NAME = "Tag";
 
-    /// <summary>
-    ///     The path up to the folder containing the cvs folder.
-    /// </summary>
-    public String Path {
-        get {return this.path;}
-    }
-
-    /// <summary>
-    ///     The contents of the cvs file.
-    /// </summary>
-    public String FileContents {
-        get {return this.fileContents;}
-    }
-
-    /// <summary>
-    ///     Constructor for the root object.
-    /// </summary>
-    public Tag (String path, String fileContents) {
-        this.path = path;
-
-        String replace_T_with_N = "N" + fileContents.Substring (1);
-        this.fileContents = replace_T_with_N;
-    }
-
-    /// <summary>
-    ///     Determine if the two objects are equal.
-    /// </summary>
-    public override bool Equals (object obj) {
-        if (obj is Tag) {
-            Tag that = (Tag)obj;
-            if (that.GetHashCode ().Equals (this.GetHashCode ())) {
-                return true;
-            }
+        /// <summary>
+        ///     The name of the cvs file that the object represents.
+        /// </summary>
+        public String Filename {
+            get {return Tag.FILE_NAME;}
         }
-        return false;
+
+/* TODO: Remove this
+        private String path;
+        private String fileContents;
+
+        /// <summary>
+        /// The full path to the folder/ directory that this cvs object represents.
+        ///     In the case of a tag the path is to the directory that the tag is
+        ///     for.
+        /// </summary>
+        public String FullPath {
+            get {return this.fullPath;}
+        }
+
+        /// <summary>
+        ///     The contents of the cvs file.
+        /// </summary>
+        public String FileContents {
+            get {return this.fileContents;}
+        }
+
+        /// <summary>
+        ///     Constructor for the root object.
+        /// </summary>
+        public Tag (String path, String fileContents) {
+            this.path = path;
+
+            String replace_T_with_N = "N" + fileContents.Substring (1);
+            this.fileContents = replace_T_with_N;
+        }
+*/        
+        /// <summary>
+        /// Create a new instance of the cvs object.
+        /// </summary>
+        /// <param name="fullPath">The full path to the object being managed.</param>
+        /// <param name="fileContents">The contents of the cvs management file.</param>
+        public Tag (String fullPath, String fileContents) : 
+            base (fullPath, fileContents) {
+        }
+
+        /// <summary>
+        /// Parse the contents of the cvs file.
+        /// </summary>
+        /// <param name="line"></param>
+        public override void Parse (String line) {
+            if (line.IndexOf('T') == 0) {
+                line = "N" + line.Substring (1);
+            } else if (line.IndexOf('N') != 0) {
+                line = "N" + line;
+            }
+            this.FileContents = line;
+        }
+
+        /// <summary>
+        ///     Determine if the two objects are equal.
+        /// </summary>
+        public override bool Equals (object obj) {
+            if (obj is Tag) {
+                Tag that = (Tag)obj;
+                if (that.GetHashCode ().Equals (this.GetHashCode ())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        ///     Override the hashcode.  This is a combination of the entry
+        ///         name and the path to the entry file.
+        /// </summary>
+        public override int GetHashCode () {
+            return this.FileContents.GetHashCode ();
+        }
+
+        /// <summary>The type of file that this is.</summary>
+        public Factory.FileType Type {get {return Factory.FileType.Tag;}}
+
+        /// <summary>Indicates whether the file can contain multiple
+        /// lines.</summary>
+        /// <returns><code>true</code> if the file can contain multiple
+        /// lines; <code>false</code> otherwise.</returns>
+        public bool IsMultiLined {
+            get {return false;}
+        }
+
     }
-
-    /// <summary>
-    ///     Override the hashcode.  This is a combination of the entry
-    ///         name and the path to the entry file.
-    /// </summary>
-    public override int GetHashCode () {
-        return this.FileContents.GetHashCode ();
-    }
-
-    /// <summary>The type of file that this is.</summary>
-    public Factory.FileType Type {get {return Factory.FileType.Tag;}}
-
-    /// <summary>Indicates whether the file can contain multiple
-    /// lines.</summary>
-    /// <returns><code>true</code> if the file can contain multiple
-    /// lines; <code>false</code> otherwise.</returns>
-    public bool IsMultiLined {
-        get {return false;}
-    }
-
-}
 }

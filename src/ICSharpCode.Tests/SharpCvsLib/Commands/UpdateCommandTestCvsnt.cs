@@ -40,120 +40,121 @@ using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Exceptions;
 
-using ICSharpCode.SharpCvsLib.Config.Tests;
+using ICSharpCode.SharpCvsLib.Tests.Config;
 
 using log4net;
 using NUnit.Framework;
 
 namespace ICSharpCode.SharpCvsLib.Commands {
-/// <summary>
-///     Tests that if a file is removed it will be pulled back down
-///         with an update.
-/// </summary>
-[TestFixture]
-public class UpdateCommandTestCvsnt	{
-    private ILog LOGGER =
-        LogManager.GetLogger (typeof(CheckoutModuleCommandTest));
-
-    private TestSettings settings = new TestSettings ();
-    private Manager manager;
-
-    private const String CVSNT_CVSROOT =
-        ":pserver:cvs@cvs.cvsnt.org:/usr/local/cvs";
-    private const String CVSNT_MODULE =
-        "cvsnt/cvsntcpl";
-
     /// <summary>
-    /// Constructor for customer db test.
+    ///     Tests that if a file is removed it will be pulled back down
+    ///         with an update.
     /// </summary>
-    public UpdateCommandTestCvsnt () {
-    }
+    [TestFixture]
+    public class UpdateCommandTestCvsnt	{
+        private ILog LOGGER =
+            LogManager.GetLogger (typeof(CheckoutModuleCommandTest));
 
+        private SharpCvsLibTestsConfig settings = SharpCvsLibTestsConfig.GetInstance();
+        private Manager manager;
 
-    /// <summary>
-    ///     Checkout the sharpcvslib module so we have something
-    ///         to test the update command with.
-    /// </summary>
-    [SetUp]
-    public void SetUp () {
-        this.manager = new Manager ();
-    }
+        private const String CVSNT_CVSROOT =
+            ":pserver:cvs@cvs.cvsnt.org:/usr/local/cvs";
+        private const String CVSNT_MODULE =
+            "cvsnt/cvsntcpl";
 
-    /// <summary>Perform an update of the repository on a directory
-    ///     that has not been checked out.</summary>
-    [Test]
-    public void UpdateNoCheckoutTest () {
-        CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
-        WorkingDirectory working =
-            new WorkingDirectory (root,
-                                  this.settings.Config.LocalPath,
-                                  CVSNT_MODULE);
-
-        CVSServerConnection connection = new CVSServerConnection ();
-        Assertion.AssertNotNull ("Should have a connection object.", connection);
-
-        ICommand command = new UpdateCommand2 (working);
-        Assertion.AssertNotNull ("Should have a command object.", command);
-
-        connection.Connect (working, this.settings.Config.ValidPassword);
-    }
-
-    /// <summary>Update from a cvsnt repository.
-    ///     NOTE: Assumption is made the the cvsnt project is "Eating
-    ///     their own dogfood." (i.e. they are using cvsnt for the
-    ///     project sources.</summary>
-    [Test]
-    public void UpdateFromCvsntTest_NoCheckout () {
-        this.PerformUpdate ();
-    }
-
-    private void PerformUpdate () {
-        CvsRoot root = new CvsRoot (CVSNT_CVSROOT);
-        WorkingDirectory working =
-            new WorkingDirectory (root,
-                                  this.settings.Config.LocalPath,
-                                  CVSNT_MODULE);
-
-        CVSServerConnection connection = new CVSServerConnection ();
-        Assertion.AssertNotNull ("Should have a connection object.", connection);
-
-        ICommand command = new UpdateCommand2 (working);
-        Assertion.AssertNotNull ("Should have a command object.", command);
-
-        connection.Connect (working, this.settings.Config.ValidPassword);
-    }
-
-    /// <summary>Checkout the cvsnt project and then update the project
-    ///     that has just been checked out.</summary>
-    [Test]
-    public void UpdateFromCvsntTest_Checkout () {
-        Manager manager = new Manager ();
-        string cvsPath =
-            Path.Combine (this.settings.Config.LocalPath, CVSNT_MODULE);
-
-        CvsRoot root = new CvsRoot (CVSNT_CVSROOT);
-        WorkingDirectory working =
-            new WorkingDirectory (root,
-                                  this.settings.Config.LocalPath,
-                                  CVSNT_MODULE);
-
-        CVSServerConnection connection = new CVSServerConnection ();
-        Assertion.AssertNotNull ("Should have a connection object.", connection);
-
-        ICommand command = new CheckoutModuleCommand (working);
-        Assertion.AssertNotNull ("Should have a command object.", command);
-
-        try {
-            connection.Connect (working, this.settings.Config.ValidPassword);
-        } catch (AuthenticationException) {
-            Assertion.Assert ("Failed to authenticate with server.", true);
+        /// <summary>
+        /// Constructor for customer db test.
+        /// </summary>
+        public UpdateCommandTestCvsnt () {
         }
 
-        command.Execute (connection);
-        connection.Close ();
 
-        this.PerformUpdate ();
+        /// <summary>
+        ///     Checkout the sharpcvslib module so we have something
+        ///         to test the update command with.
+        /// </summary>
+        [SetUp]
+        public void SetUp () {
+            this.manager = 
+                new Manager (Path.Combine(this.settings.LocalPath, CVSNT_MODULE));
+        }
+
+        /// <summary>Perform an update of the repository on a directory
+        ///     that has not been checked out.</summary>
+        [Test]
+        public void UpdateNoCheckoutTest () {
+            CvsRoot root = new CvsRoot (this.settings.Config.Cvsroot);
+            WorkingDirectory working =
+                new WorkingDirectory (root,
+                                    this.settings.Config.LocalPath,
+                                    CVSNT_MODULE);
+
+            CVSServerConnection connection = new CVSServerConnection ();
+            Assertion.AssertNotNull ("Should have a connection object.", connection);
+
+            ICommand command = new UpdateCommand2 (working);
+            Assertion.AssertNotNull ("Should have a command object.", command);
+
+            connection.Connect (working, this.settings.Config.ValidPassword);
+        }
+
+        /// <summary>Update from a cvsnt repository.
+        ///     NOTE: Assumption is made the the cvsnt project is "Eating
+        ///     their own dogfood." (i.e. they are using cvsnt for the
+        ///     project sources.</summary>
+        [Test]
+        public void UpdateFromCvsntTest_NoCheckout () {
+            this.PerformUpdate ();
+        }
+
+        private void PerformUpdate () {
+            CvsRoot root = new CvsRoot (CVSNT_CVSROOT);
+            WorkingDirectory working =
+                new WorkingDirectory (root,
+                                    this.settings.Config.LocalPath,
+                                    CVSNT_MODULE);
+
+            CVSServerConnection connection = new CVSServerConnection ();
+            Assertion.AssertNotNull ("Should have a connection object.", connection);
+
+            ICommand command = new UpdateCommand2 (working);
+            Assertion.AssertNotNull ("Should have a command object.", command);
+
+            connection.Connect (working, this.settings.Config.ValidPassword);
+        }
+
+        /// <summary>Checkout the cvsnt project and then update the project
+        ///     that has just been checked out.</summary>
+        [Test]
+        public void UpdateFromCvsntTest_Checkout () {
+            string cvsPath =
+                Path.Combine (this.settings.Config.LocalPath, CVSNT_MODULE);
+            Manager manager = new Manager (cvsPath);
+
+            CvsRoot root = new CvsRoot (CVSNT_CVSROOT);
+            WorkingDirectory working =
+                new WorkingDirectory (root,
+                                    this.settings.Config.LocalPath,
+                                    CVSNT_MODULE);
+
+            CVSServerConnection connection = new CVSServerConnection ();
+            Assertion.AssertNotNull ("Should have a connection object.", connection);
+
+            ICommand command = new CheckoutModuleCommand (working);
+            Assertion.AssertNotNull ("Should have a command object.", command);
+
+            try {
+                connection.Connect (working, this.settings.Config.ValidPassword);
+            } catch (AuthenticationException) {
+                Assertion.Assert ("Failed to authenticate with server.", true);
+            }
+
+            command.Execute (connection);
+            connection.Close ();
+
+            this.PerformUpdate ();
+        }
+
     }
-
-}
 }

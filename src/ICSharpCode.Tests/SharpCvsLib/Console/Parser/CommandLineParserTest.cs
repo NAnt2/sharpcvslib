@@ -40,15 +40,12 @@ using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 
-using ICSharpCode.SharpCvsLib.Config.Tests;
 using ICSharpCode.SharpCvsLib.Console.Parser;
 
 using log4net;
 using NUnit.Framework;
 
-namespace ICSharpCode.SharpCvsLib.Console.Parser
-{
-
+namespace ICSharpCode.SharpCvsLib.Console.Parser {
     /// <summary>
     ///     Test the command line args parameters for valid ones
     ///         and test invalid ones.

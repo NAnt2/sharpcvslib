@@ -7,16 +7,14 @@
                 warnaserror="${compile.warnaserror}" 
                 output="${dir.build}/${name.top-level}.${name.project}.${name.tests}.dll" 
                 debug="${compile.debug}" 
-                define="${compile.define}">
-                
+                define="${compile.define}">                
             <arg value="${compile.unsafe}" />
             <arg value="${compile.checked}" />
-            
-<!-- // TODO: Change to internalize helpers (accessor) -->
             <sources>
                 <includes name="**/*.cs" />
                 <includes name="../../${name.top-level}/${name.project}/**.cs" />
                 <includes name="../../${name.top-level}.${name.console}/${name.project}/**.cs" />
+                <excludes name="../../${name.top-level}/${name.project}/AssemblyInfo.cs" />
                 <excludes name="../../${name.top-level}.${name.console}/${name.project}/AssemblyInfo.cs" />
             </sources>
 
@@ -25,8 +23,6 @@
                 <includes name="${dir.lib}/${lib.zip}" />
                 <includes name="${dir.lib.ext}/${lib.log4net}" />
                 <includes name="${dir.lib.ext}/${lib.nunit}" />
-<!-- // TODO: Change to internalize helpers (lib.accessor) -->
-<!--                <includes name="${dir.build}/${lib.name}.dll" />-->
             </references>
         </csc>
     </target>
@@ -39,17 +35,14 @@
                 
             <arg value="${compile.unsafe}" />
             <arg value="${compile.checked}" />
-            
-<!-- // TODO: Change to internalize helpers (accessor) -->
             <sources>
                 <includes name="**/*.cs" />
                 <includes name="../../${name.top-level}/${name.project}/**.cs" />
                 <includes name="../../${name.top-level}.${name.console}/${name.project}/**.cs" />
+                <excludes name="../../${name.top-level}/${name.project}/AssemblyInfo.cs" />
                 <excludes name="../../${name.top-level}.${name.console}/${name.project}/AssemblyInfo.cs" />
                 <excludes name="Commands/*.cs" />
-                <excludes name="Console/Commands/CheckoutCommandTest.cs"/>
-                <excludes name="Console/Commands/UpdateCommandTest.cs"/>
-                <excludes name="Console/Commands/LoginCommandTest.cs"/>
+                <excludes name="Console/Commands/*.cs"/>
             </sources>
 
             <references>
@@ -57,8 +50,6 @@
                 <includes name="${dir.lib}/${lib.zip}" />
                 <includes name="${dir.lib.ext}/${lib.log4net}" />
                 <includes name="${dir.lib.ext}/${lib.nunit}" />
-<!-- // TODO: Change to internalize helpers (lib.accessor) -->
-<!--                <includes name="${dir.build}/${lib.name}.dll" />-->
             </references>
         </csc>
     </target>

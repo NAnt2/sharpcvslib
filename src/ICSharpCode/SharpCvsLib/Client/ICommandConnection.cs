@@ -37,28 +37,26 @@ using ICSharpCode.SharpCvsLib.Requests;
 
 
 namespace ICSharpCode.SharpCvsLib.Client {
-
-/// <summary>
-/// Interface into the CVSServerConnection that is needed by the commands.
-/// </summary>
-public interface ICommandConnection
-{
     /// <summary>
-    /// Submit a request to the cvs repository.
+    /// Interface into the CVSServerConnection that is needed by the commands.
     /// </summary>
-    /// <param name="request"></param>
-    void SubmitRequest(IRequest request);
+    public interface ICommandConnection {
+        /// <summary>
+        /// Submit a request to the cvs repository.
+        /// </summary>
+        /// <param name="request"></param>
+        void SubmitRequest(IRequest request);
 
-    /// <summary>
-    /// The repository information.
-    /// </summary>
-    WorkingDirectory Repository {get;}
+        /// <summary>
+        /// The repository information.
+        /// </summary>
+        WorkingDirectory Repository {get;}
 
-    /// <summary>
-    /// Send a file to the cvs repository.
-    /// </summary>
-    /// <param name="filename"></param>
-    /// <param name="isBinary"></param>
-    void SendFile(string filename, bool isBinary);
-}
+        /// <summary>
+        /// Send a file to the cvs repository.
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="isBinary"></param>
+        void SendFile(string filename, bool isBinary);
+    }
 }

@@ -57,455 +57,425 @@ using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Client {
 
-/// <summary>
-/// Cvs server connection, handles connections to the cvs server.
-/// </summary>
-public class CVSServerConnection : IConnection, IResponseServices, ICommandConnection
-{
-    private readonly ILog LOGGER =
-        LogManager.GetLogger (typeof (CVSServerConnection));
-
-    private string nextFileDate;
-
-    private TcpClient tcpclient = null;
-
-    private CvsStream inputStream;
-    private CvsStream outputStream;
-
-    private WorkingDirectory repository;
-
-    private IFileHandler uncompressedFileHandler =
-        new UncompressedFileHandler();
-
-    private const String PSERVER_AUTH_SUCCESS = "I LOVE YOU";
-    private const String PSERVER_AUTH_FAIL = "I HATE YOU";
-
-    private RequestLog requestLog;
-    private ResponseLog responseLog;
-
-    private SharpCvsLibConfig config;
-
     /// <summary>
-    ///     Initialize the cvs server connection.
+    /// Cvs server connection, handles connections to the cvs server.
     /// </summary>
-    public CVSServerConnection () {
-        inputStream  = new CvsStream (new MemoryStream());
-        outputStream = new CvsStream (new MemoryStream());
-        try {
-            this.config =
-                (SharpCvsLibConfig)ConfigurationSettings.GetConfig
-                (SharpCvsLibConfigHandler.APP_CONFIG_SECTION);
-        } catch (Exception e) {
-            LOGGER.Error (e);
-            this.config = new SharpCvsLibConfig();
-        }
+    public class CVSServerConnection : 
+        IConnection, IResponseServices, ICommandConnection {
 
-        try {
-            if (config.Log.DebugLog.Enabled) {
-                requestLog = new RequestLog ();
-                responseLog = new ResponseLog ();
+        private readonly ILog LOGGER =
+            LogManager.GetLogger (typeof (CVSServerConnection));
 
-                this.InputStream.RequestMessage.MessageEvent +=
-                    new EncodedMessage.MessageHandler (requestLog.Log);
-                this.OutputStream.ResponseMessage.MessageEvent +=
-                    new EncodedMessage.MessageHandler (responseLog.Log);
-            }
-        } catch (Exception e) {
-            LOGGER.Error (e);
-        }
+        private string nextFileDate;
 
-        if (null == config) {
-            config = new SharpCvsLibConfig ();
-        }
-        LOGGER.Debug("Config=["  + config.ToString() + "]");
-    }
+        private TcpClient tcpclient = null;
 
-    /// <summary>
-    /// Gets a file handler for files that are not zipped.
-    /// </summary>
-    public IFileHandler UncompressedFileHandler {
-        get {return uncompressedFileHandler;}
-    }
+        private CvsStream inputStream;
+        private CvsStream outputStream;
 
-    /// <summary>
-    ///     Set the server timeout value.
-    /// </summary>
-    public int Timeout {
-        get {return this.config.Timeout;}
-    }
+        private WorkingDirectory repository;
 
-    /// <summary>
-    ///     Set the time to sleep between sending the authentication request
-    ///         and receiving the authentication response.  Accounts for
-    ///         slow responses on some servers.
-    /// </summary>
-    public int AuthSleep {
-        get {return this.config.AuthSleep;}
-    }
+        private IFileHandler uncompressedFileHandler =
+            new UncompressedFileHandler();
 
-    /// <summary>
-    /// The port that should be used for cvs connections.
-    /// </summary>
-    public int Port {
-        get {
-            return this.repository.CvsRoot.Port;
-        }
-    }
+        private const String PSERVER_AUTH_SUCCESS = "I LOVE YOU";
+        private const String PSERVER_AUTH_FAIL = "I HATE YOU";
+
+        private RequestLog requestLog;
+        private ResponseLog responseLog;
+
+        private SharpCvsLibConfig config;
+
+        private Process p = null;
 
         /// <summary>
-        /// Cvs input stream writer
+        ///     Initialize the cvs server connection.
         /// </summary>
-        public CvsStream InputStream {
-        get {return inputStream;}
-        set {inputStream = value;}
-    }
+        public CVSServerConnection () {
+            inputStream  = new CvsStream (new MemoryStream());
+            outputStream = new CvsStream (new MemoryStream());
+            this.config = SharpCvsLibConfig.GetInstance();
 
-    /// <summary>
-    /// Wrapper for the request message delegate on the input stream.
-    /// </summary>
-    public EncodedMessage RequestMessage {
-        get {return InputStream.RequestMessage;}
-    }
+            try {
+                if (config.Log.DebugLog.Enabled) {
+                    requestLog = new RequestLog ();
+                    responseLog = new ResponseLog ();
 
-    /// <summary>
-    /// Wrapper for the response message delegate on the output
-    ///     stream.
-    /// </summary>
-    public EncodedMessage ResponseMessage {
-        get {return OutputStream.ResponseMessage;}
-    }
-
-    /// <summary>
-    /// Cvs output stream reader
-    /// </summary>
-    public CvsStream OutputStream {
-        get {return outputStream;}
-        set {outputStream = value;}
-    }
-
-    /// <summary>
-    /// Message event.
-    /// </summary>
-    public EncodedMessage MessageEvent = new EncodedMessage ();
-
-    /// <summary>
-    /// Send the message to the message event handler.
-    /// </summary>
-    /// <param name="message"></param>
-    public void SendMessage(string message) {
-        //System.Console.WriteLine (message);
-        LOGGER.Info (message);
-        MessageEvent.SendMessage(message);
-    }
-
-    /// <summary>
-    /// Send the message to the message event handler.
-    /// </summary>
-    /// <param name="module">The cvs module.</param>
-    /// <param name="repositoryPath">The path to the cvs repository.</param>
-    /// <param name="filename">The name of the file being manipulated.</param>
-    public void SendMessage (String module,
-                             String repositoryPath,
-                             String filename) {
-        StringBuilder sb = new StringBuilder ();
-        sb.Append (module);
-        sb.Append (repositoryPath);
-        sb.Append (filename);
-
-        this.SendMessage (sb.ToString ());
-    }
-
-    /// <summary>
-    /// Module to execute cvs commands on.
-    /// </summary>
-    private class Module
-    {
-        public string localdir = null;
-        public ArrayList entries = new ArrayList();
-    }
-
-    private void HandleResponses()
-    {
-        SortedList modules = new SortedList();
-
-        while (true) {
-            string responseStr = inputStream.ReadToFirstWS();
-            if (LOGGER.IsDebugEnabled)
-            {
-                LOGGER.Debug ("Response : " + responseStr);
-            }
-
-            if (responseStr.Length == 0) {
-                SendMessage("server timed out");
-                break;
-            }
-
-            IResponse response = ResponseFactory.CreateResponse(responseStr.Substring(0, responseStr.Length - 1));
-            if (LOGGER.IsDebugEnabled) {
-                LOGGER.Debug("cvs server: " + response);
-            }
-
-            if (response == null) {
-                if (responseStr.EndsWith(" ")) {
-                    inputStream.ReadLine();
+                    this.InputStream.RequestMessage.MessageEvent +=
+                        new EncodedMessage.MessageHandler (requestLog.Log);
+                    this.OutputStream.ResponseMessage.MessageEvent +=
+                        new EncodedMessage.MessageHandler (responseLog.Log);
                 }
-                break;
+            } catch (Exception e) {
+                LOGGER.Error (e);
             }
-            response.Process(inputStream, this);
-            if (response.IsTerminating) {
-                break;
+
+            if (null == config) {
+                config = new SharpCvsLibConfig ();
+            }
+            LOGGER.Debug("Config=["  + config.ToString() + "]");
+        }
+
+        /// <summary>
+        /// Gets a file handler for files that are not zipped.
+        /// </summary>
+        public IFileHandler UncompressedFileHandler {
+            get {return uncompressedFileHandler;}
+        }
+
+        /// <summary>
+        ///     Set the server timeout value.
+        /// </summary>
+        public int Timeout {
+            get {return this.config.Timeout;}
+        }
+
+        /// <summary>
+        ///     Set the time to sleep between sending the authentication request
+        ///         and receiving the authentication response.  Accounts for
+        ///         slow responses on some servers.
+        /// </summary>
+        public int AuthSleep {
+            get {return this.config.AuthSleep;}
+        }
+
+        /// <summary>
+        /// The port that should be used for cvs connections.
+        /// </summary>
+        public int Port {
+            get {
+                return this.repository.CvsRoot.Port;
             }
         }
-        // TODO: Figure out if this is where the cvs file creation should go.
-        //			repository.CreateCVSFiles();
-    }
 
-    /// <summary>
-    /// Submit a request to the cvs repository.
-    /// </summary>
-    /// <param name="request"></param>
-    public void SubmitRequest(IRequest request)
-    {
-        if (LOGGER.IsDebugEnabled)
+            /// <summary>
+            /// Cvs input stream writer
+            /// </summary>
+            public CvsStream InputStream {
+            get {return inputStream;}
+            set {inputStream = value;}
+        }
+
+        /// <summary>
+        /// Wrapper for the request message delegate on the input stream.
+        /// </summary>
+        public EncodedMessage RequestMessage {
+            get {return InputStream.RequestMessage;}
+        }
+
+        /// <summary>
+        /// Wrapper for the response message delegate on the output
+        ///     stream.
+        /// </summary>
+        public EncodedMessage ResponseMessage {
+            get {return OutputStream.ResponseMessage;}
+        }
+
+        /// <summary>
+        /// Cvs output stream reader
+        /// </summary>
+        public CvsStream OutputStream {
+            get {return outputStream;}
+            set {outputStream = value;}
+        }
+
+        /// <summary>
+        /// Message event.
+        /// </summary>
+        public EncodedMessage MessageEvent = new EncodedMessage ();
+
+        /// <summary>
+        /// Send the message to the message event handler.
+        /// </summary>
+        /// <param name="message"></param>
+        public void SendMessage(string message) {
+            //System.Console.WriteLine (message);
+            LOGGER.Info (message);
+            MessageEvent.SendMessage(message);
+        }
+
+        /// <summary>
+        /// Send the message to the message event handler.
+        /// </summary>
+        /// <param name="module">The cvs module.</param>
+        /// <param name="repositoryPath">The path to the cvs repository.</param>
+        /// <param name="filename">The name of the file being manipulated.</param>
+        public void SendMessage (String module,
+                                String repositoryPath,
+                                String filename) {
+            StringBuilder sb = new StringBuilder ();
+            sb.Append (module);
+            sb.Append (repositoryPath);
+            sb.Append (filename);
+
+            this.SendMessage (sb.ToString ());
+        }
+
+        /// <summary>
+        /// Module to execute cvs commands on.
+        /// </summary>
+        private class Module
         {
-            StringBuilder msg = new StringBuilder ();
-            msg.Append ("\nSubmit Request");
-            msg.Append ("\n\trequest=[").Append (request).Append ("]");
-            LOGGER.Debug (msg);
+            public string localdir = null;
+            public ArrayList entries = new ArrayList();
         }
 
-        outputStream.SendString(request.RequestString);
-
-        if (request.DoesModifyConnection) {
-            request.ModifyConnection(this);
-        }
-
-        if (request.IsResponseExpected) {
-            HandleResponses();
-        }
-    }
-
-    /// <summary>
-    /// Send a file to the cvs repository.
-    /// </summary>
-    /// <param name="filename"></param>
-    /// <param name="isBinary"></param>
-    public void SendFile(string filename, bool isBinary)
-    {
-        if (isBinary) {
-            UncompressedFileHandler.SendBinaryFile(OutputStream, filename);
-        } else {
-            UncompressedFileHandler.SendTextFile(OutputStream, filename);
-        }
-    }
-
-    /// <summary>
-    /// Connect to the repository.
-    /// </summary>
-    /// <param name="repository"></param>
-    /// <param name="password"></param>
-    public void Connect(WorkingDirectory repository, string password)
-    {
-        this.repository = repository;
-        Authentication(password);
-    }
-
-    private Process p = null;
-
-    private void ExitShellEvent(object sender, EventArgs e)
-    {
-        if (LOGGER.IsDebugEnabled)
+        private void HandleResponses()
         {
-            LOGGER.Debug("Process EXITED");
-        }
+            SortedList modules = new SortedList();
 
-        if (p.ExitCode != 0) {
-            throw new AuthenticationException();
-        }
-    }
-
-    /// <summary>
-    /// Authentication for the repository.
-    /// </summary>
-    /// <param name="password"></param>
-    public void Authentication(string password)
-    {
-        switch (repository.CvsRoot.Protocol) {
-            case "ext":
-                StringBuilder processArgs = new StringBuilder ();
-                processArgs.Append ("-l ").Append (repository.CvsRoot.User);
-                processArgs.Append (" -q ");  // quiet
-                processArgs.Append (" ").Append (repository.CvsRoot.Host);
-                processArgs.Append (" \"cvs server\"");
-
-                try {
-
-                    ProcessStartInfo startInfo =
-                        new ProcessStartInfo(this.config.Shell, processArgs.ToString ());
-                    if (LOGGER.IsDebugEnabled)
-                    {
-                        StringBuilder msg = new StringBuilder ();
-                        msg.Append("Process=[").Append(this.config.Shell).Append("]");
-                        msg.Append("Process Arguments=[").Append(processArgs).Append("]");
-                        LOGGER.Debug(msg);
-                    }
-                    startInfo.RedirectStandardError  = true;
-                    startInfo.RedirectStandardInput  = true;
-                    startInfo.RedirectStandardOutput = true;
-                    startInfo.UseShellExecute        = false;
-
-                    p = new Process();
-
-                    p.StartInfo = startInfo;
-                    p.Exited += new EventHandler(ExitShellEvent);
-                    p.Start();
-                } catch (Exception e) {
-                    if (LOGGER.IsDebugEnabled) {
-                        LOGGER.Debug(e);
-                    }
-                    throw new ExecuteShellException(this.config.Shell + processArgs.ToString ());
+            while (true) {
+                string responseStr = inputStream.ReadToFirstWS();
+                if (LOGGER.IsDebugEnabled)
+                {
+                    LOGGER.Debug ("Response : " + responseStr);
                 }
-                BufferedStream errstream = new BufferedStream(p.StandardError.BaseStream);
-                //inputstream  = new CvsStream(new BufferedStream(p.StandardOutput.BaseStream));
-                //outputstream = new CvsStream(new BufferedStream(p.StandardInput.BaseStream));
-                StreamWriter streamWriter  = p.StandardInput;
-                StreamReader streamReader = p.StandardOutput;
 
-                //streamWriter.AutoFlush = true;
-                //streamReader.ReadToEnd ();
-                //streamWriter.WriteLine(password);
+                if (responseStr.Length == 0) {
+                    SendMessage("server timed out");
+                    break;
+                }
 
-                inputStream = new CvsStream (streamReader.BaseStream);
-                outputStream = new CvsStream (streamWriter.BaseStream);
-                break;
-            case "pserver":
-                tcpclient = new TcpClient ();
-                tcpclient.SendTimeout = this.Timeout;
-
-                tcpclient.Connect(repository.CvsRoot.Host, this.Port);
-                inputStream  = outputStream = new CvsStream(tcpclient.GetStream());
-
+                IResponse response = ResponseFactory.CreateResponse(responseStr.Substring(0, responseStr.Length - 1));
                 if (LOGGER.IsDebugEnabled) {
-                    String msg = "Before submitting pserver connect request.  " +
-                                "repository.CvsRoot.CvsRepository=[" + repository.CvsRoot.CvsRepository + "]" +
-                                "repository.CvsRoot.User=[" + repository.CvsRoot.User + "]" +
-                                "password=[" + password + "]";
-                    LOGGER.Debug (msg);
+                    LOGGER.Debug("cvs server: " + response);
                 }
-                for (int i=0; i < 5; i++) {
-                    try {
-                        SubmitRequest(new PServerAuthRequest(repository.CvsRoot.CvsRepository,
-                                                            repository.CvsRoot.User,
-                                                            password));
-                        break;
-                    } catch (Exception e) {
-                        LOGGER.Error (e);
+
+                if (response == null) {
+                    if (responseStr.EndsWith(" ")) {
+                        inputStream.ReadLine();
                     }
+                    break;
                 }
-
-                inputStream.Flush();
-
-                string retStr;
-                // sleep for awhile for slow servers
-                System.Threading.Thread.Sleep (this.AuthSleep);
-
-                try {
-                    retStr = inputStream.ReadLine();
+                response.Process(inputStream, this);
+                if (response.IsTerminating) {
+                    break;
                 }
-                catch (IOException e) {
-                    String msg = "Failed to read line from server.  " +
-                                "It is possible that the remote server was down.";
-                    LOGGER.Error (msg, e);
-                    throw new AuthenticationException (msg);
-                }
-
-                switch (retStr) {
-                    case PSERVER_AUTH_SUCCESS:
-                        SendMessage("Connection established");
-                        break;
-                    case PSERVER_AUTH_FAIL:
-                        throw new AuthenticationException();
-                    default:
-                        StringBuilder msg = new StringBuilder ();
-                        msg.Append("Unknown Server response : >").Append(retStr).Append("<");
-                        SendMessage(msg.ToString());
-                        throw new UnsupportedResponseException(msg.ToString());
-                }
-            break;
-            default:
-                StringBuilder notSupportedMsg = new StringBuilder ();
-                notSupportedMsg.Append("Unknown protocol=[").Append(repository.CvsRoot.Protocol).Append("]");
-                throw new NotSupportedException (notSupportedMsg.ToString());
+            }
+            // TODO: Figure out if this is where the cvs file creation should go.
+            //			repository.CreateCVSFiles();
         }
-        SubmitRequest(new ValidResponsesRequest());
-        SubmitRequest(new ValidRequestsRequest());
 
-        SubmitRequest(new RootRequest(repository.CvsRoot.CvsRepository));
-        SubmitRequest(new UseUnchangedRequest());
-    }
+        /// <summary>
+        /// Submit a request to the cvs repository.
+        /// </summary>
+        /// <param name="request"></param>
+        public void SubmitRequest(IRequest request) {
+            if (LOGGER.IsDebugEnabled) {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append ("\nSubmit Request");
+                msg.Append ("\n\trequest=[").Append (request).Append ("]");
+                LOGGER.Debug (msg);
+            }
 
-    /// <summary>
-    /// Convert the specified path to winnt format.
-    /// </summary>
-    /// <param name="localPath"></param>
-    /// <param name="repository"></param>
-    /// <returns></returns>
-    public string ConvertPath(string localPath, string repository)
-    {
-        return localPath + repository.Replace("/", Path.DirectorySeparatorChar.ToString()).Replace("\\", Path.DirectorySeparatorChar.ToString());
-    }
+            outputStream.SendString(request.RequestString);
 
-    /// <summary>
-    /// Set the entry.
-    ///     TODO: Not implemented
-    /// </summary>
-    /// <param name="localFile"></param>
-    /// <param name="entry"></param>
-    public void SetEntry(string localFile, Entry entry)
-    {
-        // TODO : implement set entry
-        throw new NotSupportedException ("Implement the setentry method.");
-    }
+            if (request.DoesModifyConnection) {
+                request.ModifyConnection(this);
+            }
 
-    /// <summary>
-    /// The repository information.
-    /// </summary>
-    public WorkingDirectory Repository {
-        get {return repository;}
-    }
+            if (request.IsResponseExpected) {
+                HandleResponses();
+            }
+        }
 
-    /// <summary>
-    /// Next file date.
-    /// </summary>
-    public string NextFileDate {
-        get {return nextFileDate;}
-        set {nextFileDate = value;}
-    }
-    private string nextFile = null;
-    /// <summary>
-    /// The next file.
-    /// </summary>
-    public string NextFile {
-        get {return nextFile;}
-        set {nextFile = value;}
-    }
+        /// <summary>
+        /// Send a file to the cvs repository.
+        /// </summary>
+        /// <param name="fullPath">The full path to the file being sent to the server.</param>
+        /// <param name="isBinary"><code>true</code> if the file is binary; 
+        ///     otherwise <code>false</code>.</param>
+        public void SendFile(string fullPath, bool isBinary)
+        {
+            if (isBinary) {
+                UncompressedFileHandler.SendBinaryFile(OutputStream, fullPath);
+            } else {
+                UncompressedFileHandler.SendTextFile(OutputStream, fullPath);
+            }
+        }
 
-    /// <summary>
-    /// Close the cvs server connection.
-    /// </summary>
-    public void Close()
-    {
-        if (repository != null && repository.CvsRoot != null) {
+        /// <summary>
+        /// Connect to the repository.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="password"></param>
+        public void Connect(WorkingDirectory repository, string password) {
+            this.repository = repository;
+            Authentication(password);
+        }
+
+        private void ExitShellEvent(object sender, EventArgs e) {
+            if (LOGGER.IsDebugEnabled) {
+                LOGGER.Debug("Process EXITED");
+            }
+
+            if (p.ExitCode != 0) {
+                throw new AuthenticationException();
+            }
+        }
+
+        /// <summary>
+        /// Authentication for the repository.
+        /// </summary>
+        /// <param name="password"></param>
+        public void Authentication(string password) {
             switch (repository.CvsRoot.Protocol) {
-            case "ext":
-                if (p != null && !p.HasExited) {
-                    p.Kill();
-                    p.WaitForExit();
-                    p = null;
-                }
+                case "ext":
+                    StringBuilder processArgs = new StringBuilder ();
+                    processArgs.Append ("-l ").Append (repository.CvsRoot.User);
+                    processArgs.Append (" -q ");  // quiet
+                    processArgs.Append (" ").Append (repository.CvsRoot.Host);
+                    processArgs.Append (" \"cvs server\"");
+
+                    try {
+
+                        ProcessStartInfo startInfo =
+                            new ProcessStartInfo(this.config.Shell, processArgs.ToString ());
+                        if (LOGGER.IsDebugEnabled) {
+                            StringBuilder msg = new StringBuilder ();
+                            msg.Append("Process=[").Append(this.config.Shell).Append("]");
+                            msg.Append("Process Arguments=[").Append(processArgs).Append("]");
+                            LOGGER.Debug(msg);
+                        }
+                        startInfo.RedirectStandardError  = true;
+                        startInfo.RedirectStandardInput  = true;
+                        startInfo.RedirectStandardOutput = true;
+                        startInfo.UseShellExecute        = false;
+
+                        p = new Process();
+
+                        p.StartInfo = startInfo;
+                        p.Exited += new EventHandler(ExitShellEvent);
+                        p.Start();
+                    } catch (Exception e) {
+                        if (LOGGER.IsDebugEnabled) {
+                            LOGGER.Debug(e);
+                        }
+                        throw new ExecuteShellException(this.config.Shell + processArgs.ToString ());
+                    }
+                    BufferedStream errstream = new BufferedStream(p.StandardError.BaseStream);
+                    //inputstream  = new CvsStream(new BufferedStream(p.StandardOutput.BaseStream));
+                    //outputstream = new CvsStream(new BufferedStream(p.StandardInput.BaseStream));
+                    StreamWriter streamWriter  = p.StandardInput;
+                    StreamReader streamReader = p.StandardOutput;
+
+                    //streamWriter.AutoFlush = true;
+                    //streamReader.ReadToEnd ();
+                    //streamWriter.WriteLine(password);
+
+                    inputStream = new CvsStream (streamReader.BaseStream);
+                    outputStream = new CvsStream (streamWriter.BaseStream);
+                    break;
+                case "pserver":
+                    tcpclient = new TcpClient ();
+                    tcpclient.SendTimeout = this.Timeout;
+
+                    tcpclient.Connect(repository.CvsRoot.Host, this.Port);
+                    inputStream  = outputStream = new CvsStream(tcpclient.GetStream());
+
+                    if (LOGGER.IsDebugEnabled) {
+                        String msg = "Before submitting pserver connect request.  " +
+                                    "repository.CvsRoot.CvsRepository=[" + repository.CvsRoot.CvsRepository + "]" +
+                                    "repository.CvsRoot.User=[" + repository.CvsRoot.User + "]" +
+                                    "password=[" + password + "]";
+                        LOGGER.Debug (msg);
+                    }
+                    for (int i=0; i < 5; i++) {
+                        try {
+                            SubmitRequest(new PServerAuthRequest(repository.CvsRoot.CvsRepository,
+                                                                repository.CvsRoot.User,
+                                                                password));
+                            break;
+                        } catch (Exception e) {
+                            LOGGER.Error (e);
+                        }
+                    }
+
+                    inputStream.Flush();
+
+                    string retStr;
+                    // sleep for awhile for slow servers
+                    System.Threading.Thread.Sleep (this.AuthSleep);
+
+                    try {
+                        retStr = inputStream.ReadLine();
+                    }
+                    catch (IOException e) {
+                        String msg = "Failed to read line from server.  " +
+                                    "It is possible that the remote server was down.";
+                        LOGGER.Error (msg, e);
+                        throw new AuthenticationException (msg);
+                    }
+
+                    switch (retStr) {
+                        case PSERVER_AUTH_SUCCESS:
+                            SendMessage("Connection established");
+                            break;
+                        case PSERVER_AUTH_FAIL:
+                            throw new AuthenticationException();
+                        default:
+                            StringBuilder msg = new StringBuilder ();
+                            msg.Append("Unknown Server response : >").Append(retStr).Append("<");
+                            SendMessage(msg.ToString());
+                            throw new UnsupportedResponseException(msg.ToString());
+                    }
                 break;
+                default:
+                    StringBuilder notSupportedMsg = new StringBuilder ();
+                    notSupportedMsg.Append("Unknown protocol=[").Append(repository.CvsRoot.Protocol).Append("]");
+                    throw new NotSupportedException (notSupportedMsg.ToString());
+            }
+
+            // TODO: Move these into an abstract request class
+            SubmitRequest(new ValidResponsesRequest());
+            SubmitRequest(new ValidRequestsRequest());
+
+            SubmitRequest(new UseUnchangedRequest());
+            SubmitRequest(new RootRequest(repository.CvsRoot.CvsRepository));
+
+            SubmitRequest(new GlobalOptionRequest(GlobalOptionRequest.Options.QUIET));
+            SubmitRequest(new CaseRequest());
+
+        }
+
+        /// <summary>
+        /// The repository information.
+        /// </summary>
+        public WorkingDirectory Repository {
+            get {return repository;}
+        }
+
+        /// <summary>
+        /// Next file date.
+        /// </summary>
+        public string NextFileDate {
+            get {return nextFileDate;}
+            set {nextFileDate = value;}
+        }
+        private string nextFile = null;
+        /// <summary>
+        /// The next file.
+        /// </summary>
+        public string NextFile {
+            get {return nextFile;}
+            set {nextFile = value;}
+        }
+
+        /// <summary>
+        /// Close the cvs server connection.
+        /// </summary>
+        public void Close() {
+            if (repository != null && repository.CvsRoot != null) {
+                switch (repository.CvsRoot.Protocol) {
+                case "ext":
+                    if (p != null && !p.HasExited) {
+                        p.Kill();
+                        p.WaitForExit();
+                        p = null;
+                    }
+                    break;
+                }
             }
         }
     }
-}
 }

@@ -40,56 +40,53 @@ using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 
-using ICSharpCode.SharpCvsLib.Config.Tests;
 using ICSharpCode.SharpCvsLib.Console.Parser;
 
 using log4net;
 using NUnit.Framework;
 
-namespace ICSharpCode.SharpCvsLib.Console.Parser
-{
-
-/// <summary>
-///     Test the command line args parameters for valid ones
-///         and test invalid ones.
-/// </summary>
-[TestFixture]
-public class ConsoleMainTest
-{
+namespace ICSharpCode.SharpCvsLib.Console.Parser {
     /// <summary>
-    ///     Constructory for test case.
+    ///     Test the command line args parameters for valid ones
+    ///         and test invalid ones.
     /// </summary>
-    public ConsoleMainTest ()
+    [TestFixture]
+    public class ConsoleMainTest
     {
-    }
+        /// <summary>
+        ///     Constructory for test case.
+        /// </summary>
+        public ConsoleMainTest ()
+        {
+        }
 
-    /// <summary>
-    ///     Create a ConsoleMain object and run execute with --help.
-    ///
-    /// </summary>
-    [Test]
-    public void MakeMainTest ()
-    {
-        // Test Creating a ConsoleMain object
-        ConsoleMain newMain = new ConsoleMain();
-        String[] args = {"--help"};
+        /// <summary>
+        ///     Create a ConsoleMain object and run execute with --help.
+        ///
+        /// </summary>
+        [Test]
+        public void MakeMainTest ()
+        {
+            // Test Creating a ConsoleMain object
+            ConsoleMain newMain = new ConsoleMain();
+            String[] args = {"--help"};
 
-        // Execute the Execute method
-        newMain.Execute(args);
-    }
-    /// <summary>
-    ///     Create a ConsoleMain object and run execute with --help-commands.
-    ///
-    /// </summary>
-    [Test]
-    public void HelpCommandTest ()
-    {
-        // Test Creating a ConsoleMain object
-        ConsoleMain newMain = new ConsoleMain();
-        String[] args = {"--help-commands"};
+            // Execute the Execute method
+            newMain.Execute(args);
+        }
+        /// <summary>
+        ///     Create a ConsoleMain object and run execute with --help-commands.
+        ///
+        /// </summary>
+        [Test]
+        public void HelpCommandTest ()
+        {
+            // Test Creating a ConsoleMain object
+            ConsoleMain newMain = new ConsoleMain();
+            String[] args = {"--help-commands"};
 
-        // Execute the Execute method
-        newMain.Execute(args);
+            // Execute the Execute method
+            newMain.Execute(args);
+        }
     }
-}
 }

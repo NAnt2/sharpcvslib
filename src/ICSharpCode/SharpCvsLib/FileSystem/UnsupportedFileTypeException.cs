@@ -1,6 +1,5 @@
-#region "Copyright"
-//
-// Copyright (C) 2003 Steve Kenzell
+#region Copyright
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,60 +27,47 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    <author>Steve Kenzell</author>
-//    <author>Clayton Harbour</author>
+//    Author:     Clayton Harbour
 #endregion
+
 using System;
-using System.Collections;
-using System.IO;
-using System.Diagnostics;
 
-using ICSharpCode.SharpCvsLib;
-using ICSharpCode.SharpCvsLib.Client;
-using ICSharpCode.SharpCvsLib.Misc;
-
-using ICSharpCode.SharpCvsLib.Console.Parser;
-
-using log4net;
-using NUnit.Framework;
-
-namespace ICSharpCode.SharpCvsLib.Console.Parser {
+namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
-    ///     Test that the commandNames object is created successfully
-    ///
+    /// An unsupported file type exception occurs if a file name of file type that
+    ///     is not currently known about or not implemented.
     /// </summary>
-    [TestFixture]
-    public class CommandNamesTest
-    {
-        /// <summary>
-        ///     Constructory for test case.
-        /// </summary>
-        public CommandNamesTest ()
-        {
-        }
+    public class UnsupportedFileTypeException : Exception {
 
         /// <summary>
-        ///     Create a CommandNames object.
-        ///
+        /// An unsupported file type exception occurs if a file name of file type that
+        ///     is not currently known about or not implemented.
         /// </summary>
-        [Test]
-        public void MakeTest ()
-        {
-            // Test Creating a Command object
-            CommandNames commands  = new CommandNames();
+        public UnsupportedFileTypeException () {
 
-            // Check the first command object
-            AssertCommandEquals (commands.Commands[0], "add", "ad", "new");
+        }
 
-            // Check the last command object
-            AssertCommandEquals (commands.Commands[commands.Commands.GetLength(0) - 1], "watchers", null, null);
+        /// <summary>
+        /// An unsupported file type exception occurs if a file name of file type that
+        ///     is not currently known about or not implemented.
+        /// </summary>
+        /// <param name="message">Additional information to pass on in the
+        ///     exception.</param>
+        public UnsupportedFileTypeException (String message) : base (message) {
         }
-        private void AssertCommandEquals (Command com,
-                                        string prime, string nick1, string nick2)
-        {
-            Assertion.AssertEquals (prime, com.First);
-            Assertion.AssertEquals (nick1, com.Nick1);
-            Assertion.AssertEquals (nick2, com.Nick2);
+
+        /// <summary>
+        /// An unsupported file type exception occurs if a file name of file type that
+        ///     is not currently known about or not implemented.
+        /// </summary>
+        /// <param name="message">A message that will be helpful for someone
+        ///     resolving the issue with the library.</param>
+        /// <param name="e">An exception that has caused this error, or has
+        ///     led to this error.</param>
+        public UnsupportedFileTypeException (String message, Exception e) : 
+            base (message, e) {
         }
+
     }
+
 }

@@ -39,61 +39,81 @@ using System.Collections;
 using ICSharpCode.SharpCvsLib.FileSystem;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
-
-/// <summary>
-/// Represents a list of entries in the repository or
-///     in simple terms a folder or directory on the
-///     cvs server.
-/// </summary>
-public class Folder {
-    private Entries entries = new Entries();
-    private Repository repository;
-    private Root root;
-    private Tag tag;
-
     /// <summary>
-    ///     The repository object.
+    /// Represents a list of entries in the repository or
+    ///     in simple terms a folder or directory on the
+    ///     cvs server.
     /// </summary>
-    [Obsolete ("Please use Repository")]
-    public Repository Repos {
-        get {return this.repository;}
-        set {this.repository = value;}
-    }
+    public class Folder {
+        private Entries entries;
+        private Repository repository;
+        private Root root;
+        private Tag tag;
 
-    /// <summary>
-    /// Root file, holds cvsroot information.
-    /// </summary>
-    public Root Root {
-        get {return this.root;}
-        set {this.root = value;}
-    }
+        /// <summary>
+        /// Create a new instance of the folders object.  Initialize the entries 
+        ///     collection.
+        /// </summary>
+        public Folder () {
+            this.entries = new Entries();
+        }
+        /// <summary>
+        ///     The repository object.
+        /// </summary>
+        [Obsolete ("Use Repository")]
+        public Repository Repos {
+            get {return this.repository;}
+            set {this.repository = value;}
+        }
 
-    /// <summary>
-    /// Repository file, holds information about the relative path to the
-    ///     folder on the server.
-    /// </summary>
-    public Repository Repository {
-        get {return this.repository;}
-        set {this.repository = value;}
-    }
+        /// <summary>
+        /// Root file, holds cvsroot information.
+        /// </summary>
+        public Root Root {
+            get {return this.root;}
+            set {this.root = value;}
+        }
 
-    /// <summary>
-    /// Tag file: Optional file that records the current revision that
-    ///     is checked out.  Only present if the revision is not the HEAD
-    ///     revision.
-    /// </summary>
-    public Tag Tag {
-        get {return this.tag;}
-        set {this.tag = value;}
-    }
+        /// <summary>
+        /// Repository file, holds information about the relative path to the
+        ///     folder on the server.
+        /// </summary>
+        public Repository Repository {
+            get {return this.repository;}
+            set {this.repository = value;}
+        }
 
-    /// <summary>
-    /// List of entries.
-    /// </summary>
-    public Entries Entries {
-        get {return entries;}
-        set {this.entries = value;}
+        /// <summary>
+        /// Tag file: Optional file that records the current revision that
+        ///     is checked out.  Only present if the revision is not the HEAD
+        ///     revision.
+        /// </summary>
+        public Tag Tag {
+            get {return this.tag;}
+            set {this.tag = value;}
+        }
+
+        /// <summary>
+        /// List of entries.
+        /// </summary>
+        public Entries Entries {
+            get {return this.entries;}
+            set {this.entries = value;}
+        }
+
+        /// <summary>
+        /// Render the object as a human readable string.
+        /// </summary>
+        /// <returns></returns>
+        public override String ToString() {
+            ICSharpCode.SharpCvsLib.Util.ToStringFormatter formatter = new
+                ICSharpCode.SharpCvsLib.Util.ToStringFormatter("Folder");
+            formatter.AddProperty("Repository", this.Repository);
+            formatter.AddProperty("Root", this.Root);
+            formatter.AddProperty("Tag", this.Tag);
+            formatter.AddProperty("Entries", this.Entries);
+            return formatter.ToString();
+        }
     }
-}
 
 }

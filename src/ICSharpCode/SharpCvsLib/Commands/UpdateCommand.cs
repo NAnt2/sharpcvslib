@@ -144,7 +144,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                         DateTime old = entry.TimeStamp;
                         entry.TimeStamp = entry.TimeStamp;
     				
-                        String fileName = Path.Combine(entry.Path, entry.Name);
+                        String fileName = entry.FullPath;
                         this.SendFileRequest (connection, entry);
                     }
                 }
@@ -177,7 +177,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             DateTime old = entry.TimeStamp;
             entry.TimeStamp = entry.TimeStamp;
             try {
-                fileExists = File.Exists (entry.Filename);
+                fileExists = File.Exists (entry.FullPath);
             }
             catch (Exception e) {
                 LOGGER.Error (e);
@@ -186,10 +186,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 
             if (!fileExists) {
                 connection.SubmitRequest (new EntryRequest (entry));
-            } else if (File.GetLastAccessTime(entry.Filename) !=
+            } else if (File.GetLastAccessTime(entry.FullPath) !=
                     entry.TimeStamp.ToUniversalTime ()) {
                 connection.SubmitRequest(new ModifiedRequest(entry.Name));
-                connection.SendFile(entry.Filename, entry.IsBinaryFile);
+                connection.SendFile(entry.FullPath, entry.IsBinaryFile);
             } else {
                 connection.SubmitRequest(new EntryRequest(entry));
                 connection.SubmitRequest(new UnchangedRequest(entry.Name));

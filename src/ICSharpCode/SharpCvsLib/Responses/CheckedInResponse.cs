@@ -33,45 +33,53 @@
 #endregion
 
 using System;
+
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
+using log4net;
+
 namespace ICSharpCode.SharpCvsLib.Responses {
 
-/// <summary>
-/// Handle a checked in response.
-/// </summary>
-public class CheckedInResponse : IResponse
-{
     /// <summary>
-    /// Process a checked in response.
+    /// Handle a checked in response.
     /// </summary>
-    /// <param name="cvsStream"></param>
-    /// <param name="services"></param>
-    public void Process(CvsStream cvsStream, IResponseServices services)
-    {
-        string localPath      = cvsStream.ReadLine();
-        string repositoryPath = cvsStream.ReadLine();
-        string entryLine      = cvsStream.ReadLine();
+    public class CheckedInResponse : IResponse {
+        private readonly ILog LOGGER = LogManager.GetLogger(typeof (CheckedInResponse));
+        /// <summary>
+        /// Process a checked in response.
+        /// </summary>
+        /// <param name="cvsStream"></param>
+        /// <param name="services"></param>
+        public void Process(CvsStream cvsStream, IResponseServices services) {
+            string localPath      = cvsStream.ReadLine();
+            string repositoryPath = cvsStream.ReadLine();
+            string entryLine      = cvsStream.ReadLine();
 
-        string fileName = services.ConvertPath(localPath, repositoryPath);
-        Entry  entry = new Entry(fileName, entryLine);
+            PathTranslator orgPath   =
+                new PathTranslator (services.Repository,
+                repositoryPath);
 
-        // TODO: Determine if this is needed or not.
-        //services.SetEntry(fileName, entry);
-        Manager manager = new Manager ();
-        manager.Add (entry);
-    }
+            //string fileName = services.ConvertPath(localPath, repositoryPath);
+            string fileName = orgPath.LocalPathAndFilename;
+            Entry  entry = new Entry(orgPath.LocalPath, entryLine);
+            LOGGER.Debug ("CheckedInResponse adding entry=[" + entry + "]");
 
-    /// <summary>
-    /// Return true if this response cancels the transaction
-    /// </summary>
-    public bool IsTerminating {
-        get {
-            return false;
+            // TODO: Determine if this is needed or not.
+            //services.SetEntry(fileName, entry);
+            Manager manager = new Manager (services.Repository.WorkingPath);
+            manager.Add (entry);
+        }
+
+        /// <summary>
+        /// Return true if this response cancels the transaction
+        /// </summary>
+        public bool IsTerminating {
+            get {
+                return false;
+            }
         }
     }
-}
 }

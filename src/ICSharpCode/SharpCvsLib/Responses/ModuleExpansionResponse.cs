@@ -37,36 +37,37 @@ using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
-
-/// <summary>
-/// TODO: Find documentation on this.
-/// </summary>
-public class ModuleExpansionResponse : IResponse
-{
-    private readonly ILog LOGGER =
-        LogManager.GetLogger (typeof (ModuleExpansionResponse));
-
     /// <summary>
-    /// Process the module expansion response.
+    ///     Module-expansion pathname \n
+    ///         Return a file or directory which is included in a particular module. 
+    ///         pathname is relative to cvsroot, unlike most pathnames in responses. 
+    ///         pathname should be used to look and see whether some or all of the 
+    ///         module exists on the client side; it is not necessarily suitable for 
+    ///         passing as an argument to a co request (for example, if the modules 
+    ///         file contains the `-d' option, it will be the directory specified 
+    ///         with `-d', not the name of the module).
     /// </summary>
-    /// <param name="cvsStream"></param>
-    /// <param name="services"></param>
-    public void Process(CvsStream cvsStream, IResponseServices services)
-    {
-        string which = cvsStream.ReadLine();
-        if (LOGGER.IsDebugEnabled)
-        {
-            LOGGER.Debug("module expansion : " + which);
+    public class ModuleExpansionResponse : IResponse {
+        private readonly ILog LOGGER =
+            LogManager.GetLogger (typeof (ModuleExpansionResponse));
+
+        /// <summary>
+        /// Process the module expansion response.
+        /// </summary>
+        /// <param name="cvsStream"></param>
+        /// <param name="services"></param>
+        public void Process(CvsStream cvsStream, IResponseServices services) {
+            string which = cvsStream.ReadLine();
+            if (LOGGER.IsDebugEnabled) {
+                LOGGER.Debug("module expansion : " + which);
+            }
+        }
+
+        /// <summary>
+        /// Indicator stating whether the response is terminating or not.
+        /// </summary>
+        public bool IsTerminating {
+            get {return false;}
         }
     }
-
-    /// <summary>
-    /// Indicator stating whether the response is terminating or not.
-    /// </summary>
-    public bool IsTerminating {
-        get {
-            return false;
-        }
-    }
-}
 }

@@ -89,5 +89,21 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         public bool Contains(String path) {
             return Dictionary.Contains(path);
         }
+
+        /// <summary>
+        /// Return a human readable string that represents the folders contained
+        ///     in this dictionary object.
+        /// </summary>
+        /// <returns>A human readable string that represents this collection
+        ///     of folders.</returns>
+        public override String ToString () {
+            ICSharpCode.SharpCvsLib.Util.ToStringFormatter formatter = new
+                ICSharpCode.SharpCvsLib.Util.ToStringFormatter("Entries");
+            foreach (DictionaryEntry entry in Dictionary) {
+                formatter.AddProperty("Folder key", entry.Key);
+                formatter.AddProperty("Folder value", entry.Value);
+            }
+            return formatter.ToString();
+        }
 	}
 }

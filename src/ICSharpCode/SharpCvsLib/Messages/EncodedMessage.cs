@@ -60,13 +60,9 @@ public class EncodedMessage {
     /// </summary>
     /// <param name="message">The message to send to the delegate.</param>
     public void SendMessage (String message) {
-        if (LOGGER.IsDebugEnabled) {
-            StringBuilder msg = new StringBuilder ();
-            msg.Append ("message=[").Append (message).Append ("]");
-            msg.Append ("MessageEvent null=[").Append (null == MessageEvent).Append("]");
-            LOGGER.Debug (msg);
-        }
-        if (null != MessageEvent) {
+        if (null != MessageEvent && 
+            null != message && 
+            String.Empty != message) {
             MessageEvent(message);
         }
     }
@@ -76,7 +72,8 @@ public class EncodedMessage {
     /// </summary>
     /// <param name="message">A message to send to the delegate.</param>
     public void SendMessage (StringBuilder message) {
-        if (null != MessageEvent && null != message) {
+        if (null != MessageEvent && 
+            null != message) {
             this.SendMessage (message.ToString ());
         }
     }

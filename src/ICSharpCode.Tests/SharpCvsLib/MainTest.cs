@@ -41,7 +41,7 @@ using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Console.Parser;
 
-using ICSharpCode.SharpCvsLib.Config.Tests;
+using ICSharpCode.SharpCvsLib.Tests.Config;
 
 using log4net;
 using NUnit.Framework;
@@ -54,7 +54,8 @@ namespace ICSharpCode.SharpCvsLib.Console {
     [TestFixture]
     public class MainTest {
         private ILog LOGGER = LogManager.GetLogger (typeof (MainTest));
-        private TestSettings settings = new TestSettings ();
+        private SharpCvsLibTestsConfig settings = 
+            SharpCvsLibTestsConfig.GetInstance();
 
         private const int DEFAULT_WAIT_TIME = 100;
         private String buildDir;

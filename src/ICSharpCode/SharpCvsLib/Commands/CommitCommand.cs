@@ -45,105 +45,167 @@ using ICSharpCode.SharpCvsLib.FileSystem;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Commands {
-
-/// <summary>
-/// Commit command
-/// </summary>
-public class CommitCommand2 : ICommand
-{
-    private readonly ILog LOGGER = LogManager.GetLogger (typeof (CommitCommand2));
-    private WorkingDirectory workingdirectory;
-    private string  logmessage;
-    private string  vendor  = "vendor";
-    private string  release = "release";
-
     /// <summary>
-    /// Log message
+    /// Commit command
     /// </summary>
-    public string LogMessage {
-        get {
-            return logmessage;
-        }
-        set {
-            logmessage = value;
-        }
-    }
-
-    /// <summary>
-    /// Vendor string
-    /// </summary>
-    public string VendorString {
-        get {
-            return vendor;
-        }
-        set {
-            vendor = value;
-        }
-    }
-
-    /// <summary>
-    /// Release String
-    /// </summary>
-    public string ReleaseString {
-        get {
-            return release;
-        }
-        set {
-            release = value;
-        }
-    }
-
-    /// <summary>
-    /// Commit command two constructor
-    /// </summary>
-    /// <param name="workingdirectory"></param>
-    public CommitCommand2(WorkingDirectory workingdirectory)
+    public class CommitCommand2 : ICommand
     {
-        this.workingdirectory = workingdirectory;
-    }
+        private readonly ILog LOGGER = LogManager.GetLogger (typeof (CommitCommand2));
+        private WorkingDirectory workingdirectory;
+        private string  logmessage;
+        private string  vendor  = "vendor";
+        private string  release = "release";
 
-    /// <summary>
-    /// Execute the commit command
-    /// </summary>
-    /// <param name="connection">Cvs server connection</param>
-    public void Execute(ICommandConnection connection)
-    {
-        connection.SubmitRequest(new CaseRequest());
-        connection.SubmitRequest(new ArgumentRequest("-m"));
-        connection.SubmitRequest(new ArgumentRequest("LOG MESSAGE"));
-        StringCollection files = new StringCollection();
-        if (LOGGER.IsDebugEnabled) {
-            LOGGER.Debug("workdir cvs repository : " +
-                         workingdirectory.CvsRoot.CvsRepository);
-        }
-        foreach (DictionaryEntry folder in workingdirectory.Folders) {
-            foreach (Entry entry  in ((Folder)folder.Value).Entries) {
-                if (!entry.IsDirectory) {
-                    DateTime old = entry.TimeStamp;
-                    entry.TimeStamp = entry.TimeStamp;
-
-                    string path = Path.Combine (workingdirectory.CvsRoot.CvsRepository,
-                                                folder.Key.ToString());
-
-                    string fileName = Path.Combine (path,entry.Name);
-
-                    if (File.GetLastAccessTime(fileName) != entry.TimeStamp) {
-                        connection.SubmitRequest(new DirectoryRequest(".", path));
-                        connection.SubmitRequest(new EntryRequest(entry));
-                        connection.SubmitRequest(new ModifiedRequest(entry.Name));
-                        files.Add(entry.Name);
-                        connection.SendFile(fileName, entry.IsBinaryFile);
-                    }
-
-                    entry.TimeStamp = old;
-                }
+        /// <summary>
+        /// Log message
+        /// </summary>
+        public string LogMessage {
+            get {
+                return logmessage;
+            }
+            set {
+                logmessage = value;
             }
         }
-        //			connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository));
-        foreach (string file in files) {
-            connection.SubmitRequest(new ArgumentRequest(file));
+
+        /// <summary>
+        /// Vendor string
+        /// </summary>
+        public string VendorString {
+            get {
+                return vendor;
+            }
+            set {
+                vendor = value;
+            }
         }
-        connection.SubmitRequest(new CommitRequest());
+
+        /// <summary>
+        /// Release String
+        /// </summary>
+        public string ReleaseString {
+            get {
+                return release;
+            }
+            set {
+                release = value;
+            }
+        }
+
+        /// <summary>
+        /// Commit command two constructor
+        /// </summary>
+        /// <param name="workingdirectory"></param>
+        public CommitCommand2(WorkingDirectory workingdirectory)
+        {
+            this.workingdirectory = workingdirectory;
+        }
+
+        /// <summary>
+        /// Execute the commit command
+        /// </summary>
+        /// <param name="connection">Cvs server connection</param>
+        public void Execute(ICommandConnection connection) {
+            connection.SubmitRequest(new ArgumentRequest("-m"));
+            connection.SubmitRequest(new ArgumentRequest("LOG MESSAGE"));
+            connection.SubmitRequest(new ArgumentRequest(ArgumentRequest.Options.DASH));
+//            StringCollection files = new StringCollection();
+//            if (LOGGER.IsDebugEnabled) {
+//                LOGGER.Debug("workdir cvs repository : " +
+//                            workingdirectory.CvsRoot.CvsRepository);
+//            }
+//            connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository));
+            foreach (DictionaryEntry folderEntry in workingdirectory.Folders) {
+                Folder folder = (Folder)folderEntry.Value;
+                this.SetDirectory(connection, folder);
+//                connection.SubmitRequest(new DirectoryRequest(".", 
+//                    workingdirectory.CvsRoot.CvsRepository + "/" + 
+//                    folder.Repository.FileContents));
+                foreach (DictionaryEntry entryEntry  in folder.Entries) {
+                    Entry entry = (Entry)entryEntry.Value;
+                    LOGGER.Debug("Commit command.  Entry=[" + entry + "]");
+                    LOGGER.Debug("entry.FullPath=[" + entry.FullPath + "]");
+                    if (!entry.IsDirectory) {
+                        this.SendFileRequest(connection, entry);
+//                        DateTime old = entry.TimeStamp;
+//                        entry.TimeStamp = entry.TimeStamp;
+
+//                        string path = Path.Combine (workingdirectory.CvsRoot.CvsRepository,
+//                                                    folderEntry.Key.ToString());
+
+//                        string fileName = entry.FullPath;
+
+//                        if (File.GetLastAccessTime(fileName) != entry.TimeStamp) {
+//                            connection.SubmitRequest(new EntryRequest(entry));
+//                            connection.SubmitRequest(new ModifiedRequest(entry.Name));
+//                            files.Add(entry.Name);
+//                            connection.SendFile(fileName, entry.IsBinaryFile);
+//                        }
+
+//                        entry.TimeStamp = old;
+                    }
+                }
+
+                this.SetDirectory(connection, folder);
+//                connection.SubmitRequest(new DirectoryRequest(".", 
+//                    workingdirectory.CvsRoot.CvsRepository + "/" + 
+//                    folder.Repository.FileContents));
+
+                foreach (DictionaryEntry entryEntry in folder.Entries) {
+                    Entry entry = (Entry)entryEntry.Value;
+                    if (!entry.IsDirectory) {
+//                        if (File.GetLastAccessTime(fileName) != entry.TimeStamp) {
+                            connection.SubmitRequest(new ArgumentRequest(entry.Name));
+//                        }
+                    }
+                }
+            }
+            connection.SubmitRequest(new CommitRequest());
+        }
+
+        private void SetDirectory (ICommandConnection connection,
+            Folder folder) {
+            String absoluteDir =
+                connection.Repository.CvsRoot.CvsRepository + "/" +
+                folder.Repository.FileContents;
+
+            try {
+                connection.SubmitRequest(new DirectoryRequest(".",
+                    absoluteDir));
+            }
+            catch (Exception e) {
+                String msg = "Exception while submitting directory request.  " +
+                    "path=[" + folder.Repository.FileContents + "]";
+                LOGGER.Error (e);
+            }
+        }
+
+        private void SendFileRequest (ICommandConnection connection,
+            Entry entry) {
+//            bool fileExists;
+            DateTime old = entry.TimeStamp;
+            entry.TimeStamp = entry.TimeStamp;
+//            try {
+//                fileExists = File.Exists (entry.Filename);
+//            }
+//            catch (Exception e) {
+//                LOGGER.Error (e);
+//                fileExists = false;
+//            }
+
+//            if (!fileExists) {
+                connection.SubmitRequest (new EntryRequest (entry));
+//            } else if (File.GetLastAccessTime(entry.Filename) !=
+//                entry.TimeStamp.ToUniversalTime ()) {
+                connection.SubmitRequest(new ModifiedRequest(entry.Name));
+                connection.SendFile(entry.FullPath, entry.IsBinaryFile);
+//            } else {
+//                connection.SubmitRequest(new EntryRequest(entry));
+//                connection.SubmitRequest(new UnchangedRequest(entry.Name));
+//            }
+
+            entry.TimeStamp = old;
+        }
+           
     }
-}
 }

@@ -31,53 +31,52 @@
 using ICSharpCode.SharpCvsLib.FileSystem;
 
 namespace ICSharpCode.SharpCvsLib.Requests {
-
-/// <summary>
-/// Response expected: no.
-/// Tell the server what version of a file is on the local machine.
-/// The name in entry-line is a name relative to the directory most
-/// recently specified with Directory.
-///
-/// If the user is operating on only some files in a directory,
-/// Entry requests for only those files need be included.
-///
-/// If an Entry request is sent without Modified, Is-modified,
-/// or Unchanged, it means the file is lost (does not exist in the
-/// working directory).
-///
-/// If both Entry and one of Modified, Is-modified, or Unchanged are sent for the
-/// same file, Entry must be sent first. For a given file, one can send Modified,
-/// Is-modified, or Unchanged, but not more than one of these three.
-/// </summary>
-public class EntryRequest : AbstractRequest
-{
-    private Entry entry;
-
     /// <summary>
-    /// Constructor.
+    /// Response expected: no.
+    /// Tell the server what version of a file is on the local machine.
+    /// The name in entry-line is a name relative to the directory most
+    /// recently specified with Directory.
+    ///
+    /// If the user is operating on only some files in a directory,
+    /// Entry requests for only those files need be included.
+    ///
+    /// If an Entry request is sent without Modified, Is-modified,
+    /// or Unchanged, it means the file is lost (does not exist in the
+    /// working directory).
+    ///
+    /// If both Entry and one of Modified, Is-modified, or Unchanged are sent for the
+    /// same file, Entry must be sent first. For a given file, one can send Modified,
+    /// Is-modified, or Unchanged, but not more than one of these three.
     /// </summary>
-    /// <param name="entry"></param>
-    public EntryRequest(Entry entry)
+    public class EntryRequest : AbstractRequest
     {
-        this.entry = entry;
-    }
+        private Entry entry;
 
-    /// <summary>
-    /// Specify the file revision that resides on a local machine.
-    /// </summary>
-    public override string RequestString {
-        get {
-            return "Entry " + entry.FileContents + "\n";
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="entry"></param>
+        public EntryRequest(Entry entry)
+        {
+            this.entry = entry;
+        }
+
+        /// <summary>
+        /// Specify the file revision that resides on a local machine.
+        /// </summary>
+        public override string RequestString {
+            get {
+                return "Entry " + entry.FileContents + "\n";
+            }
+        }
+
+        /// <summary>
+        /// <code>false</code>, a response is not expected.
+        /// </summary>
+        public override bool IsResponseExpected {
+            get {
+                return false;
+            }
         }
     }
-
-    /// <summary>
-    /// <code>false</code>, a response is not expected.
-    /// </summary>
-    public override bool IsResponseExpected {
-        get {
-            return false;
-        }
-    }
-}
 }
