@@ -340,9 +340,10 @@ namespace ICSharpCode.SharpCvsLib.Client {
 					    }
 						throw new ExecuteShellException(shell);
 					}
-					BufferedStream errstream = new BufferedStream(p.StandardError.BaseStream);
-					inputstream  = new CvsStream(new BufferedStream(p.StandardOutput.BaseStream));
-					outputstream = new CvsStream(new BufferedStream(p.StandardInput.BaseStream));
+					inputstream = outputstream = new CvsStream (tcpclient.GetStream ());
+//					BufferedStream errstream = new BufferedStream(p.StandardError.BaseStream);
+//					inputstream  = new CvsStream(new BufferedStream(p.StandardOutput.BaseStream));
+//					outputstream = new CvsStream(new BufferedStream(p.StandardInput.BaseStream));
 					break;
 				case "pserver":
 			        tcpclient = new TcpClient ();
