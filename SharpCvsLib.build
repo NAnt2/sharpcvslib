@@ -4,7 +4,7 @@
 <project name="ICSharpCode.SharpCvsLib" default="Debug">
 
     <property name="assembly.name" value="ICSharpCode.SharpCvsLib" />
-    <property name="assembly.version" value="0.3.5" />  
+    <property name="assembly.version" value="0.3.4.1" />  
     <property name="warnaserror" value="true" />
     
     <property name="nant.settings.currentframework" value = "net-1.0"/>
@@ -16,12 +16,16 @@
     <property name="lib.dir" value="lib" />
     <property name="lib.ext.dir" value="${lib.dir}/ext" />
 
-    <property name="log4net" value="log4net-net-1.0.dll" />
+    <property name="log4net" value="log4net.dll" />
     <property name="nunit" value="nunit.framework.dll" />
     <property name="ziplib" value="ICSharpCode.SharpZipLib.dll" />
         
     <target name="Debug" depends="SharpCvsLib.Debug" />
     <target name="Release" depends="SharpCvsLib.Release" />
+    
+    <!-- Documentation variables -->
+    <property name="copyright-text" value="Mike Krueger 2001-2002, Clayton Harbour 2003" />
+    <property name="copyright-href" value="http://www.gnu.org/copyleft/lesser.html#TOC1" />
     
     <target name="setup">
         <mkdir dir="${build.dir}" />
@@ -44,14 +48,14 @@
 
     <target name="setup.tests">
         <mkdir dir="${build.dir}" />
-    <copy todir="${build.dir}">
-        <fileset basedir="${lib.ext.dir}">
-                <includes name="${nunit}" />
-                <includes name="${log4net}" />
-          </fileset>
-    </copy>        
+        <copy todir="${build.dir}">
+            <fileset basedir="${lib.ext.dir}">
+                    <includes name="${nunit}" />
+                    <includes name="${log4net}" />
+            </fileset>
+        </copy>        
     </target>
-    
+        
     <target name="dist.src">
         <property name="dist.src" value="${dist.dir}/${assembly.version}/src" />
         
@@ -73,6 +77,87 @@
         </zip>
     </target>
     
+    <target name="gen-doc" failonerror="true">
+        <property name="Title" value="#Cvslib" />
+        <property name="ShowMissingSummaries" value="True" />
+        <property name="OutputDirectory" value="${dist.dir}/${assembly.version}/doc/api" />
+        
+        <property name="ShowMissingSummaries" value="True" />
+        <property name="ShowMissingRemarks" value="False" />
+        <property name="ShowMissingParams" value="True" />
+        <property name="ShowMissingReturns" value="True" />
+        <property name="ShowMissingValues" value="True" />
+
+        <property name="DocumentInternals" value="False" />
+        <property name="DocumentProtected" value="True" />
+        <property name="DocumentPrivates" value="False" />
+        <property name="DocumentEmptyNamespaces" value="False" />
+
+        <property name="IncludeAssemblyVersion" value="False" />
+
+        <echo message="${build.dir}" />
+        <ndoc>
+            <assemblies basedir="${build.dir}">
+                <includes name="${assembly.name}.dll"/>
+            </assemblies>
+            <documenters>
+                <documenter name="MSDN">
+                    <property name="Title" value="${Title}" />
+                    <property name="OutputDirectory" value="${OutputDirectory}/MSDN" />
+
+                    <property name="ShowMissingSummaries" value="${ShowMissingSummaries}" />
+                    <property name="ShowMissingRemarks" value="${ShowMissingRemarks}" />
+                    <property name="ShowMissingParams" value="${ShowMissingParams}" />
+                    <property name="ShowMissingReturns" value="${ShowMissingReturns}" />
+                    <property name="ShowMissingValues" value="${ShowMissingValues}" />
+
+                    <property name="DocumentInternals" value="${DocumentInternals}" />
+                    <property name="DocumentProtected" value="${DocumentProtected}" />
+                    <property name="DocumentPrivates" value="${DocumentPrivates}" />
+                    <property name="DocumentEmptyNamespaces" value="${DocumentEmptyNamespaces}" />
+
+                    <property name="IncludeAssemblyVersion" value="${IncludeAssemblyVersion}" />
+                    <property name="CopyrightText" value="${copyright-text}" />
+                    <property name="CopyrightHref" value="${copyright-href}" />
+
+                    <property name="HtmlHelpName" value="Sporadicism.Blogger" />
+                    <property name="HtmlHelpCompilerFilename" value="hhc.exe" />
+                    <property name="IncludeFavorites" value="False" />
+                    <property name="SplitTOCs" value="False" />
+                    <property name="DefaulTOC" value="" />
+                    <property name="ShowVisualBasic" value="True" />
+                </documenter>
+<!--
+                <documenter name="JavaDoc">
+                    <property name="Title" value="${Title}" />
+                    <property name="OutputDirectory" value="${OutputDirectory}/JavaDoc" />
+
+                    <property name="ShowMissingSummaries" value="${ShowMissingSummaries}" />
+                    <property name="ShowMissingRemarks" value="${ShowMissingRemarks}" />
+                    <property name="ShowMissingParams" value="${ShowMissingParams}" />
+                    <property name="ShowMissingReturns" value="${ShowMissingReturns}" />
+                    <property name="ShowMissingValues" value="${ShowMissingValues}" />
+
+                    <property name="DocumentInternals" value="${DocumentInternals}" />
+                    <property name="DocumentProtected" value="${DocumentProtected}" />
+                    <property name="DocumentPrivates" value="${DocumentPrivates}" />
+                    <property name="DocumentEmptyNamespaces" value="${DocumentEmptyNamespaces}" />
+
+                    <property name="IncludeAssemblyVersion" value="${IncludeAssemblyVersion}" />
+                    <property name="CopyrightText" value="${copyright-text}" />
+                    <property name="CopyrightHref" value="${copyright-href}" />
+
+                    <property name="SkipNamespacesWithoutSummaries" value="False" />
+                    <property name="AutoPropertyBackerSummaries" value="False" />
+                    <property name="AutoDocumentConstructors" value="True" />
+                    <property name="DocumentAttributes" value="False" />
+                    <property name="DocumentedAttributes" value="" />
+                </documenter>
+-->
+            </documenters> 
+        </ndoc>
+    </target>
+    
     <target name="dist.bin">
         <property name="dist.bin" value="${dist.dir}/${assembly.version}/bin" />
         
@@ -91,9 +176,12 @@
             </fileset>
         </zip>
     </target>
+    
     <target name="dist" depends="SharpCvsLib.Release">
         <call target="dist.src" />
         <call target="dist.bin" />
+        
+        <call target="gen-doc" />
     </target>
 
     
@@ -127,7 +215,7 @@
         <property name="unsafe" value="/unsafe-" />
         <property name="checked" value="/checked-" />
         <property name="define" value="DEBUG;TRACE" />
-        <property name="doc" value="${build.dir}/sharpcvslib.xml" />
+        <property name="doc" value="${build.dir}/{assembly.name}.xml" />
 
         <property name="output.tests" value="${build.dir}/${assembly.name}.Tests.dll" />
 
@@ -143,8 +231,8 @@
         <property name="unsafe" value="/unsafe-" />
         <property name="checked" value="/checked-" />
         <property name="define" value="TRACE" />
-        <property name="doc" value="" />
-        
+        <property name="doc" value="${build.dir}/${assembly.name}.xml" />
+                
         <call target="SharpCvsLib" />
     </target>
     
@@ -198,6 +286,7 @@
                 <includes name="${output}" />
             </references>
         </csc>
+        
         <nunit2>
             <test assemblyname="${output.tests}"/>
         </nunit2>

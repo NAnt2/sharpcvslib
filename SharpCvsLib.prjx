@@ -2,7 +2,7 @@
   <Contents>
     <File name=".\lib\ICSharpCode.SharpZipLib.dll" subtype="Code" buildaction="Nothing" dependson="" data="" />
     <File name=".\lib\ext" subtype="Directory" buildaction="Nothing" dependson="" data="" />
-    <File name=".\lib\ext\log4net-net-1.0.dll" subtype="Code" buildaction="Nothing" dependson="" data="" />
+    <File name=".\lib\ext\log4net.dll" subtype="Code" buildaction="Nothing" dependson="" data="" />
     <File name=".\src\build.bat" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\src\COPYING.txt" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\src\README.txt" subtype="Code" buildaction="Exclude" dependson="" data="" />
@@ -104,7 +104,7 @@
   </Contents>
   <References>
     <Reference type="Assembly" refto=".\lib\ICSharpCode.SharpZipLib.dll" />
-    <Reference type="Assembly" refto=".\lib\ext\log4net-net-1.0.dll" />
+    <Reference type="Assembly" refto=".\lib\ext\log4net.dll" />
   </References>
   <DeploymentInformation target="" script="" strategy="File" />
   <Configuration runwithwarnings="False" name="Debug">
