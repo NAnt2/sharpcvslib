@@ -71,7 +71,8 @@ public class Usage {
                 the CVS home page at http://www.cvshome.org/ or
                 Pascal Molli's CVS site at http://www.loria.fr/~molli/cvs-index.html
                 the CVSNT home page at http://www.cvsnt.org/
-                ";
+                
+                Thanks for using the command line tool.";
         }
     }
 
@@ -130,7 +131,8 @@ public class Usage {
                 watch        Set watches
                 watchers     See who is watching a file
                 (Specify the --help option for a list of other help options)
-                ";
+                
+                Thanks for using the command line tool.";
         }
     }
 
@@ -167,7 +169,8 @@ public class Usage {
                 --encrypt       Encrypt all net traffic (if supported by protocol).
                 --authenticate  Authenticate all net traffic (if supported by protocol).
                 (Specify the --help option for a list of other help options)
-                ";
+                
+                Thanks for using the command line tool.";
         }
     }
 
@@ -186,6 +189,7 @@ public class Usage {
                 }
             }
             msg.Append ("(Specify the --help option for a list of other help options)").Append("\r\n");
+            msg.Append("\r\nThanks for using the command line tool.");
             return msg.ToString ();
         }
     }

@@ -119,7 +119,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         }
 
         /// <summary>
-        ///      Parse the command line options.
+        /// Parse the command line options.  There are two (2) general sweeps
+        ///     at parsing the command line.  The first sweep looks for command line
+        ///     help switches, denoted by -- parameters.     
         /// </summary>
         /// <returns>A command object from the library which will be used to 
         ///     access the repsository.</returns>
@@ -127,9 +129,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         ///     parsing the command line arguments (i.e. if invalid arguments
         ///     are entered.</exception>
         public ICommand Execute () {
-
-            int startIndex = 0;
-
             if (LOGGER.IsDebugEnabled) {
                 StringBuilder msg = new StringBuilder ();
                 msg.Append("\n Command line arguments:");
@@ -138,6 +137,14 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 }
                 LOGGER.Debug(msg);
             }
+
+            bool isHelp = this.ParseHelp (this.arguments);
+
+            if (isHelp) {
+                return null;
+            }
+
+            int startIndex = 0;
             // TODO: Remove = null when all other code paths return a value,
             //      this was just put in so it would compile.
             ICommand command = null;
@@ -154,7 +161,12 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 startIndex = 1;
             } else {
                 String tempRoot = Environment.GetEnvironmentVariable (ENV_CVS_ROOT);
-                this.cvsRoot = new CvsRoot(tempRoot);
+                try {
+                    this.cvsRoot = new CvsRoot(tempRoot);
+                } catch (CvsRootParseException e) {
+                    LOGGER.Error(e);
+                    return null;
+                }
             }
 
             for (int i = startIndex; i < arguments.Length; i++) {
@@ -168,9 +180,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "co":
                     case "get":
                         singleOptions = "ANPRcflnps";
-                        this.command = arguments[i++];
+                        this.command = arguments[i];
+                        i++;
                         // get rest of arguments which is options on the checkout command.
                         while (arguments[i].IndexOf("-", 0, 1) >= 0){
+                            LOGGER.Debug("Parsing arguments.  Argument[" + i + "]=[" + arguments[i]);
                             // Get options with second parameters?
                             if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0){
                                 for ( int cnt=1; cnt < arguments[i].Length; cnt++ ){
@@ -178,7 +192,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                                 }
                             }
                             else{
-                                this.options = this.options + arguments[i];       // Yes
+                                this.options = this.options + arguments[i++];       // Yes
                                 this.options = this.options + arguments[i] + " ";
                             }
                             i++;
@@ -241,18 +255,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             this.repository = String.Empty;
                         }
                         break;
-                    case "--help":
-                        System.Console.WriteLine(Usage.General);
-                        break;
-                    case "--help-options":
-                        System.Console.WriteLine(Usage.Options);
-                        break;
-                    case "--help-commands":
-                        System.Console.WriteLine(Usage.Commands);
-                        break;
-                    case "--help-synonyms":
-                        System.Console.WriteLine(Usage.Synonyms);
-                        break;
                     default:
                         StringBuilder msg = new StringBuilder ();
                         msg.Append("Unknown command entered.  ");
@@ -261,6 +263,60 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     }
                 }
             return command;
+        }
+
+        /// <summary>
+        /// Parse the command line arguments to determine if there are any help
+        ///     requests.  If there are help requests then return true, this can
+        ///     then be used to direct the flow of the application to not evaulate
+        ///     any other commands.
+        ///     
+        ///     Also looks at all -- command line arguments, this will be assumed 
+        ///     to have been attempts at help but were malformed.
+        ///     
+        ///     Later this can be used to handle command help options.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        /// <example>
+        ///         Parses help commands such as:
+        ///                 cvs --help
+        ///                 cvs --help-options
+        ///                 cvs --help-commands
+        ///                 cvs --help-synonyms
+        ///                 
+        ///         TODO: FUTURE REVSIONS should also parse something like
+        ///                 cvs --help co
+        ///                 cvs --help commit
+        ///                 cvs --help rtag
+        ///                 ...
+        /// </example>
+        private bool ParseHelp (String[] args) {
+            if (args.Length < 1) {
+                System.Console.WriteLine(Usage.General);
+                return true;
+            }
+            for (int i = 0; i < arguments.Length; i++) {
+                switch (arguments[i]) {
+                    case "--help":
+                        System.Console.WriteLine(Usage.General);
+                        return true;
+                    case "--help-options":
+                        System.Console.WriteLine(Usage.Options);
+                        return true;
+                    case "--help-commands":
+                        System.Console.WriteLine(Usage.Commands);
+                        return true;
+                    case "--help-synonyms":
+                        System.Console.WriteLine(Usage.Synonyms);
+                        return true;
+                }
+                if (arguments[i].IndexOf("--") > -1) {
+                    System.Console.WriteLine(Usage.General);
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

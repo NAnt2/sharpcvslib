@@ -166,6 +166,9 @@ public class CvsRoot
     /// <exception cref="CvsRootParseException">A parse exception is thrown
     ///     if the cvsroot is not in a format that is recognized.</exception>
     private void Parse (String cvsRoot) {
+        if (null == cvsRoot) {
+            throw new CvsRootParseException ("Cvsroot was null.");
+        }
         int s1 = cvsRoot.IndexOf(':', 1)  + 1;
         if (cvsRoot[0] != ':') {
             StringBuilder msg = new StringBuilder ();

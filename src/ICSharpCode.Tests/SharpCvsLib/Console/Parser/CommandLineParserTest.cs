@@ -49,72 +49,93 @@ using NUnit.Framework;
 namespace ICSharpCode.SharpCvsLib.Console.Parser
 {
 
-/// <summary>
-///     Test the command line args parameters for valid ones
-///         and test invalid ones.
-/// </summary>
-[TestFixture]
-public class CommandLineParserTest{
     /// <summary>
-    ///     Constructory for test case.
+    ///     Test the command line args parameters for valid ones
+    ///         and test invalid ones.
     /// </summary>
-    public CommandLineParserTest (){
-    }
+    [TestFixture]
+    public class CommandLineParserTest{
+        private ILog LOGGER = LogManager.GetLogger(typeof (CommandLineParserTest));
+        /// <summary>
+        ///     Constructory for test case.
+        /// </summary>
+        public CommandLineParserTest (){
+        }
 
-    /// <summary>
-    /// Test a CommandLineParser object is created successfully.
-    ///
-    /// </summary>
-    [Test]
-    public void MakeCommandParserTest (){
-        String[] args = {"--help"};
-        // Test Creating a CommandLineParser object
-        CommandLineParser newCommandLineParser = new CommandLineParser( args);
-        Assertion.AssertNotNull ("Should have a command object.", newCommandLineParser);
-        newCommandLineParser.Execute();
-    }
+        /// <summary>
+        /// Test a CommandLineParser object is created successfully.
+        ///
+        /// </summary>
+        [Test]
+        public void MakeCommandParserTest (){
+            String[] args = {"--help"};
+            // Test Creating a CommandLineParser object
+            CommandLineParser newCommandLineParser = new CommandLineParser( args);
+            Assertion.AssertNotNull ("Should have a command object.", newCommandLineParser);
+            newCommandLineParser.Execute();
+        }
 
-    /// <summary>
-    /// Test that the -d option parameter is connected to the cvsroot, to keep
-    ///     the implementation similar to cvs/ cvsnt.
-    ///
-    ///     Correct
-    ///     <code>
-    ///         cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/sharpcvslib login
-    ///     </code>
-    ///     Incorrect:
-    ///     <code>
-    ///         cvs -d :pserver:anonymous:cvs.sf.net:/cvsroot/sharpcvslib login
-    ///     </code>
-    /// </summary>
-    [Test]
-    public void MinusDOptionConnectedToCvsRoot () {
-        String[] args = {"-d:pserver:anonymous:cvs.sf.net:/cvsroot/sharpcvslib", "login"};
-        CommandLineParser parser = new CommandLineParser (args);
-        try {
-            parser.Execute ();
-        } catch {
-            Assertion.Fail ("Should not throw an exception, valid parameters.");
+        /// <summary>
+        /// Test that the -d option parameter is connected to the cvsroot, to keep
+        ///     the implementation similar to cvs/ cvsnt.
+        ///
+        ///     Correct
+        ///     <code>
+        ///         cvs -d:pserver:anonymous@cvs.sf.net:/cvsroot/sharpcvslib login
+        ///     </code>
+        ///     Incorrect:
+        ///     <code>
+        ///         cvs -d :pserver:anonymous:cvs.sf.net:/cvsroot/sharpcvslib login
+        ///     </code>
+        /// </summary>
+        [Test]
+        public void MinusDOptionConnectedToCvsRoot () {
+            try {
+                String commandLine = "-d:pserver:anonymous:cvs.sf.net:/cvsroot/sharpcvslib login";
+                String[] argsBad = commandLine.Split(' ');
+                CommandLineParser parser = new CommandLineParser (argsBad);
+
+                parser.Execute ();
+                Assertion.Fail("Should throw an exception.");
+            } catch (CvsRootParseException e){
+                // expected the exception, log the error for good luck
+                LOGGER.Debug(e);
+            } catch (Exception e) {
+                // this should not happen, log it and rethrow the exception
+                LOGGER.Error (e);
+                throw e;
+            }
+            try {
+                String[] argsBad = {"-d:pserver:anonymous@cvs.sf.net:/cvsroot/sharpcvslib", "login"};
+                CommandLineParser parser = new CommandLineParser (argsBad);
+
+                parser.Execute();
+            } catch (CvsRootParseException e){
+                LOGGER.Error(e);
+                Assertion.Fail ("Should not throw an exception, valid parameters.");
+            } catch (Exception e) {
+                // this should not happen, log it and rethrow the exception
+                LOGGER.Error(e);
+                throw e;
+            }
+        }
+        /// <summary>
+        /// Test the options are parsed correctly and added to the Options property.
+        /// </summary>
+        [Test]
+        public void ParseOptions () {
+            String commandLine = "-d:pserver:anonymous@cvs.sf.net:/cvsroot/sharpcvslib co -r v0_3_1 -d newLocation sharpcvslib";
+            String[] args = commandLine.Split(' ');
+            CommandLineParser parser = new CommandLineParser (args);
+            try {
+                parser.Execute ();
+            } 
+            catch (Exception e) {
+                LOGGER.Error(e);
+                throw e;
+            }
+            Assertion.Equals("-r v0_3_1 -d newlocation ", parser.Options);
+            Assertion.Equals("sharpcvslib", parser.Repository);
         }
     }
-    /// <summary>
-    /// Test the options are parsed correctly and added to the Options property.
-    /// </summary>
-    [Test]
-    public void ParseOptions () {
-        String[] args = {"-d:pserver:anonymous:cvs.sf.net:/cvsroot/sharpcvslib",
-                         "co", "-r", "v0_3_1", "-d", "newlocation", "sharpcvslib"};
-        CommandLineParser parser = new CommandLineParser (args);
-        try 
-        {
-            parser.Execute ();
-        } 
-        catch 
-        {
-            Assertion.Fail ("Should not throw an exception, valid parameters.");
-        }
-        Assertion.Equals("-rv0_3_1 -dnewlocation ", parser.Options);
-        Assertion.Equals("sharpcvslib", parser.Repository);
-    }
-}
 }
