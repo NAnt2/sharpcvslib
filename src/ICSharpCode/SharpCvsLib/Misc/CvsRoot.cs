@@ -53,7 +53,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </summary>
         public const string CVSROOT_REGEX = 
               @":(?<Protocol>ext|pserver|ssh|local|sspi)
-                :(?<User>[\w\.-]*)[@]*
+                :(?<User>[\s\w\.-]*)[@]*
                 (?<Host>[\w\d-]+[\.\w\d-]*)
                 :(?<Port>[\d]+)*
                 [:]*(?<Repository>(?:(?:[A-Za-z]:/)|/).[^\s]*)";
