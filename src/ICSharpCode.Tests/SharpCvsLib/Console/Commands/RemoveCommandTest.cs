@@ -70,16 +70,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         public void MakeRemoveCommandTest () {
             Directory.CreateDirectory( settings.Config.LocalPath);
             Environment.CurrentDirectory = settings.Config.LocalPath;
-            // add file first
-            // commit file second
-            // remove file third
-            // commit removed file
-            String commandLine = "-d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib rm fileremove.txt";
+            // add file TargetFile
+            // commit file TargetFile
+            // remove file TargetFile
+            // commit remove TargetFile
+            String commandLine = "-d" + settings.Config.Cvsroot + " rm " + 
+            Path.Combine(settings.Config.LocalPath, settings.Config.TargetFile);
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a RemoveCommand object
             ConsoleMain consoleMain = new ConsoleMain();
-            consoleMain.Execute(commandLineArgs);
             Assertion.AssertNotNull ("Should have a command object.", consoleMain);
+            
+            consoleMain.Execute(commandLineArgs);
+            Assertion.Assert(!File.Exists(Path.Combine(settings.Config.LocalPath, settings.Config.TargetFile)));
         }
     }
 }
