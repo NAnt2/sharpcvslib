@@ -38,7 +38,7 @@
                     <attribute type="ComVisibleAttribute" value="false" />
                     <attribute type="CLSCompliantAttribute" value="true" />
                     <attribute type="AssemblyVersionAttribute" value="${assembly.version}" />
-                    <attribute type="AssemblyTitleAttribute" value="${name.project}" />
+                    <attribute type="AssemblyTitleAttribute" value="${assembly.title}" />
                     <attribute type="AssemblyDescriptionAttribute" value="${assembly.description}" />
                     <attribute type="AssemblyCopyrightAttribute" value="${assembly.copyright.text}" />
                     <attribute type="AssemblyCompanyAttribute" value="${assembly.company}" />

@@ -21,9 +21,11 @@
     
     <!-- Version information -->
     <property name="assembly.start-date" value="2001-01-01" />  <!-- This is a guess at the start date, it is used to generate the current version number. -->
+    <property name="assembly.title" value="Concurrent Versions System (sharpCVS) (client)" />
     <property name="assembly.copyright.text" value="Mike Krueger 2001-2002, SharpCvsLib Developers 2003-${current.year}
-     CVS may be copied only under the terms of the GNU General Public License,
-     a copy of which can be found with the CVS distribution kit." />
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit." />
     <property name="assembly.copyright.href" value="http://sharpcvslib.sourceforge.net/license.html" />
     <property name="assembly.description" value="${nant.platform.name}; ${nant.settings.defaultframework}; ${build.date}" />
     <property name="assembly.company" value="SharpCvsLib - http://sharpcvslib.sourceforge.net" />

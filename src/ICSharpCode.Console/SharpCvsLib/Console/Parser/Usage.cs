@@ -46,6 +46,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 /// Contains the usage message for the command line interface.
 /// </summary>
 public class Usage {
+	private static String titleInfo;
 	private static String copyrightInfo;
 	private static String companyInfo;
 	private static String description;
@@ -206,6 +207,14 @@ Thanks for using the command line tool.";
         return version;
     }
 
+	private static String GetTitleInfo () {
+		if (null == titleInfo) {
+			titleInfo = ((System.Reflection.AssemblyTitleAttribute)
+				System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyTitleAttribute), false)[0]).Title; 
+		}
+		return titleInfo;
+	}
+
 	private static String GetCopyrightInfo () {
 		if (null == copyrightInfo) {
 			copyrightInfo = ((System.Reflection.AssemblyCopyrightAttribute)
@@ -236,19 +245,22 @@ Thanks for using the command line tool.";
         get{
 		
 		String programInfo = @"
-Concurrent Versions System (sharpCVS) {0} (client)
-  Build  : {3}
-  Runtime: {5}; {4}
+{0} - {1}
+  Build  : {2}
+  Runtime: {3}; {4}
 
-Copyright (c) {2}
+Copyright (c) {5}
 
 Specify the --help option for further information about CVS
-
-see {1} for more information on SharpCvsLib";
-			object[] args = {GetVersion(), GetCompanyInfo(),
-								GetCopyrightInfo(), 
-							  GetDescription(), Environment.OSVersion.Version.ToString(), 
-								Environment.OSVersion.Platform.ToString()};
+  or see {6}";
+			object[] args = {GetTitleInfo(), 
+								GetVersion(), 
+								GetDescription(),
+								Environment.OSVersion.Platform.ToString(),
+								Environment.OSVersion.Version.ToString(), 
+								GetCopyrightInfo(),
+								GetCompanyInfo()
+								};
             return String.Format (programInfo, args);
         }
     }    
