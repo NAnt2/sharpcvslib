@@ -32,11 +32,14 @@
 #endregion
 using System;
 using System.Globalization;
+using System.Collections;
+using System.IO;
 using System.Text;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Commands;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Console.Parser;
+using ICSharpCode.SharpCvsLib.FileSystem;
 
 using log4net;
 
@@ -49,7 +52,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         private WorkingDirectory currentWorkingDirectory;
         private CvsRoot cvsRoot;
         private string fileNames;
-        private string localDirectory;
         private string unparsedOptions;
         private string message;
         private string kflag; // could be enumeration
@@ -96,18 +98,27 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             ICSharpCode.SharpCvsLib.Commands.AddCommand addCommand;
             this.ParseOptions(this.unparsedOptions);
             try {
-                if (localDirectory == null) {
-                    localDirectory = Environment.CurrentDirectory;
-                }
+                // Open the Repository file in the CVS directory
+                Manager manager = new Manager(Environment.CurrentDirectory);
+                Repository repository = manager.FetchRepository(Environment.CurrentDirectory); 
+                // If this fails error out and state the user
+                //    is not in a CVS repository directory tree.
                 currentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
-                    localDirectory, fileNames);
+                    Environment.CurrentDirectory, repository.FileContents);
                 // If fileNames has a wild card (*) like '*.txt'
-                ICSharpCode.SharpCvsLib.FileSystem.Entry newEntry = 
-                    new ICSharpCode.SharpCvsLib.FileSystem.Entry(fileNames, null);
-                currentWorkingDirectory.AddEntry(localDirectory, newEntry);
                 // Create new AddCommand object
                 addCommand = new ICSharpCode.SharpCvsLib.Commands.AddCommand(
                                  this.currentWorkingDirectory);
+
+                String[] files = Directory.GetFiles(Environment.CurrentDirectory, fileNames);
+                ArrayList copiedFiles = new ArrayList ();
+                foreach (String file in files) {
+                    LOGGER.Debug("file=[" + file + "]");
+                    // Remove the .txt when everything works, giving me bugs...
+                    String fullPath = Path.Combine(Environment.CurrentDirectory, file);
+                    copiedFiles.Add(fullPath);
+                }
+                addCommand.Folders = GetFoldersToAdd(copiedFiles);
             }
             catch (Exception e) {
                 LOGGER.Error (e);
@@ -148,6 +159,41 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                     kflag = adOptions.Substring(i, endofOptions);
                 }
             }
+        }
+        /// <summary>
+        /// Setup the list of files to be a folder object for the cvs
+        ///     library to process.
+        /// </summary>
+        /// <param name="filesAdded">An array filenames that are to be added
+        ///     to the cvs repository.</param>
+        private Folders GetFoldersToAdd (ICollection filesAdded) {
+            Folders folders = new Folders();
+            Manager manager = new Manager(Environment.CurrentDirectory);
+            LOGGER.Debug("Number of files copied=[" + filesAdded.Count + "]");
+            foreach (String file in filesAdded) {
+                Folder folder;
+                if (!folders.Contains(Path.GetDirectoryName(file))) {
+                    folder = new Folder();
+                    LOGGER.Debug("file=[" + file + "]");
+                    LOGGER.Debug("file path=[" + Path.GetDirectoryName(file) + "]");
+                    folder.Repository = 
+                        manager.FetchRepository(Path.GetDirectoryName(file));
+                    folder.Root = 
+                        manager.FetchRoot(Path.GetDirectoryName(file));
+                    folder.Tag = 
+                        manager.FetchTag(Path.GetDirectoryName(file));
+                    folders.Add(Path.GetDirectoryName(file), folder);
+                } else {
+                    folder = folders[Path.GetDirectoryName(file)];
+                }
+                if (!folder.Entries.Contains(file)) {
+                    Entry entry = Entry.CreateEntry(file);
+                    folder.Entries.Add (file, entry);
+                } else {
+                    folder.Entries[file] = Entry.CreateEntry(file);
+                }
+            }
+            return folders;
         }
     }
 }
