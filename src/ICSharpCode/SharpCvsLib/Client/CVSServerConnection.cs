@@ -430,6 +430,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
                             } finally {
                                 throw new AuthenticationException();
                             }
+			    break;
                         }
                         default: {
                             StringBuilder msg = new StringBuilder ();
