@@ -271,8 +271,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 }
             }
             this.Parse(fileContents);
-            LOGGER.Error("path=[" + path + "]");
-            LOGGER.Error("name=[" + this.Name + "]");
+            LOGGER.Debug("path=[" + path + "]");
+            LOGGER.Debug("name=[" + this.Name + "]");
             if (deriveFullPath) {
                 this.FullPath = System.IO.Path.Combine(path, this.Name);
                 if (this.isDir) {
@@ -352,19 +352,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 }
             } 
             path = System.IO.Path.GetDirectoryName(fullPath);
-            // get the directory if the path ends with a slash
-//            if (fullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
-//                fullPath.EndsWith("/")) {
-//                // strip the slash off so the filename is derived correctly
-//                fileName = 
-//                    System.IO.Path.GetFileName(fullPath.Substring(0, fullPath.Length - 1));
-//            } else {
-                fileName = System.IO.Path.GetFileName(fullPath);
-//            }
+            fileName = System.IO.Path.GetFileName(fullPath);
+
             entryString.Append("/").Append(System.IO.Path.GetFileName(fileName));
             entryString.Append("/0///");
 
-            LOGGER.Error("entryString=[" + entryString.ToString() + "]");
+            LOGGER.Debug("entryString=[" + entryString.ToString() + "]");
             Entry entry = new Entry(path, 
                 entryString.ToString());
             LOGGER.Debug("Created entry=[" + entry + "]");

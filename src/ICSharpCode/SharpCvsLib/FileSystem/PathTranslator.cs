@@ -263,8 +263,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public static String ConvertToOSSpecificPath (String path) {
             // Make the path match the os' preference
             String osPath = path;
-            osPath = osPath.Replace ('/', Path.DirectorySeparatorChar);
-            osPath = osPath.Replace ('\\', Path.DirectorySeparatorChar);
+            osPath = osPath.Replace ("/", Path.DirectorySeparatorChar.ToString());
+            osPath = osPath.Replace ("\\", Path.DirectorySeparatorChar.ToString());
 
             return osPath;
         }

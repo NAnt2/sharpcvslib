@@ -53,9 +53,8 @@ public class ErrorResponse : IResponse
     public void Process(CvsStream cvsStream, IResponseServices services)
     {
         string message = cvsStream.ReadLine();
-        // TODO: Figure out if I should spit this out to the client.
-        //services.SendMessage("cvs server: Error " + error);
         String msg = "cvs server: M " + message;
+        services.SendErrorMessage(msg);
         LOGGER.Debug (msg);
 
     }

@@ -112,45 +112,48 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <returns>A collection of folders that contain the cvs entries for
         ///       each directory.</returns>
         public Folder[] FetchFilesToUpdate (String directory) {
-            if (!directory.EndsWith(Path.DirectorySeparatorChar.ToString())) {
-                directory = directory + Path.DirectorySeparatorChar.ToString();
-            }
-            this.ValidateInSandbox(directory);
-            ArrayList folders = new ArrayList ();
+            Folders folders = new Folders ();
             Folder folder = new Folder ();
-            folder.Repository = (Repository)this.FetchSingle (directory,
-                                Factory.FileType.Repository);
-            folder.Entries = new Entries ();
-            ArrayList colEntries = new ArrayList (this.Fetch (directory,
-                                            Factory.FileType.Entries));
-            foreach (Entry entry in colEntries) {
-                folder.Entries.Add (entry.FullPath, entry);
-            }
-            folders.Add (folder);
-            this.FetchFilesToUpdateRecursive (folders, directory);
+            try {
+                folder.Repository = 
+                    this.FetchRepository (directory);
+                folder.Entries = this.FetchEntries(Path.Combine(directory, Entry.FILE_NAME));
 
-            return (Folder[])folders.ToArray (typeof (Folder));
+                folders.Add (directory, folder);
+            } catch (CvsFileNotFoundException e) {
+                LOGGER.Debug("File not found, this is normal recursing through the tree.", e);
+            }
+
+            if (!PathTranslator.ContainsCVS(directory)) {
+                this.FetchFilesToUpdateRecursive (folders, directory);
+            }
+
+            return (Folder[])(new ArrayList(folders.Values)).ToArray (typeof (Folder));
         }
 
-        private void FetchFilesToUpdateRecursive (ArrayList folders,
+        private void FetchFilesToUpdateRecursive (Folders folders,
                 String directory) {
-            this.ValidateInSandbox(directory);
+
             foreach (String subDir in Directory.GetDirectories (directory)) {
                 LOGGER.Debug("Looking in directory=[" + subDir + "]");
                 Folder folder = new Folder ();
-                if (!directory.EndsWith(Path.DirectorySeparatorChar.ToString())) {
-                    directory = directory + Path.DirectorySeparatorChar.ToString();
+
+                try {
+                    folder.Repository = (Repository)this.FetchRepository (directory);
+                    Entries colEntries = this.FetchEntries (Path.Combine(directory, Entry.FILE_NAME));
+
+                    foreach (DictionaryEntry dicEntry in colEntries) {
+                        Entry entry = (Entry)dicEntry.Value;
+                        LOGGER.Debug("Adding entry to update=[" + entry + "]");
+                        folder.Entries.Add (entry.FullPath, entry);
+                    }
+                    folders.Add (subDir, folder);
+                } catch (CvsFileNotFoundException e) {
+                    LOGGER.Debug("File not found, this is normal recursing through the tree.", e);
                 }
-                folder.Repository = (Repository)this.FetchSingle (directory,
-                                    Factory.FileType.Repository);
-                ArrayList colEntries = new ArrayList (this.Fetch (directory,
-                                                Factory.FileType.Entries));
-                foreach (Entry entry in colEntries) {
-                    LOGGER.Debug("Adding entry to update=[" + entry + "]");
-                    folder.Entries.Add (entry.FullPath, entry);
+                if (!PathTranslator.ContainsCVS(subDir)) {
+                    this.FetchFilesToUpdateRecursive (folders, subDir);
                 }
-                folders.Add (folder);
-                this.FetchFilesToUpdateRecursive (folders, subDir);
             }
         }
 
@@ -445,7 +448,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <returns>Returns <code>true</code> if the path being written to is
         ///     inside the working path, otherwise returns <code>false</code>.</returns>
         private bool IsInSandbox (String path) {
-            return path.IndexOf(this.workingPath) >= 0;
+            String tempPath = PathTranslator.ConvertToOSSpecificPath(path);
+            String tempWorkingPath = PathTranslator.ConvertToOSSpecificPath(this.workingPath);
+            if (Path.DirectorySeparatorChar.Equals("\\")) {
+                tempPath = tempPath.ToLower();
+                tempWorkingPath = tempWorkingPath.ToLower();
+            }
+            return tempPath.IndexOf(tempWorkingPath) >= 0;
         }
 
         /// <summary>
@@ -739,7 +748,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 msg.Append("full path=[").Append(fullPath).Append("]");
                 msg.Append("cvsFileName=[").Append(cvsFileName).Append("]");
                 msg.Append("cvsFullPath=[").Append(cvsFullPath).Append("]");
-                LOGGER.Warn(msg);
+                LOGGER.Debug(msg);
 
                 throw new CvsFileNotFoundException (cvsFullPath);
             }
@@ -1211,7 +1220,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         private void ValidateInSandbox (String path) {
-            if (!IsInSandbox(PathTranslator.ConvertToOSSpecificPath(path))) {
+            if (!IsInSandbox(path)) {
                 StringBuilder msg = new StringBuilder();
                 msg.Append("Unable to write outside of sandbox.  ");
                 msg.Append("Attempting to write to path=[").Append(path).Append("]");

@@ -44,26 +44,17 @@ namespace ICSharpCode.SharpCvsLib.Client {
 /// </summary>
 public interface IResponseServices
 {
-/*    /// <summary>
-    /// Convert the path to a winnt path.
-    /// </summary>
-    /// <param name="localPath"></param>
-    /// <param name="repository"></param>
-    /// <returns></returns>
-//    string ConvertPath(string localPath, string repository);
-
-    /// <summary>
-    /// Set entry.
-    /// </summary>
-    /// <param name="localFile"></param>
-    /// <param name="entry"></param>
-//    void   SetEntry(string localFile, Entry entry);
-*/
     /// <summary>
     /// Send message
     /// </summary>
     /// <param name="msg"></param>
     void   SendMessage(string msg);
+
+    /// <summary>
+    /// Send an error message.
+    /// </summary>
+    /// <param name="msg"></param>
+    void SendErrorMessage(string msg);
 
     /// <summary>
     /// The repository object, contains information about

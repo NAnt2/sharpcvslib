@@ -105,5 +105,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
             }
             return formatter.ToString();
         }
+
+        /// <summary>
+        /// Return the collection of values for the dictionary.
+        /// </summary>
+        public ICollection Values {
+            get {return this.Dictionary.Values;}
+        }
 	}
 }

@@ -148,10 +148,10 @@ namespace ICSharpCode.SharpCvsLib.Client {
             }
         }
 
-            /// <summary>
-            /// Cvs input stream writer
-            /// </summary>
-            public CvsStream InputStream {
+        /// <summary>
+        /// Cvs input stream writer
+        /// </summary>
+        public CvsStream InputStream {
             get {return inputStream;}
             set {inputStream = value;}
         }
@@ -185,12 +185,26 @@ namespace ICSharpCode.SharpCvsLib.Client {
         public EncodedMessage MessageEvent = new EncodedMessage ();
 
         /// <summary>
+        /// This message event is fired when there is an error message returned
+        ///     from the server.
+        /// </summary>
+        public EncodedMessage ErrorMessageEvent = new EncodedMessage();
+
+        /// <summary>
         /// Send the message to the message event handler.
         /// </summary>
         /// <param name="message"></param>
         public void SendMessage(string message) {
-            LOGGER.Info (message);
             MessageEvent.SendMessage(message);
+        }
+
+        /// <summary>
+        /// Use this event to send error messages to a client.
+        /// </summary>
+        /// <param name="errorMessage">A message that will notify the client 
+        ///     as to the nature of the error message.</param>
+        public void SendErrorMessage(string errorMessage) {
+            ErrorMessageEvent.SendMessage("Error: " + errorMessage);
         }
 
         /// <summary>
@@ -251,8 +265,6 @@ namespace ICSharpCode.SharpCvsLib.Client {
                     break;
                 }
             }
-            // TODO: Figure out if this is where the cvs file creation should go.
-            //			repository.CreateCVSFiles();
         }
 
         /// <summary>
