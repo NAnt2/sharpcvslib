@@ -50,22 +50,26 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 	public class PathTranslatorTest	{
 		private ILog LOGGER = 
 			LogManager.GetLogger (typeof(EntryTest));
+        private String moduleDir;
 	    
         private const String ROOT_ENTRY1 = 
             ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
 	    // TODO: need *nix style dir when testing on *nix
-	    private String LOCAL_DIR1 
+	    private String LOCAL_ROOT_DIR1 
 	    {
 	        get {
 	            if (IsWindows) {
-	                return "Z:\\sharpcvslib";
+	                return "Z:\\dev-src";
 	            } else if (IsUnix) {
-	                return "/tmp/sharpcvslib";
+	                return "/tmp/dev-src";
 	            } else {
 	                String msg = "Path seperator unknown.";
 	                throw new Exception (msg);
 	            }
 	        }
+	    }
+	    private String LOCAL_DIR1 {
+	        get {return Path.Combine (LOCAL_ROOT_DIR1, moduleDir);}
 	    }
 	    
 	    private bool IsUnix {
@@ -75,10 +79,16 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 	    private bool IsWindows {
 	        get {return Path.DirectorySeparatorChar.Equals ('\\');}
 	    }
+	    
+	    private String ModuleDir {
+	        get {return this.moduleDir;}
+	        set {this.moduleDir = value;}
+	    }
 	    private const String REPOS_NAME1 = "sharpcvslib";
-	    private const String REPOS_FILE_PATH1 = "/cvsroot/sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/PathTranslator.cs";
-	    private const String REPOS_DIR_PATH1 = "/cvsroot/sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/";
-	    private const String REPOS_FILE_PATH2 = "/cvsroot/sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/Sharp";
+	    private const String REPOS_FILE_PATH1 = "/cvsroot/sharpcvslib/sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/PathTranslator.cs";
+	    private const String REPOS_DIR_PATH1 = "/cvsroot/sharpcvslib/sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/";
+	    private const String REPOS_FILE_PATH2 = "/cvsroot/sharpcvslib/sharpcvslib/src/ICSharpCode/SharpCvsLib/FileSystem/Sharp";
+	    private const String REPOS_DIR_PATH2 = "/home/cvs/src/./";
 
 		/// <summary>
 		/// Constructor for customer db test.
@@ -92,6 +102,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [SetUp]
         public void SetUp () {
+            this.moduleDir = REPOS_NAME1;
         }
         
         /// <summary>
@@ -114,14 +125,17 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             PathTranslator pathTranslator;
             
             cvsRoot = new CvsRoot (ROOT_ENTRY1);
-            workingDirectory = new WorkingDirectory (cvsRoot, LOCAL_DIR1, REPOS_NAME1);
+            workingDirectory = new WorkingDirectory (cvsRoot, LOCAL_ROOT_DIR1, REPOS_NAME1);
             pathTranslator = new PathTranslator (workingDirectory, REPOS_FILE_PATH1);
             
-            Assertion.Assert (pathTranslator.CvsRoot, pathTranslator.CvsRoot.Equals ("/cvsroot/sharpcvslib"));
-            Assertion.Assert (pathTranslator.RelativePath, pathTranslator.RelativePath.Equals ("src/ICSharpCode/SharpCvsLib/FileSystem/"));
+            LOGGER.Debug ("pathTranslator=[" + pathTranslator.ToString () + "]");
+            Assertion.Assert (pathTranslator.CvsRoot.CvsRepository, 
+                              pathTranslator.CvsRoot.CvsRepository.Equals ("/cvsroot/sharpcvslib"));
+            Assertion.Assert (pathTranslator.RelativePath, pathTranslator.RelativePath.Equals ("src/ICSharpCode/SharpCvsLib/FileSystem"));
             Assertion.Assert (pathTranslator.Filename, pathTranslator.Filename.Equals ("PathTranslator.cs"));
-            String expectedLocalPath = Path.Combine (LOCAL_DIR1, "src/ICSharpCode/SharpCvsLib/FileSystem/");
-            Assertion.Assert (pathTranslator.LocalPath, pathTranslator.LocalPath.Equals (expectedLocalPath));
+            String expectedLocalPath = 
+                PathTranslator.ConvertToOSSpecificPath (Path.Combine (LOCAL_DIR1, "src/ICSharpCode/SharpCvsLib/FileSystem"));
+            Assertion.AssertEquals (pathTranslator.LocalPath, expectedLocalPath, pathTranslator.LocalPath);
             Assertion.Assert (pathTranslator.LocalPathAndFilename, pathTranslator.LocalPathAndFilename.Equals (Path.Combine (expectedLocalPath, "PathTranslator.cs")));
             Assertion.Assert (pathTranslator.IsDirectory == false);
         }
@@ -136,14 +150,16 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             PathTranslator pathTranslator;
             
             cvsRoot = new CvsRoot (ROOT_ENTRY1);
-            workingDirectory = new WorkingDirectory (cvsRoot, LOCAL_DIR1, REPOS_NAME1);
+            workingDirectory = new WorkingDirectory (cvsRoot, LOCAL_ROOT_DIR1, REPOS_NAME1);
             pathTranslator = new PathTranslator (workingDirectory, REPOS_DIR_PATH1);
             
-            Assertion.Assert (pathTranslator.CvsRoot, pathTranslator.CvsRoot.Equals ("/cvsroot/sharpcvslib"));
-            Assertion.Assert (pathTranslator.RelativePath, pathTranslator.RelativePath.Equals ("src/ICSharpCode/SharpCvsLib/FileSystem/"));
+            Assertion.Assert (pathTranslator.CvsRoot.CvsRepository, 
+                              pathTranslator.CvsRoot.CvsRepository.Equals ("/cvsroot/sharpcvslib"));
+            Assertion.AssertEquals (pathTranslator.RelativePath, "src/ICSharpCode/SharpCvsLib/FileSystem", pathTranslator.RelativePath);
             Assertion.Assert (pathTranslator.Filename, pathTranslator.Filename.Length == 0);
-            String expectedLocalPath = Path.Combine (LOCAL_DIR1, "src/ICSharpCode/SharpCvsLib/FileSystem/");
-            Assertion.Assert (pathTranslator.LocalPath, pathTranslator.LocalPath.Equals (expectedLocalPath));
+            String expectedLocalPath = 
+                PathTranslator.ConvertToOSSpecificPath (Path.Combine (LOCAL_DIR1, "src/ICSharpCode/SharpCvsLib/FileSystem"));
+            Assertion.AssertEquals (pathTranslator.LocalPath, expectedLocalPath, pathTranslator.LocalPath);
             Assertion.Assert (pathTranslator.LocalPathAndFilename, pathTranslator.LocalPathAndFilename.Equals (expectedLocalPath));
             Assertion.Assert (pathTranslator.IsDirectory == true);
         }
@@ -159,13 +175,14 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             PathTranslator pathTranslator;
             
             cvsRoot = new CvsRoot (ROOT_ENTRY1);
-            workingDirectory = new WorkingDirectory (cvsRoot, LOCAL_DIR1, REPOS_NAME1);
+            workingDirectory = new WorkingDirectory (cvsRoot, LOCAL_ROOT_DIR1, REPOS_NAME1);
             pathTranslator = new PathTranslator (workingDirectory, REPOS_FILE_PATH2);
             
-            Assertion.Assert (pathTranslator.CvsRoot, pathTranslator.CvsRoot.Equals ("/cvsroot/sharpcvslib"));
-            Assertion.Assert (pathTranslator.RelativePath, pathTranslator.RelativePath.Equals ("src/ICSharpCode/SharpCvsLib/FileSystem/"));
+            Assertion.Assert (pathTranslator.CvsRoot.CvsRepository, pathTranslator.CvsRoot.CvsRepository.Equals ("/cvsroot/sharpcvslib"));
+            Assertion.Assert (pathTranslator.RelativePath, pathTranslator.RelativePath.Equals ("src/ICSharpCode/SharpCvsLib/FileSystem"));
             Assertion.Assert (pathTranslator.Filename, pathTranslator.Filename.Equals ("Sharp"));
-            String expectedLocalPath = Path.Combine (LOCAL_DIR1, "src/ICSharpCode/SharpCvsLib/FileSystem/");
+            String expectedLocalPath = 
+                PathTranslator.ConvertToOSSpecificPath (Path.Combine (LOCAL_DIR1, "src/ICSharpCode/SharpCvsLib/FileSystem"));
             Assertion.Assert (pathTranslator.LocalPath, pathTranslator.LocalPath.Equals (expectedLocalPath));
             Assertion.Assert (pathTranslator.LocalPathAndFilename, pathTranslator.LocalPathAndFilename.Equals (Path.Combine (expectedLocalPath, "Sharp")));
             Assertion.Assert (pathTranslator.IsDirectory == false);

@@ -428,6 +428,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             return Directory.Exists (cvsDir);
         }
         
+        /// <summary>
+        ///     Determine if the path has the CVS folder at the end of the path.
+        /// </summary>
+        /// <returns><code>true</code> if the path contains the cvs directory, 
+        ///     <code>false</code> otherwise.</returns>
         private bool HasCvsDirInPath (String path) {
             String cvsDir = Path.Combine (path, this.CVS);
             

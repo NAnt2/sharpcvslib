@@ -125,7 +125,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 			    // TODO: Move this somewhere else when I get the fileset
 			    //    system working.  This just grabs the tag file at the
 			    //    root folder.
-			    Tag tag = this.FetchTag (connection);
+			    Tag tag = this.FetchTag (connection.Repository.WorkingPath);
 			    if (null != tag) {
 			        connection.SubmitRequest (new StickyRequest (tag.FileContents));
 			    }
@@ -156,7 +156,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     					
 //    					path = workingdirectory.CvsRoot.CvsRepository + 
 //    							folder.Repos.FileContents;
-    					    					
+    // TODO: Remove the LocalDirectory and swap for WorkingPath...unless I remove it all
 //    				    string fileName =
 //    				        this.getFileNameAndPath (
 //    				                                 Path.GetDirectoryName (workingdirectory.LocalDirectory),
@@ -190,11 +190,11 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     		}
 		}
 		
-		private Tag FetchTag (CVSServerConnection connection) {
+		private Tag FetchTag (String path) {
 		    Manager manager = new Manager ();
 		    
 		    try {
-    		    return manager.FetchTag (connection.Repository.WorkingDirectoryName);
+    		    return manager.FetchTag (path);
 		    } catch (FileNotFoundException) {
 		        return null;
 		    }

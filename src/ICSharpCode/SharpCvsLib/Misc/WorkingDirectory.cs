@@ -40,6 +40,7 @@ using System.IO;
 using log4net;
 
 using ICSharpCode.SharpCvsLib.FileSystem;
+using ICSharpCode.SharpCvsLib.Util;
 
 namespace ICSharpCode.SharpCvsLib.Misc { 
 		
@@ -63,37 +64,81 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		private Hashtable folders = new Hashtable();
 	    
 	    private Folder[] foldersToUpdate;
-		
+
+        /// <summary>
+        ///     Render the object as a human readable string.
+        /// </summary>
+        public override String ToString () {
+            ToStringFormatter formatter = 
+                new ToStringFormatter ("WorkingDirectory");
+            formatter.AddProperty ("cvsRoot", cvsroot);
+            formatter.AddProperty ("localdirectory", localdirectory);
+            formatter.AddProperty ("LocalDirectory", LocalDirectory);
+            formatter.AddProperty ("repositoryname", repositoryname);
+            formatter.AddProperty ("revision", revision);
+            formatter.AddProperty ("overrideDirectory", overrideDirectory);
+            formatter.AddProperty ("WorkingDirectoryName", WorkingDirectoryName);
+            formatter.AddProperty ("WorkingPath", WorkingPath);
+            
+            return formatter.ToString ();
+            
+        }
+
+        /// <summary>
+        /// The root directory on the local/ client machine that sources
+        ///     will be checked out into.  This will be contain the Module
+        ///     or Override directory.
+        /// </summary>
+        public string LocalDirectory {
+            get {return this.localdirectory;}
+        }
+
         /// <summary>
         /// The name of the module.
         /// </summary>
 		public string ModuleName {
-			get {
-				return repositoryname;
-			}
-			set {
-				repositoryname = value;
-			}
+			get {return repositoryname;}
+			set {repositoryname = value;}
 		}		    
 		
         /// <summary>
-        /// The name of the working directory.  
-        ///     TODO: Figure out if this should be the repository name
-        ///         or if it would be better to allow this to be overridden.
+        /// The name of the working directory under the local root directory.
+        ///     This directory is usually equal to the module name however there
+        ///     is an option to override this directory and specify an alternative.
         /// </summary>
 		public string WorkingDirectoryName {
 			get {
 			    if (this.HasOverrideDirectory) {
-			        return Path.Combine (this.LocalDirectory, this.OverrideDirectory);
+			        return this.OverrideDirectory;
 			    } else {
-				    return Path.Combine (this.LocalDirectory, this.repositoryname);
+				    return this.repositoryname;
 			    }
 			}
-			set {
-				repositoryname = value;
-			}
 		}
-		
+
+        /// <summary>
+        ///     Specifies the current working path for the sources.  This is
+        ///         a combination of the root/ sandbox directory and the module
+        ///         or override directory.
+        /// </summary>
+        public String WorkingPath {
+            get {
+                if (null != this.LocalDirectory && 
+                    null != this.WorkingDirectoryName) {
+                    return 
+                        Path.Combine (this.LocalDirectory, this.WorkingDirectoryName);
+                 } else {
+                     StringBuilder msg = new StringBuilder ();
+                     msg.Append ("Unable to determine working path, you must specify ");
+                     msg.Append ("a local directory and a module/ override directory.");
+                     msg.Append ("\nLocalDirectory=[").Append (this.LocalDirectory).Append ("]");
+                     msg.Append ("\nWorkingDirectoryName=[").Append (this.WorkingDirectoryName).Append ("]");
+                     throw new Exception (msg.ToString ());
+                 }
+            }
+        }
+
+
         /// <summary>
         /// A list of the cvs folders on the local host.
         /// </summary>
@@ -113,34 +158,18 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		}
 		
         /// <summary>
-        /// The local directory to use for sources.
-        /// </summary>
-        public string LocalDirectory {
-            get {return this.localdirectory;}
-            set {localdirectory = value;}
-        }
-
-        /// <summary>
         /// Object encapsulating information to connect to a cvs server.
         /// </summary>
 		public CvsRoot CvsRoot {
-			get {
-				return cvsroot;
-			}
-			set {
-				cvsroot = value;
-			}
+			get {return cvsroot;}
+			set {cvsroot = value;}
 		}
 		
 		/// <summary>Used to specify the revision of the module
 		/// requested.  This should correspond to a module tag.</summary>
 		public String Revision {
-		    get {
-		        return this.revision;
-		    }
-		    set {
-		        this.revision = value;
-		    }
+		    get {return this.revision;}
+		    set {this.revision = value;}
 		}
 		
 		/// <summary>
@@ -188,8 +217,14 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		{
 			this.repositoryname = repositoryname;
 			this.cvsroot        = cvsroot;
-			this.localdirectory = localdirectory;
-		}
+		    if (localdirectory.EndsWith (Path.DirectorySeparatorChar.ToString ()) ||
+		        localdirectory.EndsWith ("/")) {
+    	        this.localdirectory = 
+    	            localdirectory.Substring (0, localdirectory.Length - 1);
+	        } else {
+                this.localdirectory = localdirectory;
+            }
+        }
 		
         /// <summary>
         /// Clear folders collection.

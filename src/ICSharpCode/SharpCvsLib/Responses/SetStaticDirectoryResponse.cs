@@ -30,12 +30,16 @@
 #endregion
 
 using System;
+using System.IO;
+using System.Text;
 
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Messages;
+using ICSharpCode.SharpCvsLib.FileSystem;
+
+using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Responses { 
-	
     /// <summary>
     /// "Set-static-directory pathname \n"
     /// 
@@ -48,6 +52,9 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// </summary>
 	public class SetStaticDirectoryResponse : IResponse
 	{
+    	private ILog LOGGER = 
+    	    LogManager.GetLogger (typeof (SetStaticDirectoryResponse));
+
         /// <summary>
         /// Process the response stream.
         /// </summary>
@@ -57,6 +64,26 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	    {
             string localPath      = cvsStream.ReadLine();
             string repositoryPath = cvsStream.ReadLine();
+	        
+	        if (LOGGER.IsDebugEnabled) {
+	            StringBuilder msg = new StringBuilder ();
+	            msg.Append ("localPath=[").Append (localPath).Append ("]");
+	            msg.Append ("repositoryPath=[").Append (repositoryPath).Append ("]");
+	            LOGGER.Debug (msg);
+	        }
+	        PathTranslator pathTranslator = 
+	            new PathTranslator (services.Repository,
+	                                repositoryPath);
+	        if (LOGGER.IsDebugEnabled) {
+	            LOGGER.Debug (pathTranslator.ToString ());
+	        }
+	        LOGGER.Debug ("directory exitsts=[" + Directory.Exists (pathTranslator.LocalPath) + "]");
+	        if (!Directory.Exists (pathTranslator.LocalPath)) {
+	            LOGGER.Debug ("Creating directory=[" + pathTranslator.LocalPath + "]");
+	            if (!(pathTranslator.LocalPath == null && pathTranslator.LocalPath == String.Empty)) {
+    	            Directory.CreateDirectory (pathTranslator.LocalPath);
+	            }
+	        }
 	    	// TODO : make something useful with this request
 	    }
 	    

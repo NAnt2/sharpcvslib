@@ -100,9 +100,12 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 
             connection.SubmitRequest(new CheckoutRequest());
             Manager manager = new Manager ();
-            LOGGER.Info ("looking for directories to add to the entries file in=[" + 
-                         this.workingDirectory.LocalDirectory + "]");
-            manager.AddDirectories (this.workingDirectory.LocalDirectory);
+            if (LOGGER.IsDebugEnabled) {
+                LOGGER.Debug ("looking for directories to add to the " + 
+                              "entries file in=[" +
+                             this.workingDirectory.WorkingPath + "]");
+            }
+            manager.AddDirectories (this.workingDirectory.WorkingPath);
 
         }
     }

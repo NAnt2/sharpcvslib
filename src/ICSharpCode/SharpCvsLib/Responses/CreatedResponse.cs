@@ -79,14 +79,17 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	        Manager manager = new Manager ();
 	        
 			cvsStream.ReadLine();
-	        PathTranslator orgPath =
-	            new PathTranslator (services.Repository, cvsStream.ReadLine ());
-			string localPathAndFilename = orgPath.LocalPathAndFilename;
-	        string directory = orgPath.LocalPath;
+	        String repositoryPath = cvsStream.ReadLine ();
 	        
-			string entry     = cvsStream.ReadLine();
-			string flags     = cvsStream.ReadLine();
-			string sizeStr   = cvsStream.ReadLine();
+			String entry     = cvsStream.ReadLine();
+			String flags     = cvsStream.ReadLine();
+			String sizeStr   = cvsStream.ReadLine();
+	        
+	        PathTranslator orgPath = 
+	            new PathTranslator (services.Repository, repositoryPath);
+			String localPathAndFilename = orgPath.LocalPathAndFilename;
+	        String directory = orgPath.LocalPath;
+
 			bool compress = sizeStr[0] == 'z';
 			
 			if (LOGGER.IsDebugEnabled) {
@@ -119,8 +122,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 			Entry e;
 			if (orgPath.IsDirectory) {
 			    e = manager.CreateDirectoryEntry (orgPath);
-			}
-			else {
+			} else {
     			e = new Entry(directory, entry);
 			}
 			
@@ -143,7 +145,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	        manager.Add (e);
 	        
 	        UpdateMessage message = new UpdateMessage ();
-	        message.Module = services.Repository.ModuleName;
+	        message.Module = services.Repository.WorkingDirectoryName;
 	        message.Repository =  orgPath.RelativePath;
 	        message.Filename = e.Name;
 	        services.SendMessage (message.Message);

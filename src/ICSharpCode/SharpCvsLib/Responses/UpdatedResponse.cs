@@ -149,7 +149,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	        manager.SetFileTimeStamp (localPathAndFilename, e.TimeStamp);
 	        
 	        UpdateMessage message = new UpdateMessage ();
-	        message.Module = services.Repository.ModuleName;
+	        message.Module = services.Repository.WorkingDirectoryName;
 	        message.Repository =  orgPath.RelativePath;
 	        message.Filename = e.Name;
 	        services.SendMessage (message.Message);

@@ -77,9 +77,9 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
         /// <summary>
         /// Receive a text file from the cvs server.
         /// </summary>
-        /// <param name="inputStream"></param>
-        /// <param name="fileName"></param>
-        /// <param name="length"></param>
+        /// <param name="inputStream">Input stream from the cvs server.</param>
+        /// <param name="fileName">The name of the file to be created.</param>
+        /// <param name="length">The number of bytes the file contains.</param>
 	    public virtual void ReceiveTextFile(CvsStream inputStream, string fileName, int length)
 	    {
 			byte[] buffer = new byte[length];
@@ -111,8 +111,8 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
 		/// <summary>
 		/// Send a binary file to the cvs server.
 		/// </summary>
-		/// <param name="outStream"></param>
-		/// <param name="fileName"></param>
+		/// <param name="outStream">Writable stream to the cvs server.</param>
+		/// <param name="fileName">The name of the file to stream across.</param>
 	    public virtual void SendBinaryFile(CvsStream outStream, string fileName)
 	    {
 			FileStream fs = File.OpenRead(fileName);

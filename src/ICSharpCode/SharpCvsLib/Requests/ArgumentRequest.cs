@@ -56,7 +56,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
         /// <summary>
         /// An argument to use with the cvs command.
         /// </summary>
-        /// <param name="arg"></param>
+        /// <param name="arg">The argument to send to the server.</param>
 	    public ArgumentRequest(string arg)
     	{
         	this.arg = arg;

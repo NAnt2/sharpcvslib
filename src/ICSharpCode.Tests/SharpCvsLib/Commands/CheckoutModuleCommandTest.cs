@@ -84,7 +84,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         [TearDown]
         public void TearDown () {
-            this.CleanTempDirectory ();
+           this.CleanTempDirectory ();
         }
 
         
@@ -152,7 +152,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// <param name="revision">The revision tag to checkout.</param>
         /// <param name="expectedContent">The file contents that are expected.</param>
         private void CheckoutRevisionTest (String revision, String expectedContent) {
-            this.Checkout (revision, expectedContent);
+            this.Checkout (revision, null);
             Assertion.Assert ("Should have found the check file.  file=[" + 
                               checkFile + "]", File.Exists (checkFile));
             
@@ -209,12 +209,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// <summary>
         ///     Test that specifying a revision produces a checkout of the specific
         ///     revision tag and creates a tag file in the cvs folder.
-        /// 
-        /// TODO: Get this working
         /// </summary>
         [Test]
         public void CheckoutOverrideDirectoryTest () {
-/*            this.rootDir =
+            this.rootDir =
                 Path.Combine (TestConstants.LOCAL_PATH, TestConstants.OVERRIDE_DIRECTORY);
             this.checkFile =
                 Path.Combine (rootDir, TestConstants.TARGET_FILE);
@@ -250,7 +248,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             String tagFile = 
                 Path.Combine (Path.Combine (TestConstants.MODULE, manager.CVS), Tag.FILE_NAME);
             Assertion.Assert ("Should not have a cvs directory and tag file in the current execution path.  ",
-                              !Directory.Exists (tagFile)); */
+                              !Directory.Exists (tagFile)); 
         }
                 
         /// <summary>
@@ -294,9 +292,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             
             System.Console.WriteLine (TestConstants.LOCAL_PATH);
 
-            if (revision != null) {
-                working.Revision = revision;
-            }
+            working.Revision = revision;
+            working.OverrideDirectory = overrideDirectory;
             
             CVSServerConnection connection = new CVSServerConnection ();
             Assertion.AssertNotNull ("Should have a connection object.", connection);
