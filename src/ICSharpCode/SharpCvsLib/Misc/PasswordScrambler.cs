@@ -118,10 +118,12 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </throws>
         public static string Descramble(string text)
         {
-            switch (text[0]) {
-            case 'A': // currently the only recognized scrambeling method
+            if (text == null || text.Length == 0) {
+                return 'A'.ToString();
+            } else if (text[0] == 'A') {
+                // currently the only recognized scrambeling method
                 return Scramble(text.Substring(1)).Substring(1);
-            default:
+            } else {
                 throw new ArgumentException("This isn't a scrambled text, or an unknown scrambeling method is used.");
             }
         }
