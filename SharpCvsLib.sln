@@ -23,6 +23,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsAddIn", "src\SharpC
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SharpCvsAddInSetup", "src\SharpCvsAddInSetup\SharpCvsAddInSetup.vdproj", "{5E2129EC-24CE-4DD4-BB82-8BBE7F2F2FC5}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -50,6 +54,10 @@ Global
 		{29608312-FA1C-4E7D-85C9-73B5D4443DC9}.Debug.Build.0 = Debug|.NET
 		{29608312-FA1C-4E7D-85C9-73B5D4443DC9}.Release.ActiveCfg = Release|.NET
 		{29608312-FA1C-4E7D-85C9-73B5D4443DC9}.Release.Build.0 = Release|.NET
+		{5E2129EC-24CE-4DD4-BB82-8BBE7F2F2FC5}.Debug.ActiveCfg = Debug
+		{5E2129EC-24CE-4DD4-BB82-8BBE7F2F2FC5}.Debug.Build.0 = Debug
+		{5E2129EC-24CE-4DD4-BB82-8BBE7F2F2FC5}.Release.ActiveCfg = Release
+		{5E2129EC-24CE-4DD4-BB82-8BBE7F2F2FC5}.Release.Build.0 = Release
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
