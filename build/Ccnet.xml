@@ -1,4 +1,5 @@
 <project name="Ccnet" default="Build">
+    <include buildfile="SharpCvsLib.common.xml"/>
     <property name="frameworks" value="net-1.1 mono-1.0"/>
     <target name="Build">
         <call target="CreateBuildText"/>
