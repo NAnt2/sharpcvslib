@@ -242,6 +242,15 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void TestTooManyArgsEntry () {
             Entry entry = new Entry (this.settings.Config.LocalPath, INVALID_ENTRY_1);
         }
+
+        /// <summary>
+        /// Test that valid cvs root paths pass.  Note that a root can contain cvs directories.
+        /// </summary>
+        [Test]
+        public void TestValidRootPaths () {
+            Entry entry = new Entry("c:/cvs/nant", CHECKOUT_ENTRY);
+
+        }
     }
 }
 

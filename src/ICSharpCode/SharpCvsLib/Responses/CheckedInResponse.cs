@@ -61,7 +61,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                 repositoryPath);
 
             string fileName = orgPath.LocalPathAndFilename;
-            Entry  entry = new Entry(orgPath.LocalPath, entryLine);
+            Factory factory = new Factory();
+            Entry  entry = (Entry)factory.CreateCvsObject(orgPath.CurrentDir, Entry.FILE_NAME, entryLine);
             LOGGER.Debug ("CheckedInResponse adding entry=[" + entry + "]");
 
             Manager manager = new Manager (Services.Repository.WorkingPath);

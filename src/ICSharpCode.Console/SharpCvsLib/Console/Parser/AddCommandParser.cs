@@ -232,10 +232,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     folder = folders[Path.GetDirectoryName(file)];
                 }
                 if (!folder.Entries.Contains(file)) {
-                    Entry entry = Entry.CreateEntry(file);
+                    Entry entry = Entry.CreateEntry(new FileInfo(file));
                     folder.Entries.Add (file, entry);
                 } else {
-                    folder.Entries[file] = Entry.CreateEntry(file);
+                    folder.Entries[file] = Entry.CreateEntry(new FileInfo(file));
                 }
             }
             return folders;

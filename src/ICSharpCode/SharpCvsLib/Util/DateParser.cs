@@ -52,9 +52,14 @@ public class DateParser {
     ///     The date format used by cvsnt.
     /// </summary>
     public const String CVSNT1 =
-        "ddd MMM d HH':'mm':'ss yyyy";    // single 'd' to support both single & double digit dates
+        "ddd MMM  d HH':'mm':'ss yyyy";    // single 'd' to support both single & double digit dates
     //	        "ddd MMM dd HH':'mm':'ss yyyy";
     //	        "ddd MMM dd HH:mm:ss yyyy";
+    public const String CVS_SINGLE_DAY =
+        "ddd MMM  d HH':'mm':'ss yyyy";    // single 'd' to support both single & double digit dates
+    public const String CVS_DOUBLE_DAY =
+        "ddd MMM dd HH':'mm':'ss yyyy";    // single 'd' to support both single & double digit dates
+
 
 
     /// <summary>
@@ -100,8 +105,14 @@ public class DateParser {
     /// <param name="date">The date to convert to a string.</param>
     /// <returns>The date as a cvs formatted date string.</returns>
     public static String GetCvsDateString (DateTime date) {
-        String dateString = date.ToString(DateParser.CVSNT1,
-                                          DateTimeFormatInfo.InvariantInfo);
+        string dateString;
+        if (date.Day < 10) {
+            dateString = date.ToString(DateParser.CVS_SINGLE_DAY,
+                DateTimeFormatInfo.InvariantInfo);
+        } else {
+            dateString = date.ToString(DateParser.CVS_DOUBLE_DAY,
+                DateTimeFormatInfo.InvariantInfo);
+        }
         return dateString;
     }
 

@@ -62,6 +62,12 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// </summary>
         public event MessageEventHandler ErrorResponseMessageEvent;
         /// <summary>
+        /// Occurs when a <see cref="ICSharpCode.SharpCvsLib.Responses.ErrorMessageResponse"/> 
+        /// is sent from the cvs server and the message sent down is 
+        /// <code></code>
+        /// </summary>
+        public event MessageEventHandler ListResponseMessageEvent;
+        /// <summary>
         /// Send a generic response message event.  Used for all responses that are not needed for now, 
         /// however if used often enough the response will be broken out into it's own specific response 
         /// event.
@@ -104,11 +110,15 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                 if (null != ErrorResponseMessageEvent) {
                     this.ErrorResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.ERROR_PREFIX));
                 }
+            } else if (responseType == typeof(ListResponse)) {
+                if (null != ListResponseMessageEvent) {
+                    this.ListResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.EMPTY_PREFIX));
+                }
             } else {
                 if (null != this.UnspecifiedResponseMessageEvent) {
-                    this.UnspecifiedResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
+                    this.UnspecifiedResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.DEFAULT_PREFIX));
                 }
-            }
+            } 
 
         }
 	}

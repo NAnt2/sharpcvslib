@@ -107,13 +107,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         /// <param name="connection"></param>
         public void Execute(ICommandConnection connection) {
-            if (LOGGER.IsDebugEnabled) {
-                String msg = "In execute, looking for working folders.  " +
-                            "count of working folders=[" +
-                            workingDirectory.Folders.Count + "]";
-                LOGGER.Debug (msg);
-            }
-
             Folder[] _foldersToUpdate =
                 (Folder[])workingDirectory.FoldersToUpdate.Clone ();
             foreach (Folder folder in _foldersToUpdate) {
@@ -156,9 +149,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 
         private void SetDirectory (ICommandConnection connection,
                                 Folder folder) {
-            String absoluteDir =
-                connection.Repository.CvsRoot.CvsRepository + "/" +
-                folder.Repository.FileContents;
+            String absoluteDir = String.Format("{0}", 
+                connection.Repository.CvsRoot.CvsRepository);
 
             try {
                 connection.SubmitRequest(new DirectoryRequest(".",

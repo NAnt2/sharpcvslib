@@ -50,6 +50,9 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                     response = new MessageResponse();
                     break;
                 case "E":
+                    // NOTE: The error message response is overloaded from the server
+                    //  so there is some complexity hidden in this class...responses
+                    //  are basically being delegated to other responses in here.
                     response = new ErrorMessageResponse();
                     break;
                 case "MT":
@@ -65,6 +68,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                     response = new ModTimeResponse();
                     break;
                 case "ok":
+                    ResetErrorResponseHandlers();
                     response = new OkResponse();
                     break;
                 case "error":
@@ -105,6 +109,10 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                     break;
             }
             return response;
+        }
+
+        private static void ResetErrorResponseHandlers () {
+            ListResponse.IsHandling = false;
         }
     }
 }

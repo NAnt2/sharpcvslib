@@ -199,15 +199,15 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void TestContainsCvsDirectory () {
-            Assert.IsTrue(PathTranslator.ContainsCVS ("c:\\temp\\CVS"));
-            Assert.IsTrue(PathTranslator.ContainsCVS ("c:\\temp\\cvs"));
-            Assert.IsTrue(PathTranslator.ContainsCVS ("c:\\temp\\cVs"));
-            Assert.IsTrue(PathTranslator.ContainsCVS ("c:\\temp\\cVs\\Crap"));
-            Assert.IsTrue(!PathTranslator.ContainsCVS ("c:\\temp\\testCvs\\"));
-            Assert.IsTrue(!PathTranslator.ContainsCVS ("c:\\temp\\CVSFile"));
-            Assert.IsTrue(PathTranslator.ContainsCVS(
+            Assert.IsTrue(PathTranslator.IsCvsDir ("c:\\temp\\CVS"));
+            Assert.IsTrue(PathTranslator.IsCvsDir ("c:\\temp\\cvs"));
+            Assert.IsTrue(PathTranslator.IsCvsDir ("c:\\temp\\cVs"));
+            Assert.IsTrue(PathTranslator.IsCvsDir ("c:\\temp\\cVs\\Crap"));
+            Assert.IsTrue(!PathTranslator.IsCvsDir ("c:\\temp\\testCvs\\"));
+            Assert.IsTrue(!PathTranslator.IsCvsDir ("c:\\temp\\CVSFile"));
+            Assert.IsTrue(PathTranslator.IsCvsDir(
                 "C:\\Documents and Settings\\Administrator\\Local Settings\\Temp\\sharpcvslib-tests\\sharpcvslib-test-repository\\conf\\CVS\\conf"));
-            Assert.IsTrue(PathTranslator.ContainsCVS(
+            Assert.IsTrue(PathTranslator.IsCvsDir(
                 "C:\\DOCUME~1\\ADMINI~1\\LOCALS~1\\Temp\\sharpcvslib-tests\\sharpcvslib-test-repository\\test\\CVS"));
         }
 

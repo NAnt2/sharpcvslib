@@ -142,7 +142,7 @@ namespace ICSharpCode.SharpCvsLib.Console
         public void StopProcess(object sender, ProcessEventArgs e) {
             this.stopTime = e.Date;
             TimeSpan elapsedTime = this.stopTime.Subtract(this.startTime);
-            this.WriteLine(String.Format("Processing time: {0}:{1}:{2}:{3}.",
+            this.WriteLine(String.Format("\nProcessing time: {0}:{1}:{2}:{3}.",
                 elapsedTime.Hours, elapsedTime.Minutes, elapsedTime.Seconds,
                 elapsedTime.Milliseconds));
 

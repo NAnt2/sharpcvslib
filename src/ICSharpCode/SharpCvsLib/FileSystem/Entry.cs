@@ -72,6 +72,32 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
         private bool isUtcTimeStamp= true;
 
+        private string key;
+        /// <summary>
+        /// Get a key that represents this cvs entry.
+        /// </summary>
+        public override string Key {
+            get {
+                if (null == key) {
+                    this.key = System.IO.Path.Combine(
+                        System.IO.Path.GetDirectoryName(this.FullPath), this.Name);
+                } 
+                return this.key;
+            }
+        }
+
+        /// <summary>
+        /// The full path to the file or directory that this object is managing.
+        /// </summary>
+        public virtual String FullPath {
+            get {
+                string fullPath = System.IO.Path.Combine(
+                    System.IO.Path.GetDirectoryName(
+                    this.CvsFile.Directory.FullName), this.Name);
+                return fullPath;
+            }
+            set {base.FullPath = value;}
+        }
 
         /// <summary>
         ///     The name of the entries file.
@@ -81,7 +107,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <summary>
         ///     The name of the file to write to.
         /// </summary>
-        public String Filename {
+        public override String Filename {
             get {return Entry.FILE_NAME;}
         }
 
@@ -235,68 +261,76 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         /// <summary>
-        /// Create a new instance of the cvs object.
-        /// 
-        ///     NOTE: Derive full path is assumed.  What this means is it is assumed
-        ///     that you are passing in the path to the file and would like to use
-        ///     the fileContents or entry to get the full path to the managed file.
+        /// Create a new instance of the cvs object.  The file that is passed in should
+        /// be the cvs file that will contain the file contents.
         /// </summary>
-        /// <param name="path">The path to the directory above the object being 
+        /// <param name="cvsFile">The path to the directory above the object being 
         ///     managed.  The information in the fileContents parameter is used
         ///     to fill in the "missing" information about the file location.</param>
         /// <param name="fileContents">The contents of the cvs management file.</param>
-        public Entry (String path, String fileContents) : this (path, fileContents, true) {
+        /// <example>
+        ///     <list type="table">
+        ///         <term>cvsFile</term>
+        ///         <description>C:\dev\src\sharpcvslib\sharpcvslib\src\ICSharpCode\SharpCvsLib\FileSystem\CVS\Entries</description>
+        ///         <term>fileContents</term>
+        ///         <description></description>
+        ///     </list>
+        /// </example>
+        public Entry (FileInfo cvsFile, String fileContents) : base (cvsFile, fileContents) {
         }
 
         /// <summary>
-        /// Create a new Cvs entry.  If the deriveFullPath is set to false then the
-        ///     path information specified in the constructor is taken as the
-        ///     entire path to the file.
+        /// Create a new instance of the cvs management object.  The file that is passed 
+        /// in should be the path <warn>ABOVE</warn> the object being managed.
         /// </summary>
-        /// <param name="path">Either the path to the directory above the CVS directory,
-        ///     or if the deriveFullPath is set to true then this is the full path
-        ///     to the file under cvs control.</param>
-        /// <param name="fileContents">A line that represents this particular entry
-        ///     under cvs control.</param>
-        /// <param name="deriveFullPath"><code>true</code> if the full path should
-        ///     be derived from combining the path information and the file name
-        ///     parsed from the fileContents or if the path information passed
-        ///     in represents the full path to the file.</param>
-        public Entry (String path, String fileContents, bool deriveFullPath) : base(path, fileContents) {
-            if (PathTranslator.ContainsCVS(path)) {
-                // attempt recovery if this file contains a cvs folder.
-                path = System.IO.Path.GetDirectoryName(path);
-                if (PathTranslator.ContainsCVS(path)) {
-                    throw new EntryParseException("Path information should not contain cvs folder.");
-                }
-            }
-            this.Parse(fileContents);
-            LOGGER.Debug("path=[" + path + "]");
-            LOGGER.Debug("name=[" + this.Name + "]");
-            if (deriveFullPath) {
-                this.FullPath = System.IO.Path.Combine(path, this.Name);
-                if (this.isDir) {
-                    this.FullPath = this.FullPath + System.IO.Path.DirectorySeparatorChar;
-                }
-            } else {
-                this.FullPath = path;
-            }
+        /// <param name="cvsPath">The full path of the cvs management file.</param>
+        /// <param name="fileContents">Contents of the cvs management file or line item.</param>
+        /// <example>
+        ///     <list type="table">
+        ///         <term>cvsPath</term>
+        ///         <description>C:\dev\src\sharpcvslib\sharpcvslib\src\ICSharpCode\SharpCvsLib\FileSystem</description>
+        ///         <term>fileContents</term>
+        ///         <description>/Entry.cs/1.18/Tue Dec 16 07:44:54 2003//</description>
+        ///     </list>
+        /// </example>
+        [Obsolete ("Use 'Entry (FileInfo, string)' instead.")]
+        public Entry (string cvsPath, string fileContents) : 
+            base (new FileInfo(System.IO.Path.Combine(cvsPath, "CVS")), fileContents) {
+ 
+        }
 
-            if (this.FullPath.IndexOf("\\src\\src") >= 0) {
-                throw new Exception("What is going on? Path repeat index=[" + path.IndexOf(this.Name) + "]");
-            }
+        /// <summary>
+        /// Creates an <see cref="Entry"/> object that manages the file being passed in.
+        /// </summary>
+        /// <param name="managedFile">The file that is under cvs control.</returns>
+        /// <exception cref="EntryParseException">If the entry file cannot be
+        ///     parsed.</exception>
+        /// <example>
+        ///     <list type="table">
+        ///         <term>managedFile</term>
+        ///         <description>A full path to a file being managed such as:
+        ///             <br />
+        ///             <code>C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\sharpcvslib-tests\sharpcvslib-test-repository\someFile.txt</code>
+        ///             would create a Entries line like:
+        ///             <code>/someText.txt////</code>
+        ///         </description>
+        ///     </list>
+        ///     <warn>If a directory is being managed use the <see cref="DirectoryInfo"/>
+        ///     object.</warn>
+        /// </example>
+        public static Entry CreateEntry (FileInfo managedFile) {
+            DirectoryInfo cvsDir = new DirectoryInfo(
+                System.IO.Path.Combine(managedFile.Directory.FullName, "CVS"));
 
-            if (LOGGER.IsDebugEnabled) {
-                StringBuilder msg = new StringBuilder();
-                msg.Append("Created new entry=[").Append(this).Append("]");
-                msg.Append("path=[").Append(path).Append("]");
-                msg.Append("entry.FullPath=[").Append(this.FullPath).Append("]");
-                LOGGER.Debug(msg);
-                if (this.ToString().ToUpper().IndexOf("C:") > 0) {
-                    LOGGER.Debug("Should not have an entry formatted like this, should just contain relative paths.");
-                    LOGGER.Debug("Stack trace=[" + Environment.StackTrace + "]");
-                }
-            }
+            FileInfo cvsFile = new FileInfo(
+                System.IO.Path.Combine(cvsDir.FullName, Entry.FILE_NAME));
+
+            StringBuilder entryString = new StringBuilder();
+            entryString.Append("/").Append(managedFile.Name);
+            entryString.Append("/0///");
+
+            Entry entry = new Entry(cvsFile, entryString.ToString());
+            return entry;
         }
 
         /// <summary>
@@ -332,39 +366,46 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///         as well.
         ///     </p>
         /// </example>
-        public static Entry CreateEntry (String fullPath) {
-            String path;
-            String fileName;
-            if (PathTranslator.ContainsCVS(fullPath)) {
-                throw new EntryParseException("Unable to create an entry for CVS files.");
+        public static Entry CreateEntry (string fullPath) {
+            if (fullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString())) {
+                return CreateEntry(new DirectoryInfo(fullPath));
+            } else {
+                return CreateEntry(new FileInfo(fullPath));
             }
+        }
+
+        /// <summary>
+        /// Creates an <see cref="Entry"/> object that manages the file being passed in.
+        /// </summary>
+        /// <param name="managedDir">The directory that is under cvs control.</returns>
+        /// <exception cref="EntryParseException">If the entry file cannot be
+        ///     parsed.</exception>
+        /// <example>
+        ///     <list type="table">
+        ///         <term>managedDir</term>
+        ///         <description>The full path to a directory being managed by CVS such as:
+        ///             <br />
+        ///             <code>C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\sharpcvslib-tests\sharpcvslib-test-repository\someFile.txt</code>
+        ///             would create a Entries line like:
+        ///             <code>/someText.txt////</code>
+        ///         </description>
+        ///     </list>
+        ///     <warn>If a directory is being managed use the <see cref="DirectoryInfo"/>
+        ///     object.</warn>
+        /// </example>
+        public static Entry CreateEntry (DirectoryInfo managedDir) {
+            DirectoryInfo cvsDir = new DirectoryInfo(
+                System.IO.Path.Combine(System.IO.Path.GetDirectoryName(managedDir.FullName), "CVS"));
+
+            FileInfo cvsFile = new FileInfo(
+                System.IO.Path.Combine(cvsDir.FullName, Entry.FILE_NAME));
+
             StringBuilder entryString = new StringBuilder();
-            // Sample directory entry:  D/conf////
-            if (Directory.Exists(fullPath) ||
-                fullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
-                fullPath.EndsWith("/")) {
-                entryString.Append("D");
-                if (fullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
-                    fullPath.EndsWith("/")) {
-                    // strip the slash off so the filename is derived correctly
-                    fullPath = fullPath.Substring(0, fullPath.Length - 1);
-
-                }
-            } 
-            path = System.IO.Path.GetDirectoryName(fullPath);
-            fileName = System.IO.Path.GetFileName(fullPath);
-
-            entryString.Append("/").Append(System.IO.Path.GetFileName(fileName));
+            entryString.Append("D");
+            entryString.Append("/").Append(managedDir.Name);
             entryString.Append("/0///");
 
-            LOGGER.Debug("entryString=[" + entryString.ToString() + "]");
-            Entry entry = new Entry(path, 
-                entryString.ToString());
-            LOGGER.Debug("Created entry=[" + entry + "]");
-            LOGGER.Debug("entry.Path=[" + entry.Path + "]");
-            LOGGER.Debug("entry.FullPath=[" + entry.FullPath + "]");
-            LOGGER.Debug("fullPath=[" + fullPath + "]");
-
+            Entry entry = new Entry(cvsFile, entryString.ToString());
             return entry;
         }
 
@@ -449,7 +490,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <param name="line">The line to parse.</param>
         /// <returns>The name of the entry in the cvs file.</returns>
         public static String ParseFileName (String line) {
-            Entry entry = new Entry(System.IO.Path.GetTempPath(), line);
+            Entry entry = new Entry(new FileInfo(System.IO.Path.GetTempPath()), line);
             return entry.Filename;
         }
 

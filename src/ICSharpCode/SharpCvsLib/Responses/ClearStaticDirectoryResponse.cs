@@ -71,22 +71,14 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             manager.AddRoot (Services.Repository, localPath, reposPath);
             PathTranslator pathTranslator = new PathTranslator (Services.Repository, reposPath);
 
-            Entry entry = Entry.CreateEntry(pathTranslator.LocalPathAndFilename);
+            Factory factory = new Factory();
+            Entry entry = 
+                (Entry)factory.CreateCvsObject(pathTranslator.CurrentDir, Entry.FILE_NAME, 
+                Entry.CreateEntry(pathTranslator.CurrentDir).FileContents);
             // the root module directory does not get a cvs Entries line.
             // TODO: There has to be a cleaner way to do this...
             if (Services.Repository.WorkingPath.Length <= entry.Path.Length) {
                 manager.AddEntry(entry);
-            }
-
-            if (LOGGER.IsDebugEnabled) {
-                StringBuilder msg = new StringBuilder ();
-                msg.Append ("\n Clear static directory response.  ");
-                msg.Append ("\n\t localPath=[").Append (localPath).Append ("]");
-                msg.Append ("\n\t reposPath=[").Append (reposPath).Append ("]");
-                msg.Append ("\n\t entry=[").Append(entry).Append("]");
-                msg.Append("\n\t entry.FullPath=[").Append(entry.FullPath).Append("]");
-                msg.Append("\n\t entry.Path=[").Append(entry.Path).Append("]");
-                LOGGER.Debug (msg);
             }
 
             Services.ResponseMessageEvents.SendResponseMessage(

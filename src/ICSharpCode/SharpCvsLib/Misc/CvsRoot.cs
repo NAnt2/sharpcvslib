@@ -178,23 +178,33 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         ///     a string into the different properties that make it
         ///     up.  The cvsroot can consisit of the following components:
         ///     
-        ///         1) protocol: such as the pserver, ssh and ext protocols
-        ///             NOTE: Currently unsupported, but valid cvs protocols include: sspi and ntserver
-        ///         2) username: the login user for the remote client.  This will be
+        ///     <list type="table">
+        ///         <term>protocol:</term>
+        ///         <description>pserver, ssh and ext protocols
+        ///             <warn>NOTE: Currently unsupported, but valid cvs protocols include: sspi and ntserver</warn>
+        ///         </description>
+        ///         <term>username:</term>
+        ///         <description>the login user for the remote client.  This will be
         ///             used to authenticate the user on the remote machine.
-        ///         3) server:  server that the repository sits on.
-        ///         4) path:    path to the repository on the server
-        ///             
+        ///         </description>
+        ///         <term>server:</term>
+        ///         <description>server that the repository sits on.</description>
+        ///         <term>path:</term>
+        ///         <description>path to the repository on the server</description>
+        ///     </list>
         /// </summary>
         /// <param name="cvsRoot"></param>
         /// <example>
         ///     Cvsroot examples:
-        ///             1) :pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib
-        ///             
+        ///     <table>
+        ///     
+        ///         <item>:pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib
+        ///         
         ///                 would be parsed as follows:
-        ///                     protocol    = pserver (password server protocol)
-        ///                     user        = anonymous
-        ///                     server      = cvs.sourceforge.net
+        ///                 <list>
+        ///                     <item>protocol    = pserver (password server protocol)</item>
+        ///                     <item>user        = anonymous</item>
+        ///                     <item>server      = cvs.sourceforge.net</item>
         ///                     port        = 2401 (default port)
         ///                     path        = /cvsroot/sharpcvslib
         ///                     
@@ -227,7 +237,6 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 
             Match matches = regex.Match(cvsRoot);
 
-
             LOGGER.Debug(String.Format("Matches count: {0}.", matches.Groups.Count));
             if (!matches.Success) {
                 throw new CvsRootParseException(String.Format(@"Bad cvsroot. 
@@ -239,6 +248,23 @@ namespace ICSharpCode.SharpCvsLib.Misc {
             this.UserHost = matches.Groups[2].Value;
             this.PortString = matches.Groups[3].Value;
             this.CvsRepository = matches.Groups[4].Value;
+        }
+
+        /// <summary>
+        /// Determine if the given string is a valid cvs root or not.
+        /// </summary>
+        /// <param name="cvsRoot">A string value that represents a potential cvs root.</param>
+        /// <returns><code>true</code> if the string is a valid cvs root, 
+        ///     otherwise <code>false</code>.</returns>
+        public static bool IsValid (string cvsRoot) {
+            Regex regex = new Regex(CVSROOT_REGEX, RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
+
+            Match matches = regex.Match(cvsRoot);
+
+            if (!matches.Success) {
+                return false;
+            }
+            return true;
         }
 
         private bool HasUserVar (String[] vars) {

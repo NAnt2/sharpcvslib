@@ -197,7 +197,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             foreach (String cvsEntry in this.cvsEntries) {
                 LOGGER.Debug ("cvsEntry=[" + cvsEntry + "]");
                 LOGGER.Debug("path=[" + path + "]");
-                if (!PathTranslator.ContainsCVS(path)) {
+                if (!PathTranslator.IsCvsDir(path)) {
                     Entry entry = new Entry (path, cvsEntry);
                     entries.Add (entry);
                     manager.AddEntry(entry);
@@ -312,7 +312,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             String newDirectory = Path.Combine (path, NEW_DIRECTORY);
             Directory.CreateDirectory (newDirectory);
 
-            if (!PathTranslator.ContainsCVS(path)) {
+            if (!PathTranslator.IsCvsDir(path)) {
                 manager.AddDirectories (path);
             }
 

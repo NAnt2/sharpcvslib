@@ -81,15 +81,6 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 
             bool compress = sizeStr[0] == 'z';
 
-            if (LOGGER.IsDebugEnabled) {
-                StringBuilder msg = new StringBuilder ();
-                msg.Append ("reposPath=[").Append (reposPath).Append ("]");
-                msg.Append ("entry=[").Append (entry).Append ("]");
-                msg.Append ("flags=[").Append (flags).Append ("]");
-                msg.Append ("sizestr=[").Append (sizeStr).Append ("]");
-                LOGGER.Debug (msg);
-            }
-
             if (compress) {
                 sizeStr = sizeStr.Substring(1);
             }
@@ -106,7 +97,10 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                 Services.NextFile = null;
             }
 
-            Entry e = new Entry(orgPath.LocalPath, entry);
+            Factory factory = new Factory();
+            Entry e = (Entry)
+                factory.CreateCvsObject(new DirectoryInfo(Path.GetDirectoryName(orgPath.CurrentDir.FullName)), 
+                Entry.FILE_NAME, entry);
 
             if (e.IsBinaryFile) {
                 Services.UncompressedFileHandler.ReceiveBinaryFile(Stream,

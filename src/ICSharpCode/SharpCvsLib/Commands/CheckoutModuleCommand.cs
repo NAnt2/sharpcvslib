@@ -101,11 +101,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 
             connection.SubmitRequest(new CheckoutRequest());
             Manager manager = new Manager (connection.Repository.WorkingPath);
-            if (LOGGER.IsDebugEnabled) {
-                LOGGER.Debug ("looking for directories to add to the " +
-                            "entries file in=[" +
-                            this.workingDirectory.WorkingPath + "]");
-            }
         }
     }
 }

@@ -62,29 +62,19 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             string localPath      = this.ReadLine();
             string repositoryPath = this.ReadLine();
 
-            if (LOGGER.IsDebugEnabled) {
-                StringBuilder msg = new StringBuilder ();
-                msg.Append ("localPath=[").Append (localPath).Append ("]");
-                msg.Append ("repositoryPath=[").Append (repositoryPath).Append ("]");
-                LOGGER.Debug (msg);
-            }
             PathTranslator pathTranslator =
                 new PathTranslator (Services.Repository,
                                     repositoryPath);
-            if (LOGGER.IsDebugEnabled) {
-                LOGGER.Debug (pathTranslator.ToString ());
-            }
-            LOGGER.Debug ("directory exitsts=[" + Directory.Exists (pathTranslator.LocalPath) + "]");
+
             if (!Directory.Exists (pathTranslator.LocalPath)) {
-                LOGGER.Debug ("Creating directory=[" + pathTranslator.LocalPath + "]");
-                if (!(pathTranslator.LocalPath == null && pathTranslator.LocalPath == String.Empty)) {
+                if (!(pathTranslator.LocalPath == null && 
+                    pathTranslator.LocalPath == String.Empty)) {
                     Directory.CreateDirectory (pathTranslator.LocalPath);
                 }
             }
 
             Services.ResponseMessageEvents.SendResponseMessage(String.Format("Updating {0}/{1}",
                 Services.Repository.ModuleName, repositoryPath), this.GetType());
-            // TODO : make something useful with this request
         }
 
         /// <summary>

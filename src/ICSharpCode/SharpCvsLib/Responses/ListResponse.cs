@@ -1,5 +1,6 @@
 #region "Copyright"
-// Copyright (C) 2003 Clayton Harbour
+// ListResponse.cs
+// Copyright (C) 2004 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -26,56 +27,62 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
-//
-//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Misc;
-using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
-
     /// <summary>
-    /// New-entry pathname \n
-    ///     Additional data: New Entries line, \n. Like Checked-in, but the file is 
-    ///     not up to date.
+    /// Handle a list files response from the cvs server.
     /// </summary>
-    public class NewEntryResponse : AbstractResponse {
-        private readonly ILog LOGGER = LogManager.GetLogger(typeof (NewEntryResponse));
+    public class ListResponse : AbstractResponse {
+        private static bool isHandling = false;
         /// <summary>
-        /// Process a new entry response.
-        /// 
-        /// TODO: Copied implementation from CheckedInResponse, determine if this
-        ///     is correct or not.
+        /// Indicate if this response is handling the error response message from the
+        /// server.
+        /// </summary>
+        /// <value><code>true</code> if it is handling the response, otherwise 
+        ///     <code>false</code>.</value>
+        public static bool IsHandling {
+            get {return isHandling;}
+            set {isHandling = value;}
+        }
+
+        private string message;
+        /// <summary>
+        /// Message being delegated from another response.
+        /// </summary>
+        public string DelegateMessage {
+            get {return this.message;}
+            set {this.message = value;}
+        }
+
+        private readonly ILog LOGGER =
+            LogManager.GetLogger (typeof (ListResponse));
+        /// <summary>
+        /// Process the list files response.
         /// </summary>
         public override void Process() {
-            string localPath      = this.ReadLine();
-            string repositoryPath = this.ReadLine();
-            string entryLine      = this.ReadLine();
-
-            PathTranslator orgPath   =
-                new PathTranslator (Services.Repository,
-                repositoryPath);
-
-            string fileName = orgPath.LocalPathAndFilename;
-            Factory factory = new Factory();
-            Entry  entry = (Entry)
-                factory.CreateCvsObject(orgPath.CurrentDir, Entry.FILE_NAME, entryLine);
-            Manager manager = new Manager (Services.Repository.WorkingPath);
-            manager.Add (entry);
+            if (this.message == null) {
+                this.message = this.ReadLine();
+            }
+            if (this.DelegateMessage.Equals("Listing modules on server")) {
+                this.DelegateMessage = string.Format("\n{0}\n", this.DelegateMessage);
+            }
+            this.DelegateMessage = string.Format("{0}", message.Replace("M ", ""));
+            Services.ResponseMessageEvents.SendResponseMessage(message, this.GetType());
         }
 
         /// <summary>
         /// Return true if this response cancels the transaction
         /// </summary>
         public override bool IsTerminating {
-            get {return false;}
+            get {return true;}
         }
     }
 }

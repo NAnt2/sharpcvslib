@@ -151,8 +151,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     currentDirectory, repository.FileContents);
                 // Create new RemoveCommand object
                 removeCommand = new ICSharpCode.SharpCvsLib.Commands.RemoveCommand(
-                                 this.CurrentWorkingDirectory, currentDirectory, 
-                                 new ICSharpCode.SharpCvsLib.FileSystem.Entry( currentDirectory, removeEntry.FileContents));
+                                 this.CurrentWorkingDirectory, currentDirectory,
+                                 removeEntry);
             }
             catch (Exception e) {
                 LOGGER.Error (e);

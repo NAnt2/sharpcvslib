@@ -175,9 +175,10 @@ namespace ICSharpCode.SharpCvsLib.Console {
             try {
                 this.DoExecute();
             } catch (Exception e) {
-                LOGGER.Error(e);
-                Writer.WriteLine("Something very bad has happened.");
-                System.Environment.Exit(-1);
+                string msg = 
+                    String.Format("Something very bad has happened ( {0} ).", 
+                    e.Message);
+                ExitProgram(msg, e);
             }
         }
 
@@ -193,6 +194,8 @@ namespace ICSharpCode.SharpCvsLib.Console {
                     String.Format("{0}{1}{2}",
                         Usage.General, Environment.NewLine, e.Message));
                 return;
+            } catch (Exception e) {
+                ExitProgram("Exception parsing command.", e);
             }
 
             if (null != command) {
@@ -224,36 +227,56 @@ namespace ICSharpCode.SharpCvsLib.Console {
                     new MessageEventHandler(Writer.WriteLine);
                 serverConn.ResponseMessageEvents.ErrorResponseMessageEvent += 
                     new MessageEventHandler(Writer.WriteError);
+                serverConn.ResponseMessageEvents.ListResponseMessageEvent +=
+                    new MessageEventHandler(Writer.WriteLine);
 
                 if (null == serverConn) {
-                    Writer.WriteLine("Unable to connect to server.");
-                    Environment.Exit(-1);
+                    string msg = "Unable to connect to server.";
+                    ExitProgram(msg);
                 }
 
-                if (command.GetType() == typeof (LoginCommand)) {
-                    command.Execute (serverConn);
-                } else {
-                    try{
-                        // try connecting with empty password for anonymous users
-                        serverConn.Connect(workingDirectory, password);
-                    }
-                    catch (AuthenticationException eDefault){
-                        string msg = String.Format("Fatal error, aborting.  cvs [login aborted]: {0}: unknown user or bad password.",
-                            workingDirectory.CvsRoot.User);
-                        LOGGER.Error(msg, eDefault);
-                        Writer.WriteLine(msg);
-                        Environment.Exit(-1);
-                    }
-                    // Execute the command on cvs repository.
-                    command.Execute(serverConn);
-                    serverConn.Close();
+                try{
+                    // try connecting with empty password for anonymous users
+                    serverConn.Connect(workingDirectory, password);
+                } catch (AuthenticationException e){
+                    string msg = String.Format("Fatal error, aborting.  cvs [login aborted]: {0}: unknown user or bad password.",
+                        workingDirectory.CvsRoot.User);
+                    ExitProgram(msg, e);
+                } catch (Exception ex) {
+                    string msg = String.Format("Fatal cvs error ( {0} ).",
+                        ex.Message);
+                    ExitProgram(msg, ex);
                 }
+
+                // Execute the command on cvs repository.
+                command.Execute(serverConn);
+                serverConn.Close();
             }
+        }
+
+        public static void ExitProgram (string msg, Exception exception) {
+#if (DEBUG)
+            ExitProgram(string.Format("{0}\n{1}", msg, exception.ToString()));
+#else
+            ExitProgram(string.Format("{0}", msg));
+#endif
+        }
+
+        /// <summary>
+        /// Exit the program and display the given exit message.
+        /// </summary>
+        /// <param name="msg"></param>
+        public static void ExitProgram (string msg) {
+            ConsoleWriter writer = new ConsoleWriter();
+            writer.WriteLine(msg);
+            System.Console.ReadLine();
+            Environment.Exit(-1);
         }
 
         private string GetPassword(CommandLineParser parser, WorkingDirectory workingDir) {
             string pwd = null;
-            if (null != parser && null != parser.Password && String.Empty != parser.Password) {
+            if (null != parser && null != parser.Password && String.Empty 
+                != parser.Password) {
                 pwd = parser.Password;
             } else {
                 LoginCommand loginCommand = new LoginCommand(workingDir.CvsRoot);

@@ -88,17 +88,6 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 
             bool compress = sizeStr[0] == 'z';
 
-            if (LOGGER.IsDebugEnabled) {
-                String msg = "In created response process.  " +
-                            "orgPath=[" + orgPath.ToString () + "]" +
-                            "localPathAndFilename=[" + localPathAndFilename + "]" +
-                            "directory=[" + directory + "]" +
-                            "entry=[" + entry + "]" +
-                            "flags=[" + flags + "]" +
-                            "sizestr=[" + sizeStr + "]";
-                LOGGER.Debug (msg);
-            }
-
             if (compress) {
                 sizeStr = sizeStr.Substring(1);
             }
@@ -115,7 +104,9 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                 Services.NextFile = null;
             }
 
-            Entry e = new Entry(orgPath.LocalPath, entry);
+            Factory factory = new Factory();
+            Entry e = (Entry)
+                factory.CreateCvsObject(orgPath.CurrentDir, Entry.FILE_NAME, entry);
             
             if (e.IsBinaryFile) {
                 Services.UncompressedFileHandler.ReceiveBinaryFile(Stream,
@@ -132,7 +123,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 
             manager.Add(e);
             LOGGER.Debug("In created response, just added entry.  File date=[" + e.Date + "]");
-            manager.SetFileTimeStamp (localPathAndFilename, e.TimeStamp, e.IsUtcTimeStamp);
+            manager.SetFileTimeStamp (e.FullPath, e.TimeStamp, e.IsUtcTimeStamp);
 
             UpdateMessage message = new UpdateMessage ();
             message.Module = Services.Repository.WorkingDirectoryName;

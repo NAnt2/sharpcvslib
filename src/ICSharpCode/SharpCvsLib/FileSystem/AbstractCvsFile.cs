@@ -31,6 +31,7 @@
 #endregion
 
 using System;
+using System.IO;
 
 using log4net;
 
@@ -42,9 +43,18 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
 	/// </summary>
 	public abstract class AbstractCvsFile {
         private readonly ILog LOGGER = LogManager.GetLogger(typeof (AbstractCvsFile));
-        private String fullPath;
+        private String _fullPath;
         private String fileContents;
         private String localCvsFullPath;
+
+        private FileInfo cvsFile;
+
+        /// <summary>
+        /// Return a key that uniquely identifies this cvs file.
+        /// </summary>
+        public virtual string Key {
+            get {return this.FullPath;}
+        }
 
         /// <summary>
         /// Return the path to the file that this cvs object is controlling.  In
@@ -52,11 +62,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         ///     known exception would be the Entry which would have file information
         ///     stripped from the full path.
         /// </summary>
-        public String Path {
+        public virtual String Path {
             get {
-                String tempPath = this.fullPath;
-                if (this.fullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString())) {
-                    tempPath = this.fullPath.Substring(0, this.fullPath.Length - 1);
+                String tempPath = this.FullPath;
+                if (this.FullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString())) {
+                    tempPath = this.FullPath.Substring(0, this.FullPath.Length - 1);
                 }
                 tempPath = System.IO.Path.GetDirectoryName(tempPath);   
                 return this.GetPathWithDirectorySeperatorChar(tempPath);
@@ -87,9 +97,17 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         /// <summary>
         /// The full path to the file or directory that this object is managing.
         /// </summary>
-        public String FullPath {
-            get {return this.fullPath;}
-            set {this.fullPath = value;}
+        public virtual String FullPath {
+            get {return this.cvsFile.Directory.FullName;}
+            set {this._fullPath = value;}
+        }
+
+        /// <summary>
+        /// The full path to the file as a <see cref="FileInfo"/> object.
+        /// </summary>
+        public FileInfo CvsFile {
+            get {return this.cvsFile;} 
+            set {this.cvsFile = value;}
         }
 
         /// <summary>
@@ -101,6 +119,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
             set {this.fileContents = value;}
         }
 
+        public abstract string Filename {get;}
+
         /// <summary>
         ///     Create a new object that represents the management file that CVS
         ///         uses to hold information about the repository and local file
@@ -111,27 +131,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         /// <param name="fileContents">A line of comments that represents information
         ///     to be written to the cvs management file, or is written in the
         ///     cvs management file.</param>
-		public AbstractCvsFile(String fullPath, String fileContents) {
-            if (PathTranslator.ContainsCVS(fullPath)) {
-                // attempt recovery if this file contains a cvs folder.
-                fullPath = System.IO.Path.GetDirectoryName(fullPath);
-                if (PathTranslator.ContainsCVS(fullPath)) {
-                    throw new Exception("Path information should not contain cvs folder.");
-                }
-            }
+		public AbstractCvsFile(FileInfo cvsFile, String fileContents) {
             this.fileContents = fileContents;
-            this.fullPath = fullPath;
+
+            this.cvsFile = cvsFile;
 
             this.Parse(fileContents);
-            //this.DeriveCvsFullPath();
-
-            if (LOGGER.IsDebugEnabled) {
-                LOGGER.Debug("Created new entry=[" + this + "]");
-                if (this.ToString().ToUpper().IndexOf("C:") > 0) {
-                    LOGGER.Debug("Should not have an entry formatted like this, should just contain relative paths.");
-                    LOGGER.Debug("Stack trace=[" + Environment.StackTrace + "]");
-                }
-            }
 		}
 
         /// <summary>

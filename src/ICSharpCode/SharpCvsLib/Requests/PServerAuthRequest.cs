@@ -140,12 +140,6 @@ namespace ICSharpCode.SharpCvsLib.Requests {
         /// </summary>
         public override string RequestString {
             get {
-                if (LOGGER.IsDebugEnabled) {
-                    String msg = "Password Scrambled=[" +
-                            PasswordScrambler.Scramble (password) +
-                                "]";
-                    LOGGER.Debug (msg);
-                }
                 return "BEGIN AUTH REQUEST\n" +
                     CvsRoot + "\n" +
                     UserName + "\n" +

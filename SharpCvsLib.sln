@@ -1,5 +1,9 @@
 Microsoft Visual Studio Solution File, Format Version 8.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsLib", "src\SharpCvsLib.csproj", "{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsLib.Tests", "src\SharpCvsLib.Tests.csproj", "{4B8B1DB1-32B9-4254-912D-B7FDC4A70C5B}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "builder.nant", ".externalToolBuilders\builder.nant\builder.nant.vcproj", "{A76B2D4F-C424-410B-A6F1-7831B5E38E7D}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -11,11 +15,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsLib.Console.Lib", "
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsLib.Tests", "src\SharpCvsLib.Tests.csproj", "{4B8B1DB1-32B9-4254-912D-B7FDC4A70C5B}"
-	ProjectSection(ProjectDependencies) = postProject
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "builder.nant", ".externalToolBuilders\builder.nant\builder.nant.vcproj", "{A76B2D4F-C424-410B-A6F1-7831B5E38E7D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsLib", "src\SharpCvsLib.csproj", "{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
@@ -28,10 +28,11 @@ Global
 		Release = Release
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
-		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Debug.ActiveCfg = Debug|.NET
-		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Debug.Build.0 = Debug|.NET
-		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Release.ActiveCfg = Release|.NET
-		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Release.Build.0 = Release|.NET
+		{4B8B1DB1-32B9-4254-912D-B7FDC4A70C5B}.Debug.ActiveCfg = Debug|.NET
+		{4B8B1DB1-32B9-4254-912D-B7FDC4A70C5B}.Debug.Build.0 = Debug|.NET
+		{4B8B1DB1-32B9-4254-912D-B7FDC4A70C5B}.Release.ActiveCfg = Release|.NET
+		{A76B2D4F-C424-410B-A6F1-7831B5E38E7D}.Debug.ActiveCfg = Debug|Win32
+		{A76B2D4F-C424-410B-A6F1-7831B5E38E7D}.Release.ActiveCfg = Release|Win32
 		{29B8A199-09AD-42A5-ACA5-6710E592D57C}.Debug.ActiveCfg = Debug|.NET
 		{29B8A199-09AD-42A5-ACA5-6710E592D57C}.Debug.Build.0 = Debug|.NET
 		{29B8A199-09AD-42A5-ACA5-6710E592D57C}.Release.ActiveCfg = Release|.NET

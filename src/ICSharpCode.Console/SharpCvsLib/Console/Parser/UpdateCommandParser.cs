@@ -50,12 +50,40 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     /// Update modules in the cvs repository.
     /// </summary>
     public class UpdateCommandParser : AbstractCommandParser {
-        private CvsRoot cvsRoot;
+        private CvsRoot cvsRootVar;
         private string fileNames;
         private string revision;
         private string localDirectory;
         private DateTime date;
         private string unparsedOptions;
+
+        private CvsRoot CvsRootVar {
+            get {
+                if (null == cvsRootVar) {
+                    try {
+                        Manager m = new Manager(Environment.CurrentDirectory);
+                        Root root = m.FetchRoot(Environment.CurrentDirectory);
+                        this.cvsRootVar = new CvsRoot(root.FileContents);
+                    } catch (CvsFileNotFoundException) {
+                        this.cvsRootVar = new CvsRoot(Environment.GetEnvironmentVariable("CVSROOT"));
+
+                        if (null == this.cvsRootVar) {
+                            this.InvalidRepository();
+                        }
+                    }
+                }
+                return this.cvsRootVar;
+            }
+            set {
+                this.cvsRootVar = value;
+            }
+        }
+
+        private void InvalidRepository () {
+            System.Console.WriteLine(String.Format("cvs update: No CVSROOT specified!  Please use the `-d' option"));
+            System.Console.WriteLine(String.Format("cvs [update aborted]: or set the CVSROOT environment variable."));
+            System.Environment.Exit(-1);
+        }
 
         /// <summary>
         /// Create a new instance of the <see cref="UpdateCommandParser"/>.
@@ -103,7 +131,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <param name="fileNames">Files</param>
         /// <param name="upOptions">Options</param>
         public UpdateCommandParser(CvsRoot cvsroot, string fileNames, string upOptions) {
-            this.cvsRoot = cvsroot;
+            this.cvsRootVar = cvsroot;
             this.fileNames = fileNames;
             this.unparsedOptions = upOptions;
         }
@@ -140,33 +168,39 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             UpdateCommand2 updateCommand;
 
             this.ParseOptions(this.unparsedOptions);
-            try 
-            {
-                // Open the Repository file in the CVS directory
-                Manager manager = new Manager(Environment.CurrentDirectory);
-                Repository repository = manager.FetchRepository(Environment.CurrentDirectory); 
-                // If this fails error out and state the user
-                //    is not in a CVS repository directory tree.
-                if (localDirectory == null) {
-                    localDirectory = Environment.CurrentDirectory;
-                }
-                CurrentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
-                    localDirectory, repository.FileContents);
-                if (revision != null) {
-                    CurrentWorkingDirectory.Revision = revision;
-                }
-                if (!date.Equals(DateTime.MinValue)) {
-                    CurrentWorkingDirectory.Date = date;
-                }
-                CurrentWorkingDirectory.FoldersToUpdate =
-                    manager.FetchFilesToUpdate (Environment.CurrentDirectory);
-                // Create new UpdateCommand2 object
-                updateCommand = new UpdateCommand2(CurrentWorkingDirectory);
+            Manager manager = new Manager(Environment.CurrentDirectory);
+
+            Repository repository = null;
+            try {
+                repository = manager.FetchRepository(Environment.CurrentDirectory); 
+            } catch (NullReferenceException) {
+                this.InvalidRepository();
+            } catch (CvsFileNotFoundException) {
+                this.InvalidRepository();
             }
-            catch (Exception e) {
-                LOGGER.Error (e);
-                throw e;
+
+            if (null == repository) {
+                this.InvalidRepository();
             }
+
+            // If this fails error out and state the user
+            //    is not in a CVS repository directory tree.
+            if (localDirectory == null) {
+                localDirectory = Environment.CurrentDirectory;
+            }
+            CurrentWorkingDirectory = new WorkingDirectory( this.CvsRootVar,
+                localDirectory, repository.FileContents);
+            if (revision != null) {
+                CurrentWorkingDirectory.Revision = revision;
+            }
+            if (!date.Equals(DateTime.MinValue)) {
+                CurrentWorkingDirectory.Date = date;
+            }
+            CurrentWorkingDirectory.FoldersToUpdate =
+                manager.FetchFilesToUpdate (Environment.CurrentDirectory);
+            // Create new UpdateCommand2 object
+            updateCommand = new UpdateCommand2(CurrentWorkingDirectory);
+
             return updateCommand;
         }
  

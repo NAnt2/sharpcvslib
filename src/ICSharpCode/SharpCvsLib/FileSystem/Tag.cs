@@ -62,7 +62,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <summary>
         ///     The name of the cvs file that the object represents.
         /// </summary>
-        public String Filename {
+        public override String Filename {
             get {return Tag.FILE_NAME;}
         }
 
@@ -71,8 +71,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         /// <param name="fullPath">The full path to the object being managed.</param>
         /// <param name="fileContents">The contents of the cvs management file.</param>
-        public Tag (String fullPath, String fileContents) : 
-            base (fullPath, fileContents) {
+        public Tag (FileInfo cvsFile, String fileContents) : 
+            base (cvsFile, fileContents) {
+        }
+
+        public Tag (string fullPath, string fileContents) : 
+            this(new FileInfo(System.IO.Path.Combine(fullPath, "CVS")), fileContents) {
+
         }
 
         /// <summary>

@@ -182,27 +182,11 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 
         private void SendFileRequest (ICommandConnection connection,
             Entry entry) {
-//            bool fileExists;
             DateTime old = entry.TimeStamp;
             entry.TimeStamp = entry.TimeStamp;
-//            try {
-//                fileExists = File.Exists (entry.Filename);
-//            }
-//            catch (Exception e) {
-//                LOGGER.Error (e);
-//                fileExists = false;
-//            }
-
-//            if (!fileExists) {
-                connection.SubmitRequest (new EntryRequest (entry));
-//            } else if (File.GetLastAccessTime(entry.Filename) !=
-//                entry.TimeStamp.ToUniversalTime ()) {
-                connection.SubmitRequest(new ModifiedRequest(entry.Name));
-                connection.SendFile(entry.FullPath, entry.IsBinaryFile);
-//            } else {
-//                connection.SubmitRequest(new EntryRequest(entry));
-//                connection.SubmitRequest(new UnchangedRequest(entry.Name));
-//            }
+            connection.SubmitRequest (new EntryRequest (entry));
+            connection.SubmitRequest(new ModifiedRequest(entry.Name));
+            connection.SendFile(entry.FullPath, entry.IsBinaryFile);
 
             entry.TimeStamp = old;
         }

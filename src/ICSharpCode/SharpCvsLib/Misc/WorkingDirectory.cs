@@ -54,7 +54,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         private readonly ILog LOGGER =
             LogManager.GetLogger (typeof (WorkingDirectory));
         CvsRoot cvsroot;
-        private String  localdirectory;
+        private DirectoryInfo localDir;
         String  repositoryname;
         String revision;
         bool hasDate = false;    // DateTime is a value type so we can't use null to indicate it hasn't been set
@@ -72,8 +72,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
             ToStringFormatter formatter =
                 new ToStringFormatter ("WorkingDirectory");
             formatter.AddProperty ("cvsRoot", cvsroot);
-            formatter.AddProperty ("localdirectory", localdirectory);
-            formatter.AddProperty ("LocalDirectory", LocalDirectory);
+            formatter.AddProperty ("localdirectory", localDir.FullName);
             formatter.AddProperty ("repositoryname", repositoryname);
             formatter.AddProperty ("revision", revision);
             formatter.AddProperty ("overrideDirectory", overrideDirectory);
@@ -90,7 +89,11 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         ///     or Override directory.
         /// </summary>
         public string LocalDirectory {
-            get {return localdirectory;}
+            get {return this.localDir.FullName;}
+        }
+
+        public DirectoryInfo LocalDir {
+            get {return this.localDir;}
         }
 
         /// <summary>
@@ -125,9 +128,13 @@ namespace ICSharpCode.SharpCvsLib.Misc {
     ///     working directory name are null.</exception>
     public String WorkingPath {
         get {
-            if (null != this.LocalDirectory &&
-                null != this.WorkingDirectoryName) {
-                String tempWorkingPath = Path.Combine(this.LocalDirectory, this.WorkingDirectoryName);
+            if (null != this.LocalDirectory) {
+                string tempWorkingPath;
+                if (null == this.WorkingDirectoryName || string.Empty == this.WorkingDirectoryName) {
+                    tempWorkingPath = this.LocalDirectory;
+                } else {
+                    tempWorkingPath = Path.Combine(this.LocalDirectory, this.WorkingDirectoryName);
+                }
                 if (!tempWorkingPath.EndsWith(Path.DirectorySeparatorChar.ToString())) {
                     tempWorkingPath = tempWorkingPath + Path.DirectorySeparatorChar;
                 }
@@ -260,13 +267,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
                                     string repositoryname) {
             this.repositoryname = repositoryname;
             this.cvsroot        = cvsroot;
-            if (localdirectory.EndsWith (Path.DirectorySeparatorChar.ToString ()) ||
-                    localdirectory.EndsWith ("/")) {
-                this.localdirectory =
-                    localdirectory.Substring (0, localdirectory.Length - 1);
-            } else {
-                this.localdirectory = localdirectory;
-            }
+            this.localDir = new DirectoryInfo(localdirectory);
             this.manager = new Manager(this.WorkingPath);
         }
 
@@ -299,7 +300,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <returns></returns>
         public string ToRemotePath(string directory) {
             return directory.Substring(
-                    localdirectory.Length).Replace(Path.DirectorySeparatorChar, '/');
+                    this.localDir.FullName.Length).Replace(Path.DirectorySeparatorChar, '/');
         }
 
         /// <summary>
@@ -313,7 +314,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <returns></returns>
         [Obsolete ("Use the OrgPath to parse the org path string")]
         public string ToLocalPath(string orgPath) {
-            string _localBasePath = this.localdirectory;
+            string _localBasePath = this.localDir.FullName;
 
             string _orgPathWithoutRoot =
                 orgPath.Substring (this.cvsroot.CvsRepository.Length + 1);
@@ -417,17 +418,9 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         //        [Obsolete ("This is moving to the CvsFileManager class")]
         public void ReadAllExistingEntries() {
             Clear();
-            if (LOGGER.IsDebugEnabled) {
-                String msg = "Read all existing entries in the " +
-                            "localdirectory=[" + this.localdirectory + "]";
-                LOGGER.Debug (msg);
-            }
             string wd =
-                Path.Combine (localdirectory, this.ModuleName);
+                Path.Combine (this.localDir.FullName, this.ModuleName);
             AddEntriesIn(wd);
-            //		    if (null == this.Folders || 0 == this.Folders.Count) {
-            //		        AddEntriesIn (Path.Combine (localdirectory, this.ModuleName));
-            //		    }
         }
 
         /// <summary>

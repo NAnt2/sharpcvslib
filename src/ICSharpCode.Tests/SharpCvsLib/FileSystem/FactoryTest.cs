@@ -86,7 +86,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void CreateEntryTest () {
             String path = this.settings.Config.LocalPath;
 
-            ICvsFile cvsFile = factory.CreateCvsObject (path, Factory.FileType.Entries, ENTRY_LINE);
+            FileInfo fullPath = new FileInfo(Path.Combine(path, Factory.FileType.Entries.ToString()));
+            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, ENTRY_LINE);
             Assert.IsTrue (cvsFile is Entry);
             Assert.AreEqual (path, cvsFile.Path);
             Assert.AreEqual (Path.Combine(path, ENTRY_NAME_OF_FILE), cvsFile.FullPath);
@@ -100,7 +101,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void CreateRepositoryTest () {
             String fullPath = this.settings.Config.LocalPath;
 
-            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Repository, REPOSITORY_LINE);
+            FileInfo reposPath = new FileInfo(
+                Path.Combine(PathTranslator.AppendCvs(fullPath).FullName, Repository.FILE_NAME));
+
+
+            ICvsFile cvsFile = factory.CreateCvsObject (reposPath, REPOSITORY_LINE);
             Assert.IsTrue (cvsFile is Repository);
             Assert.AreEqual (fullPath, cvsFile.FullPath);
             Assert.AreEqual (REPOSITORY_LINE, cvsFile.FileContents);
@@ -113,7 +118,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void CreateRootTest () {
             String fullPath = this.settings.Config.LocalPath;
 
-            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Root, ROOT_LINE);
+            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Root.ToString(), ROOT_LINE);
             Assert.IsTrue (cvsFile is Root);
             Assert.AreEqual (fullPath, cvsFile.FullPath);
             Assert.AreEqual (ROOT_LINE, cvsFile.FileContents);
@@ -126,7 +131,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void CreateTagTest () {
             String fullPath = this.settings.Config.LocalPath;
 
-            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Tag, TAG_LINE);
+            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Tag.ToString(), TAG_LINE);
             Assert.IsTrue (cvsFile is Tag);
             Assert.AreEqual (fullPath, cvsFile.FullPath);
             Assert.AreEqual ("N" + TAG_LINE.Substring (1),

@@ -60,13 +60,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         private WorkingDirectory workingDirectory;
         private String repositoryPath;
 
+        private DirectoryInfo baseDir;
+        private string moduleFacade;
+        private DirectoryInfo currentDir;
+
         private CvsRoot cvsRoot;
         private String relativePath;
-        private String filename;
-        private String localPath;
-        private String localPathAndFilename;
-        private String localRootPath;
-        private String localModuleFolderName;
         private bool isDirectory;
 
         /// <summary>
@@ -90,7 +89,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// The name of the file, without any path information.
         /// </summary>
         public String Filename {
-            get {return this.filename;}
+            get {return baseDir.Name;}
         }
 
         /// <summary>
@@ -99,15 +98,20 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     This does not contain information about the filename.
         /// </summary>
         public String LocalPath {
-            get {return this.localPath;}
+            get {return baseDir.FullName;}
         }
 
         /// <summary>
         /// Local path and filename.  Combines the local path and the name
         ///     of the file.
         /// </summary>
+        [Obsolete ("Use CurrentDir")]
         public String LocalPathAndFilename {
-            get {return this.localPathAndFilename;}
+            get {return this.currentDir.FullName;}
+        }
+
+        public DirectoryInfo CurrentDir {
+            get {return this.currentDir;}
         }
 
         /// <summary>
@@ -115,6 +119,27 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         public bool IsDirectory {
             get {return this.isDirectory;}
+        }
+
+        /// <summary>
+        /// Uses the directory seperator character to determine if the platform is Windows.
+        /// </summary>
+        /// <value><code>true</code> if the directory seperator character is a '\'; otherwise
+        ///     <code>false</code>.</value>
+        public static bool IsWin32 {
+            get {
+                return Path.DirectorySeparatorChar.Equals('\\');
+            }
+        }
+
+        /// <summary>
+        /// Indicate if the platform filesystem is case sensitive or not.
+        /// </summary>
+        /// <value><code>true</code> if the OS is case sensitive; otherwise <code>false</code>.</value>
+        public static bool IsCaseSensitive {
+            get {
+                return !IsWin32;
+            }
         }
 
         /// <summary>
@@ -126,94 +151,18 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <param name="repositoryPath">The relative path to the file served
         ///     down from the cvs server.</param>
         public PathTranslator (WorkingDirectory workingDirectory,
-                            String repositoryPath) {
+            String repositoryPath) {
+            this.baseDir = new DirectoryInfo(workingDirectory.LocalDirectory);
+            this.moduleFacade = workingDirectory.WorkingDirectoryName;
+
             this.repositoryPath = repositoryPath;
             this.workingDirectory = workingDirectory;
-            this.localRootPath = workingDirectory.LocalDirectory;
             this.cvsRoot = workingDirectory.CvsRoot;
-            this.localModuleFolderName = workingDirectory.WorkingDirectoryName;
-            this.filename = this.GetFilename (repositoryPath);
             this.relativePath =
-                this.GetRelativePath (workingDirectory.CvsRoot.CvsRepository,
-                                    repositoryPath,
-                                    workingDirectory.ModuleName);
-            LOGGER.Debug ("relativePath=[" + relativePath + "]");
+                this.GetRelativePath (repositoryPath);
 
-            LOGGER.Debug ("workingDirectory=[" + workingDirectory.ToString () + "]");
-            this.localPath =
-                PathTranslator.ConvertToOSSpecificPath (Path.Combine (workingDirectory.WorkingPath,
-                                                        relativePath));
-            if (this.isDirectory) {
-                this.localPathAndFilename =
-                    PathTranslator.ConvertToOSSpecificPath(this.LocalPath);
-            } else {
-                this.localPathAndFilename =
-                    PathTranslator.ConvertToOSSpecificPath (Path.Combine (this.localPath, this.filename));
-            }
-        }
-
-        /// <summary>
-        ///     Gets the relative path to the file by removing the cvs root directory
-        ///         and the module name from the reporitoy path.
-        /// </summary>
-        /// <param name="cvsRootDirectory">The cvs root directory.</param>
-        /// <param name="repositoryPath">The path to the file/ directory as specified
-        ///       by the cvs server.</param>
-        /// <param name="moduleName">The name of the module which will be parsed
-        ///     out so the local directory name can be different than the module
-        ///     name.</param>
-        /// <returns>The relative path to the filename, excluding the file name.</returns>
-        private String GetRelativePath (String cvsRootDirectory,
-                                        String repositoryPath,
-                                        String moduleName) {
-            String filename = this.GetFilename (repositoryPath);
-            LOGGER.Debug ("Enter relative path");
-            if (LOGGER.IsDebugEnabled) {
-                StringBuilder msg = new StringBuilder ();
-                msg.Append ("cvsRootDirectory=[").Append (cvsRootDirectory).Append ("]");
-                msg.Append ("repositoryPath=[").Append (repositoryPath).Append ("]");
-                msg.Append ("moduleName=[").Append (moduleName).Append ("]");
-                msg.Append ("filename=[").Append (filename).Append ("]");
-                LOGGER.Debug (msg);
-            }
-
-            String tempRelativePath = repositoryPath;
-
-            LOGGER.Debug ("before cvsroot touched=[" + tempRelativePath + "]");
-            // Remove the cvsRoot from the path.
-            tempRelativePath =
-                tempRelativePath.Substring (cvsRootDirectory.Length);
-            LOGGER.Debug ("after cvsroot removed=[" + tempRelativePath + "]");
-
-            if (tempRelativePath.StartsWith ("/")) {
-                tempRelativePath = tempRelativePath.Substring (1);
-            }
-
-            if (tempRelativePath.Length >= filename.Length &&
-                filename.Length > 0 && 
-                !filename.Equals(Path.DirectorySeparatorChar.ToString())) {
-                tempRelativePath = tempRelativePath.Substring(0,
-                                tempRelativePath.Length - filename.Length);
-            }
-            LOGGER.Debug ("after filename removed=[" + tempRelativePath + "]");
-
-            // at this point module name should be at the start of the string
-            if (tempRelativePath.IndexOf (moduleName) > 0 ||
-                    tempRelativePath.Length >= moduleName.Length) {
-                tempRelativePath =
-                    tempRelativePath.Substring (moduleName.Length);
-            }
-            LOGGER.Debug ("after module name removed=[" +
-                        tempRelativePath + "]");
-
-            if (tempRelativePath.StartsWith ("/")) {
-                tempRelativePath = tempRelativePath.Substring (1);
-            }
-            LOGGER.Debug ("after / removed from start=[" +
-                        tempRelativePath + "]");
-
-            return tempRelativePath;
-
+            this.currentDir = 
+                new DirectoryInfo(Path.Combine(baseDir.FullName, this.relativePath));
         }
 
         /// <summary>
@@ -223,16 +172,21 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <param name="repositoryPath">The relative path to the repository directory
         ///     which is returned in the server response.</param>
         /// <returns>The value of the filename.</returns>
-        private String GetFilename (String repositoryPath) {
-            String filename = Path.GetFileName (repositoryPath);
+        private String GetRelativePath (String repositoryPath) {
+            String filename = 
+                repositoryPath.Replace(this.workingDirectory.CvsRoot.CvsRepository, "");
             if (repositoryPath.EndsWith("/")) {
-                filename = Path.DirectorySeparatorChar.ToString();
                 this.isDirectory = true;
             }
 
-            if (LOGGER.IsDebugEnabled) {
-                LOGGER.Debug ("filename=[" + filename + "]");
+            filename = filename.Substring(1, filename.Length - 1);
+            // if the module name is different from the one sent down from the repository
+            //  then we have specified an override directory.
+            if (filename.Substring(0, this.moduleFacade.Length) != this.moduleFacade) {
+                filename = filename.Replace(filename.Substring(0, filename.IndexOf("/")), 
+                    this.moduleFacade);
             }
+
             return filename;
         }
 
@@ -245,11 +199,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             formatter.AddProperty ("cvsRoot", cvsRoot);
             formatter.AddProperty ("repositoryPath=[", this.repositoryPath);
             formatter.AddProperty ("relativePath", relativePath);
-            formatter.AddProperty ("localModuleFolderName", localModuleFolderName);
-            formatter.AddProperty ("filename", filename);
-            formatter.AddProperty ("localRootPath", localRootPath);
-            formatter.AddProperty ("localPath", localPath);
-            formatter.AddProperty ("localPathAndFilename", this.localPathAndFilename);
 
             return formatter.ToString ();
         }
@@ -277,14 +226,52 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <param name="fullPath">The full path to validate.</param>
         /// <returns>Returns <code>true</code> if the path does NOT contain a CVS
         ///     folder; otherwise returns <code>false</code></returns>
-        public static bool ContainsCVS(String fullPath) {
-            if (fullPath.ToUpper().IndexOf(CVS) >= 0) {
-                if (fullPath.ToUpper().IndexOf(Path.DirectorySeparatorChar + CVS + Path.DirectorySeparatorChar) >= 0) {
+        private static bool ContainsCVS(String fullPath) {
+            if (!fullPath.EndsWith(Path.DirectorySeparatorChar.ToString())) {
+                fullPath += Path.DirectorySeparatorChar;
+            }
+            foreach (string fileType in System.Enum.GetNames(typeof(Factory.FileType))) {
+                string cvsDir = string.Format("{0}{1}{2}{3}",
+                    Path.DirectorySeparatorChar, CVS, Path.DirectorySeparatorChar, fileType);
+
+                int lastCvsDir = fullPath.ToUpper().IndexOf(cvsDir.ToUpper());
+                int lastFile = fullPath.Length - cvsDir.Length - 1;
+                if (lastCvsDir == lastFile) {
                     return true;
                 }
-                if (IsSeperatorBeforeAndAfterCvs(fullPath)) {
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Determine if the full path specified is a cvs control directory or if it is just a 
+        /// regular path on the hard drive.
+        /// </summary>
+        /// <param name="fullPath">Full path to check.</param>
+        /// <returns><code>true</code> if the directory is a cvs control directory; 
+        ///     otherwise <code>false</code>.</returns>
+        public static bool IsCvsDir (string fullPath) {
+            if (ContainsCVS(fullPath)) { // && HasControlFiles(fullPath)) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        private static bool HasControlFiles (string fullPath) {
+            if (null == fullPath) {
+                return false;
+            }
+            DirectoryInfo dirInfo = new DirectoryInfo(fullPath);
+            if (!dirInfo.Exists) {
+                return false;
+            }
+            foreach (FileInfo file in dirInfo.GetFiles()) {
+                if ((ContainsCVS(dirInfo.Name) && Entry.FILE_NAME.IndexOf(file.Name) > -1) ||
+                    (ContainsCVS(dirInfo.Name) && Root.FILE_NAME.IndexOf(file.Name) > -1) ||
+                    (ContainsCVS(dirInfo.Name) && Repository.FILE_NAME.IndexOf(file.Name) > -1)) {
                     return true;
-                } 
+                }
             }
             return false;
         }
@@ -296,21 +283,73 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 String cvsString = 
                     fullPath.ToUpper().Substring (startOfCvs - 1, CVS.Length + 2);
                 
-                if (LOGGER.IsDebugEnabled) {
-                    StringBuilder msg = new StringBuilder();
-                    msg.Append("fullPath=[").Append(fullPath).Append("]");
-                    msg.Append("cvsString=[").Append(cvsString).Append("]");
-                    LOGGER.Debug(msg);
-                }
                 if (cvsString.Equals(
                     Path.DirectorySeparatorChar + CVS + Path.DirectorySeparatorChar)) {
                     return true;
                 }
-            } catch (ArgumentOutOfRangeException e) {
-                LOGGER.Debug(e);
+            } catch (ArgumentOutOfRangeException) {
                 return true;
             }
 
+            return false;
+        }
+
+        /// <summary>
+        /// Checks the end of a path string, if the path ends in CVS it does nothing, 
+        /// otherwise it appends CVS to the full path.
+        /// </summary>
+        /// <param name="fullPath">Full path to a file/ directory that may or may
+        ///     not end with CVS.</param>
+        /// <returns>The full path with a CVS appended.</returns>
+        public static FileSystemInfo AppendCvs(FileSystemInfo fs) {
+            if (fs.FullName.EndsWith(string.Format("{0}{1}{2}", Path.DirectorySeparatorChar, CVS, Path.DirectorySeparatorChar)) ||
+                fs.FullName.EndsWith(string.Format("{0}{1}", Path.DirectorySeparatorChar, CVS)) ||
+                PathTranslator.IsCvsDir(fs.FullName)) {
+                LOGGER.Warn(string.Format("Already ends with cvs directory: {0}",
+                    fs.FullName));
+                return fs;
+            } 
+
+            if (fs.GetType() == typeof(DirectoryInfo)) {
+                return new DirectoryInfo(Path.Combine(fs.FullName, CVS));
+            } else {
+                return new FileInfo(Path.Combine(fs.FullName, CVS));
+            }
+        }
+
+        public static FileSystemInfo AppendCvs(string fs) {
+            FileSystemInfo _fs;
+            if (File.Exists(fs) || 
+                IsControlFile(fs)) {
+                _fs = new FileInfo(fs);
+            } else {
+                _fs = new DirectoryInfo(fs);
+            } 
+
+            return AppendCvs(_fs);
+        }
+
+        /// <summary>
+        /// Append the cvs directory to the file full path, then append the cvs management
+        /// file to the full path.
+        /// </summary>
+        /// <param name="fullPath">Full path that may or may not contain a CVS 
+        ///     directory.</param>
+        /// <param name="managingFile">Name of the managing file, should correspond
+        ///     to a type in <see cref="ICSharpCode.SharpCvsLib.FileSystem.Manager.FileType"/></param>
+        /// <returns></returns>
+        public static string AppendCvs(string fullPath, string managingFile) {
+            return Path.Combine(AppendCvs(fullPath).FullName, managingFile);
+        }
+
+        private static bool IsControlFile (string fs) {
+            FileInfo fileInfo = new FileInfo(fs);
+            
+            foreach (string file in System.Enum.GetNames(typeof(Factory.FileType))) {
+                if (fileInfo.Name == file) {
+                    return true;
+                }
+            }
             return false;
         }
 

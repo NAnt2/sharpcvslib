@@ -44,9 +44,11 @@ namespace ICSharpCode.SharpCvsLib.Messages {
         private string message;
         private string prefix = String.Empty;
 
+        /// <summary>Empty prefix.</summary>
+        public const string EMPTY_PREFIX = "";
         /// <summary>Default prefix that is appended to all requests without a 
         /// prefix specified.</summary>
-        public const string DEFAULT_PREFIX = "";
+        public const string DEFAULT_PREFIX = EMPTY_PREFIX;
         /// <summary>Prefix that is appended to client requests.</summary>
         public const string CLIENT_PREFIX = "sharpcvslib";
         /// <summary>Prefix that is appended to server responses.</summary>

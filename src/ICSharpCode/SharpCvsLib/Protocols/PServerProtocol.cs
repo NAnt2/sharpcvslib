@@ -33,15 +33,20 @@
 #endregion
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using ICSharpCode.SharpCvsLib.Exceptions;
+using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Messages;
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Streams;
+using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Util;
 
 using log4net;
 
@@ -73,6 +78,11 @@ namespace ICSharpCode.SharpCvsLib.Protocols
             get {return this.tcpClient;}
         }
 
+        private CvsRoot CvsRoot {
+            get {return this.Repository.CvsRoot;}
+        }
+
+
         /// <summary>
         /// Create a new instance of the pserver protocol.
         /// </summary>
@@ -83,6 +93,9 @@ namespace ICSharpCode.SharpCvsLib.Protocols
         /// Connect to the cvs server.
         /// </summary>
         public override void Connect () {
+            if (null == this.Password || string.Empty == this.Password) {
+                this.Password = this.GetPassword();
+            }
             this.HandlePserverAuthentication(this.Password);
         }
 
@@ -101,13 +114,14 @@ namespace ICSharpCode.SharpCvsLib.Protocols
         ///<exception cref="AuthenticationException">If the user is not valid.</exception>
         private void HandlePserverAuthentication(String password) {
             String retStr = this.SendPserverAuthentication(password);
+
             if (retStr.Equals(PSERVER_AUTH_SUCCESS)) {
                 this.SendConnectedMessageEvent(this, new MessageEventArgs("Connection established"));
             } else if (retStr.Equals(PSERVER_AUTH_FAIL)) {
                 try {
-                    tcpClient.Close();
-                } finally {
                     throw new AuthenticationException();
+                } finally {
+                    tcpClient.Close();
                 }
             } else {
                 StringBuilder msg = new StringBuilder ();
@@ -121,35 +135,31 @@ namespace ICSharpCode.SharpCvsLib.Protocols
             }   
         }
 
+        /// <summary>
+        /// Prompt for the cvs password and handle the user input.
+        /// </summary>
+        /// <param name="cvsRoot"></param>
+        /// <returns></returns>
+        public static string PromptForPassword (string cvsRoot) {
+            System.Console.WriteLine(String.Format("Logging in to {0}", cvsRoot));
+            System.Console.Write(String.Format("CVS password: "));
+            return System.Console.ReadLine();
+        }
+
         private String SendPserverAuthentication (String password) {
             tcpClient = new TcpClient ();
             tcpClient.SendTimeout = this.Timeout;
 
-            if (LOGGER.IsDebugEnabled) {
-                StringBuilder msg = new StringBuilder();
-                msg.Append("Before submitting pserver connect request.  ");
-                msg.Append("this.Repository.CvsRoot.CvsRepository=[").Append(this.Repository.CvsRoot.CvsRepository).Append("]");
-                msg.Append("this.Repository.CvsRoot.User=[").Append(this.Repository.CvsRoot.User).Append("]");
-                msg.Append("has password=[").Append(null != password).Append("]");
-                msg.Append("port=[").Append(this.Repository.CvsRoot.Port).Append("]");
-                LOGGER.Debug (msg);
-            }
-
             tcpClient.Connect(this.Repository.CvsRoot.Host, this.Repository.CvsRoot.Port);
             SetInputStream(new CvsStream(tcpClient.GetStream()));
             SetOutputStream(this.InputStream);
-//            inputStream  = outputStream = new CvsStream(tcpClient.GetStream());
 
-            int MAX_RETRY = 1;
-            for (int i=0; i < MAX_RETRY; i++) {
-                try {
-                    SubmitRequest(new PServerAuthRequest(this.Repository.CvsRoot.CvsRepository,
-                        this.Repository.CvsRoot.User,
-                        password));
-                    break;
-                } catch (Exception e) {
-                    LOGGER.Error (e);
-                }
+            try {
+                SubmitRequest(new PServerAuthRequest(this.Repository.CvsRoot.CvsRepository,
+                    this.Repository.CvsRoot.User,
+                    password));
+            } catch (Exception e) {
+                LOGGER.Error (e);
             }
 
             InputStream.Flush();
@@ -175,25 +185,16 @@ namespace ICSharpCode.SharpCvsLib.Protocols
         /// </summary>
         /// <param name="request"></param>
         private void SubmitRequest(IRequest request) {
-            if (LOGGER.IsDebugEnabled) {
-                StringBuilder msg = new StringBuilder ();
-                msg.Append ("\nSubmit Request");
-                msg.Append ("\n\trequest=[").Append (request).Append ("]");
-                LOGGER.Debug (msg);
-            }
-
             OutputStream.SendString(request.RequestString);
-
-// PServer request does not modify the connection.
-//            if (request.DoesModifyConnection) {
-//                request.ModifyConnection(this);
-//            }
-
-// Response is not expected from the pserver authentication...well it is handled seperately from
-// this mechanism in any case.
-//            if (request.IsResponseExpected) {
-//                HandleResponses();
-//            }
         }
-	}
+
+        /// <summary>
+        /// Lookup the password for the given file
+        /// </summary>
+        /// <returns></returns>
+        private string GetPassword () {
+            Manager manager = new Manager(this.Repository.LocalDirectory);
+            return PasswordScrambler.Descramble(manager.ReadPassword(this.CvsRoot));
+        }
+    }
 }

@@ -109,7 +109,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser{
         /// <param name="cvsRoot">The cvs root to use for this checkout.</param>
         /// <param name="repositoryName">Name of the local repository path.</param>
         /// <param name="coOptions">All unparsed checkout options.</param>
-//        [Obsolete("Use CheckCommandParser(CvsRoot, string[])")]
+        [Obsolete("Use CheckCommandParser(CvsRoot, string[])")]
         public CheckoutCommandParser (CvsRoot cvsRoot, string repositoryName, string coOptions) {
             this.cvsRoot = cvsRoot;
             repository = repositoryName;

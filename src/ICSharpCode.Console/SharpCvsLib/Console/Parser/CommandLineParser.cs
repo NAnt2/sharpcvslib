@@ -38,6 +38,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -262,38 +263,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 System.Console.WriteLine (Usage.General);
             }
 
-            Regex cvsRoot = new Regex(@"[-d]+[\s]*[\s]*" + CvsRoot.CVSROOT_REGEX);
+            Regex cvsRoot = new Regex(@"[-d]+[:\s]*" + CvsRoot.CVSROOT_REGEX);
             Match match = cvsRoot.Match(this.CommandLine);
 
-            if (match.Groups.Count > 0) {
+            if (match.Groups.Count > 0 && CvsRoot.IsValid(this.CommandLine)) {
                 this.cvsRoot = new CvsRoot(this.CommandLine);
                 startIndex = 1;
-/*
-            if (arguments[0].IndexOf ("-d", 0, 2) >= 0) {
-                String tempRoot = arguments[0].Substring (2);
-                this.cvsRoot = new CvsRoot (tempRoot);
-                if (arguments.Length == 1) {
-                    throw new CommandLineParseException("Only specified a cvsroot, need to specify a command.");
-                }
-                startIndex = 1;
-*/
-            } else {
-                try {
-                    // Get the cvsroot from the Root file in the CVS directory
-                    Manager manager = new Manager(Environment.CurrentDirectory);
-                    Root root = manager.FetchRoot(Environment.CurrentDirectory);
-                    this.cvsRoot = new CvsRoot(root.FileContents);
-                } catch {
-                    // Should be using CVSROOT as last option
-                    String tempRoot = Environment.GetEnvironmentVariable (ENV_CVS_ROOT);
-                    try {
-                        this.cvsRoot = new CvsRoot(tempRoot);
-                    } catch (CvsRootParseException e) {
-                        LOGGER.Error(e);
-                        return null;
-                    }
-                }
-            }
+            } 
 
             for (int i = startIndex; i < arguments.Length; i++) {
                 if (LOGGER.IsDebugEnabled) {
@@ -302,7 +278,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     LOGGER.Debug(msg);
                 }
                 LOGGER.Debug("Before we grab the arguments.");
-                switch (arguments[i].Trim()) {
+                string commandString = arguments[i].Trim();
+                CommandParserFactory factory;
+                ICommandParser parser;
+                switch (commandString) {
                     case "add":
                     case "ad":
                     case "new":
@@ -311,7 +290,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         i++;
                         // get rest of arguments which is options on the commit command.
                         while (arguments.Length > i && arguments[i].IndexOf("-", 0, 1) >= 0) {
-                            LOGGER.Debug("Parsing arguments.  Argument[" + i + "]=[" + arguments[i]);
                             // Get options with second parameters?
                             if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
                                 for ( int cnt=1; cnt < arguments[i].Length; cnt++ ) {
@@ -334,17 +312,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         else {
                             this.repository = String.Empty;
                         }
-                        try {
-                            AddCommandParser addCommand = 
-                                new AddCommandParser(this.CvsRoot, repository, options);
-                            command = addCommand.CreateCommand ();
-                            this.currentWorkingDirectory = 
-                                addCommand.CurrentWorkingDirectory;
-                        } 
-                        catch (Exception e) {
-                            LOGGER.Error(e);
-                            throw new CommandLineParseException("Unable to create add command.", e);
-                        }
+                        AddCommandParser addCommand = 
+                            new AddCommandParser(this.CvsRoot, repository, options);
+                        command = addCommand.CreateCommand ();
+                        this.currentWorkingDirectory = 
+                            addCommand.CurrentWorkingDirectory;
                         break;
                     case "commit":
                     case "ci":
@@ -377,17 +349,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         else {
                             this.repository = String.Empty;
                         }
-                        try {
-                            CommitCommandParser commitCommand = 
-                                new CommitCommandParser(this.CvsRoot, repository, options);
-                            command = commitCommand.CreateCommand ();
-                            this.currentWorkingDirectory = 
-                                commitCommand.CurrentWorkingDirectory;
-                        } 
-                        catch (Exception e) {
-                            LOGGER.Error(e);
-                            throw new CommandLineParseException("Unable to create commit command.", e);
-                        }
+                        CommitCommandParser commitCommand = 
+                            new CommitCommandParser(this.CvsRoot, repository, options);
+                        command = commitCommand.CreateCommand ();
+                        this.currentWorkingDirectory = 
+                            commitCommand.CurrentWorkingDirectory;
                         break;
                     case "checkout":
                     case "co":
@@ -425,44 +391,41 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         } else {
                             this.repository = String.Empty;
                         }
-                        try {
-                            CheckoutCommandParser checkoutCommand = 
-                                new CheckoutCommandParser(this.CvsRoot, this.Repository, options);
-                            command = checkoutCommand.CreateCommand ();
-                            this.currentWorkingDirectory = 
-                                checkoutCommand.CurrentWorkingDirectory;
-                        } catch (Exception e) {
-                            LOGGER.Error(e);
-                            throw new CommandLineParseException("Unable to create checkout command.", e);
-                        }
+                        CheckoutCommandParser checkoutCommand = 
+                            new CheckoutCommandParser(this.CvsRoot, this.Repository, options);
+                        command = checkoutCommand.CreateCommand ();
+                        this.currentWorkingDirectory = 
+                            checkoutCommand.CurrentWorkingDirectory;
                         break;
                     case "init":
                         this.commandTxt = arguments[i];
-                        try {
-                            InitCommandParser initCommand = new InitCommandParser(this.CvsRoot);
-                            command = initCommand.CreateCommand ();
-                            this.currentWorkingDirectory = initCommand.CurrentWorkingDirectory;
-                        } catch (Exception e) {
-                            LOGGER.Error(e);
-                            throw new CommandLineParseException("Unable to create init command.", e);
-                        }
+                        InitCommandParser initCommand = new InitCommandParser(this.CvsRoot);
+                        command = initCommand.CreateCommand ();
+                        this.currentWorkingDirectory = initCommand.CurrentWorkingDirectory;
                         break;
                     case "login":
                     case "logon":
                     case "lgn":
                         // login to server
                         this.commandTxt = arguments[i];
-                        try {
-                            LoginCommand loginCommand = 
-                                new LoginCommand(this.CvsRoot, this.currentWorkingDirectory);
-                            loginCommand.Args = arguments;
-                            this.currentWorkingDirectory.CvsRoot = this.CvsRoot;
-                            command = loginCommand;
-                        } 
-                        catch (Exception e) {
-                            LOGGER.Error(e);
-                            throw new CommandLineParseException("Unable to create login command.", e);
-                        }
+                        LoginCommand loginCommand = 
+                            new LoginCommand(this.CvsRoot, this.currentWorkingDirectory);
+                        loginCommand.Args = arguments;
+                        this.currentWorkingDirectory = loginCommand.CurrentWorkingDirectory;
+                        command = loginCommand;
+                        break;
+                    case "dir":
+                    case "list":
+                    case "ls":
+                        factory = 
+                            new CommandParserFactory("ls", arguments, 
+                            this.cvsRoot, this.currentWorkingDirectory);
+
+                        parser = factory.GetCommandParser();
+                        i = arguments.Length;
+                        command = parser.CreateCommand();
+                        this.currentWorkingDirectory = 
+                            parser.CurrentWorkingDirectory;
                         break;
                     case "passwd":
                     case "password":
@@ -499,17 +462,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         else {
                             this.files = String.Empty;
                         }
-                        try {
-                            RemoveCommandParser removeCommand = 
-                                new RemoveCommandParser(this.CvsRoot, files, options);
-                            command = removeCommand.CreateCommand ();
-                            this.currentWorkingDirectory = 
-                                removeCommand.CurrentWorkingDirectory;
-                        } 
-                        catch (Exception e) {
-                            LOGGER.Error(e);
-                            throw new CommandLineParseException("Unable to create remove command.", e);
-                        }
+                        RemoveCommandParser removeCommand = 
+                            new RemoveCommandParser(this.CvsRoot, files, options);
+                        command = removeCommand.CreateCommand ();
+                        this.currentWorkingDirectory = 
+                            removeCommand.CurrentWorkingDirectory;
                         break;
                     case "rt":
                     case "rtag":
@@ -540,17 +497,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         else {
                             this.repository = String.Empty;
                         }
-                        try {
-                            RTagCommandParser rtagCommand = 
-                                new RTagCommandParser(this.CvsRoot, repository, options);
-                            command = rtagCommand.CreateCommand ();
-                            this.currentWorkingDirectory = 
-                                rtagCommand.CurrentWorkingDirectory;
-                        } 
-                        catch (Exception e) {
-                            LOGGER.Error(e);
-                            throw new CommandLineParseException("Unable to create rtag command.", e);
-                        }
+                        RTagCommandParser rtagCommand = 
+                            new RTagCommandParser(this.CvsRoot, repository, options);
+                        command = rtagCommand.CreateCommand ();
+                        this.currentWorkingDirectory = 
+                            rtagCommand.CurrentWorkingDirectory;
                         break;
                     case "up":
                     case "upd":
@@ -580,25 +531,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         else {
                             this.repository = String.Empty;
                         }
-                        try {
-                            UpdateCommandParser updateCommand = 
-                                new UpdateCommandParser(this.CvsRoot, repository, options);
-                            command = updateCommand.CreateCommand ();
-                            this.currentWorkingDirectory = 
-                                updateCommand.CurrentWorkingDirectory;
-                        } 
-                        catch (Exception e) {
-                            LOGGER.Error(e);
-                            throw new CommandLineParseException("Unable to create update command.", e);
-                        }
+                        UpdateCommandParser updateCommand = 
+                            new UpdateCommandParser(this.CvsRoot, repository, options);
+                        command = updateCommand.CreateCommand ();
+                        this.currentWorkingDirectory = 
+                            updateCommand.CurrentWorkingDirectory;
                         break;
                     case "xml":
-                        CommandParserFactory factory = 
+                        factory = 
                             new CommandParserFactory("xml", arguments, 
                             this.cvsRoot, this.currentWorkingDirectory);
 
                         // TODO: Move this outside of case statement when all commands use same pattern
-                        ICommandParser parser = factory.GetCommandParser();
+                        parser = factory.GetCommandParser();
                         i = arguments.Length;
                         command = parser.CreateCommand();
                         this.currentWorkingDirectory = 
@@ -670,9 +615,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         return true;
                     case "--help-synonyms":
                         System.Console.WriteLine(Usage.Synonyms);
-			return true;
-		    case "--version":
-		        System.Console.WriteLine(Usage.Version);
+			            return true;
+		            case "--version":
+		                System.Console.WriteLine(Usage.Version);
                         return true;
                 }
                 if (arguments[i].IndexOf("--") > -1) {
@@ -682,5 +627,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             }
             return false;
         }
+
     }
 }

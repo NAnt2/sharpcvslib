@@ -1,6 +1,6 @@
 #region "Copyright"
-// CheckoutRequest.cs
-// Copyright (C) 2001 Mike Krueger
+// List.cs
+// Copyright (C) 2004 Clayton Harbour
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
 //
@@ -35,14 +35,14 @@ namespace ICSharpCode.SharpCvsLib.Requests {
     /// sending the co request, and then seeing what directory names the server sends back in
     /// its responses, and (2) the expand-modules request.
     /// </summary>
-    public class CheckoutRequest : AbstractRequest
+    public class ListRequest : AbstractRequest
     {
         /// <summary>
         /// Send request to checkout files from the server.
         /// </summary>
         public override string RequestString {
             get {
-                return "co\n";
+                return "ls\n";
             }
         }
 
