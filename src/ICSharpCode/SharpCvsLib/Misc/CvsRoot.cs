@@ -50,14 +50,10 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// Regular expression for matching a cvsroot.
         /// </summary>
         public const string CVSROOT_REGEX = 
-//            @":(ext|pserver|ssh|local|sspi)
-//:([\w*]*[[@]*[\w*]*[\.\w*]*]*)
-//[:]*([\d*]*)
-//:([A-Za-z:/|/]+[\w*/-]*)";
               @":(ext|pserver|ssh|local|sspi)
-              :((?:[\w]*@)?[\w]+(?:\.[\w]+)*)
+              :((?:[\w]*@)?[\w]+(?:\.[\w|-]+)*)
               :?((?:[\d]*)?)
-              :((?:(?:[A-Za-z]:/)|/).*)";
+              :((?:(?:[A-Za-z]:/)|/).[^\s]*)";
 
         private readonly ILog LOGGER = LogManager.GetLogger(typeof(CvsRoot));
         /// <summary>
