@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsLib", "src\SharpCvs
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsAddIn", "src\SharpCvsAddIn\SharpCvsAddIn.csproj", "{29608312-FA1C-4E7D-85C9-73B5D4443DC9}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -42,6 +46,10 @@ Global
 		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Debug.ActiveCfg = Debug|.NET
 		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Debug.Build.0 = Debug|.NET
 		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Release.ActiveCfg = Release|.NET
+		{29608312-FA1C-4E7D-85C9-73B5D4443DC9}.Debug.ActiveCfg = Debug|.NET
+		{29608312-FA1C-4E7D-85C9-73B5D4443DC9}.Debug.Build.0 = Debug|.NET
+		{29608312-FA1C-4E7D-85C9-73B5D4443DC9}.Release.ActiveCfg = Release|.NET
+		{29608312-FA1C-4E7D-85C9-73B5D4443DC9}.Release.Build.0 = Release|.NET
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
