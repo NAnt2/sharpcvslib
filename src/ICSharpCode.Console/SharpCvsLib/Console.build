@@ -5,7 +5,7 @@
     <target name="build">
         <csc    target="exe" 
                 warnaserror="${compile.warnaserror}" 
-                output="${dir.build}/${name.top-level}.${name.console}.dll" 
+                output="${dir.build}/${name.console.exe}.exe" 
                 debug="${compile.debug}" 
                 define="${compile.define}">
                 
