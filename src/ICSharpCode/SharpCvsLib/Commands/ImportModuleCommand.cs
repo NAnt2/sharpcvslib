@@ -45,116 +45,139 @@ using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Commands {
 
-/// <summary>
-/// Import a module into the cvs repository
-/// </summary>
-public class ImportModuleCommand : ICommand
-{
-    private WorkingDirectory workingdirectory;
-    private string  logmessage;
-    private string  vendor  = "vendor";
-    private string  release = "release";
-
-    private readonly ILog LOGGER =
-        LogManager.GetLogger (typeof (ImportModuleCommand));
-
     /// <summary>
-    /// The log message returned by the cvs server.
+    /// Import a module into the cvs repository
     /// </summary>
-    public string LogMessage {
-        get {
-            return logmessage;
-        }
-        set {
-            logmessage = value;
-        }
-    }
-
-    /// <summary>
-    /// Vendor string.
-    /// </summary>
-    public string VendorString {
-        get {
-            return vendor;
-        }
-        set {
-            vendor = value;
-        }
-    }
-
-    /// <summary>
-    /// Release string
-    /// </summary>
-    public string ReleaseString {
-        get {
-            return release;
-        }
-        set {
-            release = value;
-        }
-    }
-
-    /// <summary>
-    /// Constructor for the import module command.
-    /// </summary>
-    /// <param name="workingdirectory"></param>
-    /// <param name="logmessage"></param>
-    public ImportModuleCommand(WorkingDirectory workingdirectory, string logmessage)
+    public class ImportModuleCommand : ICommand
     {
-        this.logmessage = logmessage;
-        this.workingdirectory = workingdirectory;
-    }
+        private WorkingDirectory workingdirectory;
+        private string  logmessage;
+        private string  vendor  = "vendor";
+        private string  release = "release";
 
-    /// <summary>
-    /// Do the dirty work.
-    /// </summary>
-    /// <param name="connection"></param>
-    public void Execute(ICommandConnection connection)
-    {
-        connection.SubmitRequest(new CaseRequest());
-        connection.SubmitRequest(new ArgumentRequest("-b"));
-        connection.SubmitRequest(new ArgumentRequest("1.1.1"));
-        connection.SubmitRequest(new ArgumentRequest("-m"));
-        connection.SubmitRequest(new ArgumentRequest(logmessage));
-        connection.SubmitRequest(new ArgumentRequest(workingdirectory.WorkingDirectoryName));
-        connection.SubmitRequest(new ArgumentRequest(vendor));
-        connection.SubmitRequest(new ArgumentRequest(release));
+        private readonly ILog LOGGER =
+            LogManager.GetLogger (typeof (ImportModuleCommand));
 
-        LOGGER.Info("IMPORT START");
-
-        foreach (DictionaryEntry folder in workingdirectory.Folders) {
-            foreach (Entry entry  in ((Folder)folder.Value).Entries) {
-                DateTime old = entry.TimeStamp;
-                entry.TimeStamp = entry.TimeStamp.ToUniversalTime();
-
-                string path = workingdirectory.CvsRoot.CvsRepository +  "/" + workingdirectory.WorkingDirectoryName + folder.Key.ToString();
-                string modulepath;
-
-                if (folder.Key.ToString().Length < 1) {
-                    modulepath = ".";
-                } else {
-                    modulepath = folder.Key.ToString().Substring(1);
-                }
-
-                connection.SubmitRequest(new DirectoryRequest(modulepath, path));
-                connection.SubmitRequest(new ModifiedRequest(entry.Name));
-
-                path = Path.Combine (workingdirectory.CvsRoot.CvsRepository,
-                                     folder.Key.ToString());
-
-
-                string fileName = Path.Combine (path, entry.Name);
-                connection.SendFile(fileName, entry.IsBinaryFile);
-
-                entry.TimeStamp = old;
+        /// <summary>
+        /// The log message returned by the cvs server.
+        /// </summary>
+        public string LogMessage {
+            get {
+                return logmessage;
+            }
+            set {
+                logmessage = value;
             }
         }
 
-        connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository + "/" + workingdirectory.WorkingDirectoryName));
-        connection.SubmitRequest(new ImportRequest());
-        if (LOGGER.IsDebugEnabled) {
-            LOGGER.Debug ("IMPORT END");
+        /// <summary>
+        /// Vendor string.
+        /// </summary>
+        public string VendorString {
+            get {
+                return vendor;
+            }
+            set {
+                vendor = value;
+            }
         }
+
+        /// <summary>
+        /// Release string
+        /// </summary>
+        public string ReleaseString {
+            get {
+                return release;
+            }
+            set {
+                release = value;
+            }
+        }
+
+        /// <summary>
+        /// Constructor for the import module command.
+        /// </summary>
+        /// <param name="workingdirectory"></param>
+        /// <param name="logmessage"></param>
+        public ImportModuleCommand(WorkingDirectory workingdirectory, string logmessage)
+        {
+            this.logmessage = logmessage;
+            this.workingdirectory = workingdirectory;
+        }
+
+        /// <summary>
+        /// Do the dirty work.
+        /// </summary>
+        /// <param name="connection"></param>
+        public void Execute(ICommandConnection connection)
+        {
+            //connection.SubmitRequest(new CaseRequest());
+            connection.SubmitRequest(new ArgumentRequest("-b"));
+            connection.SubmitRequest(new ArgumentRequest("1.1.1"));
+            connection.SubmitRequest(new ArgumentRequest("-m"));
+            connection.SubmitRequest(new ArgumentRequest(logmessage));
+
+            LOGGER.Info("IMPORT START");
+
+            foreach (DictionaryEntry folder in workingdirectory.Folders) {
+                this.SetDirectory(connection, (Folder)folder.Value);
+                foreach (Entry entry  in ((Folder)folder.Value).Entries.Values) {
+                    this.SendFileRequest(connection, entry);
+                }
+            }
+
+            connection.SubmitRequest(new ArgumentRequest(workingdirectory.WorkingDirectoryName));
+            connection.SubmitRequest(new ArgumentRequest(vendor));
+            connection.SubmitRequest(new ArgumentRequest(release));
+
+            connection.SubmitRequest(new ImportRequest());
+            if (LOGGER.IsDebugEnabled) {
+                LOGGER.Debug ("IMPORT END");
+            }
+        }
+
+        private void SetDirectory (ICommandConnection connection,
+            Folder folder) {
+            String absoluteDir = String.Format("{0}", 
+                connection.Repository.CvsRoot.CvsRepository);
+
+            try {
+                connection.SubmitRequest(new DirectoryRequest(".",
+                    absoluteDir));
+            }
+            catch (Exception e) {
+                String msg = "Exception while submitting directory request.  " +
+                    "path=[" + folder.Repository.FileContents + "]";
+                LOGGER.Error (e);
+            }
+        }
+
+        private void SendFileRequest (ICommandConnection connection,
+            Entry entry) {
+            bool fileExists;
+            DateTime old = entry.TimeStamp;
+            entry.TimeStamp = entry.TimeStamp;
+            try {
+                fileExists = File.Exists (entry.FullPath);
+            }
+            catch (Exception e) {
+                LOGGER.Error (e);
+                fileExists = false;
+            }
+
+            if (!fileExists) {
+                connection.SubmitRequest (new EntryRequest (entry));
+            } else if (File.GetLastAccessTime(entry.FullPath) !=
+                entry.TimeStamp.ToUniversalTime ()) {
+                connection.SubmitRequest(new ModifiedRequest(entry.Name));
+                connection.SendFile(entry.FullPath, entry.IsBinaryFile);
+            } else {
+                connection.SubmitRequest(new EntryRequest(entry));
+                connection.SubmitRequest(new UnchangedRequest(entry.Name));
+            }
+
+            entry.TimeStamp = old;
+        }
+
     }
-}
 }

@@ -27,28 +27,28 @@
 
 namespace ICSharpCode.SharpCvsLib.Requests {
 
-/// <summary>
-/// Request to import a module.
-///     TODO: Add nice documentation like the other requests.
-/// </summary>
-public class ImportRequest : AbstractRequest
-{
     /// <summary>
     /// Request to import a module.
+    ///     TODO: Add nice documentation like the other requests.
     /// </summary>
-    public override string RequestString {
-        get {
-            return "import\n";
+    public class ImportRequest : AbstractRequest
+    {
+        /// <summary>
+        /// Request to import a module.
+        /// </summary>
+        public override string RequestString {
+            get {
+                return "import\n";
+            }
         }
-    }
 
-    /// <summary>
-    /// <code>true</code>, a response is expected.
-    /// </summary>
-    public override bool IsResponseExpected {
-        get {
-            return true;
+        /// <summary>
+        /// <code>true</code>, a response is expected.
+        /// </summary>
+        public override bool IsResponseExpected {
+            get {
+                return true;
+            }
         }
     }
-}
 }
