@@ -97,6 +97,10 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 			}
 		}
 		
+		/// <summary>
+		///     The cvs folders that are to be updated/ manipulated when requests
+		///         are sent to the server.
+		/// </summary>
 		public Folder[] FoldersToUpdate {
 		    get {return this.foldersToUpdate;}
 		    set {this.foldersToUpdate = value;}
@@ -183,7 +187,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// TODO: Clean up this dirty bad boy and move the functionality
         ///     to the Manager
         /// </summary>
-        /// <param name="directory">The directory path.</param>
+        /// <param name="orgPath">The directory path.</param>
         /// <returns></returns>
         [Obsolete ("Use the OrgPath to parse the org path string")]
 		public string ToLocalPath(string orgPath) {
@@ -307,6 +311,10 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 //		    }
 		}
 		
+		/// <summary>
+		///     Set the collection of folders to the working directory.
+		/// </summary>
+		/// <param name="folders">The cvs folders in the working directory.</param>
 		public void SetFolders (Folder[] folders) {
 		    
 		}

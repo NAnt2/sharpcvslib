@@ -33,6 +33,7 @@
 #endregion
 
 using System;
+using System.Configuration;
 using System.IO;
 using System.Collections;
 using System.Threading;
@@ -41,6 +42,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Diagnostics;
 
+using ICSharpCode.SharpCvsLib.Config;
 using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Requests;
@@ -50,9 +52,6 @@ using ICSharpCode.SharpCvsLib.Messages;
 using ICSharpCode.SharpCvsLib.FileSystem;
 
 using log4net;
-
-[assembly: log4net.Config.DOMConfigurator(
-	ConfigFileExtension="config", Watch=true)]
 
 namespace ICSharpCode.SharpCvsLib.Client {
 	
@@ -70,6 +69,11 @@ namespace ICSharpCode.SharpCvsLib.Client {
 	        LogManager.GetLogger (typeof (CVSServerConnection));
 	    
 		private const int DEFAULT_PORT = 2401;
+	    private const int DEFAULT_TIMEOUT = 1000;
+	    private const int DEFAULT_AUTH_SLEEP = 1000;
+	    
+	    private int timeout;
+	    private int authSleep;
 		
 		private string nextFileDate;
 		
@@ -86,6 +90,24 @@ namespace ICSharpCode.SharpCvsLib.Client {
 	    private const String PSERVER_AUTH_SUCCESS = "I LOVE YOU";
 	    private const String PSERVER_AUTH_FAIL = "I HATE YOU";
 	    
+	    /// <summary>
+	    ///     Initialize the cvs server connection.
+	    /// </summary>
+	    public CVSServerConnection () {
+	        SharpCvsLibConfig config = 
+                (SharpCvsLibConfig)ConfigurationSettings.GetConfig 
+                (SharpCvsLibConfigHandler.APP_CONFIG_SECTION);
+	        
+	        if (null == config || 0 == config.Timeout) {
+	            this.timeout = DEFAULT_TIMEOUT;
+	        }
+	        
+	        if (null == config || 0 == config.AuthSleep) {
+	            this.authSleep = DEFAULT_AUTH_SLEEP;
+	        }
+	        
+	        
+	    }
 		
         /// <summary>
         /// Gets a file handler for files that are not zipped.
@@ -94,6 +116,24 @@ namespace ICSharpCode.SharpCvsLib.Client {
 			get {
 				return uncompressedFileHandler;
 			}
+		}
+		
+		/// <summary>
+		///     Set the server timeout value.
+		/// </summary>
+		public int Timeout {
+		    get {return this.timeout;}
+		    set {this.timeout = value;}
+		}
+		
+		/// <summary>
+		///     Set the time to sleep between sending the authentication request
+		///         and receiving the authentication response.  Accounts for
+		///         slow responses on some servers.
+		/// </summary>
+		public int AuthSleep {
+		    get {return this.authSleep;}
+		    set {this.authSleep = value;}
 		}
 		
         /// <summary>
@@ -141,7 +181,9 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// <summary>
         /// Send the message to the message event handler.
         /// </summary>
-        /// <param name="message"></param>
+        /// <param name="module">The cvs module.</param>
+        /// <param name="repositoryPath">The path to the cvs repository.</param>
+        /// <param name="filename">The name of the file being manipulated.</param>
 		public void SendMessage (String module, 
 		                         String repositoryPath, 
 		                         String filename) {
@@ -305,6 +347,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
 					break;
 				case "pserver":
 					tcpclient = new TcpClient();
+			        tcpclient.SendTimeout = this.Timeout;
 					tcpclient.Connect(repository.CvsRoot.Host, DEFAULT_PORT);
 					inputstream  = outputstream = new CvsStream(tcpclient.GetStream());
 			        
@@ -319,6 +362,9 @@ namespace ICSharpCode.SharpCvsLib.Client {
 					                                     repository.CvsRoot.User, 
 					                                     password));
 					inputstream.Flush();
+			        
+			        // sleep for awhile for slow servers
+			        for (int sleeping=0; sleeping < this.AuthSleep; sleeping++);
 			        
 			        string retStr;
 			        

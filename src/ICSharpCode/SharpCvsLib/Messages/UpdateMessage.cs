@@ -38,8 +38,14 @@ using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Messages { 
 
+    /// <summary>
+    ///     Used to handle a cvs server message.
+    /// </summary>
     public class UpdateMessage : IMessage {
         
+        /// <summary>
+        ///     Specify that this action is an update to the cvs file.
+        /// </summary>
         public const String ACTION = "U";
         private String module;
         private String repository;
@@ -47,6 +53,10 @@ namespace ICSharpCode.SharpCvsLib.Messages {
         
         private readonly ILog LOGGER = 
             LogManager.GetLogger (typeof (UpdateMessage));
+        
+        /// <summary>
+        ///     Constructor.
+        /// </summary>
         public UpdateMessage () {
             
         }

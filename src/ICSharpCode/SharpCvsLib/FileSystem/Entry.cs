@@ -65,14 +65,23 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		private string date        = null;
 	    
 	    private string cvsEntry;
-	    
+
+        /// <summary>
+        ///     Date format for the <code>RFC1123</code> specification.
+        /// </summary>	    
 	    public const String RFC1123 = 
 	        "dd MMM yyyy HH':'mm':'ss '-0000'";
+	    /// <summary>
+	    ///     A standard cvs date format.
+	    /// </summary>
 	    public const String FORMAT_1 =
 	        "ddd MMM dd HH':'mm':'ss yyyy";
 //	        "ddd MMM dd HH:mm:ss yyyy";	    
 		
 		
+		/// <summary>
+		///     The name of the entries file.
+		/// </summary>
 		public const String FILE_NAME = "Entries";
 	    private String path;
 	    
@@ -261,6 +270,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///         entry object by parsing the string into the various
         ///         components.
         /// </summary>
+        /// <param name="path">The local path to the cvs file.</param>
         /// <param name="line">The cvs entry string.</param>
 		public Entry(String path, String line)
 		{

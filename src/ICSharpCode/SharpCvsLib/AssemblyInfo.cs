@@ -23,6 +23,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 
+using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -31,12 +32,17 @@ using System.Runtime.CompilerServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("#CvsLib")]
-[assembly: AssemblyCopyright("Mike Krueger 2001-2002")]
+[assembly: AssemblyCopyright("Mike Krueger 2001-2002, Clayton Harbour 2003")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.3.3.0")]
+[assembly: AssemblyVersion("0.3.4.0")]
 
 [assembly: AssemblyDelaySign(false)]
 [assembly: AssemblyKeyFile("")]
 [assembly: AssemblyKeyName("")]
+
+[assembly: CLSCompliant(true)]
+
+[assembly: log4net.Config.DOMConfigurator(Watch=true)]
+

@@ -40,6 +40,13 @@ using log4net;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem { 
 
+    /// <summary>
+    ///     Interface for all cvs files.  Allows the file system manager to store
+    ///         files that contain cvs information such as:
+    ///             <code>Entries</code>
+    ///             <code>Repository</code>
+    ///             <code>Root</code>
+    /// </summary>
     public interface ICvsFile {
         /// <summary>
         ///     The name of the file.  This will be a constant for each

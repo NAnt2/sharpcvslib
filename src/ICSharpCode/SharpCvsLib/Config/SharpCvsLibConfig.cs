@@ -1,6 +1,5 @@
 #region "Copyright"
-// WorkingDirectory.cs 
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,45 +27,50 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
-//                Clayton Harbour
+//    Author        Clayton Harbour
 //
 #endregion
 
-using System.Collections;
+using System;
+using System.Xml;
+using System.Xml.Serialization;
 
-using ICSharpCode.SharpCvsLib.FileSystem;
-
-namespace ICSharpCode.SharpCvsLib.Misc { 
-	
+namespace ICSharpCode.SharpCvsLib.Config {
+    
     /// <summary>
-    /// Represents a list of entries in the repository or
-    ///     in simple terms a folder or directory on the
-    ///     cvs server.
+    ///     Holds the core configuration settings for sharpcvslib.
     /// </summary>
-	public class Folder
-	{
-		private ArrayList entries = new ArrayList();
-		private Repository repos;
-	    
-	    /// <summary>
-	    ///     The repository object.
-	    /// </summary>
-		public Repository Repos {
-		    get {return this.repos;}
-		    set {this.repos = value;}
-		}
+    [XmlRoot ("sharpcvslib-config")]
+    public class SharpCvsLibConfig {
+        
         /// <summary>
-        /// List of entries.
+        ///     The sub section of this configuration entity in the application 
+        ///         configuration file.
         /// </summary>
-		public ArrayList Entries {
-			get {
-				return entries;
-			}
-			set {
-			    this.entries = value;
-			}
-		}
-	}
-	
+        public const String SUB_SECTION = "sharpcvslib-config";
+        
+        private int timeout;
+        private int authSleep;
+        
+        /// <summary>
+        ///     The timeout value for the cvs server connection.
+        /// </summary>
+        [XmlElement ("timeout", typeof (int))]
+        public int Timeout {
+            get {return this.timeout;}
+            set {this.timeout = value;}
+        }
+
+        /// <summary>
+        ///     The time between when an authorization request is sent and the
+        ///         response is read.  This is used to handle problems from a 
+        ///         slow network connection or a slow server.
+        /// </summary>
+        [XmlElement ("auth-sleep", typeof (int))]        
+        public int AuthSleep {
+            get {return this.authSleep;}
+            set {this.authSleep = value;}
+        }
+        
+    }
 }

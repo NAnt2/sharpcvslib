@@ -74,6 +74,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Assertion.Assert (repos.FileContents.Equals (this.ROOT_ENTRY));
         }
         
+        /// <summary>
+        ///     Test that the equals method correctly identifies two root objects
+        ///         as equal.
+        /// </summary>
         [Test]
         public void EqualsTest () {
             String cvsPath = Path.Combine (TestConstants.LOCAL_PATH, 
@@ -94,5 +98,14 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Assertion.Assert (!RootSame2.Equals (RootDiff1));
         }
         
+        /// <summary>
+        ///     Clean up any test directories, etc.
+        /// </summary>
+        [TearDown]
+        public void TearDown () {
+		    if (File.Exists (TestConstants.LOCAL_PATH)) {
+    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    }            
+        }        
     }
 }

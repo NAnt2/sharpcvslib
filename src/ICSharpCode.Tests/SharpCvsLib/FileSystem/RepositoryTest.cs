@@ -100,7 +100,15 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                               repos.FileContents + "]",
                               repos.FileContents.Equals ("sharpcvslib/src"));
         }
-
-
+        
+        /// <summary>
+        ///     Clean up any test directories, etc.
+        /// </summary>
+        [TearDown]
+        public void TearDown () {
+		    if (File.Exists (TestConstants.LOCAL_PATH)) {
+    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    }            
+        }
     }
 }

@@ -209,6 +209,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             throw new EntryNotFoundException (errorMsg);
         }
         
+        /// <summary>
+        ///     Add an entry to the filesystem.
+        /// </summary>
+        /// <param name="cvsEntries">The collection of cvs entries to add
+        ///     to the filesystem.  This collection can contain 1 entry,
+        ///     as in the case of a Repository entry, or many entries, as
+        ///     in the case of an Entries file).</param>
         public void Add (ICvsFile[] cvsEntries) {
             foreach (ICvsFile entry in cvsEntries) {
                 this.Add (entry);
@@ -353,10 +360,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///         and all other following entries are appended to the
         ///         file.
         /// </summary>
-        /// <param name="path">The current working directory.</param>
-        /// <param name="file">The cvs file to write to.</param>
-        /// <param name="lines">A collection of String value lines to add to 
-        ///     the cvs file.</param>        
+        /// <param name="entries">The collection of cvs entries to add to the
+        ///     file system.</param>
         private void WriteToFile (ICvsFile[] entries) {
             bool append = false;
             
@@ -482,7 +487,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         /// <param name="path">The path to the current working directory
         ///    or to the cvs directory.</param>
-        /// <param name="filename">The name of the cvs file to fetch values.</param>
+        /// <param name="fileType">The type of cvs file to fetch.</param>
         /// <returns>A single <see cref="ICvsFile">Cvs file</see></returns>
         public ICvsFile FetchSingle (String path, Factory.FileType fileType) {
             ICvsFile [] entries = this.Fetch (path, fileType);
@@ -507,7 +512,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         /// <param name="path">The path to the current working directory
         ///    or to the cvs directory.</param>
-        /// <param name="filename">The name of the cvs file to fetch values.</param>
+        /// <param name="fileType">The type of the cvs file to fetch.</param>
         /// <returns>A collection of <see cref="ICvsFile">Cvs files</see></returns>
         public ICvsFile [] Fetch (String path, Factory.FileType fileType) {
             String cvsDir = this.CombineCvsDir (path);

@@ -54,22 +54,41 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         private String filename;
         private String localPath;
         
+        /// <summary>
+        ///     The cvs root.
+        /// </summary>
         public String CvsRoot {
             get {return this.cvsRoot;}
         }
+        
+        /// <summary>
+        ///     The relative path to the file.
+        /// </summary>
         public String RelativePath {
             get {return this.relativePath;}
         }
+        /// <summary>
+        ///     The name of the file.
+        /// </summary>
         public String Filename {
             get {return this.filename;}
         }
+        /// <summary>
+        ///     Local path.
+        /// </summary>
         public String LocalPath {
             get {return this.localPath;}
         }
+        /// <summary>
+        ///     Local path and filename.
+        /// </summary>
         public String LocalPathAndFilename {
             get {return Path.Combine (localPath, filename);}
         }
         
+        /// <summary>
+        ///     Determines if path contains a reference to a file or a directory.
+        /// </summary>
         public bool IsDirectory {
             get {return this.filename.Length == 0;}
         }
@@ -113,6 +132,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 
         }
         
+        /// <summary>
+        ///     Convert this object to a human readable string.
+        /// </summary>
+        /// <returns>A string representation of the object.</returns>
         public override String ToString () {
             String msg = "OrgPath.ToString()=[" +
                 "cvsRoot=[" + this.cvsRoot + "]" +

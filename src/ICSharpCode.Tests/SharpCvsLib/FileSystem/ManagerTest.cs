@@ -238,6 +238,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		///         the entries file.  If not then throw an assertion exception.
 		/// </summary>
 		/// <param name="path">The path to check for the entries in.</param>
+		/// <param name="fileType">The type of file that is being checked.</param>
 		/// <param name="entriesExpected">The number of entries expected.</param>
 		private void verifyEntryCount (String path,
 		                               Factory.FileType fileType,
@@ -286,6 +287,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		                      
 		}
 		
+		/// <summary>
+		///     Test that all directories are added to an entries file if the
+		///         path is specified that contains those directories.
+		/// </summary>
 		[Test]
 		public void AddDirectoryEntriesFromPath () {
 		    const String NEW_DIRECTORY = "test";
@@ -508,7 +513,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		                            File.GetLastWriteTime(filenameAndPath).Subtract (System.TimeZone.CurrentTimeZone.GetUtcOffset (entry.TimeStamp)));
  		    
 		}
-
 
     }
 }

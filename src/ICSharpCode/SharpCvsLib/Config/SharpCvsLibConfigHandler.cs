@@ -32,35 +32,56 @@
 #endregion
 
 using System;
+using System.Configuration;
+using System.Xml;
+using System.Xml.Serialization;
+using System.Xml.XPath;
 
-namespace ICSharpCode.SharpCvsLib.Messages { 
-
+namespace ICSharpCode.SharpCvsLib.Config {
+    
     /// <summary>
-    ///     Interface for handling message related to the cvs client/ server
-    ///         protocol.  Used to output useful server messages usually to
-    ///         some sort of interactive client.
+    ///     Handles loading of the sharpcvslib configuration file.
     /// </summary>
-    public interface IMessage {
+    public class SharpCvsLibConfigHandler : IConfigurationSectionHandler {
+    
+        /// <summary>
+        /// Application configuration node name.
+        /// </summary>
+        public const String APP_CONFIG_SECTION = "sharpcvslib";
 
         /// <summary>
-        ///     The cvs module being manipulated.
+        /// Create the configuration section.
         /// </summary>
-        String Module {get;set;}
-        
-        /// <summary>
-        ///     Repository information.
-        /// </summary>
-        String Repository {get;set;}
+        /// <param name="parent"></param>
+        /// <param name="configContext"></param>
+        /// <param name="section"></param>
+        /// <returns></returns>
+        public object Create(object parent,
+                             object configContext,
+                             XmlNode section) {
+            XPathNavigator nav = section.CreateNavigator();
+            String typename = (String) nav.Evaluate("string(@type)");
+            Type type = Type.GetType(typename);
+            object theObject = this.GetConfigObject (type, 
+                section.SelectSingleNode ("//" + SharpCvsLibConfig.SUB_SECTION));
+
+            return theObject;
+        }
 
         /// <summary>
-        ///     The name of the file being manipulated.
-        /// </summary>        
-        String Filename {get;set;}
-        
-        /// <summary>
-        ///     Message to send to the user.
+        /// Get the object using the xml serializer.
         /// </summary>
-        String Message {get;}
-        
+        /// <param name="type">The type of object we are expecting.</param>
+        /// <param name="node">Xml node to look for in the config file.</param>
+        /// <returns>The inflated xml object.</returns>
+        private object GetConfigObject (Type type, XmlNode node) {
+            object theObject;
+            XmlSerializer ser = new XmlSerializer(type);
+            theObject = ser.Deserialize(new XmlNodeReader(node));
+
+            return theObject;
+
+        }
+
     }
 }

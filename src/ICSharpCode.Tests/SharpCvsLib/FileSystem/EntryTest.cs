@@ -50,8 +50,14 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		private ILog LOGGER = 
 			LogManager.GetLogger (typeof(EntryTest));
 	    
+	    /// <summary>
+	    ///     Test entry 1.
+	    /// </summary>
     	public const String CHECKOUT_ENTRY = 
     	        "/CvsFileManagerTest.cs/1.1/Tue May 13 05:10:17 2003//"; 
+	    /// <summary>
+	    ///     Test entry 2.
+	    /// </summary>
         public const String CHECKOUT_ENTRY_2 =
                 "/EntryTest.cs/1.1/03 Jan 2003 04:07:36 -0000//";
 
@@ -101,6 +107,16 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Assertion.Assert (entry.IsDirectory == false);
             
             Assertion.Assert (entry.FileContents.Equals (CHECKOUT_ENTRY));
+        }
+        
+        /// <summary>
+        ///     Clean up any test directories, etc.
+        /// </summary>
+        [TearDown]
+        public void TearDown () {
+		    if (File.Exists (TestConstants.LOCAL_PATH)) {
+    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    }            
         }
         
 	}

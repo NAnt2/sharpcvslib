@@ -45,9 +45,21 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// </summary>
     public class Factory {
         
+        /// <summary>
+        ///     Type of cvs file.
+        /// </summary>
         public enum FileType {
+            /// <summary>
+            ///     Root file type.
+            /// </summary>
             Root,
+            /// <summary>
+            ///     Repository file type.
+            /// </summary>
             Repository,
+            /// <summary>
+            ///     The entries file type.
+            /// </summary>
             Entries
         }
         /// <summary>

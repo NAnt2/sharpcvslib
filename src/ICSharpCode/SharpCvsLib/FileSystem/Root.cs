@@ -39,8 +39,24 @@ using System.Globalization;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem { 
+    /// <summary>
+    ///     Value object for the <code>Root</code> cvs file.  The root file
+    ///         holds the cvsroot string.  The cvsroot is a string value 
+    ///         which has the following information:
+    ///             <ol>
+    ///                 <li>protocol</li>
+    ///                 <li>user@servername.domainname</li>
+    ///                 <li>server repository directory</li>
+    ///             </ol>
+    ///         seperated by a colan(<code>:</code>).
+    /// 
+    ///     eg)     :pserver:anonymous@linux.sporadicism.com:/home/cvs/src/
+    /// </summary>
     public class Root : ICvsFile {
         
+        /// <summary>
+        ///     The name of the root file.
+        /// </summary>
 	    public const String FILE_NAME = "Root";
 	    private String path;
 	    private String fileContents;

@@ -136,7 +136,9 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// </summary>
 		[TearDown]
 		public void TearDown () {
-		    //Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    if (File.Exists (TestConstants.LOCAL_PATH)) {
+    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    }
 		}
 	}
 }

@@ -2,36 +2,48 @@
     Build file for the 
 -->
 <project name="ICSharpCode.SharpCvsLib" default="Debug">
-    <property name="src.dir" value="src" />
-    <property name="lib.dir" value="lib" />
-    <property name="build.dir" value="bin" /> 
-    
-    <property name="assembly.name" value="ICSharpCode.SharpCvsLib" />    
-    <property name="assembly.version" value="0.3.2" />   
+
+    <property name="assembly.name" value="ICSharpCode.SharpCvsLib" />
+    <property name="assembly.version" value="0.3.4" />  
+    <property name="warnaserror" value="true" />
 
     <property name="nant.settings.currentframework" value = "net-1.0"/>
-    
+
+    <property name="src.dir" value="src" />
+    <property name="lib.dir" value="lib" />
+    <property name="lib.ext.dir" value="${lib.dir}/ext" />
+    <property name="build.dir" value="build/bin" /> 
+
+    <property name="log4net" value="log4net-net-1.0.dll" />
+    <property name="nunit" value="nunit.framework.dll" />
+    <property name="ziplib" value="ICSharpCode.SharpZipLib.dll" />
+        
     <target name="Debug" depends="SharpCvsLib.Debug" />
     <target name="Release" depends="SharpCvsLib.Release" />
     
     <target name="setup">
         <mkdir dir="${build.dir}" />
-   	    <copy todir="${build.dir}">
-	         <fileset basedir="${lib.dir}">
-                    <includes name="ICSharpCode.SharpZipLib.dll" />
-      	        <includes name="log4net.dll" />
+        <copy todir="${build.dir}">
+             <fileset basedir="${lib.dir}">
+                    <includes name="${ziplib}" />
                     <includes name="conf/**/*.conf" />
                </fileset>
-		</copy>        
+          </copy>        
+          <copy todir="${build.dir}">
+              <fileset basedir="${lib.ext.dir}">
+                <includes name="${log4net}" />
+              </fileset>
+          </copy>
     </target>
 
     <target name="setup.tests">
         <mkdir dir="${build.dir}" />
-   	<copy todir="${build.dir}">
-	    <fileset basedir="${lib.dir}">
-                <includes name="nunit.framework.dll" />
-            </fileset>
-	</copy>        
+    <copy todir="${build.dir}">
+        <fileset basedir="${lib.ext.dir}">
+                <includes name="${nunit}" />
+                <includes name="${log4net}" />
+          </fileset>
+    </copy>        
     </target>
 
     
@@ -70,7 +82,7 @@
         <property name="output.tests" value="${build.dir}\${assembly.name}.Tests.dll" />
 
         <call target="SharpCvsLib" />
-	<call target="SharpCvsLib.Tests" />
+        <call target="SharpCvsLib.Tests" />
     </target>
     
     <target name="SharpCvsLib.Release">
@@ -82,29 +94,44 @@
         <property name="checked" value="/checked-" />
         <property name="define" value="TRACE" />
         <property name="doc" value="" />
+        
         <call target="SharpCvsLib" />
     </target>
     
     <target name="SharpCvsLib" depends="setup">
-        <csc target="library" output="${output}" debug="${debug}" define="${define}" doc="${doc}">
+        <csc    target="library" 
+                warnaserror="${warnaserror}" 
+                output="${output}" 
+                debug="${debug}" 
+                define="${define}" 
+                doc="${doc}">
+                
             <arg value="${unsafe}" />
             <arg value="${checked}" />
+            
             <sources basedir="${src.dir}">
                 <includes name="**/*.cs" />
                 <excludes name="ICSharpCode.Tests/**/*.cs" />
             </sources>
+            
             <references>
                 <includes name="System.Web.dll" />
                 <includes name="System.Web.Services.dll" />
                 <includes name="System.dll" />            
-                <includes name="${lib.dir}/ICSharpCode.SharpZipLib.dll" />
-                <includes name="${lib.dir}/log4net.dll" />
+                <includes name="${lib.dir}/${ziplib}" />
+                <includes name="${lib.ext.dir}/${log4net}" />
             </references>
+            
         </csc>
     </target>
 
     <target name="SharpCvsLib.Tests" depends="SharpCvsLib, setup.tests">
-        <csc target="library" output="${output.tests}" debug="${debug}" define="${define}" doc="${doc}">
+        <csc    target="library" 
+                warnaserror="${warnaserror}"
+                output="${output.tests}" 
+                debug="${debug}" 
+                define="${define}" 
+                doc="${doc}">
             <arg value="${unsafe}" />
             <arg value="${checked}" />
             <sources basedir="${src.dir}">
@@ -115,9 +142,9 @@
                 <includes name="System.Web.dll" />
                 <includes name="System.Web.Services.dll" />
                 <includes name="System.dll" />            
-                <includes name="${lib.dir}/ICSharpCode.SharpZipLib.dll" />
-                <includes name="${lib.dir}/log4net.dll" />
-                <includes name="${lib.dir}/nunit.framework.dll" />
+                <includes name="${lib.dir}/${ziplib}" />
+                <includes name="${lib.ext.dir}/${log4net}" />
+                <includes name="${lib.ext.dir}/${nunit}" />
                 <includes name="${output}" />
             </references>
         </csc>

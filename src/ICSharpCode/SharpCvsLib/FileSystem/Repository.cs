@@ -49,6 +49,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 	public class Repository : ICvsFile {
 	    private ILog LOGGER = LogManager.GetLogger (typeof (Repository));
 	    
+	    /// <summary>
+	    ///     The name of the repository file.
+	    /// </summary>
 	    public const String FILE_NAME = "Repository";
 	    private String path;
 	    private String fileContents;

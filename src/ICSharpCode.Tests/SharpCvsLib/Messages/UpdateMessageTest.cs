@@ -41,6 +41,10 @@ using ICSharpCode.SharpCvsLib.Messages;
 
 namespace ICSharpCode.SharpCvsLib.Messages { 
 
+    /// <summary>
+    ///     Ensures the content of the update message are consistent with other
+    ///         command line cvs clients.
+    /// </summary>
     [TestFixture]
     public class UpdateMessageTest {
         private const String MODULE = "Sharpcvslib";

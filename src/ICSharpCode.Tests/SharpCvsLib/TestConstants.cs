@@ -29,18 +29,43 @@
 #endregion
 
 using System;
-
+using System.IO;
 
 namespace ICSharpCode.SharpCvsLib {
     
+    /// <summary>
+    ///     Holds constants used for test cases.
+    /// </summary>
     public class TestConstants {
-        public const String LOCAL_PATH = "c:/test/sharpcvslib-tests/";
+        /// <summary>
+        ///     The local path for the test.
+        /// </summary>
+        public static readonly String LOCAL_PATH = 
+            Path.Combine (Path.GetTempPath (), "sharpcvslib-tests/");
+        /// <summary>
+        ///     Cvs root to use for test cases.
+        /// </summary>
         public const String CVSROOT = 
-            ":pserver:anonymous@linux.sporadicism.com:/home/cvs/src";
-        public const String MODULE = "Logger";
+            ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/nant";
+        /// <summary>
+        ///     Project/ module to use.
+        /// </summary>
+        public const String MODULE = "nant";
+        /// <summary>
+        ///     The valid password for a login.
+        /// </summary>
         public const String PASSWORD_VALID = "";
+        /// <summary>
+        ///     Cvs server response if password is invalid.
+        /// </summary>
         public const String PASSWORD_INVALID = "I_HATE_YOU_TOO";
-        public const String TARGET_FILE = "Logger.sln";
-        public const String TARGET_DIRECTORY = "lib";
+        /// <summary>
+        ///     The file that will be checked after update/ checkout.
+        /// </summary>
+        public const String TARGET_FILE = "nant.build";
+        /// <summary>
+        ///     The directory that will be searched for after an update/ checkout.
+        /// </summary>
+        public const String TARGET_DIRECTORY = "bin";
     }
 }
