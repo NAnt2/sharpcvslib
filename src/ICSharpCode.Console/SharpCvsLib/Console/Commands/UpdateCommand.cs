@@ -38,20 +38,39 @@ using ICSharpCode.SharpCvsLib.Commands;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Console.Parser;
 
+using log4net;
+
 namespace ICSharpCode.SharpCvsLib.Console.Commands {
 
     /// <summary>
     /// Update modules in the cvs repository.
     /// </summary>
     public class UpdateCommand {
-
-        private ICommand updateCommand;
-        private WorkingDirectory workingDirectory;
-        private string upcvsroot;
+        private WorkingDirectory currentWorkingDirectory;
+        private CvsRoot cvsRoot;
         private string repository;
         private string revision;
         private string localDirectory;
         private DateTime date;
+        private string unparsedOptions;
+        private readonly ILog LOGGER = 
+            LogManager.GetLogger (typeof(UpdateCommand));
+
+        /// <summary>
+        /// The current working directory.
+        /// </summary>
+        public WorkingDirectory CurrentWorkingDirectory {
+            get {return this.currentWorkingDirectory;}
+        }
+        /// <summary>
+        /// Update module files from a cvs repository.
+        /// </summary>
+        /// <param name="cvsroot">User information</param>
+        /// <param name="repositoryName">Repository</param>
+        /// <param name="upOptions">Options</param>
+        public UpdateCommand(string cvsroot, string repositoryName, string upOptions) : 
+            this(new CvsRoot(cvsroot), repositoryName, upOptions){
+        }
 
         /// <summary>
         ///    Update modules or files in the cvs repository
@@ -59,41 +78,86 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <param name="cvsroot">User Information</param>
         /// <param name="repositoryName">Repository</param>
         /// <param name="upOptions">Options</param>
-        public UpdateCommand(string cvsroot, string repositoryName, string upOptions) {
-            int endofOptions = 0;
-            upcvsroot = cvsroot;
+        public UpdateCommand(CvsRoot cvsroot, string repositoryName, string upOptions) {
+            this.cvsRoot = cvsroot;
             repository = repositoryName;
-            // get Checkout Options and parameters
-            for (int i = 0; i < upOptions.Length; i++){
-                if (upOptions[i]== '-' && upOptions[i+1] == 'r'){
+            this.unparsedOptions = upOptions;
+        }
+
+        /// <summary>
+        /// Create the command object that will be used to act on the repository.
+        /// </summary>
+        /// <returns>The command object that will be used to act on the
+        ///     repository.</returns>
+        /// <exception cref="Exception">TODO: Make a more specific exception</exception>
+        /// <exception cref="NotImplementedException">If the command argument
+        ///     is not implemented currently.  TODO: Implement the argument.</exception>
+        public ICommand CreateCommand () {
+            UpdateCommand2 updateCommand;
+            try {
+                if (localDirectory == null) {
+                    localDirectory = Environment.CurrentDirectory;
+                }
+                currentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
+                    localDirectory, repository);
+                if (revision != null) {
+                    currentWorkingDirectory.Revision = revision;
+                }
+                if (date.Equals(null)) {
+                    currentWorkingDirectory.Date = date;
+                }
+                // Create new UpdateCommand2 object
+                updateCommand = new UpdateCommand2(this.currentWorkingDirectory);
+            }
+            catch (Exception e) {
+                LOGGER.Error (e);
+                throw e;
+            }
+            this.ParseOptions(updateCommand, this.unparsedOptions);
+         
+            return updateCommand;
+        }
+ 
+        /// <summary>
+        /// Parse the command line options/ arguments and populate the command
+        ///     object with the arguments.
+        /// </summary>
+        /// <param name="updateCommand">A update command that is to be
+        ///     populated.</param>
+        /// <param name="upOptions">A string value that holds the command
+        ///     line options the user has selected.</param>
+        private void ParseOptions (ICommand updateCommand, String upOptions) {
+            int endofOptions = 0;
+            for (int i = 0; i < upOptions.Length; i++) {
+                if (upOptions[i]== '-' && upOptions[i+1] == 'r') {
                     i += 2;
                     // get revision of files to update
-                    if (upOptions.IndexOf(" -", i, upOptions.Length - i) == -1){
+                    if (upOptions.IndexOf(" -", i, upOptions.Length - i) == -1) { 
                         endofOptions = upOptions.Length - i - 1;
                     }
-                    else{
+                    else {
                         endofOptions = upOptions.IndexOf(" -", i, upOptions.Length - i) - 2;
                     }
                     revision = upOptions.Substring(i, endofOptions);
                 }
-                if (upOptions[i]== '-' && upOptions[i+1] == 'D'){
+                if (upOptions[i]== '-' && upOptions[i+1] == 'D') {
                     i += 2;
                     // get date of files to update
                     // Date format needs to be the short date pattern as stated in the 
                     // Control Panel -> Regional Options -> see Date tab
-                    if (upOptions.IndexOf(" -", i, upOptions.Length - i) == -1){
+                    if (upOptions.IndexOf(" -", i, upOptions.Length - i) == -1) {
                         endofOptions = upOptions.Length - i - 1;  // minus one so not to
                         // include last space
                     }
-                    else{
+                    else {
                         endofOptions = upOptions.IndexOf(" -", i, upOptions.Length - i) - 2;
                     }
-                    try{
+                    try {
                         // Parse string to DateTime format
                         string datepar = upOptions.Substring(i, endofOptions);
                         date = System.Convert.ToDateTime(datepar, DateTimeFormatInfo.CurrentInfo);
                     }
-                    catch{
+                    catch {
                         StringBuilder msg = new StringBuilder ();
                         msg.Append("The -D update option parameter is not ");
                         msg.Append("in correct format of ");
@@ -122,142 +186,95 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                     else {
                         endofOptions = upOptions.IndexOf(" -", i, upOptions.Length - i) - 2;
                     }
-                    //revision = upOptions.Substring(i, endofOptions);
+                    // Set revision attribute for update command
+                    //revisionTo = upOptions.Substring(i, endofOptions);
                 }
                 if (upOptions[i]== '-' && upOptions[i+1] == 'k') {
                     i += 2;
                     // get kopt
-                    if (upOptions.IndexOf(" -", i, upOptions.Length - i) == -1){
+                    if (upOptions.IndexOf(" -", i, upOptions.Length - i) == -1) {
                         endofOptions = upOptions.Length - i - 1;
                     }
-                    else{
+                    else {
                         endofOptions = upOptions.IndexOf(" -", i, upOptions.Length - i) - 2;
                     }
-                    //revision = upOptions.Substring(i, endofOptions);
+                    // Set kopt attribute for update command
+                    //????? = upOptions.Substring(i, endofOptions);
                 }
-                if (upOptions[i]== '-' && upOptions[i+1] == 'I'){
+                if (upOptions[i]== '-' && upOptions[i+1] == 'I') {
                     i += 2;
                     // get More file to ignore 
-                    if (upOptions.IndexOf(" -", i, upOptions.Length - i) == -1){
+                    if (upOptions.IndexOf(" -", i, upOptions.Length - i) == -1) {
                         endofOptions = upOptions.Length - i - 1;
                     }
-                    else{
+                    else {
                         endofOptions = upOptions.IndexOf(" -", i, upOptions.Length - i) - 2;
                     }
-                    //revision = upOptions.Substring(i, endofOptions);
+                    //set attribute for this command 
+                    //????? = upOptions.Substring(i, endofOptions);
                 }
-                if (upOptions[i]== '-' && upOptions[i+1] == 'W'){
+                if (upOptions[i]== '-' && upOptions[i+1] == 'W') {
                     i += 2;
                     // get wrapper specification line
-                    if (upOptions.IndexOf(" -", i, upOptions.Length - i) == -1){
+                    if (upOptions.IndexOf(" -", i, upOptions.Length - i) == -1) {
                         endofOptions = upOptions.Length - i - 1;
                     }
-                    else{
+                    else {
                         endofOptions = upOptions.IndexOf(" -", i, upOptions.Length - i) - 2;
                     }
                     //revision = upOptions.Substring(i, endofOptions);
                 }
-                if (upOptions[i]== '-' && upOptions[i+1] == 'A'){
+                if (upOptions[i]== '-' && upOptions[i+1] == 'A') {
                     String msg = "The -A update option is not  " +
                         "implemented.";
-                    throw new ApplicationException (msg);
+                    throw new NotImplementedException (msg);
                 }
-                if (upOptions[i]== '-' && upOptions[i+1] == 'P'){
+                if (upOptions[i]== '-' && upOptions[i+1] == 'P') {
                     String msg = "The -P update option is not  " +
                         "implemented.";
-                    throw new ApplicationException (msg);
+                    throw new NotImplementedException (msg);
                 }
-                if (upOptions[i]== '-' && upOptions[i+1] == 'C'){
+                if (upOptions[i]== '-' && upOptions[i+1] == 'C') {
                     String msg = "The -C update option is not  " +
                         "implemented.";
-                    throw new ApplicationException (msg);
+                    throw new NotImplementedException (msg);
                 }
-                if (upOptions[i]== '-' && upOptions[i+1] == 'f'){
+                if (upOptions[i]== '-' && upOptions[i+1] == 'f') {
                     String msg = "The -f update option is not  " +
                         "implemented.";
-                    throw new ApplicationException (msg);
+                    throw new NotImplementedException (msg);
                 }
-                if (upOptions[i]== '-' && upOptions[i+1] == 'l'){
+                if (upOptions[i]== '-' && upOptions[i+1] == 'l') {
                     String msg = "The -l update option is not  " +
                         "implemented.";
-                    throw new ApplicationException (msg);
+                    throw new NotImplementedException (msg);
                 }
-                if (upOptions[i]== '-' && upOptions[i+1] == 'R'){
+                if (upOptions[i]== '-' && upOptions[i+1] == 'R') {
                     String msg = "The -R update option is not  " +
                         "implemented.";
-                    throw new ApplicationException (msg);
+                    throw new NotImplementedException (msg);
                 }
-                if (upOptions[i]== '-' && upOptions[i+1] == 'l'){
+                if (upOptions[i]== '-' && upOptions[i+1] == 'l') {
                     String msg = "The -l update option is not  " +
                         "implemented.";
-                    throw new ApplicationException (msg);
+                    throw new NotImplementedException (msg);
                 }
-                if (upOptions[i]== '-' && upOptions[i+1] == 'p'){
+                if (upOptions[i]== '-' && upOptions[i+1] == 'p') {
                     String msg = "The -p update option is not  " +
                         "implemented.";
-                    throw new ApplicationException (msg);
+                    throw new NotImplementedException (msg);
                 }
-                if (upOptions[i]== '-' && upOptions[i+1] == 'b'){
+                if (upOptions[i]== '-' && upOptions[i+1] == 'b') {
                     String msg = "The -b update option is not  " +
                         "implemented.";
-                    throw new ApplicationException (msg);
+                    throw new NotImplementedException (msg);
                 }
-                if (upOptions[i]== '-' && upOptions[i+1] == 'm'){
+                if (upOptions[i]== '-' && upOptions[i+1] == 'm') {
                     String msg = "The -m update option is not  " +
                         "implemented.";
-                    throw new ApplicationException (msg);
+                    throw new NotImplementedException (msg);
                 }
             }
-        }
-
-        /// <summary>
-        /// Process the update command with cvs library API calls
-        /// </summary>
-        public void Execute () {
-            string password = "";
-            try 
-            {
-                // create CvsRoot object parameter
-                CvsRoot root = new CvsRoot(upcvsroot);
-                if (localDirectory == null) {
-                    localDirectory = Environment.CurrentDirectory;
-                }
-                workingDirectory = new WorkingDirectory( root,
-                    localDirectory, repository);
-                if (revision != null) {
-                    workingDirectory.Revision = revision;
-                }
-                if (date.Equals(null)) {
-                    workingDirectory.Date = date;
-                }
-                // Create new UpdateCommand2 object
-                updateCommand = new UpdateCommand2(workingDirectory);
-            }
-            catch {
-            }
-            // Create CVSServerConnection object that has the ICommandConnection
-            CVSServerConnection serverConn = new CVSServerConnection();
-            try {
-                // try connecting with empty password for anonymous users
-                serverConn.Connect(workingDirectory, password);
-            }
-            catch {
-                try {
-                    //string scrambledpassword;
-                    // check to connect with password from .cvspass file
-                    // check for .cvspass file and get password
-                    //password = PasswordScrambler.Descramble(scrambledpassword);
-                    serverConn.Connect(workingDirectory, password);
-                }
-                catch {
-                    // prompt user for password by using login command?
-                    LoginCommand login = new LoginCommand(upcvsroot);
-                    serverConn.Connect(workingDirectory, login.Password);
-                }
-            }
-            // run the execute checkout command on cvs repository.
-            updateCommand.Execute(serverConn);
-            serverConn.Close();
         }
     }
 }
