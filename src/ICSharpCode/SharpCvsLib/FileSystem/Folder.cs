@@ -131,16 +131,17 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// Create a new instance of the folders object.  Initialize the entries 
         ///     collection.
         /// </summary>
-        public Folder () {
-            this.entries = new Entries();
+        public Folder () : this(new DirectoryInfo(Environment.CurrentDirectory)) {
+
         }
 
         /// <summary>
         /// Create a new folder object passing in the directory that it represents.
         /// </summary>
         /// <param name="path"></param>
-        public Folder (DirectoryInfo path) : this() {
+        public Folder (DirectoryInfo path) {
             this.path = path;
+            this.entries = new Entries(this.Path);
         }
 
         /// <summary>

@@ -57,8 +57,9 @@ using log4net.Config;
 namespace ICSharpCode.SharpCvsLib.Console {
 
     /// <summary>The main driver/ entry point into the program.</summary>
-    [Serializable]
+    [Serializable()]
     public class ConsoleMain {
+        [NonSerialized()]
         private ILog LOGGER;
 
         private string[] _args;

@@ -46,14 +46,22 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
 	/// </summary>
     [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
 	public class Entries : DictionaryBase {
-
+        private FileInfo _entriesPath;
         private ILog LOGGER = LogManager.GetLogger (typeof (Entries));
+
+        public FileInfo EntriesPath {
+            get { return this._entriesPath; }
+            set { this._entriesPath = value; }
+        }
 
         /// <summary>
         /// Create a new instance of the entries class.
         /// </summary>
-		public Entries() : base() {
-
+		public Entries(DirectoryInfo cvsDir) : base() {
+            if (!cvsDir.FullName.ToLower().EndsWith("cvs")) {
+                cvsDir = new DirectoryInfo(Path.Combine(cvsDir.FullName, "CVS"));
+            }
+            this._entriesPath = new FileInfo(Path.Combine(cvsDir.FullName, "Entries"));
 		}
 
         /// <summary>
@@ -69,7 +77,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
             if (null == entry || null == entry.FullPath) {
                 throw new ArgumentException("Entry must contain a path value.");
             }
-            Dictionary.Add(entry.FullPath, entry);
+            if (this.Contains(entry.FullPath)) {
+                this[entry.FullPath] = entry;
+            } else {
+                Dictionary.Add(entry.FullPath, entry);
+            }
         }
 
         /// <summary>
@@ -124,23 +136,37 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         /// load the corresponding Entry from the Entries file.</param>
         /// <returns></returns>
         public static Entries Load (FileInfo cvsFile) {
-            return LoadImpl(cvsFile);
+            Entries entries = new Entries(cvsFile.Directory);
+            using (StreamReader reader = new StreamReader(cvsFile.FullName)) {
+                string line;
+                while ((line = reader.ReadLine()) != null) {
+                    entries.Add(new Entry(cvsFile, line));
+                }
+            }
+            return entries;
         }
 
-        private static Entries LoadImpl (FileInfo cvsFile) {
-            Manager manager = new Manager(cvsFile.DirectoryName);
-            return manager.FetchEntries(cvsFile.FullName);
+        public static void Save(Entry entry) {
+            Entries entries = Entries.Load(entry.CvsFile.Directory);
+            entries.Save();
         }
 
         public void Save() {
-            DirectoryInfo dir = null;
-            foreach (Entry entry in this.Dictionary.Values) {
-                dir = entry.CvsFile.Directory;
-                break;
-            }
-            if (null != dir) {
-                Manager manager = new Manager(dir);
-                manager.SaveEntries(this);
+            if (null != this.Dictionary && this.Dictionary.Count > 0) {
+                Entries currentEntries = Entries.Load(this._entriesPath);
+                foreach(Entry currentEntry in currentEntries.Values) {
+                    if (!this.Contains(currentEntry.FullPath)) {
+                        this.Add(currentEntry);
+                    }
+                }
+                if (!this.EntriesPath.Directory.Exists) {
+                    this.EntriesPath.Directory.Create();
+                }
+                using (StreamWriter writer = new StreamWriter(this.EntriesPath.FullName)) {
+                    foreach (Entry entryVal in this.Dictionary.Values) {
+                        writer.WriteLine(entryVal.ToString());
+                    }
+                }
             }
         }
 

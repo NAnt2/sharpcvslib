@@ -48,6 +48,14 @@ namespace ICSharpCode.SharpCvsLib.Assertions {
             throw new AssertionException("{0}, expected true", condition);
         }
 
+        public static void GreaterThanEqual(long num1, long num2) {
+            if (num1 >= num2) {
+                return;
+            }
+            throw new AssertionException("{0} should be greater than or equal {1}",
+                num1, num2);
+        }
+
         public static void Equal(object obj1, object obj2) {
             if (obj1.GetType() == obj2.GetType()) {
                 if (obj1.Equals(obj2)) {

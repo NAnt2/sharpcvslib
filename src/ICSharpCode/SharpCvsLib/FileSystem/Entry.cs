@@ -264,7 +264,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             if (this.IsDirectory) {
                 // Assert the management file is stored one level up
                 // project\CVS\Entries      
-                // project\build
+                // project\build\
                 Assert.Equal(new DirectoryInfo(this.ManagedPath.FullName).Parent.FullName,
                     this.CvsFile.Directory.Parent.FullName);
             } else {
@@ -374,7 +374,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     </p>
         /// </example>
         public static Entry CreateEntry (string fullPath) {
-            if (fullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString())) {
+            if (fullPath.EndsWith("\\") ||
+                fullPath.EndsWith("/")) {
                 return CreateEntry(new DirectoryInfo(fullPath));
             } else {
                 return CreateEntry(new FileInfo(fullPath));
@@ -418,6 +419,14 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             Entry entry = new Entry(cvsFile, entryString.ToString());
             return entry;
+        }
+
+        public static Entry CreateEntry (FileSystemInfo fileSystemInfo) {
+            if (fileSystemInfo is DirectoryInfo) {
+                return Entry.CreateEntry((DirectoryInfo)fileSystemInfo);
+            } else {
+                return Entry.CreateEntry((FileInfo)fileSystemInfo);
+            }
         }
 
         public static Entry Load (FileInfo managedFile) {
@@ -537,13 +546,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         /// <summary>The type of file that this is.</summary>
-        public Factory.FileType Type {get {return Factory.FileType.Entries;}}
+        public override Factory.FileType Type {get {return Factory.FileType.Entries;}}
 
         /// <summary>Indicates whether the file can contain multiple
         /// lines.</summary>
         /// <returns><code>true</code> if the file can contain multiple
         /// lines; <code>false</code> otherwise.</returns>
-        public bool IsMultiLined {
+        public override bool IsMultiLined {
             get {return true;}
         }
 

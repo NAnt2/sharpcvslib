@@ -132,25 +132,23 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         ///     working directory name are null.</exception>
         public String WorkingPath {
             get {
-                if (null != this.LocalDirectory) {
-                    string tempWorkingPath;
-                    if (null == this.WorkingDirectoryName || this.WorkingDirectoryName.Length == 0) {
-                        tempWorkingPath = this.LocalDirectory;
-                    } else {
-                        tempWorkingPath = Path.Combine(this.LocalDirectory, this.WorkingDirectoryName);
-                    }
-                    if (!tempWorkingPath.EndsWith(Path.DirectorySeparatorChar.ToString())) {
-                        tempWorkingPath = tempWorkingPath + Path.DirectorySeparatorChar;
-                    }
-                    return tempWorkingPath;
-                } else {
-                    StringBuilder msg = new StringBuilder ();
-                    msg.Append ("Unable to determine working path, you must specify ");
-                    msg.Append ("a local directory and a module/ override directory.");
-                    msg.Append ("\nLocalDirectory=[").Append (this.LocalDirectory).Append ("]");
-                    msg.Append ("\nWorkingDirectoryName=[").Append (this.WorkingDirectoryName).Append ("]");
-                    throw new InvalidPathException (msg.ToString ());
+                DirectoryInfo rootDir = this.GetRootDir(this.localDir);
+                string subDir;
+                try {
+                    Repository repos = Repository.Load(this.localDir);
+                    subDir = repos.FileContents;
+                } catch (CvsFileNotFoundException) {
+                    subDir = this.WorkingDirectoryName;
                 }
+                return Path.Combine(rootDir.FullName, subDir);
+            }
+        }
+
+        private DirectoryInfo GetRootDir(DirectoryInfo dir) {
+            if (dir.GetDirectories("CVS").Length > 0) {
+                return GetRootDir(dir.Parent);
+            } else {
+                return dir;
             }
         }
 

@@ -64,6 +64,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         private string moduleFacade;
 
         private DirectoryInfo _currentDir;
+        private FileSystemInfo _localPathInfo;
 
         private CvsRoot cvsRoot;
         private String relativePath;
@@ -90,7 +91,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// The name of the file, without any path information.
         /// </summary>
         public String Filename {
-            get {return this._currentDir.Name;}
+            get {return this._localPathInfo.Name;}
         }
 
         /// <summary>
@@ -110,9 +111,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// Local path and filename.  Combines the local path and the name
         ///     of the file.
         /// </summary>
-        [Obsolete ("Use CurrentDir")]
+        [Obsolete ("Use LocalPathInfo.FullName")]
         public String LocalPathAndFilename {
-            get {return this._currentDir.FullName;}
+            get {return this._localPathInfo.FullName;}
         }
 
         public DirectoryInfo CurrentDir {
@@ -123,6 +124,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 return this._currentDir;
             }
             set {this._currentDir = value;}
+        }
+
+        public FileSystemInfo LocalPathInfo {
+            get { return this._localPathInfo; }
         }
 
         /// <summary>
@@ -168,9 +173,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             this.relativePath =
                 this.GetRelativePath (repositoryPath);
 
-            this._currentDir = 
-                new DirectoryInfo(Path.Combine(Path.Combine(baseDir.FullName,
-                this.workingDirectory.WorkingDirectoryName), this.relativePath));        
+            this._localPathInfo = this.GetLocalPathInfo(this.baseDir, this.workingDirectory, this.relativePath);
+            this._currentDir = this.GetLocalDirInfo(this.baseDir, this.workingDirectory, this.relativePath);
         }
 
         /// <summary>
@@ -202,6 +206,32 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             }
 
             return repositoryPath;
+        }
+
+        private DirectoryInfo GetLocalDirInfo(DirectoryInfo baseDir,
+            WorkingDirectory wd, string relativePath) {
+            DirectoryInfo dir;
+            if (baseDir.FullName.EndsWith(this.moduleFacade)) {
+                dir = baseDir;
+            } else {
+                dir = new DirectoryInfo(Path.Combine(baseDir.FullName,
+                    this.workingDirectory.WorkingDirectoryName));
+            }
+            return dir;
+        }
+
+        private FileSystemInfo GetLocalPathInfo(DirectoryInfo baseDir, 
+            WorkingDirectory wd, string relativePath) {
+            DirectoryInfo dir = this.GetLocalDirInfo(baseDir, wd, relativePath);
+            FileSystemInfo localPathInfo;
+
+            if (relativePath.EndsWith("/") ||
+                relativePath.EndsWith("\\")) {
+                localPathInfo = new DirectoryInfo(Path.Combine(dir.FullName, relativePath));
+            } else {
+                localPathInfo = new FileInfo(Path.Combine(dir.FullName, relativePath));
+            }
+            return localPathInfo;
         }
 
         /// <summary>

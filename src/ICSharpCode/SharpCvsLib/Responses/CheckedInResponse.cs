@@ -60,13 +60,11 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                 new PathTranslator (Services.Repository,
                 repositoryPath);
 
-            string fileName = orgPath.LocalPathAndFilename;
-            Factory factory = new Factory();
-            Entry  entry = (Entry)factory.CreateCvsObject(orgPath.CurrentDir, Entry.FILE_NAME, entryLine);
-            LOGGER.Debug ("CheckedInResponse adding entry=[" + entry + "]");
-
-            Manager manager = new Manager (Services.Repository.WorkingPath);
-            manager.Add (entry);
+            string fileName = orgPath.LocalPathInfo.FullName;
+            Entry entry = new Entry(orgPath.CurrentDir.FullName, entryLine);
+            Entries entries = Entries.Load(entry.CvsFile.Directory);
+            entries.Add(entry);
+            entries.Save();
         }
 
         /// <summary>

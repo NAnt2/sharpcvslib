@@ -45,7 +45,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 	/// </summary>
 	public class FileParser {
         private Hashtable _files = new Hashtable();
-        private Entries _cvsEntries = new Entries();
         private Folders _folders = new Folders();
 
         private string[] _args;

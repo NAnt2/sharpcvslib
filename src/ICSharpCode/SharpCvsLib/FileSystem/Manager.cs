@@ -37,6 +37,7 @@ using System.IO;
 using log4net;
 
 using ICSharpCode.SharpCvsLib.Attributes;
+using ICSharpCode.SharpCvsLib.Assertions;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib.Util;
@@ -440,8 +441,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <param name="entries">A collection of entries that needs to be
         ///     persisted.</param>
         private void WriteToFile (Entries entries) {
-            this.WriteToFile ((ICvsFile[])(
-                new ArrayList(entries.Values)).ToArray(typeof(ICvsFile)));
+            ArrayList vals = new ArrayList(entries.Values);
+            vals.Sort();
+            this.WriteToFile ((ICvsFile[])(vals).ToArray(typeof(ICvsFile)));
         }
         /// <summary>
         ///     Adds a collection of lines to the cvs file.  The first
@@ -462,7 +464,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                     foreach (ICvsFile entry in entries) {
                         if (!existingEntries.Contains(entry.Key)) {
                             existingEntries.Add(entry.Key, entry);
-                        }
+                        } 
                     }
                 } catch (CvsFileNotFoundException) {
                 
@@ -670,7 +672,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             ICollection cvsFiles = 
                 this.ReadFromFile(cvsFile);
 
-            Entries entries = new Entries();
+            Entries entries = new Entries(cvsPath);
             foreach (DictionaryEntry entryEntry in cvsFiles) {
                 Entry entry = (Entry)entryEntry.Value;
                 if (!entries.Contains(entry.Key)) {
@@ -1016,8 +1018,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             if (!entries.Contains(entry.FullPath)) {
                 entries.Add(entry);
             }
-            this.SaveEntries(entries);
-            this.WriteToFile(entries);
+            entries.Save();
+
+#if (DEBUG)
+                Entries savedEntries = Entries.Load(entry.CvsFile.Directory);
+                Assert.GreaterThanEqual(savedEntries.Count, entries.Count);
+#endif
             return entry;
         }
 
@@ -1131,7 +1137,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     the cvs folder.</returns>
         private Folder CreateFolder (String path) {
             Folder newFolder = new Folder();
-            newFolder.Entries = new Entries ();
+            newFolder.Entries = new Entries (new DirectoryInfo(path));
             newFolder.Repository = this.FetchRepository (Path.GetDirectoryName(path));
             newFolder.Tag = this.FetchTag (Path.GetDirectoryName(path));
             newFolder.Root = this.FetchRoot (Path.GetDirectoryName(path));

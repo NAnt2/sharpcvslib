@@ -100,10 +100,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                 Services.NextFile = null;
             }
 
-            Factory factory = new Factory();
-            Entry e = (Entry)
-                factory.CreateCvsObject(new DirectoryInfo(Path.GetDirectoryName(orgPath.CurrentDir.FullName)), 
-                Entry.FILE_NAME, entry);
+            Entry e = new Entry(orgPath.CurrentDir.FullName, entry);
 
             if (e.IsBinaryFile) {
                 Services.UncompressedFileHandler.ReceiveBinaryFile(Stream,

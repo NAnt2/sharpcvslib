@@ -42,12 +42,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 	///     implementation for all CVS management files.
 	/// </summary>
     [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
-	public abstract class AbstractCvsFile {
+	public abstract class AbstractCvsFile : ICvsFile, IComparable {
         private readonly ILog LOGGER = LogManager.GetLogger(typeof (AbstractCvsFile));
         private String _fullPath;
         private String fileContents;
         private String localCvsFullPath;
         private FileSystemInfo _managedPath;
+        private bool _isMultiLined = false;
 
         private FileInfo _cvsFile;
 
@@ -57,6 +58,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public virtual string Key {
             get {return this.ParentDir.FullName;}
         }
+
+        public virtual bool IsMultiLined { 
+            get { return this._isMultiLined; }
+            set { this._isMultiLined = value; } 
+        }
+
+        public abstract Factory.FileType Type {get;}
 
         /// <summary>
         /// Return the path to the file that this cvs object is managing.  In
@@ -190,5 +198,14 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         /// <returns>The cvs filename and path.</returns>
         protected abstract String DeriveCvsFullPath();
+
+        public int CompareTo(object obj) {
+            if (obj.GetType() != this.GetType()) {
+                throw new ArgumentException(string.Format("Object is not type {0}", 
+                    this.GetType().Name), "obj");
+            }
+            AbstractCvsFile abstractCvsFile = (AbstractCvsFile)obj;
+            return abstractCvsFile.FullPath.CompareTo(this.FullPath);
+        }
 	}
 }
