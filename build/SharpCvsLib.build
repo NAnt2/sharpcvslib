@@ -3,10 +3,13 @@
         http://sharpcvslib.sourceforge.net
 -->
 <project name="${name.top-level}-${name.project}" default="run-tests-sample">
+    <!-- TODO: Create a NAnt task to get this using the working dir, etc. -->
+    <property name="cvs.branch" value="Release_0_35_branch" />
+    
     <property name="util.copy" value="pscp" />
     <property name="name.developer" value="drakmar" />
     <property name="sf.username" value="${name.developer}@shell.sourceforge.net" />
-    <property name="sf.location" value="/home/groups/s/sh/sharpcvslib/htdocs/nightly-build" />
+    <property name="sf.location" value="/home/groups/s/sh/sharpcvslib/htdocs/nightly-build/${cvs.branch}" />
 
 
     <!-- Names of the files generated -->
