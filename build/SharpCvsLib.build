@@ -11,7 +11,7 @@
        <property name="cvs.command" value="update -Pd" />
        <echo message="Updating ${dir.base} using cvs command: ${cvs.command}." />
        
-       <cvs     module="sharcvslib" 
+       <cvs     module="sharpcvslib" 
                 cvsroot=":ext:${name.developer}@cvs.sourceforge.net:/cvsroot/sharpcvslib"
                 destination="${dir.base}"
                 command="${cvs.command}"
