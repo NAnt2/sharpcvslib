@@ -1,10 +1,10 @@
-﻿
+
 <!--
     Build file for the sharpcvsaddin library files.
 -->
 <project name="SharpCvsAddIn" default="build">
-	<!-- path for some assemblies, you'll need to change this if you have visual studion installed to a non-standard place -->
-	<property name="addin.ideasm.path" value="c:\program files\Microsoft Visual Studio .NET 2003\Common7\IDE\PublicAssemblies" />
+    <!-- path for some assemblies, you'll need to change this if you have visual studion installed to a non-standard place -->
+    <property name="addin.ideasm.path" value="c:\program files\Microsoft Visual Studio .NET 2003\Common7\IDE\PublicAssemblies" />
     <target name="build">
         <csc    target="library" 
                 warnaserror="${compile.warnaserror}" 
@@ -29,14 +29,14 @@
             </sources>
             
             <resources prefix="${name.addin}" >
-				<include name="**/*.bmp" />
-				<include name="**/*.resx" />
+                <include name="**/*.bmp" />
+                <include name="**/*.resx" />
             </resources> 
             
             <references>
-				<include name="EnvDTE.dll" />
-				<include name="${addin.ideasm.path}/Extensibility.dll" />
-				<include name="Office.dll" />
+                <include name="${framework::get-framework-directory(framework::get-runtime-framework())}/EnvDTE.dll" />
+                <include name="${addin.ideasm.path}/Extensibility.dll" />
+                <include name="${framework::get-framework-directory(framework::get-runtime-framework())}/Office.dll" />
                 <include name="${dir.lib.ext}/${lib.log4net}" />
                 <include name="${dir.bin}/${name.top-level}.${name.project}.dll" />
                 <include name="System.dll" />
@@ -48,17 +48,17 @@
         
     
         <nant buildfile="addin-resources.build.xml" >
-			<properties>
-				<property name="config" value="${BuildType}" />
-				<property name="outputdir" value="${dir.bin}" />			
-			</properties>
+            <properties>
+                <property name="config" value="${BuildType}" />
+                <property name="outputdir" value="${dir.bin}" />            
+            </properties>
         </nant>
         
         <copy todir="${dir.bin}">
-			<fileset basedir="${dir.src}/${name.addin}/bin/${BuildType}">
-				<include name="sharpcvsaddin-log.config" />
-				<include name="language-assembly.dll" />
-			</fileset>
+            <fileset basedir="${dir.src}/${name.addin}/bin/${BuildType}">
+                <include name="sharpcvsaddin-log.config" />
+                <include name="language-assembly.dll" />
+            </fileset>
         </copy> 
     </target>
 </project>
