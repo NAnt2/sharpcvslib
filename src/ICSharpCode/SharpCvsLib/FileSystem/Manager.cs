@@ -238,7 +238,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             try {
                 ArrayList currentCvsFiles = 
-                    new ArrayList(this.Fetch (cvsEntries[0].FullPath, cvsEntries[0].Type));
+                    new ArrayList(this.Fetch (cvsEntries[0].ParentDir.FullName, cvsEntries[0].Type));
 
                 int originalCount = currentCvsFiles.Count;
                 if (currentCvsFiles.Count >= 1 && !cvsEntries[0].IsMultiLined) {
@@ -280,7 +280,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Hashtable newCvsEntries = new Hashtable();
             try {
                 ArrayList currentCvsFiles = 
-                    new ArrayList(this.Fetch (newCvsEntry.FullPath, newCvsEntry.Type));
+                    new ArrayList(this.Fetch (newCvsEntry.ParentDir.FullName, newCvsEntry.Type));
 
                 int originalCount = currentCvsFiles.Count;
 
@@ -371,7 +371,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             ICvsFile cvsFile = 
                 factory.CreateCvsObject(cvsFileLocation, line);
 
-            cvsFiles.Remove(cvsFile.FullPath);
+            cvsFiles.Remove(cvsFile.ParentDir.FullName);
             this.WriteToFile ((ICvsFile[])(new ArrayList(cvsFiles.Values)).ToArray(typeof(ICvsFile)));
         }
 
@@ -473,7 +473,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <param name="cvsFile">The full path to the file or directory.</param>
         /// <returns>The path to the cvs directory.</returns>
         internal String GetCvsDir (ICvsFile cvsFile) {
-            String path = cvsFile.FullPath;
+            String path = cvsFile.ParentDir.FullName;
 
             if (cvsFile is Entry) {
                 Entry entry = (Entry)cvsFile;
@@ -943,12 +943,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public Tag AddTag (Tag tag) {
             try {
                 // check if the root exists, if so it does not get modified
-                return this.FetchTag(tag.FullPath);
+                return this.FetchTag(tag.ParentDir.FullName);
             } catch (CvsFileNotFoundException) {
                 // if the repository does not exist then add it
                 this.WriteToFile(tag);
                 // TODO: Remove this, just verifying the write operation
-                return this.FetchTag(tag.FullPath);
+                return this.FetchTag(tag.ParentDir.FullName);
             }
         }
 

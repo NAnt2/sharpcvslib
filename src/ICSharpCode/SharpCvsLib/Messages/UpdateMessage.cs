@@ -91,9 +91,6 @@ public class UpdateMessage : IMessage {
         /// </summary>
         public String Message {
             get {
-                System.Console.WriteLine(string.Format("Filename: {0}", this.Filename));
-                System.Console.WriteLine(string.Format("Repository: {0}", this.Repository));
-                System.Console.WriteLine(string.Format("Module: {0}", this.Module));
                 string tempRepos = this.Repository;
                 if (tempRepos.Length >= 0 &&
                     tempRepos.EndsWith("/")) {

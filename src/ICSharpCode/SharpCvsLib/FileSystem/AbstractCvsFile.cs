@@ -53,7 +53,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         /// Return a key that uniquely identifies this cvs file.
         /// </summary>
         public virtual string Key {
-            get {return this.FullPath;}
+            get {return this.ParentDir.FullName;}
         }
 
         /// <summary>
@@ -64,9 +64,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         /// </summary>
         public virtual String Path {
             get {
-                String tempPath = this.FullPath;
-                if (this.FullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString())) {
-                    tempPath = this.FullPath.Substring(0, this.FullPath.Length - 1);
+                String tempPath = this.ParentDir.FullName;
+                if (this.ParentDir.FullName.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString())) {
+                    tempPath = this.ParentDir.FullName.Substring(0, this.ParentDir.FullName.Length - 1);
                 }
                 tempPath = System.IO.Path.GetDirectoryName(tempPath);   
                 return this.GetPathWithDirectorySeperatorChar(tempPath);
@@ -94,11 +94,15 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
             return path;
         }
 
+        public DirectoryInfo ParentDir {
+            get {return this.cvsFile.Directory;}
+        }
+
         /// <summary>
         /// The full path to the file or directory that this object is managing.
         /// </summary>
         public virtual String FullPath {
-            get {return this.cvsFile.Directory.FullName;}
+            get {return this.cvsFile.FullName;}
             set {this._fullPath = value;}
         }
 

@@ -62,6 +62,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         String Path {get;}
 
         /// <summary>
+        /// Parent directory that contains the CVS management folder.
+        /// </summary>
+        DirectoryInfo ParentDir {get;}
+
+        /// <summary>
         /// The full path to the file that the file that this CVS object is managing.
         ///     In most cases FullPath will equal Path, with the exception of Entry
         ///     files that are not directories.

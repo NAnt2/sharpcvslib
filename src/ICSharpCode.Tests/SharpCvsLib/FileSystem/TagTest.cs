@@ -77,8 +77,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 this.TAG_ENTRY1);
 
             String cvsPath = Path.Combine (fullPath, "CVS");
-            Assert.IsNotNull (tag.FullPath);
-            Assert.AreEqual (fullPath, tag.FullPath);
+            Assert.IsNotNull (tag.ParentDir.FullName);
+            Assert.AreEqual (fullPath, tag.ParentDir.FullName);
             Assert.IsNotNull (tag.FileContents);
             Assert.AreEqual ("N" + this.TAG_ENTRY1.Substring (1), tag.FileContents);
             Assert.AreEqual (this.TAG_FILE_NAME, tag.Filename);

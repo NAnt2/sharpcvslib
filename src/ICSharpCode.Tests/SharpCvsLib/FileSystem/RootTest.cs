@@ -80,6 +80,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             String cvsPath = Path.Combine (fullPath, "CVS");
             Assert.AreEqual (fullPath, root.FullPath);
+            Assert.AreEqual (new FileInfo(fullPath).DirectoryName, root.ParentDir.FullName);
             Assert.AreEqual (this.ROOT_ENTRY1, root.FileContents);
             Assert.AreEqual (this.ROOT_FILE_NAME, root.Filename);
             Assert.AreEqual (Factory.FileType.Root, root.Type);
