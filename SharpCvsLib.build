@@ -22,6 +22,28 @@
 		</copy>        
     </target>
     
+    <target name="sf-release">
+        <property name="export.dir" value="h:/dev/sf.net/sharpcvslib" />
+        <property name="version.dir" value="${export.dir}\${assembly.version}" />
+        <property name="files.dir" value="${version.dir}\files" />
+        
+        <mkdir dir="${version.dir}" />
+        <mkdir dir="${files.dir}" />
+        
+        <copy todir="${files.dir}">
+            <fileset basedir=".">
+                <includes name="**/**.*" />
+                <excludes name="*.suo" />
+                <excludes name="*.csproj.user" />
+            </fileset>
+        </copy>
+        <zip zipfile="${version.dir}\${assembly.name}-${assembly.version}.zip">
+            <fileset basedir="${files.dir}">
+                <includes name="**/**.*" />
+            </fileset>
+        </zip>
+    </target>
+    
     <target name="SharpCvsLib.Debug">
         <property name="project.name" value="SharpCvsLib" />
         <property name="build.dir" value="${build.dir}\Debug" />
