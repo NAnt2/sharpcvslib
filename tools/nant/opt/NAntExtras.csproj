@@ -139,6 +139,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\Tasks\TryCatchTask.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src\Util\Shortcut\IPersistFile.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

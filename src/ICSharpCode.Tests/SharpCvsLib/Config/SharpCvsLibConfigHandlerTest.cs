@@ -62,21 +62,25 @@ public class SharpCvsLibConfigHandlerTest {
     /// </summary>
     [Test]
     public void LoadAppConfigTest () {
-        SharpCvsLibConfigHandler configHandler =
-            new SharpCvsLibConfigHandler ();
-        ConfigXmlDocument xmlDoc =
-            new ConfigXmlDocument ();
+        try {
+            SharpCvsLibConfigHandler configHandler =
+                new SharpCvsLibConfigHandler ();
+            ConfigXmlDocument xmlDoc =
+                new ConfigXmlDocument ();
 
-        xmlDoc.Load (CONFIG_FILE);
+            xmlDoc.Load (CONFIG_FILE);
 
-        SharpCvsLibConfig config = null;
-        config =
-            (SharpCvsLibConfig)configHandler.Create
-            (xmlDoc.SelectSingleNode ("configuration"),
-             null,
-             xmlDoc.SelectSingleNode ("//" +
-                                      SharpCvsLibConfigHandler.APP_CONFIG_SECTION));
-        this.CheckValues (config);
+            SharpCvsLibConfig config = null;
+            config =
+                (SharpCvsLibConfig)configHandler.Create
+                (xmlDoc.SelectSingleNode ("configuration"),
+                null,
+                xmlDoc.SelectSingleNode ("//" +
+                SharpCvsLibConfigHandler.APP_CONFIG_SECTION));
+            this.CheckValues (config);
+        } catch (Exception) {
+            Assert.Fail();
+        }
     }
 
     private void CheckValues (SharpCvsLibConfig config) {
@@ -95,11 +99,15 @@ public class SharpCvsLibConfigHandlerTest {
     /// </summary>
     [Test]
     public void GetConfigTestFile () {
-        SharpCvsLibConfig config =
-            (SharpCvsLibConfig)ConfigurationSettings.GetConfig
-            (SharpCvsLibConfigHandler.APP_CONFIG_SECTION);
+        try {
+            SharpCvsLibConfig config =
+                (SharpCvsLibConfig)ConfigurationSettings.GetConfig
+                (SharpCvsLibConfigHandler.APP_CONFIG_SECTION);
 
-        this.CheckValues (config);
+            this.CheckValues (config);
+        } catch {
+            Assert.Fail();
+        }
     }
 
 }

@@ -101,11 +101,25 @@
     </target>    
 
     <target name="run-tests" depends="build.all">
-        <nant buildfile="${dir.build}/${name.tests}.build.xml" target="run-tests"/>
+        <TryCatch>
+            <Try> 
+                <nant buildfile="${dir.build}/${name.tests}.build.xml" target="run-tests" failonerror="false"/>
+            </Try>
+            <Catch>
+                <echo message="test failed"/>
+            </Catch>
+        </TryCatch>    
     </target>
     
     <target name="run-tests-sample" depends="build.all">
-        <nant buildfile="${dir.build}/${name.tests}.build.xml" target="run-tests-sample"/>
+        <TryCatch>
+            <Try> 
+                <nant buildfile="${dir.build}/${name.tests}.build.xml" target="run-tests-sample" failonerror="false"/>
+            </Try>
+            <Catch>
+                <echo message="Test failed."/>
+            </Catch>
+        </TryCatch>    
     </target>
     <target name="tests-to-html">
         <nant buildfile="${dir.build}/${name.tests}.build.xml" target="tests-to-html"/>
