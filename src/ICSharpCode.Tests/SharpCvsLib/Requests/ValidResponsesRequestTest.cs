@@ -93,6 +93,10 @@ public class ValidResponsesRequestTest {
         string requestString = request.RequestString;
         string[] responses;
 
+        // Need to remove terminating '\n' to simplify Split()
+        if (requestString.Length > 0 && requestString[requestString.Length - 1] == '\n') {
+            requestString = requestString.Substring(0, requestString.Length - 1);
+        }
         // split the responses in the request into seperate strings
         responses = requestString.Split(null);
 
@@ -121,6 +125,10 @@ public class ValidResponsesRequestTest {
         string[] responses;
         int responseClasses = 0;
 
+        // Need to remove terminating '\n' to simplify Split()
+        if (requestString.Length > 0 && requestString[requestString.Length - 1] == '\n') {
+            requestString = requestString.Substring(0, requestString.Length - 1);
+        }
         // split the responses in the request into seperate strings
         // remember first entry will be the response name
         responses = requestString.Split(null);
