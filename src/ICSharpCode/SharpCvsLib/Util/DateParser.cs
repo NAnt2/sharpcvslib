@@ -55,12 +55,6 @@ namespace ICSharpCode.SharpCvsLib.Util {
 	        "ddd MMM d HH':'mm':'ss yyyy";    // single 'd' to support both single & double digit dates
 //	        "ddd MMM dd HH':'mm':'ss yyyy";
 //	        "ddd MMM dd HH:mm:ss yyyy";	    
-        /// <summary>
-        ///     Date format for the <code>RFC1123</code> specification.
-        /// </summary>	    
-	    public const String CVSNT2 = 
-	        "ddd MMM yyyy HH':'mm':'ss '-0000'";
-
         
 
         /// <summary>
@@ -87,15 +81,11 @@ namespace ICSharpCode.SharpCvsLib.Util {
 					    try {
                             dateTime = DateParser.ParseCvsNT1 (date);
 					    } catch (FormatException) {
-    					    try {
-                                dateTime = DateParser.ParseCvsNT2 (date);
-    					    } catch (FormatException) {
-    					        try {
-                                    dateTime = DateTime.Parse (date);
-    					        } catch (FormatException) {
-    					            dateTime = DateTime.Now;
-    					        }
-    					    }
+					        try {
+                                dateTime = DateTime.Parse (date);
+					        } catch (FormatException) {
+					            dateTime = DateTime.Now;
+					        }
 					    }
 					}
 				}				
@@ -146,13 +136,6 @@ namespace ICSharpCode.SharpCvsLib.Util {
 			                                DateTimeFormatInfo.InvariantInfo,
 			                                DateTimeStyles.AllowWhiteSpaces);
         }
-        
-        private static DateTime ParseCvsNT2 (String date) {
-			return DateTime.ParseExact(date, 
-			                                CVSNT2,
-			                                DateTimeFormatInfo.InvariantInfo);
-        }
-
         
     }
 }

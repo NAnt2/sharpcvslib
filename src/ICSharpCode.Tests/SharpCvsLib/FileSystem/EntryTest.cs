@@ -64,7 +64,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public const String CHECKOUT_ENTRY_2 =
                 "/EntryTest.cs/1.1/03 Jan 2003 04:07:36 -0000//";
         private const String NORMALISED_ENTRY_2 =
-                "/EntryTest.cs/1.1/Fri Jan 03 04:07:36 2003//";
+                "/EntryTest.cs/1.1/Fri Jan 3 04:07:36 2003//";
 	    /// <summary>
 	    ///     Test entry 3: Checkout file with conflict, binary flag and tag.
 	    /// </summary>
