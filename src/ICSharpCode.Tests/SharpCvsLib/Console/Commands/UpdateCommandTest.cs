@@ -48,7 +48,7 @@ using NUnit.Framework;
 namespace ICSharpCode.SharpCvsLib.Console.Commands {
     
     /// <summary>
-    ///     Test the checkout command object for valid ones
+    ///     Test the update command object for valid ones
     ///         and test invalid ones.
     /// </summary>
     [TestFixture]
@@ -109,7 +109,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             //Assertion.Assert(Directory.Exists("newlocation"));
         }
         /// <summary>
-        ///     Checkout files no earlier than the specified Date 
+        ///     Update files no earlier than the specified Date 
         ///     with the -D option
         /// </summary>
         [Test]
@@ -122,11 +122,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             Assertion.AssertNotNull ("Should have a command object.", updateCommand);
             //updateCommand.Execute();
             // Find a file that should exist 
-            //Assertion.Assert ("Should have found the check file.  file=[" +
+            //Assertion.Assert ("Should have found the update file.  file=[" +
             //    checkFile + "]", File.Exists (checkFile));
 
             // Find a file that should not exist
-            //Assertion.Assert ("Should have found the check file.  file=[" +
+            //Assertion.Assert ("Should have found the update file.  file=[" +
             //    checkFile + "]", File.Exists (checkFile));
         }
     }
