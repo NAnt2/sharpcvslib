@@ -49,11 +49,11 @@ using log4net;
 ConfigFileExtension="config", Watch=true)]
 
 namespace ICSharpCode.SharpCvsLib.Tests {
-	/// <summary>
-	/// Abstract test is used to perform common setup and teardown routines for
-	///     tests.
-	/// </summary>
-	public class AbstractTest {
+    /// <summary>
+    /// Abstract test is used to perform common setup and teardown routines for
+    ///     tests.
+    /// </summary>
+    public class AbstractTest {
         private SharpCvsLibTestsConfig settings = 
             SharpCvsLibTestsConfig.GetInstance();
         private readonly ILog LOGGER = LogManager.GetLogger(typeof(AbstractTest));
@@ -68,8 +68,8 @@ namespace ICSharpCode.SharpCvsLib.Tests {
         /// <summary>
         /// Create a new instance of the abstract test.
         /// </summary>
-		public AbstractTest() {
-		}
+        public AbstractTest() {
+        }
 
         /// <summary>
         /// Perform arbitrary setup routines, such as creating any temporary directories
@@ -164,5 +164,5 @@ namespace ICSharpCode.SharpCvsLib.Tests {
             connection.Close ();
         }
 
-	}
+    }
 }
