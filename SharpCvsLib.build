@@ -8,9 +8,8 @@
     FIXME: Having security issues with the 1-1 framework, is this just
         my machine??!
     
-    -->
-    <property name="nant.settings.currentframework" value = "net-1.0"/>
-    <!--<property name="nant.settings.currentframework" value = "mono-1.0-linux"/>  -->
+    <property name="nant.settings.currentframework" value = "net-1.0"/>    -->
+    <property name="nant.settings.currentframework" value = "mono-1.0-linux"/>
 
     <!-- Names of the files generated -->
     <property name="name.top-level" value="ICSharpCode" />
@@ -88,7 +87,7 @@
     </target>
 
     <target name="build.console" depends="setup">
-            <nant buildfile="${dir.src}/${name.top-level}.${name.console}/${name.console}.build" target="build-${nant.settings.currentframework}"/>
+            <nant buildfile="${dir.src}/${name.top-level}.${name.console}/${name.project}/${name.console}.build" target="build-${nant.settings.currentframework}"/>
     </target>
     
     <target name="build.test" depends="setup">
