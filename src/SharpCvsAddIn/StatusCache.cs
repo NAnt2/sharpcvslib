@@ -9,45 +9,6 @@ using log4net;
 
 namespace SharpCvsAddIn
 {
-	public enum CvsStatus
-	{
-		/// <summary>
-		/// The file is identical with the latest revision in the repository for the branch in use. 
-		/// </summary>
-		UpToDate,
-		/// <summary>
-		/// You have edited the file, and not yet committed your changes. 
-		/// </summary>
-		LocallyModified,
-		/// <summary>
-		///	You have added the file with add, and not yet committed your changes. 
-		/// </summary>
-		LocallyAdded,
-		/// <summary>
-		///	You have removed the file with remove, and not yet committed your changes. 
-		/// </summary>
-		LocallyRemoved,
-		/// <summary>
-		/// Someone else has committed a newer revision to the repository. The name is slightly misleading; you will ordinarily use update rather than checkout to get that newer revision. 
-		/// </summary>
-		NeedsCheckout,
-		/// <summary>
-		/// Like Needs Checkout, but the cvsnt server will send a patch rather than the entire file. Sending a patch or sending an entire file accomplishes the same thing. 
-		/// </summary>
-		NeedsPatch,
-		/// <summary>
-		/// Someone else has committed a newer revision to the repository, and you have also made modifications to the file. 
-		/// </summary>
-		NeedsMerge,	
-		/// <summary>
-		/// This is like Locally Modified, except that a previous update command gave a conflict. If you have not already done so, you need to resolve the conflict as described in the section called “Conflicts example ”. 
-		/// </summary>
-		ConflictsOnMerge,
-		/// <summary>
-		/// cvsnt doesn't know anything about this file. For example, you have created a new file and have not run add. 
-		/// </summary>
-		Unknown,
-	}
 
 	public class FileStatusCollection : NameObjectCollectionBase 
 	{
@@ -110,14 +71,14 @@ namespace SharpCvsAddIn
 	public class FileStatus
 	{
 		private static readonly ILog log_ = LogManager.GetLogger(typeof(FileStatus));
-		private CvsStatus	status_ = CvsStatus.Unknown;
+		private CvsStatusType	status_ = CvsStatusType.Unknown;
 		private string		fileName_ = string.Empty;
 		private string		version_ = string.Empty;
 		private string		directory_ = string.Empty;
 
 		private void ParseStatus( string statusInfo )
 		{
-			status_ = CvsStatus.UpToDate;
+			status_ = CvsStatusType.UpToDate;
 			// check for conflict marker
 			string[] timestamps = statusInfo.Split('+');
 			// get modification date from file, this may seem like a weird way to do this but
@@ -131,11 +92,11 @@ namespace SharpCvsAddIn
 			{
 				if( timestamps[1] == stringModTime )
 				{
-					status_ = CvsStatus.ConflictsOnMerge;
+					status_ = CvsStatusType.ConflictsOnMerge;
 				}
 				else
 				{
-					status_ = CvsStatus.LocallyModified;
+					status_ = CvsStatusType.LocallyModified;
 				}
 
 				return;
@@ -143,7 +104,7 @@ namespace SharpCvsAddIn
 			// check for local modifications
 			if( stringModTime != timestamps[0] )
 			{
-				status_ = CvsStatus.LocallyModified;
+				status_ = CvsStatusType.LocallyModified;
 			}
 
 
@@ -153,7 +114,7 @@ namespace SharpCvsAddIn
 		{
 			fileName_ = fileInfo.fileName_;
 			directory_ = fileInfo.directoryName_;
-			status_ = CvsStatus.Unknown;
+			status_ = CvsStatusType.Unknown;
 		}
 
 		public FileStatus()
@@ -178,10 +139,10 @@ namespace SharpCvsAddIn
 			switch( entryParts[2][0])
 			{
 				case '0' :	// file added needs commit
-					status_ = CvsStatus.LocallyAdded;
+					status_ = CvsStatusType.LocallyAdded;
 					break;
 				case '-' :	// file removed but not yet commited
-					status_ = CvsStatus.LocallyRemoved;
+					status_ = CvsStatusType.LocallyRemoved;
 					// remove dash from front of version
 					version_ = version_.Substring( 1 );
 					break;
@@ -203,7 +164,7 @@ namespace SharpCvsAddIn
 			get{ return Path.Combine( directory_, fileName_ ) ; }
 		}
 
-		public CvsStatus CvsStatus
+		public CvsStatusType CvsStatus
 		{
 			get{ return status_; }
 		}

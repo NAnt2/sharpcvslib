@@ -111,7 +111,7 @@ namespace SharpCvsAddIn.Events
 
 				controller_.SolutionExplorer.Initialize();
 
-				controller_.CacheSolutionState();
+				controller_.HandleSolutionOpenEvent();
 
 
 			}

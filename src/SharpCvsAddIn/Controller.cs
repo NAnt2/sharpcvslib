@@ -22,6 +22,7 @@ namespace SharpCvsAddIn
 		private bool addInLoadedForSolution_ = false;
 		private FileStatusCache statusCache_ = null;
 		private SolutionExplorer solutionExplorer_ = null;
+		private Events.ProjectFileEvents fileEvents_ = null;
 
 		public Controller(EnvDTE._DTE dte, EnvDTE.AddIn addin,IErrorHandler errorHandler)
 		{
@@ -33,6 +34,8 @@ namespace SharpCvsAddIn
 			errorHandler_ = errorHandler;
 
 			outputWriter_ = new OutputPaneWriter( application_, this.GetLocalizedString("OUTPUT_WINDOW_PANE") );
+
+			fileEvents_ = new Events.ProjectFileEvents( this );
 
 			//solutionExplorer_.Initialize();
 		}
@@ -60,10 +63,13 @@ namespace SharpCvsAddIn
 		/// Called when the solution is loaded. It will do the work of getting status for all of the 
 		/// items under cvs control and updating the solution explorer
 		/// </summary>
-		public void CacheSolutionState()
+		public void HandleSolutionOpenEvent()
 		{
 			addInLoadedForSolution_ = true;
+			// synch user interface with loaded project
 			this.SolutionExplorer.Refresh();
+			// wire up events so we know when things change
+			fileEvents_.AddHandlers();
 
 			//statusCache_ = new FileStatusCache( application_ );
 			
@@ -72,7 +78,9 @@ namespace SharpCvsAddIn
 		public void SolutionCleanup()
 		{
 			solutionOpen_ = false;
+			fileEvents_.RemoveHandlers();
 			this.SolutionExplorer.Cleanup();
+
 		}
 
 		public Model Model { get{ return model_; } }

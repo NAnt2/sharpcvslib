@@ -32,12 +32,17 @@ namespace SharpCvsAddIn.UI
 		TreeView treeview_;
 		ImageList statusImageList_;
 		IntPtr originalImageList_ = IntPtr.Zero;
-		IStatusNode solutionItems_ = null;
+		StatusGraph.SolutionNode root_ = null;
 
 		public SolutionExplorer(Controller controller)
 		{
 			controller_ = controller;
 
+		}
+
+		public IStatusNode Root
+		{
+			get { return root_ ; }
 		}
 
 		public TreeView TreeView
@@ -47,7 +52,7 @@ namespace SharpCvsAddIn.UI
 
 		public void Refresh()
 		{
-			solutionItems_ = StatusGraph.GetRoot( controller_ );
+			root_ = StatusGraph.GetRoot( controller_ );
 		}
 
 		/// <summary>

@@ -15,6 +15,11 @@ namespace SharpCvsAddIn.Utilities
 			get;
 		}
 
+		bool HasChildren
+		{
+			get;
+		}
+
 		ITreeNode Parent
 		{
 			get;
@@ -75,6 +80,17 @@ namespace SharpCvsAddIn.Utilities
 				ITreeNode[] nodes = new TreeNode[result.Count];
 				result.CopyTo( nodes );				
 				return nodes;
+			}
+		}
+
+		/// <summary>
+		/// Fast way to find out if a node has children
+		/// </summary>
+		public bool HasChildren
+		{
+			get
+			{
+				return (child_ != null );
 			}
 		}
 
@@ -141,7 +157,8 @@ namespace SharpCvsAddIn.Utilities
             ITreeNode[] children = this.Children;
 			foreach( ITreeNode child in children )
 			{
-				if( child.Name == token )
+				// do a case insensitive compare
+				if( string.Compare( child.Name, token, true) == 0 )
 				{
 					// if we are at end of path we found the item
 					// so return it, otherwise remove head of path

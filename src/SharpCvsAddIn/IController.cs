@@ -36,7 +36,7 @@ namespace SharpCvsAddIn
 
 		void OpenSolution( string solutionPath );
 		void SolutionCleanup();
-		void CacheSolutionState();
+		void HandleSolutionOpenEvent();
 
         /// <summary>
         /// The SolutionExplorer object.

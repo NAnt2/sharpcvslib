@@ -20,6 +20,8 @@ namespace SharpCvsAddIn
 		void Initialize();
 		void Cleanup();
 
+		IStatusNode Root { get; }
+
         /// <summary>
         /// Updates the status of the given item.
         /// </summary>
