@@ -38,6 +38,7 @@ using System.Text;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Assertions;
 using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Util;
 
@@ -82,19 +83,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 } 
                 return this.key;
             }
-        }
-
-        /// <summary>
-        /// The full path to the file or directory that this object is managing.
-        /// </summary>
-        public override String FullPath {
-            get {
-                string fullPath = System.IO.Path.Combine(
-                    System.IO.Path.GetDirectoryName(
-                    this.CvsFile.Directory.FullName), this.Name);
-                return fullPath;
-            }
-            set {base.FullPath = value;}
         }
 
         /// <summary>
@@ -262,19 +250,32 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// Create a new instance of the cvs object.  The file that is passed in should
         /// be the cvs file that will contain the file contents.
         /// </summary>
-        /// <param name="cvsFile">The path to the directory above the object being 
-        ///     managed.  The information in the fileContents parameter is used
-        ///     to fill in the "missing" information about the file location.</param>
-        /// <param name="fileContents">The contents of the cvs management file.</param>
+        /// <param name="cvsFile">The cvs management file, CVS\Entries.</param>
+        /// <param name="fileContents">The line entry used to represent the file in the CVS\Entries file.</param>
         /// <example>
         ///     <list type="table">
         ///         <term>cvsFile</term>
-        ///         <description>C:\dev\src\sharpcvslib\sharpcvslib\src\ICSharpCode\SharpCvsLib\FileSystem\CVS\Entries</description>
+        ///         <description>C:\dev\src\sharpcvslib\sharpcvslib\src\ICSharpCode\SharpCvsLib\FileSystem\Entry.cs</description>
         ///         <term>fileContents</term>
-        ///         <description></description>
+        ///         <description>/Entry.cs/1.28/Sun Jan 23 23:12:09 2005//</description>
         ///     </list>
         /// </example>
         public Entry (FileInfo cvsFile, String fileContents) : base (cvsFile, fileContents) {
+            if (this.IsDirectory) {
+                // Assert the management file is stored one level up
+                // project\CVS\Entries      
+                // project\build
+                Assert.Equal(new DirectoryInfo(this.ManagedPath.FullName).Parent.FullName,
+                    this.CvsFile.Directory.Parent.FullName);
+            } else {
+                // Assert the management file is correct.
+                // project\CVS\Entries      <-- project directory of management file
+                // project\SomeFile.cs      <-- should equal project directory of managed file
+                Assert.Equal(new FileInfo(this.ManagedPath.FullName).Directory.FullName, 
+                    this.CvsFile.Directory.Parent.FullName);
+                // The managed file and the management file should be two different entities.
+                Assert.NotEqual(this.ManagedPath.FullName, this.CvsFile.FullName);
+            }
         }
 
         /// <summary>
@@ -293,11 +294,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </example>
         [Obsolete ("Use 'Entry (FileInfo, string)' instead.")]
         public Entry (string cvsPath, string fileContents) : 
-            base (new FileInfo(
+            this (new FileInfo(
             System.IO.Path.Combine(
                 System.IO.Path.Combine(cvsPath, "CVS")
             , Entry.FILE_NAME)), fileContents) {
- 
         }
 
         /// <summary>
@@ -322,15 +322,18 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     <warn>If a directory is being managed use the <see cref="DirectoryInfo"/>
         ///     object.</warn>
         /// </example>
-        public static Entry CreateEntry (FileInfo managedFile) {
+        public static Entry CreateEntry (FileInfo managedPath) {
+            // this is a directory, we don't want it
+            Assert.NotEndsWith(managedPath.FullName, System.IO.Path.DirectorySeparatorChar.ToString());
+
             DirectoryInfo cvsDir = new DirectoryInfo(
-                System.IO.Path.Combine(managedFile.Directory.FullName, "CVS"));
+                System.IO.Path.Combine(managedPath.Directory.FullName, "CVS"));
 
             FileInfo cvsFile = new FileInfo(
                 System.IO.Path.Combine(cvsDir.FullName, Entry.FILE_NAME));
 
             StringBuilder entryString = new StringBuilder();
-            entryString.Append("/").Append(managedFile.Name);
+            entryString.Append("/").Append(managedPath.Name);
             entryString.Append("/0///");
 
             Entry entry = new Entry(cvsFile, entryString.ToString());
@@ -381,14 +384,14 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <summary>
         /// Creates an <see cref="Entry"/> object that manages the file being passed in.
         /// </summary>
-        /// <param name="managedDir">The directory that is under cvs control.</param>
+        /// <param name="managedPath">The directory that is under cvs control.</param>
         /// <returns>A new cvs entry, using the full path to the file for the
         ///     entry information.</returns>
         /// <exception cref="EntryParseException">If the entry file cannot be
         ///     parsed.</exception>
         /// <example>
         ///     <list type="table">
-        ///         <term>managedDir</term>
+        ///         <term>managedPath</term>
         ///         <description>The full path to a directory being managed by CVS such as:
         ///             <br />
         ///             <code>C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\sharpcvslib-tests\sharpcvslib-test-repository\someFile.txt</code>
@@ -399,16 +402,18 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     <warn>If a directory is being managed use the <see cref="DirectoryInfo"/>
         ///     object.</warn>
         /// </example>
-        public static Entry CreateEntry (DirectoryInfo managedDir) {
+        public static Entry CreateEntry (DirectoryInfo managedPath) {
+            // if this is a file we don't want it
+            Assert.EndsWith(managedPath.FullName, System.IO.Path.DirectorySeparatorChar.ToString());
             DirectoryInfo cvsDir = new DirectoryInfo(
-                System.IO.Path.Combine(System.IO.Path.GetDirectoryName(managedDir.FullName), "CVS"));
+                System.IO.Path.Combine(managedPath.Parent.FullName, "CVS"));
 
             FileInfo cvsFile = new FileInfo(
                 System.IO.Path.Combine(cvsDir.FullName, Entry.FILE_NAME));
 
             StringBuilder entryString = new StringBuilder();
             entryString.Append("D");
-            entryString.Append("/").Append(managedDir.Name);
+            entryString.Append("/").Append(managedPath.Name);
             entryString.Append("/0///");
 
             Entry entry = new Entry(cvsFile, entryString.ToString());
@@ -428,12 +433,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void SetTimeStamp() {
             if (null == date) {
                 DateTime now = DateTime.Now;
-                // File system time is stored without regards to daylight savings time
-                //  therefore if the file time is different then we can assume
-                //  that daylight savings is in effect.
-//                if (now.ToFileTime() != now.Ticks) {
-//                    now = now.AddHours(-1);
-//                } 
                 now = now.AddHours(-1);
                 date = DateParser.GetCvsDateString(now);
                 this.timestamp = now;
@@ -454,17 +453,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// Parses the cvs entries file.
         /// </summary>
         /// <param name="line"></param>
-        public override void Parse(string line)
-        {
-            if (LOGGER.IsDebugEnabled) {
-                String msg = "cvsEntry=[" + line + "]";
-                LOGGER.Debug (msg);
-            }
-
+        public override void Parse(string line){
             if (line.StartsWith("D/")) {
                 this.isDir = true;
                 line = line.Substring(1);
-                this.name = "";
+                this.name = string.Empty;
             }
             string[] tokens = line.Split( new char[] { '/' });
             const int TokensExpected = 6;
@@ -475,6 +468,16 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             } 
 
             name      = tokens[1];
+
+            // set the managed file name
+            if (this.IsDirectory) {
+                this.ManagedPath = new DirectoryInfo(
+                    System.IO.Path.Combine(this.CvsFile.Directory.Parent.FullName, this.Name));
+            } else {
+                this.ManagedPath = new FileInfo(
+                    System.IO.Path.Combine(this.CvsFile.Directory.Parent.FullName, this.name));
+            }
+
             if (!this.isDir) {
                 revision  = tokens[2];
                 LOGGER.Debug("revision=[" + revision + "]");

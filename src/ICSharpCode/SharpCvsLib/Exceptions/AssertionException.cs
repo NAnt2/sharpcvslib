@@ -1,6 +1,5 @@
 #region "Copyright"
-// CheckedInResponse.cs
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2005 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,53 +26,33 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//  
 #endregion
 
 using System;
 
 using ICSharpCode.SharpCvsLib.Attributes;
-using ICSharpCode.SharpCvsLib.Misc;
-using ICSharpCode.SharpCvsLib.FileSystem;
-using ICSharpCode.SharpCvsLib.Client;
-using ICSharpCode.SharpCvsLib.Streams;
 
-using log4net;
-
-namespace ICSharpCode.SharpCvsLib.Responses {
+namespace ICSharpCode.SharpCvsLib.Exceptions{
 
     /// <summary>
-    /// Handle a checked in response.
+    /// <see cref="AssertionFailedException"/> is thrown when an internal state check 
+    /// returns an unexpected condition.  
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
     [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class CheckedInResponse : AbstractResponse {
-        private readonly ILog LOGGER = LogManager.GetLogger(typeof (CheckedInResponse));
+    public class AssertionException : Exception {
         /// <summary>
-        /// Process a checked in response.
+        /// Constructor
         /// </summary>
-        public override void Process() {
-            string localPath      = this.ReadLine();
-            string repositoryPath = this.ReadLine();
-            string entryLine      = this.ReadLine();
-
-            PathTranslator orgPath   =
-                new PathTranslator (Services.Repository,
-                repositoryPath);
-
-            string fileName = orgPath.LocalPathAndFilename;
-            Factory factory = new Factory();
-            Entry  entry = (Entry)factory.CreateCvsObject(orgPath.CurrentDir, Entry.FILE_NAME, entryLine);
-            LOGGER.Debug ("CheckedInResponse adding entry=[" + entry + "]");
-
-            Manager manager = new Manager (Services.Repository.WorkingPath);
-            manager.Add (entry);
+        public AssertionException() {
         }
 
         /// <summary>
-        /// Return true if this response cancels the transaction
+        /// Constructor
         /// </summary>
-        public override bool IsTerminating {
-            get { return false; }
+        /// <param name="msg"></param>
+        /// <param name="obj"></param>
+        public AssertionException(string msg, params object[] obj) : base(string.Format(msg, obj)) {
         }
     }
 }

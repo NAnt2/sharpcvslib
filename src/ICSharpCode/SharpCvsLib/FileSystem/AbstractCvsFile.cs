@@ -47,8 +47,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         private String _fullPath;
         private String fileContents;
         private String localCvsFullPath;
+        private FileSystemInfo _managedPath;
 
-        private FileInfo cvsFile;
+        private FileInfo _cvsFile;
 
         /// <summary>
         /// Return a key that uniquely identifies this cvs file.
@@ -58,7 +59,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         /// <summary>
-        /// Return the path to the file that this cvs object is controlling.  In
+        /// Return the path to the file that this cvs object is managing.  In
         ///     most cases this is just the full path to the object, however one
         ///     known exception would be the Entry which would have file information
         ///     stripped from the full path.
@@ -96,23 +97,39 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         public DirectoryInfo ParentDir {
-            get {return this.cvsFile.Directory;}
+            get {return this._cvsFile.Directory;}
         }
 
         /// <summary>
         /// The full path to the file or directory that this object is managing.
         /// </summary>
         public virtual String FullPath {
-            get {return this.cvsFile.FullName;}
-            set {this._fullPath = value;}
+            get {return this._managedPath.FullName;}
+            set {
+                if (value.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString())) {
+                    this._managedPath = new DirectoryInfo(value);
+                } else {
+                    this._managedPath = new FileInfo(value);
+                }
+            }
         }
 
         /// <summary>
-        /// The full path to the file as a <see cref="FileInfo"/> object.
+        /// Full path to the <see cref="FileInfo"/> or <see cref="DirectoryInfo"/> object being
+        /// managed by cvs.
+        /// </summary>
+        public FileSystemInfo ManagedPath {
+            get { return this._managedPath; }
+            set { this._managedPath = value; }
+        }
+
+        /// <summary>
+        /// The full path to the management file as a <see cref="FileInfo"/> object.  This would 
+        /// correspond to the CVS\Entries, CVS\Root or the CVS\Repository files.
         /// </summary>
         public FileInfo CvsFile {
-            get {return this.cvsFile;} 
-            set {this.cvsFile = value;}
+            get {return this._cvsFile;} 
+            set {this._cvsFile = value;}
         }
 
         /// <summary>
@@ -137,9 +154,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     cvs management file.</param>
 		public AbstractCvsFile(FileInfo cvsFile, String fileContents) {
             this.fileContents = fileContents;
-
-            this.cvsFile = cvsFile;
-
+            this._cvsFile = cvsFile;
+            // the managed path for a CVS\Repository would be the directory above 
+            // the management folder; so:
+            // project/CVS/Repository         would manage the file
+            // project
+            this.ManagedPath = cvsFile.Directory.Parent;
             this.Parse(fileContents);
 		}
 

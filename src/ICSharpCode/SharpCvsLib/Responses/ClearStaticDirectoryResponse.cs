@@ -27,12 +27,10 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
-//
-//    Author:     Mike Krueger,
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
 using System;
+using System.IO;
 using System.Text;
 
 using ICSharpCode.SharpCvsLib.Attributes;
@@ -45,17 +43,21 @@ using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
     /// <summary>
+    /// <para>
     /// Handle a clear static directory response.
-    ///
+    /// <br/>
+    /// <code>
     /// from: http://www.loria.fr/~molli/cvs/doc/cvsclient_5.html
     ///    Clear-static-directory pathname \n
-    ///
+    /// </code>
+    /// </para>
+    /// <para>
     /// This instructs the client to un-set the Entries.Static flag,
     /// which it should then send back to the server in a Static-directory
     /// request whenever the directory is operated on. pathname ends in a
     /// slash; its purpose is to specify a directory, not a file within a
     /// directory.
-    ///
+    /// </para>
     /// </summary>
     [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
     [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
@@ -75,9 +77,15 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             PathTranslator pathTranslator = new PathTranslator (Services.Repository, reposPath);
 
             Factory factory = new Factory();
-            Entry entry = 
-                (Entry)factory.CreateCvsObject(pathTranslator.CurrentDir, Entry.FILE_NAME, 
-                Entry.CreateEntry(pathTranslator.CurrentDir).FileContents);
+
+            Entry entry;
+            if (localPath.EndsWith("/")) {
+                entry = Entry.CreateEntry(new DirectoryInfo(System.IO.Path.Combine(
+                    pathTranslator.LocalPath, localPath)));
+            } else {
+                entry = Entry.CreateEntry(new FileInfo(System.IO.Path.Combine(
+                    pathTranslator.LocalPath, localPath)));
+            }
             // the root module directory does not get a cvs Entries line.
             // TODO: There has to be a cleaner way to do this...
             if (Services.Repository.WorkingPath.Length <= entry.Path.Length) {

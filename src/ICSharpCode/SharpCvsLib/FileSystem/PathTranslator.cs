@@ -138,9 +138,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <value><code>true</code> if the directory seperator character is a '\'; otherwise
         ///     <code>false</code>.</value>
         public static bool IsWin32 {
-            get {
-                return Path.DirectorySeparatorChar.Equals('\\');
-            }
+            get { return Path.DirectorySeparatorChar.Equals('\\'); }
         }
 
         /// <summary>
@@ -148,9 +146,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         /// <value><code>true</code> if the OS is case sensitive; otherwise <code>false</code>.</value>
         public static bool IsCaseSensitive {
-            get {
-                return !IsWin32;
-            }
+            get { return !IsWin32; }
         }
 
         /// <summary>

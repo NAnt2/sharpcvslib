@@ -101,6 +101,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Assertions\Assert.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Attributes\AuthorAttribute.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -232,6 +237,11 @@
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Config\Logging\LogConfig.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Exceptions\AssertionException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
