@@ -34,11 +34,14 @@
 
 using System;
 using System.Collections;
+using System.IO;
 
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.FileSystem;
+
+using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Commands {
 
@@ -48,7 +51,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 /// </summary>
 public class LogCommand : ICommand
 {
-    private WorkingDirectory workingdirectory;
+    private ILog LOGGER =
+        LogManager.GetLogger (typeof (LogCommand));
+    
+    private WorkingDirectory workingDirectory;
     private string directory;
     private Entry entry;
     
@@ -162,7 +168,7 @@ public class LogCommand : ICommand
     /// </summary>
     public void AddInclusiveDateStart(DateTime startDate) {
         DateTime dummyDate = new DateTime();
-        AddDateRange(true, startDate, false, dummyDate, "<");
+        AddDateRange(true, startDate, false, dummyDate, "<=");
     }
     
     /// <summary>
@@ -173,7 +179,7 @@ public class LogCommand : ICommand
     /// </summary>
     public void AddInclusiveDateEnd(DateTime endDate) {
         DateTime dummyDate = new DateTime();
-        AddDateRange(false, dummyDate, true, endDate, "<");
+        AddDateRange(false, dummyDate, true, endDate, "<=");
     }
     
     /// <summary>
@@ -192,7 +198,7 @@ public class LogCommand : ICommand
                               bool hasEndDate, DateTime endDate, 
                               string separator) {
         string dateArg = "";
-	    string dateFormat = "dd MMM yyyy";
+        string dateFormat = "dd MMM yyyy HH:mm:ss zz00";
 
         if (hasStartDate || hasEndDate) {
             if (hasStartDate) {
@@ -209,12 +215,13 @@ public class LogCommand : ICommand
     /// <summary>
     /// Constructor
     /// </summary>
-    /// <param name="workingdirectory"></param>
-    /// <param name="directory"></param>
-    /// <param name="entry"></param>
-    public LogCommand(WorkingDirectory workingdirectory, string directory, Entry entry)
+    /// <param name="workingDirectory"></param>
+    /// <param name="directory">relative to the root of the working directory.
+    /// null for the entire working directory</param>
+    /// <param name="entry">null for all files</param>
+    public LogCommand(WorkingDirectory workingDirectory, string directory, Entry entry)
     {
-        this.workingdirectory    = workingdirectory;
+        this.workingDirectory = workingDirectory;
         this.directory = directory;
         this.entry = entry;
     }
@@ -225,7 +232,33 @@ public class LogCommand : ICommand
     /// <param name="connection"></param>
     public void Execute(ICommandConnection connection)
     {
-        connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository + directory));
+        Folder[] _foldersToUpdate = (Folder[])workingDirectory.FoldersToUpdate.Clone ();
+        foreach (Folder folder in _foldersToUpdate) {
+            this.SetDirectory (connection, folder);
+            
+            foreach (DictionaryEntry de in folder.Entries) {
+                Entry entry = (Entry)de.Value;
+                // Only submit the entry information if the entry is not
+                // a directory.
+                if (!entry.IsDirectory) {
+                    DateTime old = entry.TimeStamp;
+                    entry.TimeStamp = entry.TimeStamp;
+
+                    String fileName = Path.Combine(entry.Path, entry.Name);
+                    this.SendEntryRequest (connection, entry);
+                }
+            }
+        }
+        
+        string relativeDirectory;
+        if (this.directory != null && this.directory.Length > 0) {
+            relativeDirectory = this.directory;
+        } else {
+            relativeDirectory = workingDirectory.WorkingDirectoryName;
+        }
+        // Note: don't use Path.Combine() as the separator must be "/"
+        string repositoryDir = workingDirectory.CvsRoot.CvsRepository + "/" + relativeDirectory;
+        connection.SubmitRequest(new DirectoryRequest(relativeDirectory, repositoryDir));
 
         if (defaultBranch) {
             connection.SubmitRequest(new ArgumentRequest("-b"));
@@ -247,8 +280,55 @@ public class LogCommand : ICommand
             connection.SubmitRequest(new ArgumentRequest(dateArg));
         }
 
-        connection.SubmitRequest(new ArgumentRequest(entry.Name));
-        connection.SubmitRequest(new LogRequest());
+        if (this.entry != null) {
+            connection.SubmitRequest (new EntryRequest (this.entry));
+        }
+        connection.SubmitRequest (new LogRequest());
     }
+ 
+    private void SetDirectory (ICommandConnection connection,
+                            Folder folder) {
+        String absoluteDir =
+            connection.Repository.CvsRoot.CvsRepository + "/" +
+            folder.Repository.FileContents;
+
+        try {
+            connection.SubmitRequest(new DirectoryRequest(folder.Repository.FileContents,
+                                    absoluteDir));
+        }
+        catch (Exception e) {
+            String msg = "Exception while submitting directory request.  " +
+                        "path=[" + folder.Repository.FileContents + "]";
+            LOGGER.Error (e);
+        }
+    }
+
+    private void SendEntryRequest (ICommandConnection connection,
+                            Entry entry) {
+        bool fileExists;
+        DateTime old = entry.TimeStamp;
+        entry.TimeStamp = entry.TimeStamp;
+        try {
+            fileExists = File.Exists (entry.Filename);
+        }
+        catch (Exception e) {
+            LOGGER.Error (e);
+            fileExists = false;
+        }
+
+        connection.SubmitRequest (new EntryRequest (entry));
+        if (fileExists) {
+            if (File.GetLastAccessTime(entry.Filename) !=
+                entry.TimeStamp.ToUniversalTime ()) {
+                connection.SubmitRequest(new ModifiedRequest(entry.Name));
+            } else {
+                connection.SubmitRequest(new UnchangedRequest(entry.Name));
+            }
+        }
+
+        entry.TimeStamp = old;
+    }
+
 }
 }
+
