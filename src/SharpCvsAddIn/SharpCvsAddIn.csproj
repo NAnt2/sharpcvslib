@@ -109,6 +109,12 @@
                     Project = "{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
                 />
+                <Reference
+                    Name = "VSLangProj"
+                    AssemblyName = "VSLangProj"
+                    HintPath = "..\..\..\..\..\Program Files\Microsoft Visual Studio .NET 2003\Common7\IDE\PublicAssemblies\VSLangProj.dll"
+                    AssemblyFolderKey = "hklm\publicassemblies"
+                />
             </References>
         </Build>
         <Files>
@@ -272,6 +278,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "Events\ProjectFileEvents.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Events\SolutionEvents.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -286,7 +297,17 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "UI\StatusGraph.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "UI\TreeView.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "Utilities\dag.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

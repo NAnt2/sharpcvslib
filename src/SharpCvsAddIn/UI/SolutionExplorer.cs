@@ -16,7 +16,7 @@ namespace SharpCvsAddIn.UI
 	/// <summary>
 	/// Summary description for SolutionExplorer.
 	/// </summary>
-	public class SolutionExplorer
+	public class SolutionExplorer : ISolutionExplorer
 	{
 		//private UIHierarchy uiHierarchy;
 		private const string VSNETWINDOW = "wndclass_desked_gsk";
@@ -32,11 +32,22 @@ namespace SharpCvsAddIn.UI
 		TreeView treeview_;
 		ImageList statusImageList_;
 		IntPtr originalImageList_ = IntPtr.Zero;
+		IStatusNode solutionItems_ = null;
 
 		public SolutionExplorer(Controller controller)
 		{
 			controller_ = controller;
 
+		}
+
+		public TreeView TreeView
+		{
+			get{ return treeview_; }
+		}
+
+		public void Refresh()
+		{
+			solutionItems_ = StatusGraph.GetRoot( controller_ );
 		}
 
 		/// <summary>
@@ -139,7 +150,17 @@ namespace SharpCvsAddIn.UI
 
 			this.statusImageList_ = new ImageList();
 			this.statusImageList_.ImageSize = new Size(7, 16);
-			this.statusImageList_.Images.AddStrip( statusImages );   
+			this.statusImageList_.Images.AddStrip( statusImages );  
+			originalImageList_ = treeview_.StatusImageList;
+			treeview_.StatusImageList = this.statusImageList_.Handle;
+		}
+
+		public void Cleanup()
+		{
+			if( originalImageList_ != IntPtr.Zero )
+			{
+				treeview_.StatusImageList = originalImageList_ ;
+			}
 		}
 
 

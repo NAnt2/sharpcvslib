@@ -34,7 +34,7 @@ namespace SharpCvsAddIn
 
 			outputWriter_ = new OutputPaneWriter( application_, this.GetLocalizedString("OUTPUT_WINDOW_PANE") );
 
-			solutionExplorer_.Initialize();
+			//solutionExplorer_.Initialize();
 		}
 
 
@@ -56,17 +56,23 @@ namespace SharpCvsAddIn
 
 		}
 
+		/// <summary>
+		/// Called when the solution is loaded. It will do the work of getting status for all of the 
+		/// items under cvs control and updating the solution explorer
+		/// </summary>
 		public void CacheSolutionState()
 		{
 			addInLoadedForSolution_ = true;
+			this.SolutionExplorer.Refresh();
 
-			statusCache_ = new FileStatusCache( application_ );
+			//statusCache_ = new FileStatusCache( application_ );
 			
 		}
 
 		public void SolutionCleanup()
 		{
 			solutionOpen_ = false;
+			this.SolutionExplorer.Cleanup();
 		}
 
 		public Model Model { get{ return model_; } }
@@ -99,8 +105,7 @@ namespace SharpCvsAddIn
 		{
 			get
 			{
-				// TODO:  Add AddInController.SolutionExplorer getter implementation
-				return null;
+				return solutionExplorer_;
 			}
 		}
 

@@ -3,22 +3,28 @@
  * *******************************************************************************************/
 using EnvDTE;
 using System.Collections;
+using SharpCvsAddIn.UI;
 
 namespace SharpCvsAddIn
 {
-    public interface ISolutionExplorer : ISelectionContainer
+    public interface ISolutionExplorer //: ISelectionContainer
     {
+		TreeView TreeView { get; }
         /// <summary>
         /// Refreshes all subnodes of a specific project.
         /// </summary>
         /// <param name="project"></param>
-        void Refresh( Project project );
+        //void Refresh( Project project );
+
+		void Refresh();
+		void Initialize();
+		void Cleanup();
 
         /// <summary>
         /// Updates the status of the given item.
         /// </summary>
         /// <param name="item"></param>
-        void Refresh( ProjectItem item );
+       // void Refresh( ProjectItem item );
 
         /// <summary>
         /// Retrieves the resources associated with a project item.
@@ -26,7 +32,7 @@ namespace SharpCvsAddIn
         /// <param name="item"></param>
         /// <param name="recursive"></param>
         /// <returns></returns>
-        IList GetItemResources( ProjectItem item, bool recursive );
+        //IList GetItemResources( ProjectItem item, bool recursive );
 
         /// <summary>	 	
         /// Visits all the selected nodes.	 	
@@ -38,11 +44,11 @@ namespace SharpCvsAddIn
         /// Returns the selected ProjectItem
         /// </summary>
         /// <returns></returns>
-        ProjectItem GetSelectedProjectItem();
+        //ProjectItem GetSelectedProjectItem();
 
         /// <summary>
         /// Notify the Solution Explorer to unload.
         /// </summary>
-        void Unload();
+        //void Unload();
     }
 }
