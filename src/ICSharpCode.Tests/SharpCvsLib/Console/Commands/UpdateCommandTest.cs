@@ -59,8 +59,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <summary>
         ///     Constructory for test case.
         /// </summary>
-        public UpdateCommandTest ()
-        {
+        public UpdateCommandTest () {
         }
 
         /// <summary>
@@ -72,55 +71,64 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             Directory.CreateDirectory( settings.Config.LocalPath);
             Environment.CurrentDirectory = settings.Config.LocalPath;
 
-            String commandLine = "-d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib up sharpcvslib";
+            String commandLine = "-d" + settings.Config.Cvsroot + " up " +
+                settings.Config.Module;
             String [] commandLineArgs = commandLine.Split(' ');
-            // Test Creating a UpdateCommand object
+            // Test Creating a consoleMain object to test the UpdateCommand object
             ConsoleMain consoleMain = new ConsoleMain();
             consoleMain.Execute(commandLineArgs);
-            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
+            Assertion.AssertNotNull ("Should have a consoleMain object.", consoleMain);
         }
         /// <summary>
         ///     Update files based on revision specified in -r option.
         ///
         /// </summary>
         [Test]
-        public void MinusrOptionUpdateFilesBasedOnRevision (){
-            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-            String repository = "sharpcvslib";
-            String options = "-rv0_3_1 ";
-            // Test Creating a UpdateCommand object
-            UpdateCommand updateCommand = new UpdateCommand(root, repository, options);
-            Assertion.AssertNotNull ("Should have a command object.", updateCommand);
-            //updateCommand.Execute();
+        public void MinusrOptionUpdateFilesBasedOnRevision () {
+            Directory.CreateDirectory( settings.Config.LocalPath);
+            Environment.CurrentDirectory = settings.Config.LocalPath;
+
+            String commandLine = "-d" + settings.Config.Cvsroot + " up -r " + 
+                                 settings.Config.Tag1 + " " + settings.Config.Module;
+            String [] commandLineArgs = commandLine.Split(' ');
+            // Test Creating a consoleMain object to test the UpdateCommand object
+            ConsoleMain consoleMain = new ConsoleMain();
+            Assertion.AssertNotNull ("Should have a consoleMain object.", consoleMain);
+            consoleMain.Execute(commandLineArgs);
         }
         /// <summary>
         ///     Update files to specified local location instead of current local location
         ///     with the -d option
         /// </summary>
         [Test]
-        public void MinusdOptionUpdateFileIntoDir (){
-            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-            String repository = "sharpcvslib";
-            String options = "-dnewlocation ";
-            // Test Creating a UpdateCommand object
-            UpdateCommand updateCommand = new UpdateCommand(root, repository, options);
-            Assertion.AssertNotNull ("Should have a command object.", updateCommand);
-            //updateCommand.Execute();
-            //Assertion.Assert(Directory.Exists("newlocation"));
+        public void MinusdOptionUpdateFileIntoDir () {
+            Directory.CreateDirectory( settings.Config.LocalPath);
+            Environment.CurrentDirectory = settings.Config.LocalPath;
+            String commandLine = "-d" + settings.Config.Cvsroot + " up -d newlocation " +
+                settings.Config.Module;
+            String [] commandLineArgs = commandLine.Split(' ');
+            // Test Creating a ConsoleMain object to test the UpdateCommand object
+            ConsoleMain consoleMain = new ConsoleMain();
+            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
+            consoleMain.Execute(commandLineArgs);
+            Assertion.Assert(Directory.Exists(Path.Combine(settings.Config.LocalPath, "newlocation")));
         }
         /// <summary>
         ///     Update files no earlier than the specified Date 
         ///     with the -D option
         /// </summary>
         [Test]
-        public void MinusDOptionUpdateByCertainDate (){
-            String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-            String repository = "sharpcvslib";
-            String options = "-D01.28.03 ";
-            // Test Creating a UpdateCommand object
-            UpdateCommand updateCommand = new UpdateCommand(root, repository, options);
-            Assertion.AssertNotNull ("Should have a command object.", updateCommand);
-            //updateCommand.Execute();
+        public void MinusDOptionUpdateByCertainDate () {
+            Directory.CreateDirectory( settings.Config.LocalPath);
+            Environment.CurrentDirectory = settings.Config.LocalPath;
+            String commandLine = "-d" + settings.Config.Cvsroot + " up -D 01.28.03 " +
+                                  settings.Config.Module;
+            String [] commandLineArgs = commandLine.Split(' ');
+           
+            // Test Creating a ConsoleMain object to test the UpdateCommand object
+            ConsoleMain consoleMain = new ConsoleMain();
+            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
+            consoleMain.Execute( commandLineArgs);
             // Find a file that should exist 
             //Assertion.Assert ("Should have found the update file.  file=[" +
             //    checkFile + "]", File.Exists (checkFile));
