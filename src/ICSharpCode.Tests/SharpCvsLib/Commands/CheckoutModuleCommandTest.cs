@@ -197,7 +197,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             String tagFile = 
                 Path.Combine (Path.Combine (TestConstants.MODULE, manager.CVS), Tag.FILE_NAME);
             Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
-                              !Directory.Exists (tagFile))); 
+                              !Directory.Exists (tagFile)); 
         }
         
         /// <summary>
@@ -205,9 +205,9 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         [TearDown]
         public void TearDown () {
-            if (Directory.Exists(TestConstants.LOCAL_PATH)) {
-                Directory.Delete (TestConstants.LOCAL_PATH, true);
-            }
+//            if (Directory.Exists(TestConstants.LOCAL_PATH)) {
+//                Directory.Delete (TestConstants.LOCAL_PATH, true);
+//            }
         }
     }
 }

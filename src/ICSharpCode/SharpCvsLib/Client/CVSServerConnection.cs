@@ -105,7 +105,10 @@ namespace ICSharpCode.SharpCvsLib.Client {
 	        if (null == config || 0 == config.AuthSleep) {
 	            this.authSleep = DEFAULT_AUTH_SLEEP;
 	        }
-	        
+
+            if (config.Verbose) {
+                
+            }
 	        
 	    }
 		

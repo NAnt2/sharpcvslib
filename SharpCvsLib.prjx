@@ -103,6 +103,8 @@
     <File name=".\lib\ext\nunit.framework.dll" subtype="Code" buildaction="Nothing" dependson="" data="" />
     <File name=".\src\ICSharpCode\SharpCvsLib\Responses\SetStickyResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode\SharpCvsLib\FileSystem\Tag.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode\SharpCvsLib\Requests\RequestMessageEventHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode\SharpCvsLib\Requests\RequestMessageEventArgs.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto=".\lib\ICSharpCode.SharpZipLib.dll" localcopy="True" />

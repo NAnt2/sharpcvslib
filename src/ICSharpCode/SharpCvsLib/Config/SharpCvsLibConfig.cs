@@ -49,8 +49,10 @@ namespace ICSharpCode.SharpCvsLib.Config {
         /// </summary>
         public const String SUB_SECTION = "sharpcvslib-config";
         
-        private int timeout;
-        private int authSleep;
+        int timeout;
+        int authSleep;
+        
+        bool verbose = false;
         
         /// <summary>
         ///     The timeout value for the cvs server connection.
@@ -70,6 +72,15 @@ namespace ICSharpCode.SharpCvsLib.Config {
         public int AuthSleep {
             get {return this.authSleep;}
             set {this.authSleep = value;}
+        }
+        
+        /// <summary>
+        ///     Set to <code>true</code> if the request/ response commands should
+        ///         be sent to a log file.
+        /// </summary>
+        public bool Verbose {
+            get {return this.verbose;}
+            set {this.verbose = value;}
         }
         
     }
