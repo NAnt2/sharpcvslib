@@ -1,0 +1,24 @@
+<project name="astyle" default="style">
+    <property name="base.dir" value="e:/test/testing-astyle" />
+    <property name="src.dir" value="${base.dir}/src" />
+
+    <target name="style">
+        <astyle program="${base.dir}tools/astyle/astyle.exe"
+                options-file="${base.dir}/tools/astyle-options.astylerc">
+            <sources>
+                <includes name="${src.dir}/**.cs" />
+            </sources>
+        </astyle>  
+        <!-- OPTIONAL!!!  Remove all of the "orig" files from the directory.  
+            You may want to compile your project first before you do this. 
+        <call target="remove.orig.files" />
+        -->
+    </target>
+    <target name="remove.orig.files" />
+       <delete>
+            <fileset>
+                <includes name="${src.dir}/**.orig"/>
+            </fileset>
+        </delete>
+    </target>    
+</project>
