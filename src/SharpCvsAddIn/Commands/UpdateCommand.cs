@@ -43,6 +43,8 @@ namespace SharpCvsAddIn.Commands
 		private void OnUpdateComplete( object sender, object job )
 		{
 			log_.Debug( string.Format("Job {0} is complete", ((IJob)job).Name ));
+			CvsUpdateFolderJob updateJob = (CvsUpdateFolderJob)job;
+			updateJob.FinishJob();			
 		}
 
 	}

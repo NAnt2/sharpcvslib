@@ -26,6 +26,23 @@ namespace SharpCvsAddIn.Jobs
 			password_ = password;
 		}
 
+		public void FinishJob()
+		{
+			log_.Debug( "called finish job" );
+
+			if( exception_ == null )
+			{
+				controller_.SolutionExplorer.Refresh();
+			}
+			else
+			{
+				log_.Error( "Exception in FinishJob", exception_ );
+				controller_.UIShell.ExceptionMessage( 
+					string.Format(controller_.GetLocalizedString("MSGBOX_EXCEPTION_CVS_UPDATE"), 
+					exception_.Message ));
+			}
+		}
+
 		#region IJob Members
 
 		public string Name

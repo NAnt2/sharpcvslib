@@ -52,7 +52,20 @@ namespace SharpCvsAddIn.UI
 
 		public void Refresh()
 		{
-			root_ = StatusGraph.GetRoot( controller_ );
+			treeview_.LockWindowUpdate(true);
+			try
+			{
+				root_ = StatusGraph.GetRoot( controller_ );
+			}
+			catch( Exception e )
+			{
+				log_.Error( "An exception was thrown while updating the solution explorer", e );
+				controller_.UIShell.ExceptionMessage(
+					string.Format(controller_.GetLocalizedString("MSGBOX_EXCEPTION_SOLUTION_EXPLORER"),
+					e.Message ));
+			}
+
+			treeview_.LockWindowUpdate(false);
 		}
 
 		/// <summary>
