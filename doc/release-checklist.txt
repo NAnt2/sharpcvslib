@@ -1,0 +1,56 @@
+Steps to perform in a sf.net release:
+-------------------------------------
+
+1) Change the version in the SharpCvsLib.build directory to the target for the release version.
+	- eg) currently this is release 0.3.5
+
+2) Change the version in the AssemblyInfo.cs file located in the directory:
+	+ sharpcvslib
+		+ src
+ 			+ ICSharpCode
+				+ SharpCvsLib
+					- AssemblyInfo.cs **** Change ME!! ****
+
+3) Run the nant build with no target specified.  This will run the build and execute the unit tests.  
+	- If the tests fail then you are not ready for a release.
+	NOTE: There are problems with connection timeouts.  
+		- If you notice that your test runs well sometimes and not another then please test against your 
+			local repository.  
+		- Better yet if you know a safe way to fix this (by safe I mean not looping through an authorization 
+			routine, that could lead to account lockouts) please email me the fix (Re: Bug # 758445).
+
+4) Run the nant target dist.  This will perform the following operations:
+	- Build the project and tests
+	- Copy the project files and the test files to the dist directory
+	- Create 2 zip files
+		a) ICSharpCode.SharpCvsLib-[version-number]-src.zip
+		b) ICSharpCode.SharpCvsLib-[version-number]-bin.zip
+
+5) Upload these releases files to sf.net
+	a) Change to the (local) directory that the dist has put the zip files in:
+		>> cd [base.dir]/dist/[version-number]/
+
+	b) login to the sf.net anonymous ftp:
+		>> ftp upload.sourceforge.net
+
+		-- username: anonymous
+		-- password: your-email-address@right-here.com
+
+	c) switch the transport type to binary
+		>> binary
+	
+	d) change directory to the incoming folder
+		>> cd /incoming
+
+	e) upload the source release
+		>> put ICSharpCode.SharpCvsLib-[version-number]-src.zip
+
+	f) upload the binary release
+		>> put ICSharpCode.SharpCvsLib-[version-number]-bin.zip
+
+	g) terminate the ftp connection
+		>> bye
+
+6) Update the file release information and attach the uploaded files to the release.
+	- see sf.net to complete this task:
+		https://sourceforge.net/docman/display_doc.php?docid=6445&group_id=1
