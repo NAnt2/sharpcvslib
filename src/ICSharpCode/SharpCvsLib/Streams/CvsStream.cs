@@ -231,7 +231,6 @@ namespace ICSharpCode.SharpCvsLib.Streams {
                 }
                 builder.Append((char)i);
             }
-            ResponseMessage.SendMessage(builder.ToString());
             return builder.ToString();
         }
         
@@ -267,7 +266,6 @@ namespace ICSharpCode.SharpCvsLib.Streams {
                     break;
                 }
             }
-            ResponseMessage.SendMessage(builder);
             return builder.ToString();
         }
                 
