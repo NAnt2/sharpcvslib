@@ -189,16 +189,20 @@
         <call target="dist.clean" />
         <call target="build.all" failonerror="false" />
         <call target="run-tests-sample" failonerror="false" />
+        
         <mkdir dir="${dir.dist}/bin" />
-        <mkdir dir="${dir.dist}/src" />    
+        <mkdir dir="${dir.dist}/bin/doc"/>
+        <mkdir dir="${dir.dist}/src" /> 
+        <mkdir dir="${dir.dist}/src/doc"/>
         
         <!-- Generate the net doc and send it to the dist folder -->
         <call target="netdoc" />
         <!-- Package the existing html docs and put them in the doc folder too
             this will be used for both the source and binary release -->
-        <copy todir="${dir.dist}/doc">
+        <copy todir="${dir.dist}/doc" flatten="true">
             <fileset basedir="${dir.doc}">
-                <includes name="**/*"/>
+                <includes name="**/*.chm"/>
+                <includes name="license.html"/>
             </fileset>
         </copy>
         <!-- Copy the binary and config files from the bin directory -->
@@ -209,9 +213,11 @@
                 <includes name="${dir.bin}/*.config"/>
             </fileset>
         </copy>
-        <copy todir="${dir.dist}/bin">
-            <fileset basedir="${dir.dist}">
-                <includes name="doc**"/>
+        
+        <copy todir="${dir.dist}/bin/doc" flatten="true">
+            <fileset basedir="${dir.dist}/doc">
+                <includes name="**/*.chm"/>
+                <includes name="license.html"/>
             </fileset>
         </copy>
         
@@ -244,16 +250,18 @@
                 <excludes name="**/obj**" />
             </fileset>
         </copy>
-        <copy todir="${dir.dist}/src">
-            <fileset basedir="${dir.dist}">
-                <includes name="doc**"/>
+
+        <copy todir="${dir.dist}/src/doc" flatten="true">
+            <fileset basedir="${dir.dist}/doc">
+                <includes name="**/*.chm"/>
+                <includes name="license.html"/>
             </fileset>
         </copy>
 
         <delete dir="${dir.dist}/doc" />
     </target>
     
-    <target name="integration" depends="dist">
+    <target name="integration" depends="src.update, dist">
         <copy todir="${ccnet.log.dir}/${label-to-apply}">
             <fileset basedir="${dir.dist}">
                 <includes name="**"/>
