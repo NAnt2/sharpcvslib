@@ -80,6 +80,26 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
         }
 
+        public static Tag Load (DirectoryInfo cvsDir) {
+            return Load (
+                new FileInfo(
+                System.IO.Path.Combine(cvsDir.FullName, Tag.FILE_NAME)));
+        }
+
+        /// <summary>
+        /// Load the root file.
+        /// </summary>
+        /// <param name="rootFile"></param>
+        /// <returns></returns>
+        public static Tag Load (FileInfo tagFile) {
+            if (tagFile.Name != Tag.FILE_NAME) {
+                throw new ArgumentException(string.Format("Not a valid Tag file, {0}",
+                    tagFile.FullName));
+            }
+            Manager manager = new Manager(tagFile.DirectoryName);
+            return manager.FetchTag(tagFile.DirectoryName);
+        }
+
         /// <summary>
         /// Parse the contents of the cvs file.
         /// </summary>

@@ -106,6 +106,34 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             get {return this.moduleName;}
         }
 
+        public static Repository Load (DirectoryInfo cvsDir) {
+            if (cvsDir.Name != "CVS") {
+                throw new ArgumentException("Not a valid CVS directory", "cvsDir");
+            }
+
+            return Load(new FileInfo(System.IO.Path.Combine(
+                cvsDir.FullName, Repository.FILE_NAME)));
+        }
+
+        public static Repository Load (FileInfo repositoryFile) {
+            if (repositoryFile.Name != Repository.FILE_NAME) {
+                throw new ArgumentException(string.Format("Not a Repository file.", repositoryFile));
+            }
+
+            if (!repositoryFile.Exists) {
+                throw new CvsFileNotFoundException(
+                    string.Format("File does not exist {0}.", repositoryFile.FullName));
+            }
+            string fileContents;
+
+            using (StreamReader reader = new StreamReader(repositoryFile.FullName)) {
+                fileContents = reader.ReadToEnd();
+            }
+
+            return new Repository(repositoryFile, fileContents);
+            
+        }
+
         /// <summary>
         /// Format the string as a repository entry.  Remove any trailing
         ///     slashes from the line.

@@ -89,7 +89,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <summary>
         /// The full path to the file or directory that this object is managing.
         /// </summary>
-        public virtual String FullPath {
+        public override String FullPath {
             get {
                 string fullPath = System.IO.Path.Combine(
                     System.IO.Path.GetDirectoryName(
@@ -300,17 +300,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 System.IO.Path.Combine(cvsPath, "CVS")
             , Entry.FILE_NAME)), fileContents) {
  
-        }
-
-        /// <summary>
-        /// Load file using the current directory, if the file cannot be found
-        /// in the current directory appends cvs and tries again.
-        /// </summary>
-        public Entry Load() {
-            FileInfo entryPath = new FileInfo(
-                System.IO.Path.Combine(System.IO.Path.Combine(Environment.CurrentDirectory, "CVS"), 
-                "Entries"));
-            return new Entry(entryPath.DirectoryName, LoadFile(entryPath));
         }
 
         /// <summary>

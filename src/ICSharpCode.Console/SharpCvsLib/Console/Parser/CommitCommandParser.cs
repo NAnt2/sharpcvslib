@@ -208,28 +208,18 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 Folder folder;
                 if (!folders.Contains(file.DirectoryName)) {
                     folder = new Folder();
-                    string cvsFolder = Path.Combine(file.DirectoryName, "CVS");
-                    folder.Repository = 
-                        manager.FetchRepository(cvsFolder);
-                    folder.Root = 
-                        manager.FetchRoot(cvsFolder);
+                    DirectoryInfo cvsFolder = 
+                        new DirectoryInfo(Path.Combine(file.DirectoryName, "CVS"));
+                    folder.Repository = Repository.Load(cvsFolder);
+                    folder.Root = Root.Load(cvsFolder);
                     try {
-                        folder.Tag = 
-                            manager.FetchTag(cvsFolder);
+                        folder.Tag = Tag.Load(cvsFolder);
                     } catch (CvsFileNotFoundException) {
                         // ignore, tag missing normal
                     }
+                    folder.Entries = Entries.Load(cvsFolder);
                     folders.Add(file.DirectoryName, folder);
                 } 
-                else {
-                    folder = folders[file.DirectoryName];
-                }
-                if (!folder.Entries.Contains(file.FullName)) {
-                    Entry entry = Entry.CreateEntry(file);
-                    folder.Entries.Add (file.FullName, entry);
-                } else {
-                    folder.Entries[file.FullName] = Entry.CreateEntry(file);
-                }
             }
             return folders;
         }

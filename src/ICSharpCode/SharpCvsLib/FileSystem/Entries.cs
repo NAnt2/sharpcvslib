@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.IO;
 
 using log4net;
 
@@ -96,6 +97,25 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         /// </summary>
         public ICollection Values {
             get {return this.Dictionary.Values;}
+        }
+
+        public static Entries Load(DirectoryInfo cvsDir) {
+            return Load(new FileInfo(
+                System.IO.Path.Combine(cvsDir.FullName, Entry.FILE_NAME)));
+        }
+
+        /// <summary>
+        /// Load the given string.
+        /// </summary>
+        /// <param name="fileContents">Contents of the entries file.</param>
+        /// <returns></returns>
+        public static Entries Load (FileInfo cvsFile) {
+            return LoadImpl(cvsFile);
+        }
+
+        private static Entries LoadImpl (FileInfo cvsFile) {
+            Manager manager = new Manager(cvsFile.DirectoryName);
+            return manager.FetchEntries(cvsFile.FullName);
         }
 
         /// <summary>

@@ -80,6 +80,26 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
         }
 
+        public static Root Load (DirectoryInfo cvsDir) {
+            return Load (
+                new FileInfo(
+                System.IO.Path.Combine(cvsDir.FullName, Root.FILE_NAME)));
+        }
+
+        /// <summary>
+        /// Load the root file.
+        /// </summary>
+        /// <param name="rootFile"></param>
+        /// <returns></returns>
+        public static Root Load (FileInfo rootFile) {
+            if (rootFile.Name != Root.FILE_NAME) {
+                throw new ArgumentException(string.Format("Not a valid Root file, {0}",
+                    rootFile.FullName));
+            }
+            Manager manager = new Manager(rootFile.DirectoryName);
+            return manager.FetchRoot(rootFile.DirectoryName);
+        }
+
         /// <summary>
         /// Parse the contents of the cvs file.
         /// </summary>
