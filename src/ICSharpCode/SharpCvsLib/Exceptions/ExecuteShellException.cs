@@ -57,5 +57,15 @@ namespace ICSharpCode.SharpCvsLib.Exceptions {
         public ExecuteShellException(string shell) : base(shell) {
             this.shell = shell;
         }
+
+        /// <summary>
+        /// Create a new shell execute exception object.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="exception"></param>
+        public ExecuteShellException (string message, Exception exception)
+            : base(message, exception) {
+
+        }
     }
 }

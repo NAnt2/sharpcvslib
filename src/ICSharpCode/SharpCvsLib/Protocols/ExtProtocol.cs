@@ -49,6 +49,9 @@ namespace ICSharpCode.SharpCvsLib.Protocols
 	/// Handle connect and authentication for the pserver protocol.
 	/// </summary>
 	public class ExtProtocol : AbstractProtocol {
+        private const string VERSION_ONE = "-1";
+        private const string VERSION_TWO = "-2";
+
         private readonly ILog LOGGER =
             LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -80,50 +83,87 @@ namespace ICSharpCode.SharpCvsLib.Protocols
 
 
         private void HandleExtAuthentication () {
-            StringBuilder processArgs = new StringBuilder ();
-            processArgs.Append ("-l ").Append (this.Repository.CvsRoot.User);
-            processArgs.Append (" -q ");  // quiet
-            processArgs.Append (" ").Append (this.Repository.CvsRoot.Host);
-            processArgs.Append (" \"cvs server\"");
+            ProcessStartInfo startInfo =
+                this.GetProcessInfo(this.Config.Shell, VERSION_ONE);
+
+
+            startInfo.RedirectStandardError  = true;
+            startInfo.RedirectStandardInput  = true;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.UseShellExecute        = false;
 
             try {
-
-                ProcessStartInfo startInfo =
-                    new ProcessStartInfo(this.Config.Shell, processArgs.ToString ());
-                if (LOGGER.IsDebugEnabled) {
-                    StringBuilder msg = new StringBuilder ();
-                    msg.Append("Process=[").Append(this.Config.Shell).Append("]");
-                    msg.Append("Process Arguments=[").Append(processArgs).Append("]");
-                    LOGGER.Debug(msg);
-                }
-                startInfo.RedirectStandardError  = true;
-                startInfo.RedirectStandardInput  = true;
-                startInfo.RedirectStandardOutput = true;
-                startInfo.UseShellExecute        = false;
-
                 p = new Process();
 
                 p.StartInfo = startInfo;
                 p.Exited += new EventHandler(this.ExitShellEvent);
+
+                LOGGER.Info(string.Format("{0} {1}",
+                    p.StartInfo.FileName, p.StartInfo.Arguments));
+
                 p.Start();
-            } catch (Exception e) {
-                if (LOGGER.IsDebugEnabled) {
-                    LOGGER.Debug(e);
+            } catch (Exception) {
+                try {
+                    p.StartInfo = this.GetProcessInfo(this.Config.Shell, VERSION_TWO);;
+                } catch (Exception e) {
+                    throw new ExecuteShellException(
+                        string.Format("{0} {1}",
+                        this.Config.Shell, p.StartInfo.Arguments), e);
                 }
-                throw new ExecuteShellException(this.Config.Shell + processArgs.ToString ());
             }
             BufferedStream errstream = new BufferedStream(p.StandardError.BaseStream);
-            //inputstream  = new CvsStream(new BufferedStream(p.StandardOutput.BaseStream));
-            //outputstream = new CvsStream(new BufferedStream(p.StandardInput.BaseStream));
             StreamWriter streamWriter  = p.StandardInput;
             StreamReader streamReader = p.StandardOutput;
 
-            //streamWriter.AutoFlush = true;
-            //streamReader.ReadToEnd ();
-            //streamWriter.WriteLine(password);
-
             SetInputStream(new CvsStream (streamReader.BaseStream));
             SetOutputStream(new CvsStream (streamWriter.BaseStream));
+        }
+
+        private ProcessStartInfo GetProcessInfo (string program, string version) {
+            string tProgram = Path.GetFileNameWithoutExtension(program);
+            switch (tProgram) {
+                case "plink": {
+                    return this.GetPlinkProcessInfo(version);
+                }
+                case "ssh": {
+                    return this.GetSshProcessInfo(version);
+                }
+                default:
+                    throw new ArgumentException(string.Format("Unknown ssh program specified ( {0} )",
+                        this.Config.Shell));
+            }
+        }
+
+        private ProcessStartInfo GetPlinkProcessInfo (string version) {
+            string args = string.Format("{0} {1} {2} {3} {4}",
+                version, "-l", this.Repository.CvsRoot.User, 
+                this.Repository.CvsRoot.Host, "\"cvs server\"");
+
+            ProcessStartInfo startInfo =
+                new ProcessStartInfo("plink.exe", args.ToString ());
+
+            startInfo.RedirectStandardError  = true;
+            startInfo.RedirectStandardInput  = true;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.UseShellExecute        = false;
+
+            return startInfo;
+        }
+
+        private ProcessStartInfo GetSshProcessInfo (string version) {
+            string args = string.Format("{0} {1} {2} {3} {4} {5}",
+                version.ToString(), "-l", this.Repository.CvsRoot.User, "-q", 
+                this.Repository.CvsRoot.Host, "\"cvs server\"");
+
+            ProcessStartInfo startInfo =
+                new ProcessStartInfo("ssh.exe", args);
+
+            startInfo.RedirectStandardError  = true;
+            startInfo.RedirectStandardInput  = true;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.UseShellExecute        = false;
+
+            return startInfo;
         }
 
         private void ExitShellEvent(object sender, EventArgs e) {

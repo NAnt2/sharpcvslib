@@ -1178,8 +1178,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             return this.AddCvsPassToPath(new DirectoryInfo(dir));
         }
 
-        public void UpdatePassFile (string thePassword, CvsRoot cvsRoot) {
-            FileInfo passwordFile = this.CvsPassFile;
+        public void UpdatePassFile (string thePassword, CvsRoot cvsRoot, FileInfo cvsPassfile) {
             ArrayList passFileContents = this.ReadPassFile(this.CvsPassFile);
 
             ArrayList newPassFileContents = new ArrayList();
@@ -1208,11 +1207,16 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             if (newRoot) {
                 newPassFileContents.Add(string.Format("{0} {1}", cvsRoot.ToString(),
-                                PasswordScrambler.Scramble(thePassword)));
+                    PasswordScrambler.Scramble(thePassword)));
 
             }
             
             this.WritePassFile(newPassFileContents);
+        }
+
+        public void UpdatePassFile (string thePassword, CvsRoot cvsRoot) {
+            FileInfo passwordFile = this.CvsPassFile;
+            this.UpdatePassFile(thePassword, cvsRoot, passwordFile);
         }
     
         private void WritePassFile(ICollection passFile) {
