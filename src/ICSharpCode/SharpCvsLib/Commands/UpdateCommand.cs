@@ -200,7 +200,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                         new ArgumentRequest (workingDirectory.OverrideDirectory));
                 }
 
-                if (this.Revision != null || this.Revision != string.Empty) {
+                if (this.Revision != null && this.Revision != string.Empty) {
                     connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.REVISION));
                     connection.SubmitRequest(new ArgumentRequest(this.Revision));
                 }

@@ -113,7 +113,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public Tag Tag {
             get {
                 if (null == this.tag) {
-                    this.tag = Tag.Load(this.Path);
+                    try {
+                        this.tag = Tag.Load(this.Path);
+                    } catch (CvsFileNotFoundException) {
+                        // sometimes there isn't a tag, set to null.
+                        this.tag = null;
+                    }
                 }
                 return this.tag;}
             set {this.tag = value;}

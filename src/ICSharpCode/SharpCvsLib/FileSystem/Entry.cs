@@ -457,15 +457,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 this.name = "";
             }
             string[] tokens = line.Split( new char[] { '/' });
-            if (tokens.Length < 6 && !this.isDir) {
-                throw new EntryParseException("not enough tokens in entry line (#" +
-                                            tokens.Length + ")\n" + line);
-            }
-            else if (tokens.Length > 6) {
-                throw new EntryParseException("Too many tokens in entry line." +
-                                            "tokens.Length=[" + tokens.Length + "]" +
-                                            "line=[" + line + "]");
-            }
+            const int TokensExpected = 6;
+            if ((tokens.Length < TokensExpected && !this.isDir) ||
+                tokens.Length > TokensExpected) {
+                string msg = string.Format("Expected {0} tokens in entry line {0}", TokensExpected, line);
+                throw new EntryParseException(msg);
+            } 
 
             name      = tokens[1];
             if (!this.isDir) {
