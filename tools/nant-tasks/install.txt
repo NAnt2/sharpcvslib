@@ -1,5 +1,7 @@
 Tested on nant version - CVS 2003/09/23
-     - If you notice bugs in the sample please file a bug report.
+    - If you can't find a version of nant for this date check here:
+            http://sharpcvslib.sourceforge.net/tools/nant-20030923.zip
+    - If you notice bugs in the sample please file a bug report.
 
 
 Install:
@@ -30,5 +32,7 @@ Install:
             </target>    
         </project>
         
-     3) execute the task by running nant.
-     4) Optionally verify the sources and remove the original files (specified by .orig).
+     3) set the HOME directory to point at a directory containing the .astylerc file
+            which specifies the project style format.
+     4) execute the task by running nant.
+     5) Optionally verify the sources and remove the original files (specified by .orig).
