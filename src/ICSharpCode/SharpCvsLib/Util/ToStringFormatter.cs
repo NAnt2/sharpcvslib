@@ -63,7 +63,13 @@ public class ToStringFormatter {
     /// <param name="propertyValue">The value of the string to include in
     ///     the output.</param>
     public void AddProperty (String propertyName, String propertyValue) {
-        this.formattedString.Append ("\n\t").Append (propertyName).
+	if (null == propertyName) {
+		propertyName = "";
+	}
+	if (null == propertyValue) {
+		propertyValue = "";
+	}
+        this.formattedString.Append (Environment.NewLine).Append("\t").Append (propertyName).
         Append ("=[").Append (propertyValue).Append ("]");
     }
 
@@ -86,7 +92,7 @@ public class ToStringFormatter {
     /// </summary>
     /// <returns>The value of the string.</returns>
     public override String ToString () {
-        return this.formattedString.ToString () + "\n}\n";
+        return this.formattedString.Append(Environment.NewLine).Append(Environment.NewLine).ToString ();
     }
 }
 
