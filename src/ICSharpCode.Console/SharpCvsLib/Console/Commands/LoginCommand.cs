@@ -32,6 +32,9 @@
 #endregion
 
 using System;
+
+using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.Commands;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Console.Parser;
 
@@ -40,7 +43,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
     /// <summary>
     /// Login to a cvs repository.
     /// </summary>
-    public class LoginCommand {
+    public class LoginCommand : ICommand {
         private string password;
         private string username;
 
@@ -79,14 +82,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         }
 
         /// <summary>
-        /// Process the login command with cvs library API calls
+        /// Process the login command with cvs library API calls.
         /// </summary>
-        public void Execute (){
+        public void Execute (ICommandConnection connection){
             // Is there a password file?
             //     yes, get password for this username
             //     no, prompt user for password to use
             System.Console.Write("CVS password for {0}: ", username);
             password = System.Console.ReadLine();
+
+            // once we have a password then put it in the .cvspass file.
+            // this file is either in the HOME directory or in the root of the 
+            // current folder.
+            // TODO: Finish implementation of this command.
         }
     }
 }

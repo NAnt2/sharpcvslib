@@ -69,6 +69,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             // Test Creating a CommandLineParser object
             CommandLineParser newCommandLineParser = new CommandLineParser( args);
             Assertion.AssertNotNull ("Should have a command object.", newCommandLineParser);
+            LOGGER.Debug("Before parse execute for MakeCommandParserTest.");
             newCommandLineParser.Execute();
         }
 
@@ -92,6 +93,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 String[] argsBad = commandLine.Split(' ');
                 CommandLineParser parser = new CommandLineParser (argsBad);
 
+                LOGGER.Debug("Before execute MinusDOptionConnectedToCvsRoot good.");
                 parser.Execute ();
                 Assertion.Fail("Should throw an exception.");
             } catch (CvsRootParseException e){
@@ -106,6 +108,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 String[] argsBad = {"-d:pserver:anonymous@cvs.sf.net:/cvsroot/sharpcvslib", "login"};
                 CommandLineParser parser = new CommandLineParser (argsBad);
 
+                LOGGER.Debug("Before execute MinusDOptionConnectedToCvsRoot bad.");
                 parser.Execute();
             } catch (CvsRootParseException e){
                 LOGGER.Error(e);
@@ -125,6 +128,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             String[] args = commandLine.Split(' ');
             CommandLineParser parser = new CommandLineParser (args);
             try {
+                LOGGER.Debug("Before execute ParseOptions.");
                 parser.Execute ();
             } 
             catch (Exception e) {

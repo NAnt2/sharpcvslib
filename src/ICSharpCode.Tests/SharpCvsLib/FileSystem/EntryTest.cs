@@ -228,7 +228,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         [Test]
         public void TestParseDirEntry () {
             Entry entry = new Entry (this.settings.Config.LocalPath, DIR_ENTRY);
-            Assertion.AssertEquals(Path.Combine(this.settings.Config.LocalPath, DIR_ENTRY_DIRNAME),
+            Assertion.AssertEquals(Path.Combine(this.settings.Config.LocalPath, DIR_ENTRY_DIRNAME) + Path.DirectorySeparatorChar,
                 entry.FullPath);
             Assertion.Assert (entry.IsDirectory == true);
 

@@ -192,6 +192,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     msg.Append("arguments[").Append(i).Append("]=[").Append(arguments[i]).Append("]");
                     LOGGER.Debug(msg);
                 }
+                LOGGER.Debug("Before we grab the arguments.");
                 switch (arguments[i]) {
                     case "add":
                     case "ad":
@@ -340,7 +341,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         try {
                             LoginCommand loginCommand = 
                                 new LoginCommand(this.CvsRoot);
-                            loginCommand.Execute ();
+                            command = loginCommand;
                         } 
                         catch (Exception e) {
                             LOGGER.Error(e);
