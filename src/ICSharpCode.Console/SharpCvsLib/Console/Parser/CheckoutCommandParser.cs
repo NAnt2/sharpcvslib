@@ -145,6 +145,20 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser{
             CheckoutModuleCommand checkoutCommand;
             try {
                 this.ParseOptions(this.unparsedOptions);
+
+                this.CurrentDir = new DirectoryInfo(Environment.CurrentDirectory);
+                this.CurrentWorkingDirectory = 
+                    new WorkingDirectory(this.CvsRoot,
+                    this.CurrentDir.FullName, this.Module);
+                if (revision != null) {
+                    this.CurrentWorkingDirectory.Revision = revision;
+                }
+                if (!date.Equals(DateTime.MinValue)) {
+                    this.CurrentWorkingDirectory.Date = date;
+                }
+                // Create new CheckoutModuleCommand object
+                checkoutCommand = new CheckoutModuleCommand(this.CurrentWorkingDirectory);
+
                 if (revision != null) {
                     this.CurrentWorkingDirectory.Revision = revision;
                 }

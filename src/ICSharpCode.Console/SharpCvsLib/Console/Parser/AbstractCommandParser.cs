@@ -72,10 +72,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 }
                 return this._currentDir;
             }
-            set { 
-                this._currentDir = value; 
-                this.RecalculateRoot();
-            }
+            set { this._currentDir = value; }
         }
 
         private string _module;
@@ -90,17 +87,14 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         public WorkingDirectory CurrentWorkingDirectory {
             get {
                 if (null == this.currentWorkingDirectory) {
-                    this.RecalculateRoot();
+                    this.currentWorkingDirectory = 
+                        new WorkingDirectory(this.CvsRoot, this.CurrentDir.FullName, 
+                        this.Repository.FileContents);
                 }
                 return this.currentWorkingDirectory;
             }
             set {
                 this.currentWorkingDirectory = value;
-                if (null == this.currentWorkingDirectory) {
-                    this.RecalculateRoot();
-                } else if (null != this.currentWorkingDirectory.LocalDir) {
-                    this.SetLocalDirectory(this.currentWorkingDirectory.LocalDir.FullName);
-                }
             }
         }
 
@@ -111,7 +105,14 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         public Repository Repository {
             get {
                 if (null == this._repository) {
-                    this.RecalculateRoot();
+                    try {
+                        Root root = Root.Load(
+                            new DirectoryInfo(
+                            Path.Combine(this.CurrentDir.FullName, "CVS")));
+                        this.cvsRoot = new CvsRoot(root.FileContents);
+                    } catch (Exception e) {
+                        ConsoleMain.ExitProgram("Not a valid cvs folder.", e);
+                    }
                 }
                 return this._repository;
             }
@@ -124,7 +125,15 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         public CvsRoot CvsRoot {
             get {
                 if (null == this.cvsRoot) {
-                    this.RecalculateRoot();
+                    try {
+                        this._repository = 
+                            Repository.Load(
+                            new DirectoryInfo(
+                            Path.Combine(this.CurrentDir.FullName, 
+                            "CVS")));
+                    } catch (Exception e) {
+                        ConsoleMain.ExitProgram("Not a valid cvs folder.", e);
+                    }
                 }
                 return this.cvsRoot;
             }
@@ -224,29 +233,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
         protected void SetLocalDirectory(string localDirectory) {
             this.CurrentDir = new DirectoryInfo(localDirectory);
-        }
-
-        private void RecalculateRoot () {
-            try {
-                Root root = Root.Load(new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "CVS")));
-                this.cvsRoot = new CvsRoot(root.FileContents);
-            } catch (Exception e) {
-                ConsoleMain.ExitProgram("Not a valid cvs folder.", e);
-            }
-
-            try {
-                this._repository = 
-                    Repository.Load(
-                    new DirectoryInfo(
-                    Path.Combine(Environment.CurrentDirectory, 
-                    "CVS")));
-            } catch (Exception e) {
-                ConsoleMain.ExitProgram("Not a valid cvs folder.", e);
-            }
-
-            this.currentWorkingDirectory = 
-                new WorkingDirectory(this.CvsRoot, this.CurrentDir.FullName, 
-                this.Repository.FileContents);
         }
     }
 }

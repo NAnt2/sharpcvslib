@@ -55,6 +55,8 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
         private const string VERSION_ONE = "-1";
         private const string VERSION_TWO = "-2";
 
+        private const string EnvCvsRsh = "CVS_RSH";
+
         private readonly ILog LOGGER =
             LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
@@ -65,6 +67,18 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
         /// </summary>
 		public ExtProtocol() {
 		}
+
+        private FileInfo FindCvsRsh () {
+            string cvsRsh = Environment.GetEnvironmentVariable(EnvCvsRsh);
+            if (null == cvsRsh) {
+                cvsRsh = @"c:\cygwin\bin\ssh.exe";
+            }
+            FileInfo rshFile = new FileInfo(cvsRsh);
+            if (!rshFile.Exists) {
+                throw new Exception("CVS_RSH not set, no ssh binary to use.");
+            }
+            return rshFile;
+        }   
 
         /// <summary>
         /// Connect to the cvs server using the ext method.
@@ -142,33 +156,26 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
         }
 
         private ProcessStartInfo GetPlinkProcessInfo (string version) {
-            string args = string.Format("{0} {1} {2} {3} {4}",
-                version, "-l", this.Repository.CvsRoot.User, 
-                this.Repository.CvsRoot.Host, "\"cvs server\"");
+            StringBuilder processArgs = new StringBuilder ();
+            processArgs.Append ("-l ").Append (this.Repository.CvsRoot.User);
+            processArgs.Append (" ").Append (this.Repository.CvsRoot.Host);
+            processArgs.Append (" \"cvs server\"");
 
             ProcessStartInfo startInfo =
-                new ProcessStartInfo("plink.exe", args.ToString ());
-
-            startInfo.RedirectStandardError  = true;
-            startInfo.RedirectStandardInput  = true;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.UseShellExecute        = false;
+                new ProcessStartInfo(this.FindCvsRsh().FullName, processArgs.ToString ());
 
             return startInfo;
         }
 
         private ProcessStartInfo GetSshProcessInfo (string version) {
-            string args = string.Format("{0} {1} {2} {3} {4} {5}",
-                version.ToString(), "-l", this.Repository.CvsRoot.User, "-q", 
-                this.Repository.CvsRoot.Host, "\"cvs server\"");
+            StringBuilder processArgs = new StringBuilder ();
+            processArgs.Append ("-l ").Append (this.Repository.CvsRoot.User);
+            processArgs.Append (" -q ");  // quiet
+            processArgs.Append (" ").Append (this.Repository.CvsRoot.Host);
+            processArgs.Append (" \"cvs server\"");
 
             ProcessStartInfo startInfo =
-                new ProcessStartInfo("ssh.exe", args);
-
-            startInfo.RedirectStandardError  = true;
-            startInfo.RedirectStandardInput  = true;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.UseShellExecute        = false;
+                new ProcessStartInfo(this.FindCvsRsh().FullName, processArgs.ToString());
 
             return startInfo;
         }
