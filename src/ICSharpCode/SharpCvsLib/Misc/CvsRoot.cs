@@ -158,8 +158,9 @@ namespace ICSharpCode.SharpCvsLib.Misc {
                     try {
                         this.Port = Convert.ToInt32(StripColan(value));
                     } catch (FormatException) {
-                        LOGGER.Error(String.Format("Invalid number {0}, using default port.",
-                            value));
+                        LOGGER.Debug(String.Format("Invalid number {0}, using {1} port.",
+                            value, SharpCvsLibConfig.DEFAULT_PORT));
+                        this.Port = SharpCvsLibConfig.DEFAULT_PORT;
                     }
                 }
             }
