@@ -4,7 +4,8 @@
 -->
 <project name="${name.top-level}-${name.project}" default="run-tests-sample">
     <property name="util.copy" value="pscp" />
-    <property name="sf.username" value="drakmar@shell.sourceforge.net" />
+    <property name="name.developer" value="drakmar" />
+    <property name="sf.username" value="${name.developer}@shell.sourceforge.net" />
     <property name="sf.location" value="/home/groups/s/sh/sharpcvslib/htdocs/nightly-build" />
 
 
@@ -58,10 +59,11 @@
     <property name="doc.copyright.href" value="${assembly.copyright.href}" />
 
     <!-- Targets -->
-    <target name="update.src" description="Updates the source from cvs.">
+    <target name="src.update" description="Updates the source from cvs.">
+       <!-- To run locally you must have your public key uploaded to sf.net -->
        <cvs-update  module="sharcvslib" 
-                    cvsroot=":pserver:anonymous@cvs.sourceforge.net:/cvsroot/nant"
-                    destination="${src.dir}"
+                    cvsroot=":ext:${name.developer}@cvs.sourceforge.net:/cvsroot/sharpcvslib"
+                    destination="${dir.base}"
                     password="" />
     </target>
     
