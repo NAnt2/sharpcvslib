@@ -50,6 +50,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		private ILog LOGGER = 
 			LogManager.GetLogger (typeof(EntryTest));
 	    
+    	public const String CHECKOUT_ENTRY = 
+    	        "/CvsFileManagerTest.cs/1.1/Tue May 13 05:10:17 2003//"; 
+        public const String CHECKOUT_ENTRY_2 =
+                "/EntryTest.cs/1.1/03 Jan 2003 04:07:36 -0000//";
+
 	    private Manager manager;	    
 		/// <summary>
 		/// Constructor for customer db test.
@@ -79,8 +84,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void TestParseCheckoutEntry () {
-    	    const String CHECKOUT_ENTRY = 
-    	        "/CvsFileManagerTest.cs/1.1/Tue May 13 05:10:17 2003//";            
             Entry entry = new Entry (TestConstants.LOCAL_PATH, CHECKOUT_ENTRY);
             
             Assertion.Assert (entry.Name.Equals ("CvsFileManagerTest.cs"));
@@ -97,7 +100,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Assertion.Assert (entry.IsBinaryFile == false);
             Assertion.Assert (entry.IsDirectory == false);
             
-            Assertion.Assert (entry.CvsEntry.Equals (CHECKOUT_ENTRY));
+            Assertion.Assert (entry.FileContents.Equals (CHECKOUT_ENTRY));
         }
         
 	}

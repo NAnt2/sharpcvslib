@@ -308,15 +308,93 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		    Assertion.Assert ("Working folders count should be greater than 1.",
 		                      working.FoldersToUpdate.Length > 1);
 		}
-
+		
+		/// <summary>
+		/// Test that a file not found exception does not propogate up 
+		///     during a fetch.  This should be trapped and then keep on
+		///     reading or return control gracefully.  All sub-folders
+		///     cannot be expected to be under cvs control.
+		/// </summary>
+		[Test]
+		public void NoBlowUpOnFileNotFoundEntries () {
+		    Manager manager = new Manager ();
+		    
+		    string rootDir = 
+		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
+		    
+		    Directory.CreateDirectory (rootDir);
+		    string cvsDir =
+		        Path.Combine (rootDir, manager.CVS);
+		    
+		    Directory.CreateDirectory (cvsDir);
+		    
+		    try
+		    {
+		        manager.Fetch (rootDir, Entry.FILE_NAME);
+		    } catch (FileNotFoundException) {
+		        Assertion.Assert ("Should not be here, this should be trapped.", true);
+		    }
+		}
+		
 		/// <summary>
 		///     Remove the local path directory that we were testing with.
 		/// </summary>
 		[TearDown]
 		public void TearDown () {
-		    if (Directory.Exists (TestConstants.LOCAL_PATH)) {
-    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
-		    }
+//		    if (Directory.Exists (TestConstants.LOCAL_PATH)) {
+//    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+//		    }
+		}
+		
+		/// <summary>
+		///     Create an entries file and test the date to make sure that 
+		///         it equals the value that we created it with.
+		/// </summary>
+		[Test]
+		public void CreateEntriesDateTest () {
+		    Manager manager = new Manager ();
+
+		    string rootDir = 
+		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
+
+            Entry entry = new Entry (rootDir, EntryTest.CHECKOUT_ENTRY_2);
+		    
+		    manager.Add (entry);
+		    String filenameAndPath = Path.Combine (rootDir, entry.Name);
+		    System.IO.StreamWriter writer = File.CreateText (filenameAndPath);
+		    
+		    writer.WriteLine ("This is a test file.");
+		    
+		    writer.Close ();
+		    
+		    DateTime fileTime = entry.TimeStamp;
+		    
+		    manager.SetFileTimeStamp (filenameAndPath, entry.TimeStamp);
+		    
+		    System.Console.WriteLine ("entry timestamp=[" + entry.TimeStamp + "]");
+		    System.Console.WriteLine ("filestamp time=[" + 
+                                      File.GetLastWriteTime (filenameAndPath) + "]");
+		    
+		    System.Console.WriteLine ("utc offset=[" +
+		                              System.TimeZone.CurrentTimeZone.GetUtcOffset 
+		                                  (File.GetLastWriteTime (filenameAndPath)) + "]");
+		    System.Console.WriteLine ("utc offset=[" +
+		                              System.TimeZone.CurrentTimeZone.GetUtcOffset 
+		                                  (DateTime.Now) + "]");
+		    System.Console.WriteLine ("daylight savings=[" +
+		                              System.TimeZone.CurrentTimeZone.IsDaylightSavingTime 
+		                                  (DateTime.Now) + "]");
+
+
+            if (System.TimeZone.CurrentTimeZone.IsDaylightSavingTime (DateTime.Now)) {
+    		    Assertion.AssertEquals (entry.TimeStamp, 
+    		                            File.GetLastWriteTime(filenameAndPath).AddHours (1));
+            }
+            else {
+    		    Assertion.AssertEquals (entry.TimeStamp, 
+    		                            File.GetLastWriteTime(filenameAndPath));
+            }
+		    
 		}
 
 

@@ -134,18 +134,12 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 			//services.Repository.AddEntry(orgPath.Substring(0, orgPath.LastIndexOf('/')), e);
 			services.NextFileDate = null;
 			
-			// set the timestamp from the server to the newly created file
-			// TODO: See if this is messing up the timestamp for the cvs entry.
-			//    For now I have just commented it out.
-			//e.TimeStamp = e.TimeStamp.ToLocalTime();
-			File.SetCreationTime(localPathAndFilename, e.TimeStamp);
-			File.SetLastAccessTime(localPathAndFilename, e.TimeStamp);
-			File.SetLastWriteTime(localPathAndFilename, e.TimeStamp);
+	        manager.SetFileTimeStamp (localPathAndFilename, e.TimeStamp);
 	        
 	        manager.Add (e);
 	        
-	        String cvsMsg = "cvs server: U " + orgPath;	        
-	        manager.SendCvsMessage (cvsMsg);	        
+	        String cvsMsg = "cvs server: Updating " + e.FileContents;	        
+	        manager.SendCvsMessage (cvsMsg);
 	    }
 	    
         /// <summary>

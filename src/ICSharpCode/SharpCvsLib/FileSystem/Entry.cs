@@ -69,8 +69,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 	    public const String RFC1123 = 
 	        "dd MMM yyyy HH':'mm':'ss '-0000'";
 	    public const String FORMAT_1 =
-//	        "ddd MMM dd HH':'mm':'ss yyyy";
-	        "ddd MMM dd HH:mm:ss yyyy";	    
+	        "ddd MMM dd HH':'mm':'ss yyyy";
+//	        "ddd MMM dd HH:mm:ss yyyy";	    
 		
 		
 		public const String FILE_NAME = "Entries";
@@ -101,7 +101,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 				timestamp = value;
 			}
 		}
-		
+				
         /// <summary>
         /// String indicating a conflict with the server and
         ///     client files (if any).
@@ -202,22 +202,53 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 				options = value ? "-kb" : null;
 			}
 		}
-		
-		/// <summary>
-		///     The 
-		/// </summary>
-		public String CvsEntry {
-		    get {return this.cvsEntry;}
-		    set {this.cvsEntry = value;}
-		}
-		
-		/// <summary>
-		///     The cvs entry to add to the entries file.
-		/// </summary>
-		public String FileContents {
-		    get {return this.cvsEntry;}
-		}
-		
+				
+        /// <summary>
+        /// Outputs the formatted cvs entry.
+        /// </summary>
+        /// <returns>The formatted cvs entry.</returns>
+		public String FileContents
+		{
+		    get {
+    			string str = "";
+    			if (isDir) {
+    				str += "D";
+    			}
+    			str += "/";
+    			if (name != null) {
+    				str += name + "/";
+    				if (revision != null && !isDir) {
+    					str += revision;
+    				}
+    				str += "/";
+    				
+    				if (date != null) {
+    				    String dateString;
+					    dateString = this.TimeStamp.ToString(FORMAT_1, 
+					                                         DateTimeFormatInfo.InvariantInfo);
+    					str += dateString;
+    				}
+    				if (conflict != null) {
+    					str += "+" + conflict;
+    				}
+    				
+    				str += "/";
+    				
+    				if (options != null) {
+    					str += options;
+    				}
+    				
+    				str += "/";
+    				if (tag != null) {
+    					str += tag;
+    				} else if (date != null) {
+    					str += date;
+    				}
+    			}
+    			return str;
+		    }
+		}		
+				
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -244,6 +275,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
 		public void SetTimeStamp()
 		{
+		    DateTime timestamp = DateTime.Now;
 		    if (LOGGER.IsDebugEnabled){
 		        String msg = "Converting date string.  " +
 		            "date=[" + date + "]" +
@@ -257,15 +289,31 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 					timestamp = DateTime.ParseExact(date, 
 					                                RFC1123,
 					                                DateTimeFormatInfo.InvariantInfo);
+				    if (LOGGER.IsDebugEnabled) {
+				        String msg = "Converted using pattern=[" + RFC1123 + "]" +
+				            "timestamp=[" + timestamp + "]";
+				        LOGGER.Debug (msg);
+				    }
 				} catch (Exception) {
 					try {
 						timestamp = DateTime.ParseExact("0" + date, 
 						                                RFC1123, 
 						                                DateTimeFormatInfo.InvariantInfo);
+				    if (LOGGER.IsDebugEnabled) {
+				        String msg = "Converted using pattern=[0 + " + RFC1123 + "]" +
+				            "timestamp=[" + timestamp + "]";
+				        LOGGER.Debug (msg);
+				    }
+
 					} catch (Exception) {
    						timestamp = DateTime.ParseExact(date, 
    						                                FORMAT_1, 
    						                                DateTimeFormatInfo.InvariantInfo);
+    				    if (LOGGER.IsDebugEnabled) {
+    				        String msg = "Converted using pattern=[" + FORMAT_1 + "]" +
+    				            "timestamp=[" + timestamp + "]";
+    				        LOGGER.Debug (msg);
+    				    }
 					}
 				}				
 			}
@@ -273,6 +321,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 			    String msg = "timestamp=[" + timestamp + "]";
 			    LOGGER.Debug (msg);
 			}
+			this.timestamp = timestamp;
 		}
 		
         /// <summary>
@@ -282,10 +331,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		public void Parse(string line)
 		{		    
 		    if (LOGGER.IsDebugEnabled) {
-//    	        System.Diagnostics.StackTrace trace = 
-//    	            new System.Diagnostics.StackTrace ();		        
-		        String msg = "cvsEntry=[" + line + "]";// +
-//		                        "stackTrace=[" + trace.ToString () + "]";
+		        String msg = "cvsEntry=[" + line + "]";
 		        LOGGER.Debug (msg);
 		    }
 		    
@@ -315,8 +361,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     			if (conflictIndex > 0) {
     				Conflict = date.Substring(conflictIndex + 1);
     				date = date.Substring(0, conflictIndex);
-    			}
-			    
+	        	}
     			SetTimeStamp();
     			options   = tokens[4];
     			tag       = tokens[5];

@@ -56,6 +56,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// <param name="services"></param>
 	    public void Process(CvsStream cvsStream, IResponseServices services)
 	    {
+	        Manager manager = new Manager ();
 			cvsStream.ReadLine();
 			PathTranslator orgPath   = 
 			    new PathTranslator (services.Repository,
@@ -108,13 +109,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 			//services.Repository.AddEntry(orgPath.Substring(0, orgPath.LastIndexOf('/')), e);
 			services.NextFileDate = null;
 			
-			// set the timestamp from the server to the newly created file
-			// TODO: Commented this out because I think it might be causing 
-			//    problems with the cvs repository.
-			//e.TimeStamp = e.TimeStamp.ToLocalTime();
-			File.SetCreationTime(localPathAndFilename, e.TimeStamp);
-			File.SetLastAccessTime(localPathAndFilename, e.TimeStamp);
-			File.SetLastWriteTime(localPathAndFilename, e.TimeStamp);
+	        manager.SetFileTimeStamp (localPathAndFilename, e.TimeStamp);
 	    }
 	    
         /// <summary>

@@ -75,6 +75,32 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Assertion.Assert (repos.Path.Equals (fullPath));
             Assertion.Assert (repos.FileContents.Equals (this.REPOSITORY_ENTRY));
         }
+        
+        /// <summary>
+        /// The slashes in a cvs repository file are stripped off.  This
+        ///     means that the repository + the entry from the entries file
+        ///     equal the relative server path for the file in the repository 
+        ///     when the two are concatentated.
+        /// </summary>
+        [Test]
+        public void NoSlashAtEnd () {
+            String fullPath = 
+                Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
+            
+            String repositoryEntryWithSlash = this.REPOSITORY_ENTRY + "/";
+            
+            Assertion.Assert ("We just added a slash, there should be a slash.", 
+                              repositoryEntryWithSlash.EndsWith ("/"));
+            Repository repos = new Repository (fullPath, 
+                                               repositoryEntryWithSlash);
+            
+            Assertion.Assert ("Slash should be stripped off.", 
+                              !repos.FileContents.EndsWith ("/"));
+            Assertion.Assert ("FileContents should equal module name.  FileContents=[" +
+                              repos.FileContents + "]",
+                              repos.FileContents.Equals ("sharpcvslib/src"));
+        }
+
 
     }
 }

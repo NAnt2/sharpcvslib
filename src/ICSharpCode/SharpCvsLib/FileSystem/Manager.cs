@@ -389,14 +389,16 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     directory.</param>
         private void CreateCvsDir (String path) {
             String cvsDir = this.CombineCvsDir (path);
+            bool dirExists = Directory.Exists (cvsDir);
             if (LOGGER.IsDebugEnabled) {
                 String msg = "Creating cvs directory if it does not exist.  " +
                     "path=[" + path + "]" +
-                    "cvsDir=[" + cvsDir + "]";
+                    "cvsDir=[" + cvsDir + "]" +
+                    "dirExists=[" + dirExists + "]";
                 LOGGER.Debug (msg);
             }
             
-			if (!Directory.Exists(cvsDir)) {
+			if (!dirExists) {
 				Directory.CreateDirectory(cvsDir);
 			}            
         }
@@ -556,16 +558,48 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 				}
 				sr.Close();
 			}
-			else {
-			    String msg = "File not found.  " + 
-			        "path=[" + path + "]" +
-			        "file=[" + file + "]";
-			    throw new FileNotFoundException (msg);
-			}
 			
 			return fileContents;
+        }
+        
+        /// <summary>
+        ///     Sets the timestamp on the file specified.  Sets the create 
+        ///         timestamp, access timestamp and the last write timestamp.
+        /// </summary>
+        /// <param name="filenameAndPath">The file name and path.</param>
+        /// <param name="timeStamp">The timestamp to set on the file.</param>
+        public void SetFileTimeStamp (String filenameAndPath, DateTime timeStamp) {
+            if (File.Exists (filenameAndPath)) {
+                DateTime fileTimeStamp = 
+                    this.GetCorrectTimeStamp (filenameAndPath, 
+                                              timeStamp);
+
+    			File.SetCreationTime(filenameAndPath, fileTimeStamp);
+    			File.SetLastAccessTime(filenameAndPath, fileTimeStamp);
+    			File.SetLastWriteTime(filenameAndPath, fileTimeStamp);
+
+//                DateTime correctTimeStamp = 
+//                    this.GetCorrectTimeStamp (filenameAndPath, timeStamp);
+//                
+//                if (!correctTimeStamp.Equals (timeStamp)) {
+//        			File.SetCreationTime(filenameAndPath, correctTimeStamp);
+//        			File.SetLastAccessTime(filenameAndPath, correctTimeStamp);
+//        			File.SetLastWriteTime(filenameAndPath, correctTimeStamp);
+//                }
+            }
+        }
+        
+        private DateTime GetCorrectTimeStamp (String filenameAndPath, DateTime timeStamp) {
+//            DateTime fileTime = File.GetLastWriteTime (filenameAndPath);
+//            
+//            if (TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.Now) !=
+//                TimeZone.CurrentTimeZone.GetUtcOffset (fileTime)) {
+//                return timeStamp.AddHours (-1);
+//            }
+//            return timeStamp;
+            return timeStamp.Add (System.TimeZone.CurrentTimeZone.GetUtcOffset (timeStamp));
         }
 
     }
     
-}			
+}

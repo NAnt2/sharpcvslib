@@ -82,34 +82,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		    string buildFile = 
 		        Path.Combine (rootDir, TestConstants.TARGET_FILE);
 		    
-		    //Assertion.Assert ("File should be there, have not deleted it yet.  " +
-		    //                  "file=[" + buildFile + "]",
-		    //                  File.Exists (buildFile));
-		    
 		    File.Delete (buildFile);
 		    
 		    Assertion.Assert ("File should be gone now.  file=[" + buildFile + "]", !File.Exists (buildFile));
-            CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
-            WorkingDirectory working = 
-                new WorkingDirectory (root, 
-                                        TestConstants.LOCAL_PATH, 
-                                        TestConstants.MODULE);
-
-            CVSServerConnection connection = new CVSServerConnection ();
-            Assertion.AssertNotNull ("Should have a connection object.", connection);
-		    
-            ICommand command = new UpdateCommand2 (working);
-            Assertion.AssertNotNull ("Should have a command object.", command);
-		    
-            connection.Connect (working, TestConstants.PASSWORD_VALID);
-
-            // Update all files...
-            working.FoldersToUpdate = 
-                this.manager.FetchFilesToUpdate (rootDir);
-            
-            command.Execute (connection);
-            connection.Close ();
-		    
+		    this.UpdateAllRecursive (rootDir);
 		    Assertion.Assert ("Should have found the build file.  file=[" + 
 		                      buildFile + "]", File.Exists (buildFile));
 		    
@@ -139,7 +115,37 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		        }
 		    }
 		    
-		    Assertion.Assert ("Build file should have a cvs entry.", found == 1);		    
+		    Assertion.Assert ("Build file should have a cvs entry.", found == 1);
+		    Assertion.Assert ("Should not be a module directory under root folder.",
+		                      !Directory.Exists (Path.Combine (TestConstants.LOCAL_PATH, 
+		                                                       TestConstants.MODULE)));
+		}
+
+        /// <summary>
+        ///     Update all files recursively starting with the root directory.
+        /// </summary>
+        /// <param name="rootDir">The root directory to start the update from.</param>
+		private void UpdateAllRecursive (String rootDir) {
+            CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
+            WorkingDirectory working = 
+                new WorkingDirectory (root, 
+                                        TestConstants.LOCAL_PATH, 
+                                        TestConstants.MODULE);
+
+            CVSServerConnection connection = new CVSServerConnection ();
+            Assertion.AssertNotNull ("Should have a connection object.", connection);
+		    
+            ICommand command = new UpdateCommand2 (working);
+            Assertion.AssertNotNull ("Should have a command object.", command);
+		    
+            connection.Connect (working, TestConstants.PASSWORD_VALID);
+
+            // Update all files...
+            working.FoldersToUpdate = 
+                this.manager.FetchFilesToUpdate (rootDir);
+            
+            command.Execute (connection);
+            connection.Close ();  
 		}
 		
 		/// <summary>

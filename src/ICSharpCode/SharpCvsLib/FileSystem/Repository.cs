@@ -41,7 +41,10 @@ using log4net;
 namespace ICSharpCode.SharpCvsLib.FileSystem { 
 	
     /// <summary>
-    /// Information about the repository file.
+    /// Information about the repository file.  This file is used to identify
+    ///     the relative path (from the cvsroot) of the file in the cvs 
+    ///     repository.  Combined with the entry from the cvs entries file
+    ///     this provides the relative path to the file on the cvs server.
     /// </summary>
 	public class Repository : ICvsFile {
 	    private ILog LOGGER = LogManager.GetLogger (typeof (Repository));
@@ -62,7 +65,18 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 	    /// <param name="line">The line to enter into the repository file.</param>
 	    public Repository (String path, String line) {
 	        this.path = path;
-	        this.fileContents = line;
+	        this.fileContents = this.Parse (line);
+	    }
+	    
+	    /// <summary>
+	    ///     Format the string as a repository entry.  Remove any trailing 
+	    ///         slashes from the line.
+	    /// </summary>
+	    protected String Parse (String line) {
+	        if (line.EndsWith ("/")) {
+	            return line.Substring (0, line.Length - 1);
+	        }
+	        return line;
 	    }
 	    
 	    /// <summary>

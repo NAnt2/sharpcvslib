@@ -8,6 +8,8 @@
     
     <property name="assembly.name" value="ICSharpCode.SharpCvsLib" />    
     <property name="assembly.version" value="0.3.2" />   
+
+    <property name="nant.settings.currentframework" value = "net-1.0"/>
     
     <target name="Debug" depends="SharpCvsLib.Debug" />
     <target name="Release" depends="SharpCvsLib.Release" />
@@ -21,6 +23,16 @@
             </fileset>
 		</copy>        
     </target>
+
+    <target name="setup.tests">
+        <mkdir dir="${build.dir}" />
+   	<copy todir="${build.dir}">
+	    <fileset basedir="${lib.dir}">
+                <includes name="nunit.framework.dll" />
+            </fileset>
+	</copy>        
+    </target>
+
     
     <target name="sf-release">
         <property name="export.dir" value="h:/dev/sf.net/sharpcvslib" />
@@ -53,7 +65,11 @@
         <property name="checked" value="/checked-" />
         <property name="define" value="DEBUG;TRACE" />
         <property name="doc" value="${build.dir}\sharpcvslib.xml" />
+
+        <property name="output.tests" value="${build.dir}\${assembly.name}.Tests.dll" />
+
         <call target="SharpCvsLib" />
+	<call target="SharpCvsLib.Tests" />
     </target>
     
     <target name="SharpCvsLib.Release">
@@ -75,7 +91,6 @@
             <sources basedir="${src.dir}">
                 <includes name="**/*.cs" />
                 <excludes name="ICSharpCode.Tests/**/*.cs" />
-                <excludes name="CvsLib/**/*.cs" />
             </sources>
             <references>
                 <includes name="System.Web.dll" />
@@ -86,10 +101,35 @@
             </references>
         </csc>
     </target>
+
+    <target name="SharpCvsLib.Tests" depends="SharpCvsLib, setup.tests">
+        <csc target="library" output="${output.tests}" debug="${debug}" define="${define}" doc="${doc}">
+            <arg value="${unsafe}" />
+            <arg value="${checked}" />
+            <sources basedir="${src.dir}">
+                <includes name="**/*.cs" />
+                <excludes name="ICSharpCode/**/*.cs" />
+            </sources>
+            <references>
+                <includes name="System.Web.dll" />
+                <includes name="System.Web.Services.dll" />
+                <includes name="System.dll" />            
+                <includes name="${lib.dir}/ICSharpCode.SharpZipLib.dll" />
+                <includes name="${lib.dir}/log4net.dll" />
+                <includes name="${lib.dir}/nunit.framework.dll" />
+                <includes name="${output}" />
+            </references>
+        </csc>
+        <nunit2>
+            <test assemblyname="${output.tests}"/>
+        </nunit2>
+    </target>
     
     <target name="DebugClean">
         <property name="build.dir" value="${build.dir}\Debug" />
         <call target="Clean" />
+        <delete file="${build.dir}\${assembly.name}.Tests.dll" failonerror="false" />
+        <delete file="${build.dir}\${assembly.name}.Tests.dll" failonerror="false" />
     </target>
     
     <target name="ReleaseClean">

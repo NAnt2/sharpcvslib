@@ -45,6 +45,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	    public void Process(CvsStream cvsStream, IResponseServices services)
 	    {
 	    	string date = cvsStream.ReadLine();
+	        System.Console.WriteLine ("date=[" + date + "]");
 	    	services.NextFileDate = date;
 	    }
 	    

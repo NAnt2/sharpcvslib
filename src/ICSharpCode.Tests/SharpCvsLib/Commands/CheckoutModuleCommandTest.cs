@@ -122,6 +122,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		                      !Directory.Exists (Path.Combine (TestConstants.LOCAL_PATH, manager.CVS)));
 		    Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
 		                      !Directory.Exists (Path.Combine (TestConstants.MODULE, manager.CVS)));
+		    
+		    
 		}
 		
 		/// <summary>
@@ -129,7 +131,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// </summary>
 		[TearDown]
 		public void TearDown () {
-		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    //Directory.Delete (TestConstants.LOCAL_PATH, true);
 		}
 	}
 }

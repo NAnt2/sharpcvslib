@@ -138,9 +138,13 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     					            workingdirectory.WorkingDirectoryName + "]";
     					    LOGGER.Debug (msg);
     					}
-    					string path = workingdirectory.CvsRoot.CvsRepository +  
-    								"/" + workingdirectory.WorkingDirectoryName;/* + 
-    								folder.Key.ToString();*/
+    					String path = workingdirectory.CvsRoot.CvsRepository + 
+    					                   "/" +
+    					                   folder.Repos.FileContents;
+
+    					//string path = workingdirectory.CvsRoot.CvsRepository +  
+    					//			"/" + workingdirectory.WorkingDirectoryName;/* + 
+    					//			folder.Key.ToString();*/
     					
     					if (LOGGER.IsDebugEnabled) {
     					    String msg = "Before submit directory request.  " +
@@ -236,24 +240,34 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     	private String getFileNameAndPath (    string baseDir, 
     	                                       string reposDir, 
     	                                       string entryName) {
+           if (LOGGER.IsDebugEnabled) {
+               String msg = "baseDir=[" + baseDir + "]" +
+                    "reposDir=[" + reposDir + "]" +
+                    "entryName=[" + entryName + "]";
+               LOGGER.Debug (msg);
+           }
             string _baseDir;
             if (baseDir.EndsWith (Path.DirectorySeparatorChar.ToString ())) {
                 _baseDir = baseDir.Replace (Path.DirectorySeparatorChar.ToString (), "");
             }
             else {
                 _baseDir = baseDir;
-            }
+            }           
             
-            string _reposDir = reposDir.Replace ('/', Path.DirectorySeparatorChar) + 
-                                Path.DirectorySeparatorChar;
-            string _entryName = entryName.Replace ('/', Path.DirectorySeparatorChar);
+            //string _reposDir = reposDir.Replace ('/', Path.DirectorySeparatorChar) + 
+            //                    Path.DirectorySeparatorChar;
+            //string _entryName = entryName.Replace ('/', Path.DirectorySeparatorChar);
 
-            string fileNameAndPath = _baseDir + _reposDir + _entryName;
+            String path = Path.Combine (_baseDir, reposDir);
+            String fileNameAndPath = Path.Combine (path, entryName);
+    	                                           
+            fileNameAndPath.Replace ('/', Path.DirectorySeparatorChar);
 
             if (LOGGER.IsDebugEnabled) {
                 String msg = "fileNameAndPath=[" + fileNameAndPath + "]";
                 LOGGER.Debug (msg);
             }
+            
             return fileNameAndPath;
     	}
 	}
