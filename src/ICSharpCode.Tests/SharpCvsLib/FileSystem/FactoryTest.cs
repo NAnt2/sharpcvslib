@@ -86,8 +86,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void CreateEntryTest () {
             String path = this.settings.Config.LocalPath;
 
-            FileInfo fullPath = new FileInfo(Path.Combine(path, Factory.FileType.Entries.ToString()));
-            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, ENTRY_LINE);
+            ICvsFile cvsFile = 
+                factory.CreateCvsObject (path, Factory.FileType.Entries.ToString(), ENTRY_LINE);
             Assert.IsTrue (cvsFile is Entry);
             Assert.AreEqual (path, cvsFile.Path);
             Assert.AreEqual (Path.Combine(path, ENTRY_NAME_OF_FILE), cvsFile.FullPath);
@@ -101,11 +101,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void CreateRepositoryTest () {
             String fullPath = this.settings.Config.LocalPath;
 
-            FileInfo reposPath = new FileInfo(
-                Path.Combine(PathTranslator.AppendCvs(fullPath).FullName, Repository.FILE_NAME));
-
-
-            ICvsFile cvsFile = factory.CreateCvsObject (reposPath, REPOSITORY_LINE);
+            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Repository.FILE_NAME, REPOSITORY_LINE);
             Assert.IsTrue (cvsFile is Repository);
             Assert.AreEqual (fullPath, cvsFile.FullPath);
             Assert.AreEqual (REPOSITORY_LINE, cvsFile.FileContents);
