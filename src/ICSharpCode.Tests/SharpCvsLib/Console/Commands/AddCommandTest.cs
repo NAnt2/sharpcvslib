@@ -83,11 +83,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 LOGGER.Debug("file=[" + file + "]");
                 // Remove the .txt when everything works, giving me bugs...
                 String newFileName = Guid.NewGuid().ToString() + ".txt";
-                fullPath = Path.Combine(Environment.CurrentDirectory, newFileName);
+                fullPath = Path.Combine(Path.Combine(Environment.CurrentDirectory, settings.Config.Module),newFileName);
                 File.Copy (file, fullPath);
             }
-            String commandLine = "-d" + settings.Config.Cvsroot + " add " + 
-                Path.Combine(settings.Config.LocalPath, fullPath);
+            String commandLine = "-d" + settings.Config.Cvsroot + " add " + fullPath;
             String [] commandLineArgs = commandLine.Split(' ');
             // Create consoleMain object to test the Add command
             ConsoleMain consoleMain = new ConsoleMain();
