@@ -89,9 +89,8 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </summary>
         /// <param name="path">The current path where the file exists.</param>
         /// <param name="entry">The cvs entry for the file being added locally.</param>
-        public void AddEntry (String path, String entry) {
-            this.WriteToFile (path, this.ENTRIES, entry);
-            this.WriteToFile (path, this.ENTRIES_LOG, entry);
+        private void AddEntry (String path, String entry) {            
+            this.WriteToFile (path, this.ENTRIES, entry, true);
         }
         
         /// <summary>
@@ -101,8 +100,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <param name="path">The current path where the file exists.</param>
         /// <param name="entry">An object that represents the cvs entry.</param>
         public void AddEntry (String path, Entry entry) {
-            this.WriteToFile (path, this.ENTRIES, entry.FormattedEntry);
-            this.WriteToFile (path, this.ENTRIES_LOG, entry.FormattedEntry);
+            this.AddEntry (path, entry.CvsEntry);
         }
         
         /// <summary>
@@ -114,8 +112,34 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <param name="entry">The cvs entry to add to the entries file.</param>
         public void AddEntry (String localBase, String localPath, Entry entry) {
             string cvsPath = Path.Combine (localBase, localPath);
-            this.WriteToFile (cvsPath, this.ENTRIES, entry.FormattedEntry);
-            this.WriteToFile (cvsPath, this.ENTRIES_LOG, entry.FormattedEntry);
+            this.AddEntry (cvsPath, entry.CvsEntry);
+        }
+        
+        /// <summary>
+        ///     Add a cvs entry to the log entry file.
+        /// </summary>
+        public void AddLogEntry (String path, Entry entry) {
+            this.WriteToFile (path, this.ENTRIES_LOG, entry.CvsEntry, true);
+        }
+        
+        /// <summary>
+        ///     Remove the log entry from the log file.
+        /// </summary>
+        public void RemoveLogEntry (String path, Entry entry) {
+            this.RemoveFromFile (path, this.ENTRIES_LOG, entry.CvsEntry);
+        }
+        
+        private void RemoveFromFile (String path, String file, String line) {
+            ICollection fileLines = 
+                this.ReadFromFile (path, file);
+            
+            ArrayList newFileLines = new ArrayList ();
+            foreach (String fileLine in fileLines) {
+                if (!fileLine.Equals (line)) {
+                    newFileLines.Add (line);
+                }
+            }
+            this.WriteToFile (path, file, newFileLines);
         }
         
         /// <summary>
@@ -138,7 +162,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <param name="fileEntry">The cvs root entry to add to the root file.</param>
         public void AddRoot (String localBase, String localPath, String fileEntry) {
             string cvsPath = Path.Combine (localBase, localPath);
-            this.WriteToFile (cvsPath, this.ROOT, fileEntry);
+            this.WriteToFile (cvsPath, this.ROOT, fileEntry, false);
         }
         
         /// <summary>
@@ -151,63 +175,81 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <param name="repository">The repository text.</param>
         public void AddRepository (String localBase, String localPath, String fileEntry) {
             string cvsPath = Path.Combine (localBase, localPath);
-            this.WriteToFile (cvsPath, this.REPOSITORY, fileEntry);
+            this.WriteToFile (cvsPath, this.REPOSITORY, fileEntry, false);
         }
         
         private bool IsEntry (String file) {
-            if (file.Equals (this.ENTRIES) || file.Equals (this.ENTRIES_LOG)) {
+            if (file.Equals (this.ENTRIES)) {
                 return true;
             }
             return false;
         }
-        private void WriteToFile (String path, String file, String text) {
-            if (path.LastIndexOf (Path.DirectorySeparatorChar) != path.Length) {
-                path = path + Path.DirectorySeparatorChar;
+        
+        private bool IsEntryLog (String file) {
+            if (file.Equals (this.ENTRIES_LOG)) {
+                return true;
             }
+            return false;
+        }        
+        
+        /// <summary>
+        ///     Adds a collection of lines to the cvs file.  The first
+        ///         entry overwrites any file currently in the directory
+        ///         and all other following entries are appended to the
+        ///         file.
+        /// </summary>
+        /// <param name="path">The current working directory.</param>
+        /// <param name="file">The cvs file to write to.</param>
+        /// <param name="lines">A collection of lines to add to the cvs file.</param>
+        private void WriteToFile (    String path,
+                                      String file, 
+                                      ICollection lines) {
+            bool overWriteFile = true;
+            foreach (String line in lines) {
+                this.WriteToFile (path, file, line, overWriteFile);
+                if (overWriteFile) {
+                    overWriteFile = false;
+                }
+            }
+
+        }
+        
+        /// <summary>
+        ///     Write to the cvs file.
+        /// </summary>
+        /// <param name="path">The current working directory.</param>
+        /// <param name="file">The cvs file to write to.</param>
+        /// <param name="line">The line to enter into the file.</param>
+        /// <param name="append">Whether or not to append to the file.</param>
+        private void WriteToFile (    String path, 
+                                      String file, 
+                                      String line, 
+                                      bool append) {
+            string fileAndPath = Path.Combine (path, file);
             this.CreateDirectory (path);
-            text = text.Replace ("\\", "/");
+            line = line.Replace ("\\", "/");
             
             if (LOGGER.IsDebugEnabled) {
                 String msg = "Writing to a cvs file.  " +
                     "path=[" + path + "]" +
                     "file=[" + file + "]" +
-                    "text=[" + text + "]";
+                    "line=[" + line + "]" + 
+                    "append=[" + append + "]";
                 LOGGER.Debug (msg);
             }
-
-            String _fileText = String.Empty;            
-            if (this.IsEntry (file)) {
-                if (File.Exists (path)) {
-                    Entry modifiedEntry = new Entry (text);                    
-                    ArrayList list = new ArrayList ();
-                    list.Add (this.ReadEntries (path));
-                    Entry[] entries = (Entry[])list.ToArray (typeof(Entry));
-                    foreach (Entry entry in entries) {
-                        if (modifiedEntry.Name.Equals (entry.Name)) {
-                            _fileText = modifiedEntry.CvsEntry + "\n";
-                        }
-                        else {                            
-                            _fileText = entry.CvsEntry + "\n";
-                        }
-                    }                    
-                }
-                else {
-                    _fileText = text;
-                }
-            } else {
-                _fileText = text;
-            }
+            
 			StreamWriter sw = 
-			    new StreamWriter(path + file, false, Encoding.ASCII);                
-            sw.WriteLine (_fileText);    
+			    new StreamWriter(fileAndPath, append, Encoding.ASCII);
+            sw.WriteLine (line);    
             
-            
-			sw.Close();
+			sw.Close();            
         }
         
         private void CreateDirectory (String path) {
 			if (!Directory.Exists(path + this.CVS)) {
-				Directory.CreateDirectory(path + this.CVS);
+			    string cvsDir = 
+			        Path.Combine (path, this.CVS);
+				Directory.CreateDirectory(cvsDir);
 			}            
         }
         
@@ -248,9 +290,61 @@ namespace ICSharpCode.SharpCvsLib.Misc {
                         "entry=[" + entry + "]";
                 }
                 entries.Add (new Entry (entryString));
-            }                
+            }    
+            if (entries.Count > 0) {
+                this.SyncEntriesWithLog (path, entries);
+            }
             
             return entries;
+        }
+        
+        /// <summary>
+        ///     Read the entries from the entries log and the instruction
+        ///         appended to the log (i.e. A to add an entry, R to remove, etc.)
+        ///         and apply that to the main entries file.
+        /// </summary>
+        /// <param name="entries">The collection of entries in the main entries
+        ///     file.</param>
+        private void SyncEntriesWithLog (String path, ArrayList entries) {
+            ICollection entryLogStrings =
+                this.ReadFromFile (path, this.ENTRIES_LOG);
+            
+            foreach (String entryLogString in entryLogStrings) {
+                if (entryLogString.Length > 1) {
+                    switch (entryLogString[0]) {
+                        // Add file
+                        case 'A': {   
+    						entries.Add(new Entry(entryLogString.Substring(2)));
+    						break;
+                        }
+                        // Remove file
+                        case 'R': {
+    						Entry removeMe = new Entry(entryLogString.Substring(2));
+    						Entry removeObject = null;
+    						
+    						foreach (Entry entry in entries) {
+    							if (removeMe.CvsEntry.Equals (entry.CvsEntry)) {
+    								removeObject = entry;
+    								break;
+    							}
+    						}
+    						if (removeObject != null) {
+    							entries.Remove(removeObject);
+    						}
+    						break;
+    
+                        }
+                        // Should not be here.
+                        default: {
+                            String msg = "In the default method of the entry " +
+                                "log parsing.  EntryString=[" + entryLogString + "]";
+                            LOGGER.Warn (msg);
+                            break;
+                        }
+                    }
+                }
+            }
+
         }
         
         /// <summary>

@@ -72,6 +72,11 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// </summary>
 		[Test]
 		public void CheckoutTest () {
+		    string cvsPath = 
+		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
+		    string buildFile =
+		        Path.Combine (cvsPath, TestConstants.BUILD_FILE);
+		    
             CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
             WorkingDirectory working = 
                 new WorkingDirectory (root, 
@@ -89,25 +94,24 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             command.Execute (connection);
             connection.Close ();
 		    
-		    string buildFile = 
-		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.BUILD_FILE);
 		    Assertion.Assert ("Should have found the build file.  file=[" + 
 		                      buildFile + "]", File.Exists (buildFile));
 		    
-		    ICollection entries = manager.ReadEntries (TestConstants.LOCAL_PATH);
+		    ICollection entries = 
+		        manager.ReadEntries (cvsPath);
 		    IEnumerator entriesEnum = entries.GetEnumerator ();
-            bool found = false;	
+            int found = 0;	
 		    
 		    while (entriesEnum.MoveNext ()) {
 		        Entry entry = (Entry)entriesEnum.Current;
 		        
 		        System.Console.WriteLine ("entry=[" + entry + "]");
 		        if (entry.Name.Equals (TestConstants.BUILD_FILE)) {
-		            found = true;
+		            found++;
 		        }
 		    }
 		    
-		    Assertion.Assert ("Build file should have a cvs entry.", found);
+		    Assertion.Assert ("Build file should have a cvs entry.", found == 1);
 		}
 	}
 }

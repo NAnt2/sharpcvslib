@@ -289,6 +289,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		/// <returns>
 		/// null if no entry could be read.
 		/// </returns>
+/*
 		public static Entry[] RetrieveEntries(string path) {
             CvsFileManager manager = new CvsFileManager ();		    
 		    string entriesPath = Path.Combine (path, manager.ENTRIES);
@@ -307,7 +308,8 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 					}
 				}
 				sr.Close();
-    		    entries.Add (manager.ReadEntries (path));
+			    // FIXME: Eventually move all of this to the file manager.
+    		    //entries.Add (manager.ReadEntries (path));
     		    if (entries.Count > 0) {
     				if (File.Exists (entriesLogPath)) {
     					sr = File.OpenText(entriesLogPath);
@@ -349,7 +351,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
     			}
 			}
 			return null;				
-		}
+		}*/
 		
         /// <summary>
         /// Renders a human readable string that represents the 
@@ -391,55 +393,6 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 				}
 			}
 			return str;
-		}
-		
-		/// <summary>
-		///     Return the information for this entry in a string format that
-		///         is defined by the cvs protocol.
-		/// 
-		///     / name / version / conflict / options / tag_or_date
-		/// </summary>
-		public String FormattedEntry {
-		    get {
-		        return this.cvsEntry;
-		        /*
-    			string str = "";
-    			if (isDir) {
-    				str += "D";
-    			}
-    			str += "/";
-    			if (name != null) {
-    				str += name + "/";
-    				if (revision != null && !isDir) {
-    					str += revision;
-    				}
-    				str += "/";
-    				
-    				if (date != null && !this.isDir) {
-    					str += 
-    					    timestamp.ToString(FORMAT_1, 
-                                DateTimeFormatInfo.InvariantInfo);
-    				}
-    				if (conflict != null) {
-    					str += "+" + conflict;
-    				}
-    				
-    				str += "/";
-    				
-    				if (options != null) {
-    					str += options;
-    				}
-    				
-    				str += "/";
-    				if (tag != null) {
-    					str += tag;
-    				} else if (date != null) {
-    					str += date;
-    				}
-    			}
-    			return str;*/
-
-		    }
-		}
+		}		
 	}
 }

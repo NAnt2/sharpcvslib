@@ -46,6 +46,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
     /// </summary>
 	public class WorkingDirectory
 	{
+	    private CvsFileManager manager = new CvsFileManager ();
 	    private readonly ILog LOGGER = 
 	        LogManager.GetLogger (typeof (WorkingDirectory));
 		private CvsRoot cvsroot;
@@ -64,34 +65,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 			set {
 				repositoryname = value;
 			}
-		}
-		
-		/// <summary>The cvs directory information.</summary>
-		public readonly string CVS =
-		    /*Path.DirectorySeparatorChar +*/ "CVS";
-		/// <summary>The cvs repository file information.</summary>	    
-		public readonly string REPOSITORY = 
-		    Path.DirectorySeparatorChar + "CVS" + 
-		    Path.DirectorySeparatorChar + "Repository";
-		/// <summary>The cvs entries file information.</summary>	    
-	    public readonly string ENTRIES =
-	        Path.DirectorySeparatorChar + "CVS" + 
-	        Path.DirectorySeparatorChar + "Entries";
-	    
-		/// <summary>
-		/// The cvs entries log information, platform inspecific.
-		///     TODO:I don't think this is used by cvs, I think this is just
-		///     some sort of optimization or easy way to view the entries folder.
-		/// </summary>
-	    public readonly string ENTRIES_LOG =
-	        Path.DirectorySeparatorChar + "CVS" +
-	        Path.DirectorySeparatorChar + "Entries" + 
-	        ".log";
-	    /// <summary>The cvs root file information.</summary>
-	    public readonly string ROOT =
-            Path.DirectorySeparatorChar + "CVS" +
-            Path.DirectorySeparatorChar + "Root";
-		    
+		}		    
 		
         /// <summary>
         /// The name of the working directory.  
@@ -230,20 +204,32 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 				
 		private void CreateFilesIn(string path, string repository, ArrayList entries)
 		{
-			if (!Directory.Exists(path + CVS)) {
-				Directory.CreateDirectory(path + CVS);
+			if (!Directory.Exists(path + this.manager.CVS)) {
+			    string newDir = Path.Combine (path, this.manager.CVS);
+			    if (LOGGER.IsDebugEnabled) {
+			        String msg = "Creating a cvs directory.  " +
+			            "directory=[" + newDir + "]";
+			        LOGGER.Debug (msg);
+			    }
+				Directory.CreateDirectory(newDir);
 			}
 			
+			string repositoryFile = 
+			    Path.Combine (path, this.manager.REPOSITORY);
 			StreamWriter sw = 
-			    new StreamWriter(path + REPOSITORY, false, Encoding.ASCII);
+			    new StreamWriter(repositoryFile, false, Encoding.ASCII);
 			sw.Write(repository.Substring(cvsroot.CvsRepository.Length + 1));
 			sw.Close();
 			
-			sw = new StreamWriter(path + ROOT, false, Encoding.ASCII);
+			string rootFile = 
+			    Path.Combine (path, this.manager.ROOT);
+			sw = new StreamWriter(rootFile, false, Encoding.ASCII);
 			sw.Write(cvsroot.ToString());
 			sw.Close();
 			
-			sw = new StreamWriter(path + ENTRIES, false, Encoding.ASCII);
+			string entriesFile = 
+			    Path.Combine (path, this.manager.ENTRIES);
+			sw = new StreamWriter(entriesFile, false, Encoding.ASCII);
 			
 			bool created = false;
 			if (entries != null && entries.Count > 0) {
@@ -253,7 +239,10 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 				sw.WriteLine("D");
 				sw.Close();
 				created = true;
-				sw = new StreamWriter(path + ENTRIES_LOG, false, Encoding.ASCII);
+			    
+			    string entriesLogFile = 
+			        Path.Combine (path, this.manager.ENTRIES_LOG);
+				sw = new StreamWriter(entriesLogFile, false, Encoding.ASCII);
 			}
 			
 			bool empty = true;
@@ -280,7 +269,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 			}
 			sw.Close();
 			if (empty && created) {
-				File.Delete(path + ENTRIES_LOG);
+				File.Delete(path + this.manager.ENTRIES_LOG);
 			}
 		}
 		
@@ -324,12 +313,15 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		            "directory=[" + directory + "]";
 		        LOGGER.Debug (msg);
 		    }
-			Entry[] entries = Entry.RetrieveEntries(directory);
+		    ArrayList entryCollection = 
+		        new ArrayList (this.manager.ReadEntries (directory));
+			Entry[] entries = (Entry[])entryCollection.ToArray (typeof (Entry));
+		    // TODO: Remove this line -- Entry.RetrieveEntries(directory);
 			if (entries != null && entries.Length > 0) {
 				string cvsdir    = ToRemotePath(directory);
-				if (File.Exists(Path.Combine (directory, REPOSITORY))) {
+				if (File.Exists(Path.Combine (directory, this.manager.REPOSITORY))) {
 					StreamReader sr = 
-					    File.OpenText(Path.Combine (directory, REPOSITORY));
+					    File.OpenText(Path.Combine (directory, this.manager.REPOSITORY));
 					string line = sr.ReadLine();
 					if (line != null && line.Length > 0) {
 					    // TODO: Figure out what to do with this path seperator

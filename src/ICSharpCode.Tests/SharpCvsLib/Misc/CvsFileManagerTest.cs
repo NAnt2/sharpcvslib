@@ -91,5 +91,22 @@ namespace ICSharpCode.SharpCvsLib.Misc {
             Assertion.Assert ("Cvs entry should match the entryString.", 
                               readEntry.CvsEntry.Equals (entryString));
 		}
+		
+		public void EntryLogWriteReadTest () {
+		    const string entryString = 
+		        "/CvsFileManager.cs/1.1/Sun May 11 09:07:28 2003//";
+		    Entry entry = new Entry (entryString);
+		    this.manager.AddEntry (TestConstants.LOCAL_PATH, entry);
+
+		    string entryFile = 
+		        Path.Combine (TestConstants.LOCAL_PATH, this.manager.ENTRIES);
+		    Assertion.Assert ("Missing file=[" + entryFile + "]", 
+		                      File.Exists (entryFile));
+
+            const string addEntryString = 
+                "A/SharpCvsLib.build/1.1/Sun May 11 09:07:28 2003//";
+		    Entry logEntry = new Entry (addEntryString);
+		    this.manager.AddLogEntry (TestConstants.LOCAL_PATH, logEntry);
+		}
 	}
 }

@@ -34,7 +34,7 @@ using System;
 namespace ICSharpCode.SharpCvsLib {
     
     public class TestConstants {
-        public const String LOCAL_PATH = "c:/test/sharpcvslib-tests";
+        public const String LOCAL_PATH = "c:/test/sharpcvslib-tests/";
         public const String CVSROOT = 
             ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
         public const String MODULE = "sharpcvslib";
