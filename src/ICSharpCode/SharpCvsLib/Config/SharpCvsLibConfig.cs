@@ -54,7 +54,7 @@ namespace ICSharpCode.SharpCvsLib.Config {
         /// <summary>
         /// The default encoding type for the application.
         /// </summary>
-        public static Encoding DEFAULT_ENCODING = Encoding.Unicode;
+        public static Encoding DEFAULT_ENCODING = Encoding.ASCII;
 
         private const int DEFAULT_TIMEOUT = 1000;
         private const int DEFAULT_AUTH_SLEEP = 1000;

@@ -86,6 +86,28 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         }
 
         /// <summary>
+        /// Create a new instance of the <see cref="UpdateCommandParser"/>.
+        /// </summary>
+        /// <returns></returns>
+        public static ICommandParser GetInstance() {
+            return GetInstance(typeof(AddCommandParser));
+        }
+
+        /// <summary>
+        /// Name of the command being parsed.
+        /// </summary>
+        public override string CommandName {
+            get {return "add";}
+        }
+
+        /// <summary>
+        /// Description of the command.
+        /// </summary>
+        public override string CommandDescription {
+            get {return "Add a new file/directory to the repository";}
+        }
+
+        /// <summary>
         /// Create the command object that will be used to act on the repository.
         /// </summary>
         /// <returns>The command object that will be used to act on the

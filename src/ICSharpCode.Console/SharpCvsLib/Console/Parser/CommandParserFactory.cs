@@ -103,8 +103,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         public ICommandParser GetCommandParser () {
             ICommandParser parser = null;
             switch (command) {
-                case "xml":
-                    parser = XmlLogCommandParser.GetInstance();
+                case "add":
+                case "ad":
+                case "new":
+                    parser = AddCommandParser.GetInstance();
                     break;
                 case "checkout":
                 case "co":
@@ -115,6 +117,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 case "upd":
                 case "update":
                     parser = UpdateCommandParser.GetInstance();
+                    break;
+                case "xml":
+                    parser = XmlLogCommandParser.GetInstance();
                     break;
                 default:
                     throw new ArgumentException(

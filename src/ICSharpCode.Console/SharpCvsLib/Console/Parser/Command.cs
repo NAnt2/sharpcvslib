@@ -46,6 +46,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private String first;
         private String nick1;
         private String nick2;
+        private string description;
+        private bool implemented;
 
         /// <summary>
         /// Primary name for the command, the name to be used first.
@@ -68,6 +70,29 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             get {return this.nick2;}
         }
 
+        /// <summary>
+        /// Common name for the command.
+        /// </summary>
+        public string CommandName {
+            get {return this.first;}
+        }
+
+        /// <summary>
+        /// Description of the command.
+        /// </summary>
+        public string Description {
+            get {return this.description;}
+            set {this.description = value;}
+        }
+
+        /// <summary>
+        /// <code>true</code> if the command is implemented, <code>false</code> otherwise.
+        /// </summary>
+        public bool Implemented {
+            get {return this.implemented;}
+            set {this.implemented = value;}
+        }
+
         /// <summary>Create a new command.</summary>
         /// <param name="first">Primary command name.</param>
         /// <param name="nick1">First alternate name for the command.</param>
@@ -76,6 +101,16 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             this.first = first;
             this.nick1 = nick1;
             this.nick2 = nick2;
+        }
+
+        /// <summary>
+        /// Create a new instance of the command object.
+        /// </summary>
+        /// <param name="commandName">Name of the command.</param>
+        /// <param name="description">Description of the command.</param>
+        public Command (string commandName, string description) {
+            this.first = commandName;
+            this.description = description;
         }
     }
 }

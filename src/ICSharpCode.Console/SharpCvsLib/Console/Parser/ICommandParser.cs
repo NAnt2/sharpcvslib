@@ -65,6 +65,12 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         string CommandName {get;}
 
         /// <summary>
+        /// Brief description of what the command does, corresponds to the text displayed on the
+        /// <code>cvs --help-commands</code> menu.
+        /// </summary>
+        string CommandDescription {get;}
+
+        /// <summary>
         /// Create the command object that will be used to act on the repository.
         /// </summary>
         /// <returns>The command object that will be used to act on the

@@ -72,6 +72,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         }
 
         /// <summary>
+        /// Description of the command.
+        /// </summary>
+        public override string CommandDescription {
+            get {return "Bring work tree in sync with repository";}
+        }
+
+        /// <summary>
         /// Default constructor.
         /// </summary>
         public UpdateCommandParser () {

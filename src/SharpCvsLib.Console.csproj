@@ -90,12 +90,6 @@
                     HintPath = "C:\WINNT\Microsoft.NET\Framework\v1.0.3705\System.EnterpriseServices.dll"
                 />
                 <Reference
-                    Name = "SharpCvsLib"
-                    Project = "{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}"
-                    Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
-                    Private = "False"
-                />
-                <Reference
                     Name = "nunit.framework"
                     AssemblyName = "nunit.framework"
                     HintPath = "c:\progra~1\mailfr~1\testru~1\nunit.framework.dll"
@@ -134,16 +128,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\AddCommand.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\CheckoutCommand.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\CommitCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -169,12 +153,17 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Commands\UpdateCommand.cs"
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\AbstractCommandParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\AbstractCommandParser.cs"
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\AddCommandParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\CheckoutCommandParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -205,6 +194,11 @@
                 />
                 <File
                     RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\ICommandParser.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode.Console\SharpCvsLib\Console\Parser\UpdateCommandParser.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

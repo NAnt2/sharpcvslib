@@ -95,6 +95,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         }
 
         /// <summary>
+        /// Description of the command.
+        /// </summary>
+        public virtual string CommandDescription {
+            get {return "Enter command description in overriding command parser";}
+        }
+
+        /// <summary>
         /// Create a new instance of the given 
         /// </summary>
         /// <param name="type"></param>

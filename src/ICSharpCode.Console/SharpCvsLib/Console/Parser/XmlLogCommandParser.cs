@@ -74,6 +74,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             get {return "xml";}
         }
 
+        /// <summary>
+        /// Description of the command.
+        /// </summary>
+        public override string CommandDescription {
+            get {return "Produces an xml formatted report on the history of the files";}
+        }
+
         private const string OPT_DATE = "-D";
         private const string OPT_DAYS = "-Ds";
         private const string OPT_OUTPUT_XML_FILENAME = "-oxml";

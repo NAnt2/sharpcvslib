@@ -93,7 +93,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         public string Protocol {
             get {return protocol;}
             set {
-                System.Console.WriteLine(String.Format("Protocol: {0}", value)); 
+                LOGGER.Debug(String.Format("Protocol: {0}", value)); 
                 AssertNotEmpty(value, "Protocol");
                 protocol = value;
             }
@@ -105,7 +105,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         public string User {
             get {return user;}
             set {
-                System.Console.WriteLine(String.Format("User: {0}", value)); 
+                LOGGER.Debug(String.Format("User: {0}", value)); 
                 user = value;}
         }
 
@@ -115,7 +115,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         public string Host {
             get {return host;}
             set {
-                System.Console.WriteLine(String.Format("Host: {0}", value)); 
+                LOGGER.Debug(String.Format("Host: {0}", value)); 
                 AssertNotEmpty(value, "Host");
                 host = value;}
         }
@@ -142,7 +142,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         public string CvsRepository {
             get {return cvsrepository;}
             set {
-                System.Console.WriteLine(String.Format("Repository: {0}", value)); 
+                LOGGER.Debug(String.Format("Repository: {0}", value)); 
                 AssertNotEmpty(value, "Repository");
                 cvsrepository = value;}
         }
@@ -153,7 +153,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         public int Port {
             get {return port;}
             set {
-                System.Console.WriteLine(String.Format("Port: {0}", value)); 
+                LOGGER.Debug(String.Format("Port: {0}", value)); 
                 this.port = value;}
         }
 
@@ -296,7 +296,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
             CvsRoot root1 = (CvsRoot)obj;
             CvsRoot root2 = this;
 
-            System.Console.WriteLine(String.Format("root1: {0}; root2: {1}; are equal {2}",
+            LOGGER.Debug(String.Format("root1: {0}; root2: {1}; are equal {2}",
                 root1, root2, root1.ToString().Equals(root2.ToString())));
             return root1.ToString().Equals(root2.ToString());
         }

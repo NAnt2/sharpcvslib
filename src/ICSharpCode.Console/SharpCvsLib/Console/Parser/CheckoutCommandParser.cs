@@ -73,6 +73,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser{
         }
 
         /// <summary>
+        /// Description of the command.
+        /// </summary>
+        public override string CommandDescription {
+            get {return "Checkout sources for editing";}
+        }
+
+        /// <summary>
         /// Default constructor.
         /// </summary>
         public CheckoutCommandParser () {
