@@ -135,7 +135,7 @@
         <echo message="Building assembly version ${assembly.version}" />
     </target>
        
-    <target name="build.all" description="Build all sources by calling all targets in project build files.">
+    <target name="build.all" depends="clean" description="Build all sources by calling all targets in project build files.">
         <call target="setup" />
         <call target="build.lib" />
         <call target="build.console" />
@@ -159,11 +159,11 @@
         <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="build-sample"/>
     </target>
 
-    <target name="run-tests" depends="build.test">
+    <target name="run-tests" depends="build.all">
         <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="run-tests"/>
     </target>
     
-    <target name="run-tests-sample" depends="build.test-sample">
+    <target name="run-tests-sample" depends="build.all">
         <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="run-tests-sample"/>
     </target>
     <target name="tests-to-html">
@@ -347,7 +347,7 @@
     </target>
     
     <target name="clean">
-        <echo message="Build directory: ${dir.bin}" />
+        <echo message="Binary file directory: ${dir.bin}" />
         <delete dir="${dir.bin}" failonerror="false"/>
     </target>
 </project>
