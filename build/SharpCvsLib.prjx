@@ -1,4 +1,4 @@
-<Project name="SharpCvsLib" description="Cvs client library written in c#" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
+<Project name="SharpCvsLib" standardNamespace="NewProject" description="Cvs client library written in c#" newfilesearch="None" enableviewstate="True" version="1.1" projecttype="C#">
   <Contents>
     <File name="..\lib\ICSharpCode.SharpZipLib.dll" subtype="Code" buildaction="Nothing" dependson="" data="" />
     <File name="..\lib\ext" subtype="Directory" buildaction="Nothing" dependson="" data="" />
@@ -7,6 +7,7 @@
     <File name="..\src\COPYING.txt" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name="..\src\README.txt" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Client\IResponseServices.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Responses\AbstractResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\IResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\MessageResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\MessageTaggedResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -23,9 +24,9 @@
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\SetStaticDirectoryResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\ClearStaticDirectoryResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\ValidRequestsResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name="..\src\ICSharpCode\SharpCvsLib\Commands\CheckoutModuleCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Commands\CommitCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Commands\ICommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Commands\ILogCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Commands\ImportModuleCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Commands\InitCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Commands\RetreiveFilelistCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -143,7 +144,19 @@
     <File name="..\src\ICSharpCode\SharpCvsLib\Extension\LogReporter\LogReport.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Extension\LogReporter\LogReportCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Extension\LogReporter\LogRevision.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Extension\LogReporter\LogSymbolicName.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Extension\LogReporter\LogSymbolicNames.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\SharpCvsLibAssemblyInfo.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Protocols" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Protocols\PServerProtocol.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Protocols\AbstractProtocol.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Protocols\ExtProtocol.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Protocols\IProtocol.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Messages\MessageEventHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Messages\ProcessEventHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Messages\MessageEventArgs.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Messages\ProcessEventArgs.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Responses\ResponseMessageEvents.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto="..\lib\ICSharpCode.SharpZipLib.dll" localcopy="True" />
@@ -151,20 +164,20 @@
   </References>
   <DeploymentInformation target="" script="" strategy="File" />
   <Configuration runwithwarnings="False" name="Debug">
-    <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="True" win32Icon="" />
+    <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="True" win32Icon="" noconfig="False" nostdlib="False" />
     <Execution commandlineparameters="" consolepause="True" />
-    <Output directory="..\bin" assembly="ICSharpCode.SharpCvsLib" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+    <Output directory=".\bin" assembly="ICSharpCode.SharpCvsLib" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
   </Configuration>
   <Configurations active="Debug">
     <Configuration runwithwarnings="False" name="Debug">
-      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="4" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="True" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="True" win32Icon="" noconfig="False" nostdlib="False" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory="..\bin" assembly="ICSharpCode.SharpCvsLib" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory=".\bin" assembly="ICSharpCode.SharpCvsLib" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
     <Configuration runwithwarnings="False" name="Release">
-      <CodeGeneration runtime="MsNet" compiler="Csc" warninglevel="2" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" />
+      <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="2" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
       <Execution commandlineparameters="" consolepause="True" />
-      <Output directory="..\bin" assembly="ICSharpCode.SharpCvsLib" executeScript="" executeBeforeBuild="" executeAfterBuild="" />
+      <Output directory=".\bin" assembly="ICSharpCode.SharpCvsLib" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
   </Configurations>
 </Project>

@@ -63,17 +63,18 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
             
             SharpCvsLibTestsConfig settings;
             string section = SharpCvsLibTestsConfigHandler.APP_CONFIG_SECTION;
-System.Console.WriteLine("section={0}", section);
+//System.Console.WriteLine("section={0}", section);
             settings = (SharpCvsLibTestsConfig)ConfigurationSettings.GetConfig(section);
 
-System.Console.WriteLine("target-directory={0}", settings.TargetDirectory);
-System.Console.WriteLine("password={0}", settings.ValidPassword);
+//System.Console.WriteLine("target-directory={0}", settings.TargetDirectory);
+//System.Console.WriteLine("password={0}", settings.ValidPassword);
             string moduleName = settings.Module;
             string workingDir = settings.TargetDirectory;
             string password = settings.ValidPassword;
             bool foundTestFile1 = false;
             bool foundTestFile2 = false;
             LogRevision logRevision;
+            LogSymbolicName symbolicName;
             
             LogReportCommand logCommand = new LogReportCommand(moduleName, workingDir);
     // 
@@ -95,6 +96,7 @@ System.Console.WriteLine("password={0}", settings.ValidPassword);
                     Assertion.AssertEquals("test-file.txt", logFile.WorkingFnm);
                     Assertion.AssertEquals("", logFile.Description);
                     
+                    // check the revisions
                     Assertion.AssertEquals(3, logFile.Count);
                     // most recent version will be first
                     logRevision = logFile[0];
@@ -123,7 +125,22 @@ System.Console.WriteLine("password={0}", settings.ValidPassword);
                     Assertion.AssertEquals(0, logRevision.LinesAdded);
                     Assertion.AssertEquals(0, logRevision.LinesDeleted);
                     Assertion.AssertEquals("Various changes for sticky tag support.  Looked at implementing a message event handling system for request/ responses to output server messages (similar to tortoise).", logRevision.Comment);
-                }
+                    
+                    // check the symbolic names
+                    // check the revisions
+                    Assertion.AssertEquals(3, logFile.SymbolicNames.Count);
+                    symbolicName = logFile.SymbolicNames[0];
+                    Assertion.AssertEquals("V0_3", symbolicName.Name);
+                    Assertion.AssertEquals("1.3", symbolicName.Revision);
+                    
+                    symbolicName = logFile.SymbolicNames[1];
+                    Assertion.AssertEquals("V0_2", symbolicName.Name);
+                    Assertion.AssertEquals("1.2", symbolicName.Revision);
+                    
+                    symbolicName = logFile.SymbolicNames[2];
+                    Assertion.AssertEquals("V0_1", symbolicName.Name);
+                    Assertion.AssertEquals("1.1", symbolicName.Revision);
+               }
                 if (logFile.WorkingFnm.EndsWith("test-file-2.txt"))
                 {
                     Assertion.Assert(!foundTestFile2);

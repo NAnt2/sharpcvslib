@@ -62,7 +62,8 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter
 		/// </summary>
 	    public string WorkingFnm {
 	        get { 
-                if (null == this.workingFnm || String.Empty == this.workingFnm) {
+                if ((null == this.workingFnm || String.Empty == this.workingFnm) 
+                    && this.RepositoryFnm.Length >= 2) {
                     // remove the ,v from the end of the file.
                     string temp = this.RepositoryFnm.Substring(0, this.RepositoryFnm.Length - 2);
                     try {
@@ -87,6 +88,14 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter
 	    public string Description {
 	        get { return description; }
 	        set { description = value; }
+	    }
+	    
+	    private LogSymbolicNames symbolicNames = new LogSymbolicNames();
+		/// <summary>
+		/// The symbolic name collection for this file
+		/// </summary>
+	    public LogSymbolicNames SymbolicNames {
+	        get { return symbolicNames; }
 	    }
 	    
 	    private ArrayList revisions = new ArrayList();

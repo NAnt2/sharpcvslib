@@ -54,7 +54,6 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
     /// Typical usage is as follows:
     /// 
     ///    string password = "password";
-	///    string xmlFilename = "C:\\tmp\\output.xml";
     ///	    
     ///    LogReportCommand logCommand = new LogReportCommand("sharpcvslib", "C:\\sharpcvslib");
     /// 
@@ -89,11 +88,24 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
     	private bool hasStartDate;
     	private DateTime endDate;
     	private bool hasEndDate;
-     
+ 
+        // Patterns we look for in the lines we receive from the cvs server
+        private const string repositoryFnmPrefix = "RCS file: ";
+        private const string repositoryFnmPrefixWithM = "M RCS file: ";
+        private const string workingFnmPrefix = "Working file: ";
+        private const string symbolicNamesPrefix = "symbolic names:";
+        private const string descriptionPrefix = "description:";
+        private const string revisionPrefix = "revision ";
+        private const string datePrefix = "date: ";
+        private const string branchesPrefix = "branches: ";
+        private const string fileEndPrefix = "==========";
+        private const string revisionEndPrefix = "----------";
+
         // Represents what we want next from the messages output by the log command
         private enum LogState { 
-            WANT_FILE_HEADER_START,   // initial state where we want the file header
-            WANT_FILE_HEADER,         // we are in the file header, but want more
+            WANT_FILE_HEADER_START,          // initial state where we want the file header
+            WANT_FILE_HEADER,                // we are in the file header, but want more
+            WANT_FILE_HEADER_SYMBOLIC_NAMES, // in symbolic names within file header
             WANT_FILE_DESCRIPTION,
             WANT_REVISION,
         }
@@ -165,15 +177,14 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
         /// </summary>
         public LogReport Run(string password)
         {
-           // read Root and Repository from local directory
+          // read Root and Repository from local directory
             if (null == this.cvsRoot) {
                 Manager manager = new Manager(localDirectory);
                 Root root = (Root)manager.FetchSingle (localDirectory,
                     Factory.FileType.Root);
-
                 cvsRoot = new CvsRoot(root.FileContents);
             }
-            
+           
             if (null == this.workingDirectory) {
                 workingDirectory = new WorkingDirectory(cvsRoot,
                     localDirectory,
@@ -182,8 +193,8 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
             
             // Get a connection
             CVSServerConnection connection = new CVSServerConnection();
-     
-            connection.Connect(workingDirectory, password);
+
+        	connection.Connect(workingDirectory, password);
         	
         	return Run(connection);
         }
@@ -216,13 +227,17 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
         
             ILogCommand command;
             // Recursively add all cvs folders/files under the localDirectory
-            if (Directory.Exists(workingDirectory.WorkingPath)) {
+System.Console.WriteLine("GNE workingDirectory.WorkingPath = {0}", workingDirectory.WorkingPath);
+System.Console.WriteLine("GNE localDirectory: {0}", localDirectory);
+ //           if (Directory.Exists(workingDirectory.WorkingPath)) {
+            if (Directory.Exists(localDirectory)) {
                 workingDirectory.FoldersToUpdate = FetchFiles(localDirectory);
                 command = 
                     new LogCommand(workingDirectory, this.workingDirectory.ModuleName, null);
             } else {
                 command = 
-                    new RLogCommand(workingDirectory, this.workingDirectory.ModuleName);
+// GNE - this wont compile                   new LogCommand(workingDirectory, this.workingDirectory.ModuleName);
+                    new LogCommand(workingDirectory, this.workingDirectory.ModuleName, null);
             }
     
             // add any date restrictions        
@@ -265,7 +280,6 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
          
         private void FetchFilesRecursive(ArrayList folders, string localDirectory)
         {
-            
             String modulePath = localDirectory;
             Manager manager = new Manager(modulePath);
 
@@ -303,15 +317,6 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
         /// </summary>
         public void OnMessage(string message)
         {
-            const string repositoryFnmPrefix = "RCS file: ";
-            const string repositoryFnmPrefixWithM = "M RCS file: ";
-            const string workingFnmPrefix = "Working file: ";
-            const string descriptionPrefix = "description:";
-            const string revisionPrefix = "revision ";
-            const string datePrefix = "date: ";
-            const string branchesPrefix = "branches: ";
-            const string fileEndPrefix = "==========";
-            const string revisionEndPrefix = "----------";
      
 //            System.Console.WriteLine(message);
  
@@ -363,55 +368,123 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter {
                 }
                 else {
                     switch (logState) {
-                        case LogState.WANT_FILE_HEADER_START:        // drop into WANT_FILE_HEADER
+                        case LogState.WANT_FILE_HEADER_START:          // drop into WANT_FILE_HEADER
+                        case LogState.WANT_FILE_HEADER_SYMBOLIC_NAMES: // drop into WANT_FILE_HEADER
                         case LogState.WANT_FILE_HEADER:
-                            if (message.StartsWith(repositoryFnmPrefix)) {
-                                // file line is of form 'RCS file: <filename>'
-                                curLogFile.RepositoryFnm = message.Substring(repositoryFnmPrefix.Length);
-                                logState = LogState.WANT_FILE_HEADER;
-                            } 
-                            else if (message.StartsWith(repositoryFnmPrefixWithM)) {
-                                // file line is of form 'M RCS file: <filename>'
-                                curLogFile.RepositoryFnm = message.Substring(repositoryFnmPrefixWithM.Length);
-                                logState = LogState.WANT_FILE_HEADER;
-                            }
-                            else if (message.StartsWith(workingFnmPrefix)) {
-                                // file line is of form 'Working file: <filename>'
-                                curLogFile.WorkingFnm = message.Substring(workingFnmPrefix.Length);
-                                logState = LogState.WANT_FILE_HEADER;
-                            }
-                            else if (message.StartsWith(descriptionPrefix)) {
-                                // description line is of form 'description:'
-                                // and is then optionally followed by a multi-line description
-                                logState = LogState.WANT_FILE_DESCRIPTION;
-                            }
+                            OnMessageHeader(message);
                             break;
                                     
                         case LogState.WANT_FILE_DESCRIPTION:
-                            // append description line to the description
-                            if (curLogFile.Description.Length > 0) {
-                                curLogFile.Description += Environment.NewLine;
-                            }
-                            curLogFile.Description += message;
+                            OnMessageDescription(message);
                             break;
                         
                         case LogState.WANT_REVISION:
-                            if (message.StartsWith(revisionPrefix) && curLogRevision.Revision.Length == 0) {
-                                curLogRevision.Revision = message.Substring(revisionPrefix.Length);
-                            } else if (message.StartsWith(datePrefix) && curLogRevision.Author.Length == 0) {
-                                ExtractDateAndAuthor(message);
-                            } else if (message.StartsWith(branchesPrefix) && curLogRevision.Branches.Length == 0) {
-                                curLogRevision.Branches = message.Substring(branchesPrefix.Length);
-                            } else {
-                                // assume this is part of the comment
-                                if (curLogRevision.Comment.Length > 0) {
-                                    curLogRevision.Comment += Environment.NewLine;
-                                }
-                                curLogRevision.Comment += message;
-                            }
+                            OnMessageRevision(message);
                             break;
                     }
                 }
+            }
+        }
+        
+        /// <summary>
+        /// This is called for each Message response we receive from the cvs server when we are 
+        /// processing the header
+        /// </summary>
+        public void OnMessageHeader(string message)
+        {
+            // First handle symbolic names substate
+            if (logState == LogState.WANT_FILE_HEADER_SYMBOLIC_NAMES) {
+                // symbolic names start with a tab
+                // but we also detect space, just in case
+                if (message.StartsWith("\t") || message.StartsWith(" ")) {
+                    // extract symbolic name and revision
+                    ExtractSymbolicName(message);
+                }
+                else {
+                    // this must be the end of the symbolic names
+                    logState = LogState.WANT_FILE_HEADER;
+                    // Note: we must now check for other tags that we are interested in 
+                }
+            }
+        
+            if (message.StartsWith(symbolicNamesPrefix)) {
+                // file line is of form 'symbolic names:'
+                logState = LogState.WANT_FILE_HEADER_SYMBOLIC_NAMES;
+            }
+            else if (message.StartsWith(repositoryFnmPrefix)) {
+                // file line is of form 'RCS file: <filename>'
+                curLogFile.RepositoryFnm = message.Substring(repositoryFnmPrefix.Length);
+                logState = LogState.WANT_FILE_HEADER;
+            } 
+            else if (message.StartsWith(repositoryFnmPrefixWithM)) {
+                // file line is of form 'M RCS file: <filename>'
+                curLogFile.RepositoryFnm = message.Substring(repositoryFnmPrefixWithM.Length);
+                logState = LogState.WANT_FILE_HEADER;
+            }
+            else if (message.StartsWith(workingFnmPrefix)) {
+                // file line is of form 'Working file: <filename>'
+                curLogFile.WorkingFnm = message.Substring(workingFnmPrefix.Length);
+                logState = LogState.WANT_FILE_HEADER;
+            }
+            else if (message.StartsWith(descriptionPrefix)) {
+                // description line is of form 'description:'
+                // and is then optionally followed by a multi-line description
+                logState = LogState.WANT_FILE_DESCRIPTION;
+            }
+        }
+        
+        /// <summary>
+        /// This is called for each Message response we receive from the cvs server when we are 
+        /// processing the description
+        /// </summary>
+        public void OnMessageDescription(string message)
+        {
+            // append description line to the description
+            if (curLogFile.Description.Length > 0) {
+                curLogFile.Description += Environment.NewLine;
+            }
+            curLogFile.Description += message;
+        }
+         
+        /// <summary>
+        /// This is called for each Message response we receive from the cvs server when we are 
+        /// processing the description
+        /// </summary>
+        public void OnMessageRevision(string message)
+        {
+            if (message.StartsWith(revisionPrefix) && curLogRevision.Revision.Length == 0) {
+                curLogRevision.Revision = message.Substring(revisionPrefix.Length);
+            } else if (message.StartsWith(datePrefix) && curLogRevision.Author.Length == 0) {
+                ExtractDateAndAuthor(message);
+            } else if (message.StartsWith(branchesPrefix) && curLogRevision.Branches.Length == 0) {
+                curLogRevision.Branches = message.Substring(branchesPrefix.Length);
+            } else {
+                // assume this is part of the comment
+                if (curLogRevision.Comment.Length > 0) {
+                    curLogRevision.Comment += Environment.NewLine;
+                }
+                curLogRevision.Comment += message;
+            }
+        }
+      
+        /// <summary>
+        /// Extracts all required information from the synbolic line
+        /// and add a new entry for it to the SymbolicNames collection
+        /// </summary>
+        private void ExtractSymbolicName(string message)
+        {
+            // line is of form:
+            // '\t<symbolic name>: <revision>'
+            
+            // locate the ':' separating the symbolic name from the revision
+            int idx = message.IndexOf(':');
+            if (idx > 0 && idx < message.Length - 1)
+            {
+                string name = message.Substring(0, idx).Trim();
+                string revision = message.Substring(idx + 1).Trim();
+            
+                LogSymbolicName symbolicName = new LogSymbolicName(name, revision);
+                curLogFile.SymbolicNames.AddSymbolicName(symbolicName);
             }
         }
         
