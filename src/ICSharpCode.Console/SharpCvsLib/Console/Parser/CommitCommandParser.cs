@@ -140,39 +140,44 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             ICSharpCode.SharpCvsLib.Commands.CommitCommand2 commitCommand;
             try {
                 this.ParseOptions(this.unparsedOptions);
+                string cvsFolder = Path.Combine(Environment.CurrentDirectory, "CVS");
                 // set properties before creation of CommitCommand2
                 // Open the Repository file in the CVS directory
-                Manager manager = new Manager(Environment.CurrentDirectory);
-                Repository repository = manager.FetchRepository(Environment.CurrentDirectory); 
+                Manager manager = new Manager(cvsFolder);
+                Repository repository = manager.FetchRepository(cvsFolder); 
                 // If this fails error out and the user
                 //    is not in a CVS repository directory tree.
                 CurrentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
-                    Environment.CurrentDirectory, repository.FileContents);
+                    cvsFolder, repository.FileContents);
                 if (revision != null) {
                     this.CurrentWorkingDirectory.Revision = revision;
                 }
-                String[] files = Directory.GetFiles(Environment.CurrentDirectory, fileNames);
+                String[] files = Directory.GetFiles(cvsFolder, fileNames);
                 ArrayList copiedFiles = new ArrayList ();
                 foreach (String file in files) {
                     LOGGER.Debug("file=[" + file + "]");
-                    String fullPath = Path.Combine(Environment.CurrentDirectory, file);
+                    String fullPath = Path.Combine(cvsFolder, file);
                     copiedFiles.Add(fullPath);
                 }
                 CurrentWorkingDirectory.Folders = GetFoldersToCommit(copiedFiles);
                 // Create new CommitCommand2 object
                 commitCommand = new ICSharpCode.SharpCvsLib.Commands.CommitCommand2(
-                                 this.CurrentWorkingDirectory );
-            }
-            catch (Exception e) {
+                    this.CurrentWorkingDirectory );
+
+                // set public properties on the commit command
+                if (message != null) {
+                    commitCommand.LogMessage = message;
+                }
+         
+                return commitCommand;
+            } catch (CvsFileNotFoundException e) {
+                ConsoleMain.ExitProgram(string.Format("No CVS folder found in path {0}",
+                    Environment.CurrentDirectory), e);
+                return null;
+            } catch (Exception e) {
                 LOGGER.Error (e);
                 throw e;
             }
-            // set public properties on the commit command
-            if (message != null) {
-                commitCommand.LogMessage = message;
-            }
-         
-            return commitCommand;
         }
         /// <summary>
         /// Setup the list of files to be a folder object for the cvs
@@ -190,12 +195,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     folder = new Folder();
                     LOGGER.Debug("file=[" + file + "]");
                     LOGGER.Debug("file path=[" + Path.GetDirectoryName(file) + "]");
+                    string cvsFolder = Path.Combine(Path.GetDirectoryName(file), "CVS");
                     folder.Repository = 
-                        manager.FetchRepository(Path.GetDirectoryName(file));
+                        manager.FetchRepository(cvsFolder);
                     folder.Root = 
-                        manager.FetchRoot(Path.GetDirectoryName(file));
+                        manager.FetchRoot(Path.GetDirectoryName(cvsFolder));
                     folder.Tag = 
-                        manager.FetchTag(Path.GetDirectoryName(file));
+                        manager.FetchTag(Path.GetDirectoryName(cvsFolder));
                     folders.Add(Path.GetDirectoryName(file), folder);
                 } 
                 else {
