@@ -11,11 +11,42 @@
        <property name="cvs.command" value="update -Pd" />
        <echo message="Updating ${dir.base} using cvs command: ${cvs.command}." />
        
-       <cvs     module="sharpcvslib" 
-                cvsroot=":ext:${name.developer}@cvs.sourceforge.net:/cvsroot/sharpcvslib"
-                destination="${dir.base}"
-                command="${cvs.command}"
-                usesharpcvslib="false" />
+        <cvs-update destination="${dir.base}" 
+                    cvsroot="${cvs.root}" 
+                    password="" 
+                    module="${cvs.module}"
+                    cvsrsh="ssh"
+                    overwritelocal="true"
+                    usesharpcvslib="false">
+            <fileset>
+                <include name="${dir.build}/build.number"/>
+                <include name="${dir.src}/SharpCvsLibAssemblyInfo.cs"/>
+            </fileset>
+        </cvs-update>        
+
+       <cvs-update  destination="${dir.base}"
+                    cvsroot="${cvs.root}"
+                    password=""
+                    module="${cvs.module}"
+                    cvsrsh="ssh"
+                    usesharpcvslib="false">
+        </cvs-update>            
+    </target>
+    
+    <target name="src.commit" description="Commits version changes back to cvs.">
+        <cvs    command="commit" 
+                destination="${dir.base}" 
+                cvsroot="${cvs.root}" 
+                module="${cvs.module}"
+                cvsrsh="ssh"
+                commandline="-m &quot;AUTOMATED: Incremented version.&quot;"
+                usesharpcvslib="false"
+                verbose="true">
+            <fileset basedir="${dir.base}">
+                <include name="build/build.number"/>
+                <include name="src/harpCvsLibAssemblyInfo.cs"/>
+            </fileset>
+        </cvs>        
     </target>
 
     <target name="update.version" description="Generate the assembly info file for the project.  Pass in the version number.">
@@ -232,6 +263,7 @@
                 <include name="${dir.bin}**" />
                 <include name="${dir.build}**" />
                 <include name="${dir.conf}**" />
+                <include name="${dir.examples}**" />
                 <include name="${dir.lib}**" />
                 <include name="${dir.src}**" />
                 <include name="${dir.tools}/nant**" />
@@ -257,11 +289,6 @@
     </target>
     
     <target name="integration" depends="src.update, dist">
-        <copy todir="${ccnet.log.dir}/${label-to-apply}">
-            <fileset basedir="${dir.dist}">
-                <include name="**"/>
-            </fileset>
-        </copy>
         <zip zipfile="${ccnet.log.dir}/${label-to-apply}/${assembly.version}-src.zip">
             <fileset basedir="${dir.dist}/src">
                 <include name="**" />
@@ -272,6 +299,7 @@
                 <include name="**" />
             </fileset>
         </zip>
+        <call target="src.commit"/>
     </target>
     
     <target name="build-release.common">
