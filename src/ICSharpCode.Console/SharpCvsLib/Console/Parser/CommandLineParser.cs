@@ -37,8 +37,14 @@
 #endregion
 
 using System;
+using System.Text;
+
 using ICSharpCode.SharpCvsLib.Commands;
+using ICSharpCode.SharpCvsLib.Misc;
+
 using ICSharpCode.SharpCvsLib.Console.Commands;
+
+using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
@@ -47,6 +53,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     ///     command object for the current parameters passed in.
     /// </summary>
     public class CommandLineParser {
+        private readonly ILog LOGGER = LogManager.GetLogger(typeof (CommandLineParser));
 
         private String[] arguments;
 
@@ -56,11 +63,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private string repository;
         private string singleOptions;
 
+        private WorkingDirectory currentWorkingDirectory;
         /// <summary>
-        /// Value of the cvsroot to use as a string.  This will be passed
-        ///     into the CvsRoot object which will know how to parse it.
+        /// Get the current working directory, parsed from the command line.
         /// </summary>
-        public String Cvsroot {
+        public WorkingDirectory CurrentWorkingDirectory {
+            get {return this.currentWorkingDirectory;}
+        }
+
+            /// <summary>
+            /// Value of the cvsroot to use as a string.  This will be passed
+            ///     into the CvsRoot object which will know how to parse it.
+            /// </summary>
+            public String Cvsroot {
             get {return this.cvsroot;}
         }
 
@@ -104,105 +119,121 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <summary>
         ///      Parse the command line options.
         /// </summary>
-        public void Execute () {
+        /// <returns>A command object from the library which will be used to 
+        ///     access the repsository.</returns>
+        public ICommand Execute () {
+            // TODO: Remove = null when all other code paths return a value,
+            //      this was just put in so it would compile.
+            ICommand command = null;
             if (arguments.Length < 1) {
                 System.Console.WriteLine (Usage.General);
             }
 
             for (int i = 0; i < arguments.Length; i++) {
+                if (LOGGER.IsDebugEnabled) {
+                    StringBuilder msg = new StringBuilder ();
+                    msg.Append("arguments[").Append(i).Append("]=[").Append(arguments[i]).Append("]");
+                    LOGGER.Debug(msg);
+                }
                 if (arguments[i].IndexOf ("-d", 0, 2) >= 0) {
                     cvsroot = arguments[i++].Substring (2);
                 }
                 switch (arguments[i]) {
-                case "checkout":
-                case "co":
-                case "get":
-                    singleOptions = "ANPRcflnps";
-                    this.command = arguments[i++];
-                    // get rest of arguments which is options on the checkout command.
-                    while (arguments[i].IndexOf("-", 0, 1) >= 0){
-                        // Get options with second parameters?
-                        if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0){
-                            for ( int cnt=1; cnt < arguments[i].Length; cnt++ ){
-                                this.options = this.options + "-" + arguments[i][cnt] + " "; // No
+                    case "checkout":
+                    case "co":
+                    case "get":
+                        singleOptions = "ANPRcflnps";
+                        this.command = arguments[i++];
+                        // get rest of arguments which is options on the checkout command.
+                        while (arguments[i].IndexOf("-", 0, 1) >= 0){
+                            // Get options with second parameters?
+                            if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0){
+                                for ( int cnt=1; cnt < arguments[i].Length; cnt++ ){
+                                    this.options = this.options + "-" + arguments[i][cnt] + " "; // No
+                                }
+                                i++;
                             }
-                            i++;
+                            else{
+                                this.options = this.options + arguments[i++];       // Yes
+                                this.options = this.options + arguments[i++] + " ";
+                            }
                         }
-                        else{
-                            this.options = this.options + arguments[i++];       // Yes
-                            this.options = this.options + arguments[i++] + " ";
+                        if (arguments.Length > i){
+                            // Safely grab the module, if not specified then
+                            //  pass null into the repository...the cvs command
+                            //  line for cvsnt/ cvs seems to bomb out when
+                            //  it sends to the server
+                            this.repository = arguments[i++];
+                        } else {
+                            this.repository = String.Empty;
                         }
-                    }
-                    if (arguments.Length > i){
-                        // Safely grab the module, if not specified then
-                        //  pass null into the repository...the cvs command
-                        //  line for cvsnt/ cvs seems to bomb out when
-                        //  it sends to the server
-                        this.repository = arguments[i++];
-                    } else {
-                        this.repository = String.Empty;
-                    }
-                    break;
-                case "login":
-                    // login to server
-                    this.command = arguments[i++];
-                    break;
-                case "passwd":
-                     this.command = arguments[i++];
-                     break;
-                case "up":
-                case "upd":
-                case "update":
-                    singleOptions = "ACPRbdfmp";
-                    this.command = arguments[i++];
-                        // get rest of arguments which is options on the update command.
-                    while (arguments[i].IndexOf("-", 0, 1) >= 0)
-                    {
-                        // Get options with second parameters?
-                        if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0)
+                        CheckoutCommand checkoutCommand = 
+                            new CheckoutCommand(cvsroot, repository, options);
+                        command = checkoutCommand.CreateCommand ();
+                        this.currentWorkingDirectory = 
+                            checkoutCommand.CurrentWorkingDirectory;
+                        break;
+                    case "login":
+                        // login to server
+                        this.command = arguments[i++];
+                        break;
+                    case "passwd":
+                        this.command = arguments[i++];
+                        break;
+                    case "up":
+                    case "upd":
+                    case "update":
+                        singleOptions = "ACPRbdfmp";
+                        this.command = arguments[i++];
+                            // get rest of arguments which is options on the update command.
+                        while (arguments[i].IndexOf("-", 0, 1) >= 0)
                         {
-                            for ( int cnt=1; cnt < arguments[i].Length; cnt++ )
+                            // Get options with second parameters?
+                            if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0)
                             {
-                                this.options = this.options + "-" + arguments[i][cnt] + " "; // No
+                                for ( int cnt=1; cnt < arguments[i].Length; cnt++ )
+                                {
+                                    this.options = this.options + "-" + arguments[i][cnt] + " "; // No
+                                }
+                                i++;
                             }
-                            i++;
+                            else
+                            {
+                                this.options = this.options + arguments[i++];       // Yes
+                                this.options = this.options + arguments[i++] + " ";
+                            }
                         }
-                        else
+                        if (arguments.Length > i)
                         {
-                            this.options = this.options + arguments[i++];       // Yes
-                            this.options = this.options + arguments[i++] + " ";
+                            // Safely grab the module, if not specified then
+                            //  pass null into the repository...the cvs command
+                            //  line for cvsnt/ cvs seems to bomb out when
+                            //  it sends to the server
+                            this.repository = arguments[i++];
+                        } 
+                        else 
+                        {
+                            this.repository = String.Empty;
                         }
+                        break;
+                    case "--help":
+                        this.command = arguments[i++];
+                        break;
+                    case "--help-options":
+                        this.command = arguments[i++];
+                        break;
+                    case "--help-commands":
+                        this.command = arguments[i++];
+                        break;
+                    case "--help-synonyms":
+                        this.command = arguments[i++];
+                        break;
+                    default:
+                        System.Console.WriteLine (Usage.General);
+                        throw new System.Exception ("not known");
                     }
-                    if (arguments.Length > i)
-                    {
-                        // Safely grab the module, if not specified then
-                        //  pass null into the repository...the cvs command
-                        //  line for cvsnt/ cvs seems to bomb out when
-                        //  it sends to the server
-                        this.repository = arguments[i++];
-                    } 
-                    else 
-                    {
-                        this.repository = String.Empty;
-                    }
-                    break;
-                case "--help":
-                    this.command = arguments[i++];
-                    break;
-                case "--help-options":
-                    this.command = arguments[i++];
-                    break;
-                case "--help-commands":
-                    this.command = arguments[i++];
-                    break;
-                case "--help-synonyms":
-                    this.command = arguments[i++];
-                    break;
-                default:
-                    System.Console.WriteLine (Usage.General);
-                    throw new System.Exception ("not known");
                 }
-            }
+            return command;
         }
     }
 }

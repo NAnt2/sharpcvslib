@@ -37,13 +37,22 @@
 #endregion
 
 using System;
+
+using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.Commands;
+using ICSharpCode.SharpCvsLib.Exceptions;
+using ICSharpCode.SharpCvsLib.Misc;
+
 using ICSharpCode.SharpCvsLib.Console.Commands;
 using ICSharpCode.SharpCvsLib.Console.Parser;
+
+using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Console {
 
     /// <summary>The main driver/ entry point into the program.</summary>
     public class ConsoleMain {
+        private ILog LOGGER = LogManager.GetLogger(typeof(ConsoleMain));
 
         /// <summary>Constructor.
         ///     TODO: Fill in more of a usage/ explanation.</summary>
@@ -58,8 +67,41 @@ namespace ICSharpCode.SharpCvsLib.Console {
         public void Execute (String[] args) {
             CommandLineParser parser = new CommandLineParser (args);
 
-            parser.Execute ();
+            ICommand command = parser.Execute ();
+            // might need to move this up to the library, make working
+            //  directory a public property??  Not sure.
+            WorkingDirectory workingDirectory = parser.CurrentWorkingDirectory;
 
+            string password = "";
+
+            // Create CVSServerConnection object that has the ICommandConnection
+            CVSServerConnection serverConn = new CVSServerConnection();
+            try{
+                // try connecting with empty password for anonymous users
+                serverConn.Connect(workingDirectory, password);
+            }
+            catch (AuthenticationException eDefault){
+                LOGGER.Info("Authentication failed using empty password, trying .cvspass file.", eDefault);
+                try{
+                    //string scrambledpassword;
+                    // check to connect with password from .cvspass file
+                    // check for .cvspass file and get password
+                    //password = PasswordScrambler.Descramble(scrambledpassword);
+                    serverConn.Connect(workingDirectory, password);
+                }
+                catch (AuthenticationException eCvsPass){
+                    LOGGER.Info("Authentication failed using .cvspass file, prompting for password.", eCvsPass);
+                    // prompt user for password by using login command?
+                    LoginCommand login = new LoginCommand(workingDirectory.CvsRoot);
+                    serverConn.Connect(workingDirectory, login.Password);
+                }
+            }
+            // run the execute checkout command on cvs repository.
+            command.Execute(serverConn);
+            serverConn.Close();
+
+/*  This code is duplicated and I was not sure what should be moved to the 
+ *      CommandLineParser and what was already there.
             switch (parser.Command){
             case "add":
             case "ad":
@@ -120,6 +162,8 @@ namespace ICSharpCode.SharpCvsLib.Console {
                 break;
             }
             System.Console.WriteLine ("Thanks for using the command line tool.");
+            */
         }
+        
     }
 }

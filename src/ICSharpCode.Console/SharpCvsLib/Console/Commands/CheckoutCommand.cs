@@ -29,191 +29,203 @@
 // exception statement from your version.
 //
 //    <author>Steve Kenzell</author>
+//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
 using System.Globalization;
 using System.IO;
 using System.Text;
-using ICSharpCode.SharpCvsLib.Misc;
+
 using ICSharpCode.SharpCvsLib.Commands;
 using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.Exceptions;
+using ICSharpCode.SharpCvsLib.Misc;
+
+using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Console.Commands{
-
-/// <summary>
-/// Check out module files from a cvs repository.
-/// </summary>
-public class CheckoutCommand{
-    private ICommand getCommand;
-    private WorkingDirectory workingDirectory;
-    private string cocvsroot;
-    private string repository;
-    private string revision;
-    private string localDirectory;
-    private DateTime date;
-
     /// <summary>
     /// Check out module files from a cvs repository.
     /// </summary>
-    /// <param name="cvsroot">User information</param>
-    /// <param name="repositoryName">Repository</param>
-    /// <param name="coOptions">Options</param>
-    public CheckoutCommand(string cvsroot, string repositoryName, string coOptions){
-        int endofOptions = 0;
-        cocvsroot = cvsroot;
-        repository = repositoryName;
-        // get Checkout Options and parameters
-        for (int i = 0; i < coOptions.Length; i++){
-            if (coOptions[i]== '-' && coOptions[i+1] == 'r'){
-                i += 2;
-                // get revision of files to checkout
-                if (coOptions.IndexOf(" -", i, coOptions.Length - i) == -1){
-                    endofOptions = coOptions.Length - i - 1;
-                }
-                else{
-                    endofOptions = coOptions.IndexOf(" -", i, coOptions.Length - i) - 2;
-                }
-                revision = coOptions.Substring(i, endofOptions);
-            }
-            if (coOptions[i]== '-' && coOptions[i+1] == 'd'){
-                i += 2;
-                // get location to place files locally
-                if (coOptions.IndexOf(" -", i, coOptions.Length - i) == -1){
-                    endofOptions = coOptions.Length - i - 1;  // minus one so not to
-                                                              // include last space
-                }
-                else{
-                    endofOptions = coOptions.IndexOf(" -", i, coOptions.Length - i) - 2;
-                }
-                localDirectory = coOptions.Substring(i, endofOptions);
-            }
-            if (coOptions[i]== '-' && coOptions[i+1] == 'D'){
-                i += 2;
-                // get date of files to checkout
-                // Date format needs to be the short date pattern as stated in the 
-                // Control Panel -> Regional Options -> see Date tab
-                if (coOptions.IndexOf(" -", i, coOptions.Length - i) == -1){
-                    endofOptions = coOptions.Length - i - 1;  // minus one so not to
-                                                              // include last space
-                }
-                else{
-                    endofOptions = coOptions.IndexOf(" -", i, coOptions.Length - i) - 2;
-                }
-                try{
-                    // Parse string to DateTime format
-                    string datepar = coOptions.Substring(i, endofOptions);
-                    date = System.Convert.ToDateTime(datepar, DateTimeFormatInfo.CurrentInfo);
-                }
-                catch{
-                    StringBuilder msg = new StringBuilder ();
-                    msg.Append("The -D checkout option parameter is not ");
-                    msg.Append("in correct format of ");
-                    msg.Append(DateTimeFormatInfo.CurrentInfo.ShortDatePattern);
-                    msg.Append(".");
-                    throw new ApplicationException (msg.ToString());
-                }
-            }
-            if (coOptions[i]== '-' && coOptions[i+1] == 'A'){
-                String msg = "The -A checkout option is not  " +
-                    "implemented.";
-                throw new ApplicationException (msg);
-            }
-            if (coOptions[i]== '-' && coOptions[i+1] == 'N'){
-                String msg = "The -N checkout option is not  " +
-                    "implemented.";
-                throw new ApplicationException (msg);
-            }
-            if (coOptions[i]== '-' && coOptions[i+1] == 'P'){
-                String msg = "The -P checkout option is not  " +
-                    "implemented.";
-                throw new ApplicationException (msg);
-            }
-            if (coOptions[i]== '-' && coOptions[i+1] == 'R'){
-                String msg = "The -R checkout option is not  " +
-                    "implemented.";
-                throw new ApplicationException (msg);
-            }
-            if (coOptions[i]== '-' && coOptions[i+1] == 'c'){
-                String msg = "The -c checkout option is not  " +
-                    "implemented.";
-                throw new ApplicationException (msg);
-            }
-            if (coOptions[i]== '-' && coOptions[i+1] == 'f'){
-                String msg = "The -f checkout option is not  " +
-                    "implemented.";
-                throw new ApplicationException (msg);
-            }
-            if (coOptions[i]== '-' && coOptions[i+1] == 'l'){
-                String msg = "The -l checkout option is not  " +
-                    "implemented.";
-                throw new ApplicationException (msg);
-            }
-            if (coOptions[i]== '-' && coOptions[i+1] == 'n'){
-                String msg = "The -n checkout option is not  " +
-                    "implemented.";
-                throw new ApplicationException (msg);
-            }
-            if (coOptions[i]== '-' && coOptions[i+1] == 'p'){
-                String msg = "The -p checkout option is not  " +
-                    "implemented.";
-                throw new ApplicationException (msg);
-            }
-            if (coOptions[i]== '-' && coOptions[i+1] == 's'){
-                String msg = "The -s checkout option is not  " +
-                    "implemented.";
-                throw new ApplicationException (msg);
-            }
-        }
-    }
-    /// <summary>
-    /// Process the checkout command with cvs library API calls
-    /// </summary>
-    public void Execute () {
-        string password = "";
-        try{
-            // create CvsRoot object parameter
-            CvsRoot root = new CvsRoot(cocvsroot);
-            if (localDirectory == null){
-                localDirectory = Environment.CurrentDirectory;
-            }
-            workingDirectory = new WorkingDirectory( root,
-                               localDirectory, repository);
-            if (revision != null){
-                workingDirectory.Revision = revision;
-            }
-            if (date.Equals(null)) {
-                workingDirectory.Date = date;
-            }
-            // Create new CheckoutModuleCommand object
-            getCommand = new CheckoutModuleCommand(workingDirectory);
-        }
-        catch{
+    public class CheckoutCommand{
+        private CvsRoot cvsRoot;
+        private string repository;
+        private string revision;
+        private string localDirectory;
+        private DateTime date;
+
+        private string unparsedOptions;
+        private readonly ILog LOGGER = 
+            LogManager.GetLogger (typeof(CheckoutCommand));
+        private WorkingDirectory currentWorkingDirectory;
+        /// <summary>
+        /// The current working directory.
+        /// </summary>
+        public WorkingDirectory CurrentWorkingDirectory {
+            get {return this.currentWorkingDirectory;}
         }
 
-        // Create CVSServerConnection object that has the ICommandConnection
-        CVSServerConnection serverConn = new CVSServerConnection();
-        try{
-            // try connecting with empty password for anonymous users
-            serverConn.Connect(workingDirectory, password);
+        /// <summary>
+        /// Check out module files from a cvs repository.
+        /// </summary>
+        /// <param name="cvsroot">User information</param>
+        /// <param name="repositoryName">Repository</param>
+        /// <param name="coOptions">Options</param>
+        public CheckoutCommand(string cvsroot, string repositoryName, string coOptions){
+            this.cvsRoot = new CvsRoot(cvsroot);
+            repository = repositoryName;
+            this.unparsedOptions = coOptions;
         }
-        catch{
+
+        /// <summary>
+        /// Create the command object that will be used to act on the repository.
+        /// </summary>
+        /// <returns>The command object that will be used to act on the
+        ///     repository.</returns>
+        /// <exception cref="Exception">TODO: Make a more specific exception</exception>
+        /// <exception cref="NotImplementedException">If the command argument
+        ///     is not implemented currently.  TODO: Implement the argument.</exception>
+        public ICommand CreateCommand () {
+            CheckoutModuleCommand checkoutCommand;
             try{
-                //string scrambledpassword;
-                // check to connect with password from .cvspass file
-                // check for .cvspass file and get password
-                //password = PasswordScrambler.Descramble(scrambledpassword);
-                serverConn.Connect(workingDirectory, password);
+                // create CvsRoot object parameter
+                if (localDirectory == null){
+                    localDirectory = Environment.CurrentDirectory;
                 }
-                catch{
-                    // prompt user for password by using login command?
-                    LoginCommand login = new LoginCommand(cocvsroot);
-                    serverConn.Connect(workingDirectory, login.Password);
+                this.currentWorkingDirectory = new WorkingDirectory(this.cvsRoot,
+                    localDirectory, repository);
+                if (revision != null){
+                    this.currentWorkingDirectory.Revision = revision;
+                }
+                if (date.Equals(null)) {
+                    this.currentWorkingDirectory.Date = date;
+                }
+                // Create new CheckoutModuleCommand object
+                checkoutCommand = new CheckoutModuleCommand(this.currentWorkingDirectory);
+            }
+            catch (Exception e) {
+                LOGGER.Error (e);
+                throw e;
+            }
+
+            this.ParseOptions(checkoutCommand, this.unparsedOptions);
+
+            return checkoutCommand;
+        }
+
+        /// <summary>
+        /// Parse the command line options/ arguments and populate the command
+        ///     object with the arguments.
+        /// </summary>
+        /// <param name="checkoutCommand">A checkout command that is to be
+        ///     populated.</param>
+        /// <param name="coOptions">A string value that holds the command
+        ///     line options the user has selected.</param>
+        private void ParseOptions (ICommand checkoutCommand, String coOptions) {
+            int endofOptions = 0;
+            // get Checkout Options and parameters
+            for (int i = 0; i < coOptions.Length; i++){
+                if (coOptions[i]== '-' && coOptions[i+1] == 'r'){
+                    i += 2;
+                    // get revision of files to checkout
+                    if (coOptions.IndexOf(" -", i, coOptions.Length - i) == -1){
+                        endofOptions = coOptions.Length - i - 1;
+                    }
+                    else{
+                        endofOptions = coOptions.IndexOf(" -", i, coOptions.Length - i) - 2;
+                    }
+                    revision = coOptions.Substring(i, endofOptions);
+                }
+                if (coOptions[i]== '-' && coOptions[i+1] == 'd'){
+                    i += 2;
+                    // get location to place files locally
+                    if (coOptions.IndexOf(" -", i, coOptions.Length - i) == -1){
+                        endofOptions = coOptions.Length - i - 1;  // minus one so not to
+                        // include last space
+                    }
+                    else{
+                        endofOptions = coOptions.IndexOf(" -", i, coOptions.Length - i) - 2;
+                    }
+                    localDirectory = coOptions.Substring(i, endofOptions);
+                }
+                if (coOptions[i]== '-' && coOptions[i+1] == 'D'){
+                    i += 2;
+                    // get date of files to checkout
+                    // Date format needs to be the short date pattern as stated in the 
+                    // Control Panel -> Regional Options -> see Date tab
+                    if (coOptions.IndexOf(" -", i, coOptions.Length - i) == -1){
+                        endofOptions = coOptions.Length - i - 1;  // minus one so not to
+                        // include last space
+                    }
+                    else{
+                        endofOptions = coOptions.IndexOf(" -", i, coOptions.Length - i) - 2;
+                    }
+                    try{
+                        // Parse string to DateTime format
+                        string datepar = coOptions.Substring(i, endofOptions);
+                        date = System.Convert.ToDateTime(datepar, DateTimeFormatInfo.CurrentInfo);
+                    }
+                    catch{
+                        StringBuilder msg = new StringBuilder ();
+                        msg.Append("The -D checkout option parameter is not ");
+                        msg.Append("in correct format of ");
+                        msg.Append(DateTimeFormatInfo.CurrentInfo.ShortDatePattern);
+                        msg.Append(".");
+                        throw new ApplicationException (msg.ToString());
+                    }
+                }
+                if (coOptions[i]== '-' && coOptions[i+1] == 'A'){
+                    String msg = "The -A checkout option is not  " +
+                        "implemented.";
+                    throw new NotImplementedException (msg);
+                }
+                if (coOptions[i]== '-' && coOptions[i+1] == 'N'){
+                    String msg = "The -N checkout option is not  " +
+                        "implemented.";
+                    throw new NotImplementedException (msg);
+                }
+                if (coOptions[i]== '-' && coOptions[i+1] == 'P'){
+                    String msg = "The -P checkout option is not  " +
+                        "implemented.";
+                    throw new NotImplementedException (msg);
+                }
+                if (coOptions[i]== '-' && coOptions[i+1] == 'R'){
+                    String msg = "The -R checkout option is not  " +
+                        "implemented.";
+                    throw new NotImplementedException (msg);
+                }
+                if (coOptions[i]== '-' && coOptions[i+1] == 'c'){
+                    String msg = "The -c checkout option is not  " +
+                        "implemented.";
+                    throw new NotImplementedException (msg);
+                }
+                if (coOptions[i]== '-' && coOptions[i+1] == 'f'){
+                    String msg = "The -f checkout option is not  " +
+                        "implemented.";
+                    throw new NotImplementedException (msg);
+                }
+                if (coOptions[i]== '-' && coOptions[i+1] == 'l'){
+                    String msg = "The -l checkout option is not  " +
+                        "implemented.";
+                    throw new NotImplementedException (msg);
+                }
+                if (coOptions[i]== '-' && coOptions[i+1] == 'n'){
+                    String msg = "The -n checkout option is not  " +
+                        "implemented.";
+                    throw new NotImplementedException (msg);
+                }
+                if (coOptions[i]== '-' && coOptions[i+1] == 'p'){
+                    String msg = "The -p checkout option is not  " +
+                        "implemented.";
+                    throw new NotImplementedException (msg);
+                }
+                if (coOptions[i]== '-' && coOptions[i+1] == 's'){
+                    String msg = "The -s checkout option is not  " +
+                        "implemented.";
+                    throw new NotImplementedException (msg);
                 }
             }
-            // run the execute checkout command on cvs repository.
-            getCommand.Execute(serverConn);
-        serverConn.Close();
+        }
     }
-}
 }
