@@ -74,6 +74,7 @@ namespace ICSharpCode.SharpCvsLib.Attributes {
         /// </summary>
         /// <param name="name">The name of the author.</param>
         /// <param name="email">Email to contact the author.</param>
+        /// <param name="year">Year or year range that the author worked on the code.</param>
 		public AuthorAttribute(string name, string email, string year) {
             this._name = name;
             this._email = email;

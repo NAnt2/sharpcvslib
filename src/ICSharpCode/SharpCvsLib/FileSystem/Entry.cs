@@ -471,7 +471,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             if ((tokens.Length < TokensExpected && !this.isDir) ||
                 tokens.Length > TokensExpected) {
                 string msg = string.Format("Expected {0} tokens in entry line {0}", TokensExpected, line);
-                throw new EntryParseException(msg);
+                throw new ICSharpCode.SharpCvsLib.Exceptions.EntryParseException(msg);
             } 
 
             name      = tokens[1];

@@ -91,11 +91,6 @@
                     AssemblyName = "System.Data"
                     HintPath = "C:\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.Data.dll"
                 />
-                <Reference
-                    Name = "DocsVision.Remoting"
-                    AssemblyName = "DocsVision.Remoting"
-                    HintPath = "..\lib\ext\DocsVision.Remoting.dll"
-                />
             </References>
         </Build>
         <Files>

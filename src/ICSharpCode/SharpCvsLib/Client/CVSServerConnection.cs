@@ -305,9 +305,6 @@ namespace ICSharpCode.SharpCvsLib.Client {
 
                 IResponse response = 
                     ResponseFactory.CreateResponse(responseStr.Substring(0, responseStr.Length - 1));
-                if (LOGGER.IsDebugEnabled) {
-                    LOGGER.Debug("cvs server: " + response);
-                }
 
                 if (response == null) {
                     if (responseStr.EndsWith(" ")) {
@@ -320,11 +317,9 @@ namespace ICSharpCode.SharpCvsLib.Client {
                     break;
                 }
                 if (null != response && null != response.ResponseString) {
-                    try {
+                    if (null != this.ResponseMessageEvent) {
                         this.ResponseMessageEvent(this, new MessageEventArgs(response,
                             response.GetType().Name));
-                    } catch (NullReferenceException) {
-                        LOGGER.Debug("No one is listening to the response message event.");
                     }
                 }
             }
@@ -342,6 +337,12 @@ namespace ICSharpCode.SharpCvsLib.Client {
                 }
             }
 
+            // HACK: Put in place until I figure out what is causing a null ssh stream/
+            //  pause in the ssh response.
+            if (this.protocol is ExtProtocol) {
+                this.Pause();
+            }
+
             outputStream.SendString(request.RequestString);
 
             if (request.DoesModifyConnection) {
@@ -349,6 +350,11 @@ namespace ICSharpCode.SharpCvsLib.Client {
             }
 
             if (request.IsResponseExpected) {
+                // HACK: Put in place until I figure out what is causing a null ssh stream/
+                //  pause in the ssh response.
+                if (this.protocol is ExtProtocol) {
+                    this.Pause();
+                }
                 HandleResponses();
             }
         }
@@ -398,18 +404,22 @@ namespace ICSharpCode.SharpCvsLib.Client {
             this.protocol.Password = password;
 
             protocol.Connect();
+
             this.inputStream = protocol.InputStream;
             this.outputStream = protocol.OutputStream;
-
 
             // TODO: Move these into an abstract request class
             SubmitRequest(new ValidResponsesRequest());
             SubmitRequest(new ValidRequestsRequest());
-
             SubmitRequest(new UseUnchangedRequest());
+
             SubmitRequest(new RootRequest(repository.CvsRoot.CvsRepository));
 
             SubmitRequest(new GlobalOptionRequest(GlobalOptionRequest.Options.QUIET));
+        }
+
+        private void Pause() {
+            Thread.Sleep(1000);
         }
     
         /// <summary>

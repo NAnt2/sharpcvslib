@@ -45,13 +45,13 @@ using ICSharpCode.SharpCvsLib.Streams;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Protocols {
-	/// <summary>
-	/// Handle connect and authentication for the pserver protocol.
-	/// </summary>
+    /// <summary>
+    /// Handle connect and authentication for the pserver protocol.
+    /// </summary>
     [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
     [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
-	[Protocol("ext")]
-	public class ExtProtocol : AbstractProtocol {
+    [Protocol("ext")]
+    public class ExtProtocol : AbstractProtocol {
         private const string VERSION_ONE = "-1";
         private const string VERSION_TWO = "-2";
 
@@ -65,19 +65,7 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
         /// <summary>
         /// Create a new instance of the ext (ssh) protocol.
         /// </summary>
-		public ExtProtocol() {
-		}
-
-        private FileInfo FindCvsRsh () {
-            string cvsRsh = Environment.GetEnvironmentVariable(EnvCvsRsh);
-            if (null == cvsRsh) {
-                cvsRsh = @"c:\cygwin\bin\ssh.exe";
-            }
-            FileInfo rshFile = new FileInfo(cvsRsh);
-            if (!rshFile.Exists) {
-                throw new Exception("CVS_RSH not set, no ssh binary to use.");
-            }
-            return rshFile;
+        public ExtProtocol() {
         }   
 
         /// <summary>
@@ -118,7 +106,7 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
                     p.StartInfo = this.GetProcessInfo(this.Config.Shell, VERSION_TWO);
                     p.Start();
                 } catch (Exception e) {
-                    throw new ExecuteShellException(
+                    throw new ICSharpCode.SharpCvsLib.Exceptions.ExecuteShellException(
                         string.Format("{0} {1}",
                         this.Config.Shell, p.StartInfo.Arguments), e);
                 }
@@ -136,11 +124,11 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
             ProcessStartInfo startInfo;
             switch (tProgram) {
                 case "plink": {
-                    startInfo = this.GetPlinkProcessInfo(version);
+                    startInfo = this.GetPlinkProcessInfo(tProgram, version);
                     break;
                 }
                 case "ssh": {
-                    startInfo = this.GetSshProcessInfo(version);
+                    startInfo = this.GetSshProcessInfo(tProgram, version);
                     break;
                 }
                 default:
@@ -155,27 +143,32 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
             return startInfo;
         }
 
-        private ProcessStartInfo GetPlinkProcessInfo (string version) {
+        private ProcessStartInfo GetPlinkProcessInfo (string program, string version) {
             StringBuilder processArgs = new StringBuilder ();
-            processArgs.Append ("-l ").Append (this.Repository.CvsRoot.User);
+            processArgs.Append (string.Format(" -l \"{0}\"",
+                this.Repository.CvsRoot.User));
+            processArgs.Append(version);
+            if (this.Password != null && this.Password != string.Empty) {
+                processArgs.Append(string.Format(" -pw {0} ", this.Password));
+            }
             processArgs.Append (" ").Append (this.Repository.CvsRoot.Host);
-            processArgs.Append (" \"cvs server\"");
+            processArgs.Append (" cvs server ");
 
             ProcessStartInfo startInfo =
-                new ProcessStartInfo(this.FindCvsRsh().FullName, processArgs.ToString ());
+                new ProcessStartInfo(program, processArgs.ToString ());
 
             return startInfo;
         }
 
-        private ProcessStartInfo GetSshProcessInfo (string version) {
+        private ProcessStartInfo GetSshProcessInfo (string program, string version) {
             StringBuilder processArgs = new StringBuilder ();
-            processArgs.Append ("-l ").Append (this.Repository.CvsRoot.User);
-            processArgs.Append (" -q ");  // quiet
+            processArgs.Append (string.Format(" -l \"{0}\"",
+                this.Repository.CvsRoot.User));
             processArgs.Append (" ").Append (this.Repository.CvsRoot.Host);
-            processArgs.Append (" \"cvs server\"");
+            processArgs.Append (" cvs server ");
 
             ProcessStartInfo startInfo =
-                new ProcessStartInfo(this.FindCvsRsh().FullName, processArgs.ToString());
+                new ProcessStartInfo(program, processArgs.ToString());
 
             return startInfo;
         }
@@ -190,5 +183,5 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
             }
         }
 
-	}
+    }
 }

@@ -76,6 +76,11 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// event.
         /// </summary>
         public event MessageEventHandler UnspecifiedResponseMessageEvent;
+        /// <summary>
+        /// Occurs when the server reports the response commands that it understands and
+        /// will send.
+        /// </summary>
+        public event MessageEventHandler ValidRequestsResponseEvent;
 
         /// <summary>
         /// Listen for generic message events from the server.
@@ -126,8 +131,11 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                 if (null != MessageResponseMessageEvent) {
                     this.MessageResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.EMPTY_PREFIX));
                 }
-            }
-            else {
+            } else if (responseType == typeof(ValidRequestsResponse)) {
+               if (null != ValidRequestsResponseEvent) {
+                    this.ValidRequestsResponseEvent(this, new MessageEventArgs(message, MessageEventArgs.EMPTY_PREFIX));
+                }
+            } else {
                 if (null != this.UnspecifiedResponseMessageEvent) {
                     this.UnspecifiedResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.DEFAULT_PREFIX));
                 }
