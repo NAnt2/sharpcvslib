@@ -9,6 +9,7 @@ using System.Data;
 
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Commands;
+using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib.Messages;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Responses;

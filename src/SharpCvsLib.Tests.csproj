@@ -461,22 +461,12 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode\SharpCvsLib\Misc\CvsRootParseException.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Misc\PasswordScrambler.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Misc\TraceUtil.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
-                />
-                <File
-                    RelPath = "ICSharpCode\SharpCvsLib\Misc\UnsupportedProtocolException.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

@@ -34,6 +34,7 @@ using System;
 using System.Text;
 
 using ICSharpCode.SharpCvsLib;
+using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib.Misc;
 
 using log4net;
