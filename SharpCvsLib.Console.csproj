@@ -81,6 +81,7 @@
                     Name = "ICSharpCode.SharpCvsLib"
                     AssemblyName = "ICSharpCode.SharpCvsLib"
                     HintPath = "build\bin\ICSharpCode.SharpCvsLib.dll"
+                    Private = "False"
                 />
             </References>
         </Build>

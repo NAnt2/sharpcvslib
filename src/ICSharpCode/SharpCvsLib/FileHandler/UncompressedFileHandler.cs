@@ -70,7 +70,7 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
                 }
 
                 byte[] buf = new byte[line.Length];
-                this.settings.Encoding.GetBytes(line.ToCharArray(), 0, line.Length, buf, 0);
+                SharpCvsLibConfig.Encoding.GetBytes(line.ToCharArray(), 0, line.Length, buf, 0);
                 tmpFile.Write(buf, 0, buf.Length);
                 tmpFile.WriteByte((byte)'\n');
             }

@@ -278,6 +278,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\ICSharpCode\SharpCvsLib\FileSystem\InvalidPathException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src\ICSharpCode\SharpCvsLib\FileSystem\Manager.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

@@ -54,7 +54,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
                 fs.Read(data, 0, data.Length);
                 fs.Close();
 
-                return data.Length.ToString() + "\n" + this.settings.Encoding.GetString(data);
+                return data.Length.ToString() + "\n" + SharpCvsLibConfig.Encoding.GetString(data);
             }
         }
 

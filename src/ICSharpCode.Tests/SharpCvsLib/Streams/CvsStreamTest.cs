@@ -441,7 +441,7 @@ namespace ICSharpCode.SharpCvsLib.Streams {
             MemoryStream memoryStream = new MemoryStream();
             cvsStream.BaseStream = memoryStream;
 
-            byte[] buff = this.settings.Encoding.GetBytes(TEST_DATA);
+            byte[] buff = SharpCvsLibConfig.Encoding.GetBytes(TEST_DATA);
             cvsStream.BaseStream.Write(buff, 0, buff.Length);
             cvsStream.BaseStream.Flush();
             cvsStream.BaseStream.Position = 0;
@@ -470,7 +470,7 @@ namespace ICSharpCode.SharpCvsLib.Streams {
             MemoryStream memoryStream = new MemoryStream();
             cvsStream.BaseStream = memoryStream;
 
-            byte[] buff = this.settings.Encoding.GetBytes(TEST_DATA);
+            byte[] buff = SharpCvsLibConfig.Encoding.GetBytes(TEST_DATA);
             cvsStream.BaseStream.Write(buff, 0, buff.Length);
             cvsStream.BaseStream.Flush();
             cvsStream.BaseStream.Position = 0;
@@ -495,7 +495,7 @@ namespace ICSharpCode.SharpCvsLib.Streams {
             MemoryStream memoryStream = new MemoryStream();
             cvsStream.BaseStream = memoryStream;
 
-            byte[] buff = this.settings.Encoding.GetBytes(TEST_DATA);
+            byte[] buff = SharpCvsLibConfig.Encoding.GetBytes(TEST_DATA);
             cvsStream.BaseStream.Write(buff, 0, buff.Length);
             cvsStream.BaseStream.Flush();
             cvsStream.BaseStream.Position = 0;
