@@ -106,15 +106,15 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		public CvsRoot(string cvsroot)
 		{
 			int s1 = cvsroot.IndexOf(':', 1)  + 1;
-			if (s1 == -1 || cvsroot[0] != ':')
+			if (s1 == 0 || cvsroot[0] != ':')
 				throw new ArgumentException("cvsroot doesn't start with :");
 			
 			int s2 = cvsroot.IndexOf('@', s1) + 1;
-			if (s2 == -1)
+			if (s2 == 0)
 				throw new ArgumentException("no username given");
 			
 			int s3 = cvsroot.IndexOf(':', s2) + 1;
-			if (s3 == -1)
+			if (s3 == 0)
 				throw new ArgumentException("no host given");
 				
 			protocol      = cvsroot.Substring(1, s1 - 2);
