@@ -139,6 +139,7 @@
     <File name="..\src\ICSharpCode\SharpCvsLib\Extension\ChangeLogReport\LogEntry.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Extension\ChangeLogReport\CvsChangeLog.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Extension\ChangeLogReport\FileRevision.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\SharpCvsLibAssemblyInfo.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto="..\lib\ICSharpCode.SharpZipLib.dll" localcopy="True" />

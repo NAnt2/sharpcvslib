@@ -242,7 +242,7 @@
     <target name="dist">
         <call target="dist.clean" />
         <call target="build.all" failonerror="false" />
-        <!--<call target="run-tests-sample" />-->
+        <call target="run-tests-sample" failonerror="false" />
         <mkdir dir="${dir.dist}/bin" />
         <mkdir dir="${dir.dist}/src" />    
         
