@@ -3,6 +3,7 @@
     <tstamp property="current.year" pattern="yyyy" verbose="true"/>
     <!-- TODO: Create a NAnt task to get this using the working dir, etc. -->
     <property name="cvs.branch" value="HEAD" />
+    <property name="nant.settings.defaultframework" value="${framework::get-target-framework()}"/>
     
     <property name="util.copy" value="pscp" />
     <property name="name.developer" value="drakmar" />

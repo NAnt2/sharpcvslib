@@ -229,25 +229,15 @@
                 <includes name="${dir.conf}**" />
                 <includes name="${dir.lib}**" />
                 <includes name="${dir.src}**" />
-                <includes name="${dir.tools}/nant/win32**" />
-                <includes name="${dir.tools}/nant/linux**" />
-                
-                <includes name="*.build" />
-                <includes name="*.bat" />                
-                <includes name="*.ndoc" />
-                
-                <includes name="*.csproj" />
-                <includes name="*.sln" />
-                
-                <includes name="*.prjx" />
-                <includes name="*.cmbx" />
-                
-                <includes name="*.project" />
+                <includes name="${dir.tools}/nant**" />
                 
                 <excludes name="${dir.doc}**" />
                 <excludes name="**/*.log.*" />
-                <excludes name="**/*.log" />
-                <excludes name="**/obj**" />
+                <excludes name="**/bin/**" />
+                <excludes name="**/obj/**" />
+                <excludes name="**/*.suo" />
+                <excludes name="**/*.user" />
+
             </fileset>
         </copy>
 
@@ -285,13 +275,13 @@
         
         <zip zipfile="${dir.output}/${name.lib}-${assembly.version}-bin.zip">
             <fileset basedir="${dir.dist}">
-                <includes name="bin/**/**.*" />
+                <includes name="bin/**/*.*" />
             </fileset>
         </zip>
         
         <zip zipfile="${dir.output}/${name.lib}-${assembly.version}-src.zip">
             <fileset basedir="${dir.dist}">
-                <includes name="src/**/**.*" />
+                <includes name="src/**/*.*" />
             </fileset>
         </zip>
 
@@ -312,7 +302,8 @@
     <target name="build-release.nightly" depends="build-release.common" description="Produces the nightly build and uploads to sourceforge.net">
         <property name="args.copy-program" value="${dir.output}/* ${sf.username}:${sf.location.nightly}/" />
         <exec program="${util.copy}" commandline="${args.copy-program}"/>
-        
+
+<!--        
         <property name="args.copy-docs" value="${dir.doc.msdn}/*.html ${sf.username}:${sf.location.nightly}/doc/api" />
         <exec program="${util.copy}" commandline="${args.copy-docs}"/>
 
@@ -321,7 +312,7 @@
         
         <property name="args.copy-docs" value="${dir.doc.msdn}/*.gif ${sf.username}:${sf.location.nightly}/doc/api" />
         <exec program="${util.copy}" commandline="${args.copy-docs}"/>
-        
+-->        
         <call target="upload-unit-test-results" />
         
     </target>
