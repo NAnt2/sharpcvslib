@@ -47,13 +47,20 @@ namespace ICSharpCode.SharpCvsLib.Util {
         ///     Date format for the <code>RFC1123</code> specification.
         /// </summary>	    
 	    public const String RFC1123 = 
-	        "dd MMM yyyy HH':'mm':'ss '-0000'";
-	    /// <summary>
-	    ///     A standard cvs date format.
-	    /// </summary>
-	    public const String FORMAT_1 =
+	        "dd/MMM/yyyy HH':'mm:ss '-0000'";
+        /// <summary>
+        ///     The date format used by cvsnt.
+        /// </summary>
+	    public const String CVSNT1 =
 	        "ddd MMM dd HH':'mm':'ss yyyy";
 //	        "ddd MMM dd HH:mm:ss yyyy";	    
+        /// <summary>
+        ///     Date format for the <code>RFC1123</code> specification.
+        /// </summary>	    
+	    public const String CVSNT2 = 
+	        "ddd MMM yyyy HH':'mm':'ss '-0000'";
+
+        
 
         /// <summary>
         ///     Private constructor because all accessor methods are going to
@@ -67,7 +74,7 @@ namespace ICSharpCode.SharpCvsLib.Util {
         ///         cvs date formats.
         /// </summary>
         public static DateTime ParseCvsDate (String date) {
-            DateTime dateTime = DateTime.MinValue;
+            DateTime dateTime = DateTime.Now;
             
 			if (date != null && date.Length > 0)  {
 				try {
@@ -77,22 +84,46 @@ namespace ICSharpCode.SharpCvsLib.Util {
 					    dateTime = DateParser.ParseRFC1123WithZero (date);
 					} catch (FormatException) {
 					    try {
-                            dateTime = DateParser.ParseFormat1 (date);
+                            dateTime = DateParser.ParseCvsNT1 (date);
 					    } catch (FormatException) {
-					        try {
-                                dateTime = DateTime.Parse (date);
-					        } catch (FormatException e) {
-					            dateTime = DateTime.MinValue;
-					            // TODO: Determine if this should be removed.
-					            throw e;
-					        }
+    					    try {
+                                dateTime = DateParser.ParseCvsNT2 (date);
+    					    } catch (FormatException) {
+    					        try {
+                                    dateTime = DateTime.Parse (date);
+    					        } catch (FormatException) {
+    					            dateTime = DateTime.Now;
+    					        }
+    					    }
 					    }
 					}
 				}				
-			}
+		    }
 
             return dateTime;            
         }
+        
+        /// <summary>
+        ///     Create a cvs date string given the date time.
+        /// </summary>
+        /// <param name="date">The date to convert to a string.</param>
+        /// <returns>The date as a cvs formatted date string.</returns>
+        public static String GetCvsDateString (DateTime date) {
+    	    String dateString = date.ToString(DateParser.CVSNT1,
+                                          DateTimeFormatInfo.InvariantInfo);
+            return dateString;
+        }
+                
+        /// <summary>
+        ///     Apply the correct UTC offset to the given time.  This is done
+        ///         to correct a bug in the .net framework.
+        /// </summary>
+        /// <param name="timeStamp">The timestamp to be corrected.</param>
+        /// <returns>The corrected timestamp for the file.</returns>
+        public static DateTime GetCorrectedTimeStamp (DateTime timeStamp) {
+            return timeStamp.Add (System.TimeZone.CurrentTimeZone.GetUtcOffset (timeStamp));
+        }
+
         
         private static DateTime ParseRFC1123 (String date) {
 			return DateTime.ParseExact(date, 
@@ -106,10 +137,18 @@ namespace ICSharpCode.SharpCvsLib.Util {
 			                                DateTimeFormatInfo.InvariantInfo);
         }
         
-        private static DateTime ParseFormat1 (String date) {
+        private static DateTime ParseCvsNT1 (String date) {
 			return DateTime.ParseExact(date, 
-			                                FORMAT_1, 
+			                                CVSNT1,
 			                                DateTimeFormatInfo.InvariantInfo);
         }
+        
+        private static DateTime ParseCvsNT2 (String date) {
+			return DateTime.ParseExact(date, 
+			                                CVSNT2,
+			                                DateTimeFormatInfo.InvariantInfo);
+        }
+
+        
     }
 }

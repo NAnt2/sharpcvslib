@@ -40,6 +40,7 @@ using log4net;
 
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Exceptions;
+using ICSharpCode.SharpCvsLib.Util;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     
@@ -50,15 +51,16 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///         - Root
     ///         - Tag
     /// </summary>
+// TODO: Change to internalize helpers (accessor)
     public class Manager {
 
         private readonly ILog LOGGER = 
             LogManager.GetLogger (typeof (Manager));
-		/// <summary>The cvs directory information.</summary>
-		public string CVS {
-		    get {return "CVS";}
-		}
-		
+        /// <summary>The cvs directory information.</summary>
+        public string CVS {
+            get {return "CVS";}
+        }
+        
         /// <summary>Constructory</summary>        
         public Manager () {
         }
@@ -389,11 +391,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 LOGGER.Debug (msg);
             }
             
-			StreamWriter sw = 
-			    new StreamWriter(fileAndPath, append, Encoding.ASCII);
+            StreamWriter sw = 
+                new StreamWriter(fileAndPath, append, Encoding.ASCII);
             sw.WriteLine (line);    
             
-			sw.Close();            
+            sw.Close();            
         }
         
         /// <summary>
@@ -413,9 +415,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 LOGGER.Debug (msg);
             }
             
-			if (!dirExists) {
-				Directory.CreateDirectory(cvsDir);
-			}            
+            if (!dirExists) {
+                Directory.CreateDirectory(cvsDir);
+            }            
         }
         
         /// <summary>
@@ -571,30 +573,30 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             String cvsPath = this.CombineCvsDir (path);
             
             String filePath = Path.Combine (cvsPath, file);
-			if (File.Exists(filePath)) {
-				StreamReader sr = File.OpenText(filePath);
-				
-				while (true) {
-					string line = sr.ReadLine();
-					if (line == null) {
-						break;
-					}
-					if (line.Length > 1) {		
-					    if (LOGGER.IsDebugEnabled) {
-					        String msg = "Found cvs file, adding contents.  " +
-					            "path=[" + path + "]" +
-					            "file=[" + file + "]" +
-					            "line=[" + line + "]";
-					        LOGGER.Debug (msg);
-					    }
-					    
-						fileContents.Add(line);
-					}
-				}
-				sr.Close();
-			}
-			
-			return fileContents;
+            if (File.Exists(filePath)) {
+                StreamReader sr = File.OpenText(filePath);
+                
+                while (true) {
+                    string line = sr.ReadLine();
+                    if (line == null) {
+                        break;
+                    }
+                    if (line.Length > 1) {      
+                        if (LOGGER.IsDebugEnabled) {
+                            String msg = "Found cvs file, adding contents.  " +
+                                "path=[" + path + "]" +
+                                "file=[" + file + "]" +
+                                "line=[" + line + "]";
+                            LOGGER.Debug (msg);
+                        }
+                        
+                        fileContents.Add(line);
+                    }
+                }
+                sr.Close();
+            }
+            
+            return fileContents;
         }
         
         /// <summary>
@@ -606,20 +608,21 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void SetFileTimeStamp (String filenameAndPath, DateTime timeStamp) {
             if (File.Exists (filenameAndPath)) {
                 DateTime fileTimeStamp = 
-                    this.GetCorrectTimeStamp (filenameAndPath, 
-                                              timeStamp);
+                    DateParser.GetCorrectedTimeStamp (timeStamp);
 
-    			File.SetCreationTime(filenameAndPath, fileTimeStamp);
-    			File.SetLastAccessTime(filenameAndPath, fileTimeStamp);
-    			File.SetLastWriteTime(filenameAndPath, fileTimeStamp);
+                File.SetCreationTime(filenameAndPath, fileTimeStamp);
+                File.SetLastAccessTime(filenameAndPath, fileTimeStamp);
+                File.SetLastWriteTime(filenameAndPath, fileTimeStamp);
+                
+                if (LOGGER.IsDebugEnabled) {
+                    StringBuilder msg = new StringBuilder ();
+                    msg.Append ("creation timestamp=[").Append (File.GetCreationTime (filenameAndPath)).Append ("]");
+                    msg.Append ("timeStamp=[").Append (timeStamp).Append ("]");
+                    LOGGER.Debug (msg);
+                }
             }
         }
-        
-        private DateTime GetCorrectTimeStamp (String filenameAndPath, 
-                                              DateTime timeStamp) {
-            return timeStamp.Add (System.TimeZone.CurrentTimeZone.GetUtcOffset (timeStamp));
-        }
-        
+                
         /// <summary>
         ///     Populate the tag file (if any) found in the given directory.
         /// </summary>
@@ -705,8 +708,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                                    String localPath, 
                                    String repositoryPath) {
             PathTranslator pathTranslator = 
-	            new PathTranslator (workingDirectory,
-	                                repositoryPath);
+                new PathTranslator (workingDirectory,
+                                    repositoryPath);
             Factory factory = new Factory ();
 
             if (LOGGER.IsDebugEnabled) {
@@ -721,10 +724,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             String repositoryContents = workingDirectory.ModuleName + "/" +
                                     pathTranslator.RelativePath;
 
-	        Repository repository = 
-	            (Repository)factory.CreateCvsObject (pathTranslator.LocalPath,
+            Repository repository = 
+                (Repository)factory.CreateCvsObject (pathTranslator.LocalPath,
                                          Factory.FileType.Repository,
-	                                     repositoryContents);
+                                         repositoryContents);
             this.Add (repository);
 
             return repository;
@@ -745,8 +748,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                              String localPath,
                              String repositoryPath) {
             PathTranslator pathTranslator = 
-	            new PathTranslator (workingDirectory,
-	                                repositoryPath);
+                new PathTranslator (workingDirectory,
+                                    repositoryPath);
             Factory factory = new Factory ();
 
             if (LOGGER.IsDebugEnabled) {
@@ -759,10 +762,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 LOGGER.Debug (msg);
             }
             
-	        Root root = 
-	            (Root)factory.CreateCvsObject (pathTranslator.LocalPath,
+            Root root = 
+                (Root)factory.CreateCvsObject (pathTranslator.LocalPath,
                                          Factory.FileType.Root,
-	                                     pathTranslator.CvsRoot.ToString ());
+                                         pathTranslator.CvsRoot.ToString ());
             this.Add (root);
 
             return root;
@@ -787,8 +790,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                                String repositoryPath,
                                String entry) {
             PathTranslator pathTranslator = 
-	            new PathTranslator (workingDirectory,
-	                                repositoryPath);
+                new PathTranslator (workingDirectory,
+                                    repositoryPath);
             Factory factory = new Factory ();
 
             if (LOGGER.IsDebugEnabled) {

@@ -150,24 +150,16 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// Cvs input stream writer
         /// </summary>
 		public CvsStream InputStream {
-			get {
-				return inputstream;
-			}
-			set {
-				inputstream = value;
-			}
+			get {return inputstream;}
+			set {inputstream = value;}
 		}
 		
         /// <summary>
         /// Cvs output stream reader
         /// </summary>
 		public CvsStream OutputStream {
-			get {
-				return outputstream;
-			}
-			set {
-				outputstream = value;
-			}
+			get {return outputstream;}
+			set {outputstream = value;}
 		}
 		
         /// <summary>
@@ -440,33 +432,23 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// The repository information.
         /// </summary>
 		public WorkingDirectory Repository {
-			get {
-				return repository;
-			}
+			get {return repository;}
 		}
 		
         /// <summary>
         /// Next file date.
         /// </summary>
 		public string NextFileDate {
-			get {
-				return nextFileDate;
-			}
-			set {
-				nextFileDate = value;
-			}
+			get {return nextFileDate;}
+			set {nextFileDate = value;}
 		}
 		private string nextFile = null;
         /// <summary>
         /// The next file.
         /// </summary>
 		public string NextFile {
-			get {
-				return nextFile;
-			}
-			set {
-				nextFile = value;
-			}
+			get {return nextFile;}
+			set {nextFile = value;}
 		}
 		
         /// <summary>

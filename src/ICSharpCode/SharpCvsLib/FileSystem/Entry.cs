@@ -28,8 +28,10 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
-//                Clayton Harbour 
+//    <authors>
+//        <author>Mike Krueger</author>
+//        <author>Clayton Harbour</author>
+//    </authors>
 #endregion
 
 using System;
@@ -96,12 +98,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// Timestamp for the file.
         /// </summary>
 		public DateTime TimeStamp {
-			get {
-				return timestamp;
-			}
-			set {
-				timestamp = value;
-			}
+			get {return timestamp;}
+			set {timestamp = value;}
 		}
 				
         /// <summary>
@@ -109,24 +107,18 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     client files (if any).
         /// </summary>
 		public string  Conflict {
-			get {
-				return conflict;
-			}
-			set {
-				conflict = value;
-			}
+			get {return conflict;}
+			set {conflict = value;}
 		}
 		
         /// <summary>
         /// Date of the revision.
         /// </summary>
 		public string Date {
-			get {
-				return date;
-			}
+			get {return date;}
 			set {
-				date = value;
-				SetTimeStamp();
+			    date = value;
+			    SetTimeStamp();
 			}
 		}
 		
@@ -134,48 +126,32 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// Sticky tag for the file (if any).
         /// </summary>
 		public string Tag {
-			get {
-				return tag;
-			}
-			set {
-				tag = value;
-			}
+			get {return tag;}
+			set {tag = value;}
 		}
 
         /// <summary>
         /// TODO: figure out what this is for.
         /// </summary>
 		public string Options {
-			get {
-				return options;
-			}
-			set {
-				options = value;
-			}
+			get {return options;}
+			set {options = value;}
 		}
 
         /// <summary>
         /// The revision number for the file.
         /// </summary>
 		public string Revision {
-			get {
-				return revision;
-			}
-			set {
-				revision = value;
-			}
+			get {return revision;}
+			set {revision = value;}
 		}
 		
         /// <summary>
         /// The name of the file or directory.
         /// </summary>
 		public string Name {
-			get {
-				return name;
-			}
-			set {
-				name = value;
-			}
+			get {return name;}
+			set {name = value;}
 			 
 		}
 
@@ -184,12 +160,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     otherwise.
         /// </summary>
 		public bool IsDirectory {
-			get {
-				return isDir;
-			}
-			set {
-				isDir = value;
-			}
+			get {return isDir;			}
+			set {isDir = value;}
 		}
 		
         /// <summary>
@@ -197,12 +169,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     is binary (i.e. has the option <code>-kb</code> specified).
         /// </summary>
 		public bool IsBinaryFile {
-			get {
-				return options == "-kb";
-			}
-			set {
-				options = value ? "-kb" : null;
-			}
+			get {return options == "-kb";}
+			set {options = value ? "-kb" : null;}
 		}
 				
         /// <summary>
@@ -215,22 +183,25 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     			string str = "";
     			if (isDir) {
     				str += "D";
-    			}
+    			} 
     			str += "/";
     			if (name != null) {
     				str += name + "/";
-    				if (revision != null && !isDir) {
+    				if (revision != null) {
     					str += revision;
     				}
     				str += "/";
     				
-    				if (date != null) {
+    				if (date != null && 
+    				    date != String.Empty &&
+    				    !this.IsDirectory) {
     				    String dateString;
     				    // TODO: Determine if this should be pulled out into a seperate class.
-					    dateString = this.TimeStamp.ToString(DateParser.FORMAT_1, 
-					                                         DateTimeFormatInfo.InvariantInfo);
+					    dateString = 
+					        DateParser.GetCvsDateString (this.TimeStamp);
     					str += dateString;
     				}
+    				
     				if (conflict != null) {
     					str += "+" + conflict;
     				}
@@ -248,6 +219,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     					str += date;
     				}
     			}
+
     			return str;
 		    }
 		}		
@@ -279,14 +251,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
 		public void SetTimeStamp()
 		{
-		    DateTime timestamp = DateTime.Now;
-		    
-		    timestamp = DateParser.ParseCvsDate (date);
+		    this.timestamp = DateParser.ParseCvsDate (date);
 			if (LOGGER.IsDebugEnabled) {
-			    String msg = "timestamp=[" + timestamp + "]";
+			    StringBuilder msg = new StringBuilder ();
+			    msg.Append ("timestamp=[").Append (timestamp).Append ("]");
+			    msg.Append ("date=[").Append (date).Append ("]");
 			    LOGGER.Debug (msg);
 			}
-			this.timestamp = timestamp;
 		}
 				
         /// <summary>

@@ -269,8 +269,6 @@
             </sources>
             
             <references>
-                <includes name="System.Web.dll" />
-                <includes name="System.Web.Services.dll" />
                 <includes name="System.dll" />            
                 <includes name="${lib.dir}/${ziplib}" />
                 <includes name="${lib.ext.dir}/${log4net}" />
@@ -291,16 +289,17 @@
             <arg value="${unsafe}" />
             <arg value="${checked}" />
             <sources basedir="${src.dir}">
+<!-- // TODO: Change to internalize helpers (accessor) -->
+                <includes name="ICSharpCode/**/*.cs" />
                 <includes name="ICSharpCode.Tests/**/*.cs" />
             </sources>
             <references>
-                <includes name="System.Web.dll" />
-                <includes name="System.Web.Services.dll" />
                 <includes name="System.dll" />            
                 <includes name="${lib.dir}/${ziplib}" />
                 <includes name="${lib.ext.dir}/${log4net}" />
                 <includes name="${lib.ext.dir}/${nunit}" />
-                <includes name="${build.dir}/${lib.name}.dll" />
+<!-- // TODO: Change to internalize helpers (accessor) -->
+<!--                <includes name="${build.dir}/${lib.name}.dll" />-->
             </references>
         </csc>
     </target>
@@ -324,8 +323,6 @@
                 <includes name="ICSharpCode.Console/**/*.cs" />
             </sources>
             <references>
-                <includes name="System.Web.dll" />
-                <includes name="System.Web.Services.dll" />
                 <includes name="System.dll" />            
                 <includes name="${lib.dir}/${ziplib}" />
                 <includes name="${lib.ext.dir}/${log4net}" />

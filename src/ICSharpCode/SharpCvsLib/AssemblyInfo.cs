@@ -44,5 +44,5 @@ using System.Runtime.CompilerServices;
 
 [assembly: CLSCompliant(true)]
 
-[assembly: log4net.Config.DOMConfigurator(Watch=true)]
+//[assembly: log4net.Config.DOMConfigurator(Watch=true)]
 

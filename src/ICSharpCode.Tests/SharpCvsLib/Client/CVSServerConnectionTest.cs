@@ -36,8 +36,9 @@ using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Misc;
 
+// TODO: Change to internalize helpers (remove)
 [assembly: log4net.Config.DOMConfigurator(
-	ConfigFileExtension="config", Watch=true)]
+  ConfigFileExtension="config", Watch=true)]
 
 namespace ICSharpCode.SharpCvsLib.Client {
 
@@ -69,7 +70,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
 
             CVSServerConnection connection = new CVSServerConnection ();
             Assertion.AssertNotNull ("Should have a connection object.", connection);
-		    
+            
             connection.Connect (working, TestConstants.PASSWORD_VALID);
         }
 
@@ -89,15 +90,15 @@ namespace ICSharpCode.SharpCvsLib.Client {
 
             CVSServerConnection connection = new CVSServerConnection ();
             Assertion.AssertNotNull ("Should have a connection object.", connection);
-		    
-		    try {
+            
+            try {
                 connection.Connect (working, TestConstants.PASSWORD_INVALID);
-		        Assertion.Assert ("Connection should have failed and this code " +
-		                          "should not be reached.", true == false);
-		    } catch (Exception) {
-		        Assertion.Assert ("Connection failed, this is a good thing.", true == true);
-		    } 
-		    
+                Assertion.Assert ("Connection should have failed and this code " +
+                                  "should not be reached.", true == false);
+            } catch (Exception) {
+                Assertion.Assert ("Connection failed, this is a good thing.", true == true);
+            } 
+            
         }        
         
     }

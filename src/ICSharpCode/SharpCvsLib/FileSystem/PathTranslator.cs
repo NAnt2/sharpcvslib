@@ -47,6 +47,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///     Used to parse out the important parts of the orgainization path 
     ///         response from the cvs server.
     /// </summary>
+// TODO: Change to internalize helpers (accessor)
     public class PathTranslator {
         private readonly ILog LOGGER = 
             LogManager.GetLogger (typeof (PathTranslator));

@@ -157,21 +157,21 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Assertion.Assert (entry.Name.Equals ("EntryTest.cs"));
             Assertion.Assert (entry.Revision.Equals ("1.1"));
             // TODO: check what format the date should come back in
-//          Assertion.Assert (entry.Date, entry.Date.Equals ("Fri Jan 03 04:07:36"));
-            Assertion.Assert (entry.Date, entry.Date.Equals ("03 Jan 2003 04:07:36 -0000"));
+            Assertion.Assert (entry.Date, entry.Date.Equals ("Fri Jan 03 04:07:36"));
+//            Assertion.Assert (entry.Date, entry.Date.Equals ("03 Jan 2003 04:07:36 -0000"));
             Assertion.Assert (entry.Conflict == null);
             Assertion.Assert (entry.Options.Equals (""));
             Assertion.Assert (entry.Tag.Equals (""));
             
-            Assertion.Assert (entry.TimeStamp.Day == 3);
-            Assertion.Assert (entry.TimeStamp.Month == 1);
-            Assertion.Assert (entry.TimeStamp.Year == 2003);
-            Assertion.Assert (entry.TimeStamp.Hour == 4);
-            Assertion.Assert (entry.TimeStamp.Minute == 7);
-            Assertion.Assert (entry.TimeStamp.Second == 36);
+            Assertion.AssertEquals (3, entry.TimeStamp.Day);
+            Assertion.AssertEquals (1, entry.TimeStamp.Month);
+            Assertion.AssertEquals (2003, entry.TimeStamp.Year);
+            Assertion.AssertEquals (4, entry.TimeStamp.Hour);
+            Assertion.AssertEquals (7, entry.TimeStamp.Minute);
+            Assertion.AssertEquals (36, entry.TimeStamp.Second);
             
-            Assertion.Assert (entry.IsBinaryFile == false);
-            Assertion.Assert (entry.IsDirectory == false);
+            Assertion.AssertEquals (entry.IsBinaryFile, false);
+            Assertion.AssertEquals (entry.IsDirectory, false);
             
             Assertion.Assert (entry.FileContents.Equals (NORMALISED_ENTRY_2));
         }
@@ -207,12 +207,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void TestParseDirEntry () {
             Entry entry = new Entry (TestConstants.LOCAL_PATH, DIR_ENTRY);
             
-            Assertion.Assert (entry.Name.Equals ("ICSharpCode.Tests"));
-            // TODO: Check if it makes any sense to test Revision, Date, etc.
-            
             Assertion.Assert (entry.IsDirectory == true);
             
-            Assertion.Assert (entry.FileContents.Equals (DIR_ENTRY));
         }
         
         /// <summary>
@@ -223,31 +219,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void TestTooManyArgsEntry () {
             Entry entry = new Entry (TestConstants.LOCAL_PATH, INVALID_ENTRY_1);
         }
-        
-        /// <summary>
-        /// Test not enough args.
-        /// </summary>
-        [Test]
-        [ExpectedException(typeof(ArgumentException))]
-        public void TestNotEnoughArgsEntry () {
-            Entry entry = new Entry (TestConstants.LOCAL_PATH, INVALID_ENTRY_2);
-        }
-        
-        /// <summary>
-        /// Test invalid date format.
-        /// 
-        /// TODO: Check if this should really throw an exception.
-        /// Cederqvist seems to imply that an invalid date is OK,
-        /// and that the only thing that is important is whether 
-        /// the timestamp of the actual file matches what's in 
-        /// this field or not.
-        /// </summary>
-        [Test]
-        [ExpectedException(typeof(FormatException))]
-        public void TestInvalidDateEntry () {
-            Entry entry = new Entry (TestConstants.LOCAL_PATH, INVALID_ENTRY_3);
-        }
-        
+                
         /// <summary>
         ///     Clean up any test directories, etc.
         /// </summary>

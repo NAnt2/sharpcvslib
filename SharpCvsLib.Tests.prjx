@@ -22,6 +22,8 @@
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Config" subtype="Directory" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Config\SharpCvsLibConfigHandlerTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Commands\UpdateCommandTestCvsnt.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Util" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Util\DateParserTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto=".\lib\ext\log4net.dll" localcopy="True" />
