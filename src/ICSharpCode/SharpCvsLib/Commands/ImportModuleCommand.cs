@@ -33,6 +33,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Text.RegularExpressions;
 
 using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Requests;
@@ -52,8 +53,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     public class ImportModuleCommand : ICommand {
         private WorkingDirectory workingdirectory;
         private string  logmessage;
-        private string  vendor  = "vendor";
-        private string  release = "release";
+        private string vendor = "tcvs-vendor";
+        private string release = "tcvs-release";
 
         private readonly ILog LOGGER =
             LogManager.GetLogger (typeof (ImportModuleCommand));
@@ -62,23 +63,20 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// The log message returned by the cvs server.
         /// </summary>
         public string LogMessage {
-            get {
-                return logmessage;
-            }
-            set {
-                logmessage = value;
-            }
+            get { return logmessage; }
+            set { logmessage = value; }
         }
 
         /// <summary>
         /// Vendor string.
         /// </summary>
         public string VendorString {
-            get {
-                return vendor;
-            }
-            set {
-                vendor = value;
+            get { return vendor; }
+            set { 
+                if (null == value || !Regex.IsMatch(value, @"[\w]")) {
+                    throw new ArgumentException("Value must start with a letter.");
+                }
+                vendor = value; 
             }
         }
 
@@ -86,11 +84,12 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// Release string
         /// </summary>
         public string ReleaseString {
-            get {
-                return release;
-            }
-            set {
-                release = value;
+            get { return release; }
+            set { 
+                if (null == value || !Regex.IsMatch(value, @"[\w]")) {
+                    throw new ArgumentException("Value must start with a letter.");
+                }
+                release = value; 
             }
         }
 
@@ -99,8 +98,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         /// <param name="workingdirectory"></param>
         /// <param name="logmessage"></param>
-        public ImportModuleCommand(WorkingDirectory workingdirectory, string logmessage)
-        {
+        public ImportModuleCommand(WorkingDirectory workingdirectory, string logmessage){
             this.logmessage = logmessage;
             this.workingdirectory = workingdirectory;
         }
@@ -109,15 +107,12 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// Do the dirty work.
         /// </summary>
         /// <param name="connection"></param>
-        public void Execute(ICommandConnection connection)
-        {
+        public void Execute(ICommandConnection connection){
             //connection.SubmitRequest(new CaseRequest());
             connection.SubmitRequest(new ArgumentRequest("-b"));
             connection.SubmitRequest(new ArgumentRequest("1.1.1"));
             connection.SubmitRequest(new ArgumentRequest("-m"));
             connection.SubmitRequest(new ArgumentRequest(logmessage));
-
-            LOGGER.Info("IMPORT START");
 
             foreach (DictionaryEntry folder in workingdirectory.Folders) {
                 this.SetDirectory(connection, (Folder)folder.Value);
@@ -131,9 +126,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             connection.SubmitRequest(new ArgumentRequest(release));
 
             connection.SubmitRequest(new ImportRequest());
-            if (LOGGER.IsDebugEnabled) {
-                LOGGER.Debug ("IMPORT END");
-            }
         }
 
         private void SetDirectory (ICommandConnection connection,

@@ -210,7 +210,7 @@ namespace ICSharpCode.SharpCvsLib.Console {
                         Usage.General, Environment.NewLine, e.Message));
                 return;
             } catch (Exception e) {
-                ExitProgram("Exception parsing command.", e);
+                ExitProgram(string.Format("Exception parsing command: {0}", e.Message));
             }
 
             if (null != command) {

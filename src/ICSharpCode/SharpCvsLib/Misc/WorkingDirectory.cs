@@ -116,7 +116,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         public string WorkingDirectoryName {
             get {
                 if (this.HasOverrideDirectory) {
-                return this.OverrideDirectory;
+                    return this.OverrideDirectory;
                 } else {
                     return this.repositoryname;
                 }

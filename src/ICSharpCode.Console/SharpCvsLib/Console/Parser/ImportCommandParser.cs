@@ -53,8 +53,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private string[] unparsedOptions;
 
         private string message;
-        private string vendor;
-        private string release;
+        private string vendor = "tcvs-vendor";
+        private string release = "tcvs-release";
         private string branch;
 
         /// <summary>
@@ -80,15 +80,15 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <param name="args">Commandline arguments.</param>
         public ImportCommandParser(CvsRoot cvsroot, string[] args) {
             this.CvsRoot = cvsroot;
-            this.unparsedOptions = args;
+            this.Args = args;
         }
 
         /// <summary>
-        /// Create a new instance of the <see cref="CheckoutCommandParser"/>.
+        /// Create a new instance of the <see cref="ImportCommandParser"/>.
         /// </summary>
         /// <returns></returns>
         public static ICommandParser GetInstance() {
-            return GetInstance(typeof(InitCommandParser));
+            return GetInstance(typeof(ImportCommandParser));
         }
 
         /// <summary>
@@ -129,54 +129,38 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <exception cref="NotImplementedException">If the command argument
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
         public override ICommand CreateCommand () {
-            ICSharpCode.SharpCvsLib.Commands.ImportModuleCommand importCommand;
-            try {
-                this.ParseOptions(this.unparsedOptions);
-                Manager manager = new Manager(Environment.CurrentDirectory);
+            ImportModuleCommand importCommand;
+            this.ParseOptions();
+            Manager manager = new Manager(Environment.CurrentDirectory);
+            this.CurrentWorkingDirectory = 
+                new WorkingDirectory(this.CvsRoot,
+                this.CurrentDir.FullName, this.Module);
 
-                DirectoryInfo importDir = new DirectoryInfo(Environment.CurrentDirectory);
+            DirectoryInfo importDir = 
+                new DirectoryInfo(Environment.CurrentDirectory);
 
-                if (!importDir.Exists) {
-                    ConsoleMain.ExitProgram("Import directory does not exist.");
-                }
-
-                CurrentWorkingDirectory.Folders = 
-                    manager.FetchFilesToAdd(importDir.FullName);
-                importCommand = 
-                    new ICSharpCode.SharpCvsLib.Commands.ImportModuleCommand(
-                    CurrentWorkingDirectory, this.message);
-
-                importCommand.VendorString = this.vendor;
-                importCommand.ReleaseString = this.release;
-                importCommand.LogMessage = this.message;
-//                importCommand.Repository = this.repository;
+            if (!importDir.Exists) {
+                ConsoleMain.ExitProgram("Import directory does not exist.");
             }
-            catch (Exception e) {
-                LOGGER.Error (e);
-                throw e;
-            }
+
+            importCommand = 
+                new ImportModuleCommand(CurrentWorkingDirectory, this.message);
+
+            importCommand.VendorString = this.vendor;
+            importCommand.ReleaseString = this.release;
+            importCommand.LogMessage = this.message;
             return importCommand;
-        }
-
-        public override void ParseOptions() {
-            this.ParseOptions(this.Args);
         }
 
         /// <summary>
         /// Parse the command line options/ arguments and populate the command
         ///     object with the arguments.
         /// </summary>
-        /// <param name="arguments">A string value that holds the command
-        ///     line options the user has selected.</param>
-        private void ParseOptions (string[] arguments) {
-            string singleOptions = "Cdfn";
-            string options = string.Empty;
-            int i = 0;
-            // get rest of arguments which is options on the checkout command.
-            while (arguments.Length > i && arguments[i].Trim().IndexOf("-") == 0){
-                // Get options with second parameters?
-                string arg = arguments[i].Trim();
-                if (arg.IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0){
+        public override void ParseOptions () {
+            int noDashIndex = 0;
+            for (int i = 0; i < this.Args.Length; i++) {
+                string arg = Args[i];
+                if (arg.StartsWith("-")) {
                     switch (arg) {
                         case "-C":
                             throw new NotImplementedException(string.Format("Argument not implemented {0}.", arg));
@@ -186,48 +170,32 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             throw new NotImplementedException(string.Format("Argument not implemented {0}.", arg));
                         case "-n":
                             throw new NotImplementedException(string.Format("Argument not implemented {0}.", arg));
-                        default:
-                            break;
-                    }
-                } else {
-                    switch (arg) {
                         case "-k":
                             throw new NotImplementedException(string.Format("Argument not implemented {0}.", arg));
                         case "-I":
                             throw new NotImplementedException(string.Format("Argument not implemented {0}.", arg));
                         case "-b":
-                            this.branch = arguments[++i];
+                            this.branch = this.Args[++i];
                             break;
                         case "-m":
-                            this.message = arguments[++i];
+                            this.message = this.Args[++i];
                             break;
                         case "-W":
                             throw new NotImplementedException(string.Format("Argument not implemented {0}.", arg));
-                        default:
                             break;
                     }
+                } else {
+                    if (0 == noDashIndex) {
+                        this.Module = this.Args[i];
+                        noDashIndex++;
+                    } else if (1 == noDashIndex) {
+                        this.vendor = this.Args[i];
+                        noDashIndex++;
+                    } else if (2 == noDashIndex) {
+                        this.release = this.Args[i];
+                        noDashIndex++;
+                    }
                 }
-                i++;
-            }
-            if (arguments.Length > i){
-                // Safely grab the module, if not specified then
-                //  pass null into the repository...the cvs command
-                //  line for cvsnt/ cvs seems to bomb out when
-                //  it sends to the server
-                this.Module = arguments[i++];
-            } else {
-                this.Module = String.Empty;
-            }
-
-            if (arguments.Length > i){
-                this.vendor = arguments[i++];
-            } else {
-                this.vendor = String.Empty;
-            }
-            if (arguments.Length > i){
-                this.release = arguments[i++];
-            } else {
-                this.release = String.Empty;
             }
         }
 

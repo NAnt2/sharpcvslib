@@ -30,6 +30,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsAddInTests", "SharpCvsAddInTests\SharpCvsAddInTests.csproj", "{05A1FA23-0CC1-41A1-A60F-1BF59B771C9C}"
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
@@ -43,20 +45,20 @@ Global
 		{A76B2D4F-C424-410B-A6F1-7831B5E38E7D}.Debug.ActiveCfg = Debug|Win32
 		{A76B2D4F-C424-410B-A6F1-7831B5E38E7D}.Release.ActiveCfg = Release|Win32
 		{29B8A199-09AD-42A5-ACA5-6710E592D57C}.Debug.ActiveCfg = Debug|.NET
+		{29B8A199-09AD-42A5-ACA5-6710E592D57C}.Debug.Build.0 = Debug|.NET
 		{29B8A199-09AD-42A5-ACA5-6710E592D57C}.Release.ActiveCfg = Release|.NET
 		{29B8A199-09AD-42A5-ACA5-6710E592D57C}.Release.Build.0 = Release|.NET
 		{4F5CFD04-88C6-400E-B0EB-9D03F456C631}.Debug.ActiveCfg = Debug|.NET
+		{4F5CFD04-88C6-400E-B0EB-9D03F456C631}.Debug.Build.0 = Debug|.NET
 		{4F5CFD04-88C6-400E-B0EB-9D03F456C631}.Release.ActiveCfg = Release|.NET
 		{4F5CFD04-88C6-400E-B0EB-9D03F456C631}.Release.Build.0 = Release|.NET
 		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Debug.ActiveCfg = Debug|.NET
 		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Debug.Build.0 = Debug|.NET
 		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Release.ActiveCfg = Release|.NET
 		{29608312-FA1C-4E7D-85C9-73B5D4443DC9}.Debug.ActiveCfg = Debug|.NET
-		{29608312-FA1C-4E7D-85C9-73B5D4443DC9}.Debug.Build.0 = Debug|.NET
 		{29608312-FA1C-4E7D-85C9-73B5D4443DC9}.Release.ActiveCfg = Release|.NET
 		{29608312-FA1C-4E7D-85C9-73B5D4443DC9}.Release.Build.0 = Release|.NET
 		{5E2129EC-24CE-4DD4-BB82-8BBE7F2F2FC5}.Debug.ActiveCfg = Debug
-		{5E2129EC-24CE-4DD4-BB82-8BBE7F2F2FC5}.Debug.Build.0 = Debug
 		{5E2129EC-24CE-4DD4-BB82-8BBE7F2F2FC5}.Release.ActiveCfg = Release
 		{5E2129EC-24CE-4DD4-BB82-8BBE7F2F2FC5}.Release.Build.0 = Release
 		{05A1FA23-0CC1-41A1-A60F-1BF59B771C9C}.Debug.ActiveCfg = Debug|.NET
