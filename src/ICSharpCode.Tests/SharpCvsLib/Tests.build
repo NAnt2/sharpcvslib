@@ -12,11 +12,12 @@
             <arg value="${compile.unsafe}" />
             <arg value="${compile.checked}" />
             
-            <sources basedir="${dir.src}">
 <!-- // TODO: Change to internalize helpers (accessor) -->
-                <includes name="ICSharpCode/**/*.cs" />
-                <includes name="ICSharpCode.Tests/**/*.cs" />
+            <sources>
+                <includes name="**/*.cs" />
+                <includes name="../../${name.top-level}/${name.project}/**.cs" />
             </sources>
+
             <references>
                 <includes name="System.dll" />            
                 <includes name="${dir.lib}/${lib.zip}" />
@@ -37,10 +38,10 @@
             <arg value="${compile.unsafe}" />
             <arg value="${compile.checked}" />
             
-            <sources basedir="${dir.src}">
 <!-- // TODO: Change to internalize helpers (accessor) -->
-                <includes name="ICSharpCode/**/*.cs" />
-                <includes name="ICSharpCode.Tests/**/*.cs" />
+            <sources>
+                <includes name="**/*.cs" />
+                <includes name="${dir.src}/${name.top-level}/${name.project}/**.cs" />
             </sources>
             <references>
                 <includes name="System.dll" />            

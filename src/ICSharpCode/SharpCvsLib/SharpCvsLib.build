@@ -13,8 +13,8 @@
             <arg value="${compile.unsafe}" />
             <arg value="${compile.checked}" />
             
-            <sources basedir="${dir.src}">
-                <includes name="ICSharpCode/**/*.cs" />
+            <sources>
+                <includes name="**/*.cs" />
             </sources>
             
             <references>
@@ -38,8 +38,8 @@
             <arg value="${compile.unsafe}" />
             <arg value="${compile.checked}" />
             
-            <sources basedir="${dir.src}">
-                <includes name="ICSharpCode/**/*.cs" />
+            <sources>
+                <includes name="**/*.cs" />
             </sources>
             
             <references>

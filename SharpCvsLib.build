@@ -27,7 +27,7 @@
     <property name="nant.settings.currentframework" value = "mono-1.0-linux"/>  -->  
 
     <!-- Directory structure -->
-    <property name="dir.base" value="E:/dev/src/sharpcvslib/sharpcvslib" />
+    <property name="dir.base" value="${nant.project.basedir}" />
     <property name="dir.build" value="${dir.base}/build/bin" /> 
     <property name="dir.conf" value="${dir.base}/conf" />
     <property name="dir.dist" value="${dir.base}/dist" />
