@@ -247,6 +247,7 @@
                 <include name="${dir.lib}**" />
                 <include name="${dir.src}**" />
                 <include name="${dir.tools}/nant**" />
+                <include name="${dir.tools}/Builder**" />
                 
                 <exclude name="${dir.doc}**" />
                 <exclude name="**/*.log.*" />
@@ -266,20 +267,6 @@
         </copy>
 
         <delete dir="${dir.dist}/doc" />
-    </target>
-    
-    <target name="integration" depends="clean, dist">
-        <mkdir dir="${ccnet.log.dir}/${label-to-apply}"/>
-        <zip zipfile="${ccnet.log.dir}/${label-to-apply}/${assembly.version}-src.zip">
-            <fileset basedir="${dir.dist}/src">
-                <include name="**" />
-            </fileset>
-        </zip>
-        <zip zipfile="${ccnet.log.dir}/${label-to-apply}/${assembly.version}-bin.zip">
-            <fileset basedir="${dir.dist}/bin">
-                <include name="**" />
-            </fileset>
-        </zip>
     </target>
     
     <target name="build-release.common" depends="clean">
