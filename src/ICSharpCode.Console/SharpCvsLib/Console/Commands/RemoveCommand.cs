@@ -94,17 +94,18 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             ICSharpCode.SharpCvsLib.Commands.RemoveCommand removeCommand;
             this.ParseOptions(this.unparsedOptions);
             try {
+                String currentDirectory = Environment.CurrentDirectory;
                 // Open the Repository file in the CVS directory
-                Manager manager = new Manager(Environment.CurrentDirectory);
-                Repository repository = manager.FetchRepository(Environment.CurrentDirectory); 
+                Manager manager = new Manager(currentDirectory);
+                Repository repository = manager.FetchRepository(currentDirectory); 
                 // If this fails error out and state the user
                 //    is not in a CVS repository directory tree.
                 currentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
-                    Environment.CurrentDirectory, repository.FileContents);
+                    currentDirectory, repository.FileContents);
                 // Create new RemoveCommand object
                 removeCommand = new ICSharpCode.SharpCvsLib.Commands.RemoveCommand(
-                                 this.currentWorkingDirectory, Environment.CurrentDirectory, 
-                                 new ICSharpCode.SharpCvsLib.FileSystem.Entry( Environment.CurrentDirectory, fileNames));
+                                 this.currentWorkingDirectory, currentDirectory, 
+                                 new ICSharpCode.SharpCvsLib.FileSystem.Entry( currentDirectory, fileNames));
             }
             catch (Exception e) {
                 LOGGER.Error (e);
