@@ -21,7 +21,7 @@
                 <includes name="${dir.lib}/${lib.zip}" />
                 <includes name="${dir.lib.ext}/${lib.log4net}" />
                 <includes name="${dir.lib.ext}/${lib.nunit}" />
-                <includes name="${dir.build}/*.dll" />
+                <includes name="${dir.build}/${name.top-level}.${name.lib}.dll" />
             </references>
         </csc>
     </target>
