@@ -54,13 +54,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser
 	///         and test invalid ones.
 	/// </summary>
 	[TestFixture]
-	public class CommandLineParserTest 
-	{
+	public class CommandLineParserTest{
 		/// <summary>
 		///     Constructory for test case.
 		/// </summary>
-		public CommandLineParserTest () 
-		{ 
+		public CommandLineParserTest (){ 
 		}
         
 		/// <summary>
@@ -68,15 +66,14 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser
 		///       
 		/// </summary>
 		[Test]
-		public void MakeCommandParserTest () 
-		{
+		public void MakeCommandParserTest (){
 			String[] args = {"--help"};
 			// Test Creating a CommandLineParser object
 			CommandLineParser newCommandLineParser = new CommandLineParser( args);
 			Assertion.AssertNotNull ("Should have a command object.", newCommandLineParser);
 			newCommandLineParser.Execute();
 
-			String[] coargs = {"-d", ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib", 
+			String[] coargs = {"-d", ":ext:skyward@cvs.sourceforge.net:/cvsroot/sharpcvslib", 
 								  "co", "sharpcvslib"};
 			// Test processing checkout command with CommandLineParser object
 			newCommandLineParser = new CommandLineParser( coargs);
