@@ -248,7 +248,11 @@ namespace SharpCvsAddIn.UI
 					return result;
 				}
 			}
-
+			/// <summary>
+			/// Gets the all the status information from a cvs entry file contained in the
+			/// project directory.
+			/// </summary>
+			/// <returns></returns>
 			protected virtual CvsEntry[] GetCvsEntries()
 			{
 				Debug.Assert( this.HasChildren, "Called GetCvsEntries on a terminal node" );

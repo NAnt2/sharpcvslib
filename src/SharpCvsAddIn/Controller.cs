@@ -20,7 +20,6 @@ namespace SharpCvsAddIn
 		private OutputPaneWriter outputWriter_;
 		private bool solutionOpen_ = false;
 		private bool addInLoadedForSolution_ = false;
-		private FileStatusCache statusCache_ = null;
 		private SolutionExplorer solutionExplorer_ = null;
 		private Events.ProjectFileEvents fileEvents_ = null;
 

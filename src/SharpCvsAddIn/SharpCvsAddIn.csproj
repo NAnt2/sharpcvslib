@@ -225,6 +225,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "JobQueue.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "Model.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -241,11 +246,6 @@
                 <File
                     RelPath = "status_icons.bmp"
                     BuildAction = "EmbeddedResource"
-                />
-                <File
-                    RelPath = "StatusCache.cs"
-                    SubType = "Code"
-                    BuildAction = "Compile"
                 />
                 <File
                     RelPath = "UIShell.cs"
