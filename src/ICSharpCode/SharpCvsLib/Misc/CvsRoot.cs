@@ -53,7 +53,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
             @":(ext|pserver|ssh|local|sspi)
 :([\w*]*[[@]*[\w*]*[\.\w*]*]*)
 [:]*([\d*]*)
-:([A-Za-z:/|/]+[\w*/]*)";
+:([A-Za-z:/|/]+[\w*/-]*)";
 
         private readonly ILog LOGGER = LogManager.GetLogger(typeof(CvsRoot));
         /// <summary>
