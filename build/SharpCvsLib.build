@@ -107,6 +107,7 @@
     
     <target name="setup">
         <mkdir dir="${dir.bin}" />
+        <mkdir dir="${dir.bin}/tests" />
         <copy todir="${dir.bin}">
             <fileset basedir="${dir.lib}">
                 <includes name="${lib.zip}" />
