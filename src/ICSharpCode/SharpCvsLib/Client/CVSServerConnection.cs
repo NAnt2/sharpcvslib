@@ -359,7 +359,9 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// <param name="password"></param>
         public void Connect(WorkingDirectory repository, string password) {
             this.repository = repository;
-            this.StartProcessEvent(this, new ProcessEventArgs());
+            if (StartProcessEvent != null) {
+                this.StartProcessEvent(this, new ProcessEventArgs());
+            }
             Authentication(password);
         }
 
@@ -429,7 +431,9 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// </summary>
         public void Close() {
             this.protocol.Disconnect();
-            this.StopProcessEvent(this, new ProcessEventArgs());
+            if (StopProcessEvent != null) {
+                this.StopProcessEvent(this, new ProcessEventArgs());
+            }
         }
     }
 }
