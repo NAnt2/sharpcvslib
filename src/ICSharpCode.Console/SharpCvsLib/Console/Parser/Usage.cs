@@ -140,6 +140,8 @@ Thanks for using the command line tool.";
 //#endif
 + @"
     -s VAR=VAL      Set CVS user variable.
+    -log:[level]    Sets the logging level.  Levels can be one of [debug|info|warn|error].
+    -verbose        Outputs request and response messages.
 
     --version       CVS version and copyright.
     --encrypt       Encrypt all net traffic (if supported by protocol).
