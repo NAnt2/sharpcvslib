@@ -903,6 +903,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\ICSharpCode.Tests\SharpCvsLib\Tests\AbstractTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src\ICSharpCode.Tests\SharpCvsLib\Tests\Util\PathUtil.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

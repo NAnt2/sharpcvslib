@@ -1,0 +1,1 @@
+tools\nant\win32\bin\nant.exe -buildfile:SharpCvsLib.build run-tests-sample
