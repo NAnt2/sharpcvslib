@@ -17,7 +17,7 @@
     <property name="name.tests" value="Tests" />
     
     <!-- Version information -->
-    <property name="assembly.start-date" value="2001/01/01" />  <!-- This is a guess at the start date, it is used to generate the current version number. -->
+    <property name="assembly.start-date" value="2001-01-01" />  <!-- This is a guess at the start date, it is used to generate the current version number. -->
     <property name="assembly.copyright.text" value="Mike Krueger 2001-2002, SharpCvsLib Developers 2003" />
     <property name="assembly.copyright.href" value="http://sharpcvslib.sourceforge.net/license.html" />
     <property name="assembly.description" value="Cvs client library written in c#" />
@@ -66,7 +66,7 @@
     
     <target name="generate.assembly-info" description="Generate the assembly info file for the project.  Pass in the version number.">
         <echo message="Generating assembly info for version ${assembly.version}" />
-        <asminfo output="${dir.src}/SharpCvsLibAssemblyInfo.cs" language="CSharp">
+        <asminfo output="${dir.src}/SharpCvsLibAssemblyInfo.cs" language="CSharp" failonerror="false">
             <imports>
                 <import name="System" />
                 <import name="System.Reflection" />

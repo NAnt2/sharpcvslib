@@ -450,19 +450,15 @@ namespace ICSharpCode.SharpCvsLib.Client {
 	    ///<exception cref="AuthenticationException">If the user is not valid.</exception>
 	    private void HandlePserverAuthentication(String password) {
             String retStr = this.SendPserverAuthentication(password);
-	        switch (retStr) {
-	            case PSERVER_AUTH_SUCCESS: {
+		if (retStr.Equals(PSERVER_AUTH_SUCCESS)) {
 	                SendMessage("Connection established");
-	                break;
-	            }
-	            case PSERVER_AUTH_FAIL: {
+		} else if (retStr.Equals(PSERVER_AUTH_FAIL)) {
 	                try {
 	                    tcpclient.Close();
 	                } finally {
 	                    throw new AuthenticationException();
 	                }
-	            }
-	            default: {
+		} else {
 	                StringBuilder msg = new StringBuilder ();
 	                msg.Append("Unknown Server response : >").Append(retStr).Append("<");
 	                SendMessage(msg.ToString());
@@ -471,8 +467,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
 	                } finally {
 	                    throw new AuthenticationException(msg.ToString());
 	                }
-	            }
-	        }	
+	            }	
 	    }
 
         /// <summary>
