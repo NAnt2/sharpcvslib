@@ -216,7 +216,25 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// <summary>
         /// Occurs when a file is being updated from the repository.
         /// </summary>
-        public event MessageEventHandler FileUpdatedMessageEvent;
+        public event MessageEventHandler UpdatedResponseMessageEvent;
+        /// <summary>
+        /// Occurs when a <see cref="Responses.SetStaticDirectoryResponse"/> event is sent
+        /// from the server.
+        /// </summary>
+        public event MessageEventHandler SetStaticDirectoryResponseMessageEvent;
+        /// <summary>
+        /// Occurs when a <see cref="ICSharpCode.SharpCvsLib.Responses.ErrorResponse"/> is sent
+        /// from the cvs server.
+        /// </summary>
+        public event MessageEventHandler ErrorResponseMessageEvent;
+        /// <summary>
+        /// Send a generic response message event.  Used for all responses that are not needed for now, 
+        /// however if used often enough the response will be broken out into it's own specific response 
+        /// event.
+        /// </summary>
+        public event MessageEventHandler UnspecifiedResponseMessageEvent;
+
+
 
         /// <summary>
         /// This message event is fired when there is an error message returned
@@ -259,13 +277,37 @@ namespace ICSharpCode.SharpCvsLib.Client {
         }
 
         /// <summary>
-        /// Send notification to event handlers that a file has been updated from the repository.
-        /// Clients that wish to handle this message should listen for the 
-        /// <see cref="FileUpdatedMessageEvent"/>.
+        /// Send notification that the directory has changed,
+        /// <see cref="SetStaticDirectoryResponseMessageEvent"/>.
         /// </summary>
         /// <param name="message"></param>
-        public void SendFileUpdatedMessage(string message) {
-            this.FileUpdatedMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
+        public void SendSetStaticDirectoryResponseMessage(string message) {
+            this.SetStaticDirectoryResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
+        }
+
+        /// <summary>
+        /// Send a message event to the specific event handler signalling that a <see cref="IResponse"/>
+        /// has been recieved from the cvs server.
+        /// </summary>
+        /// <param name="message">Message to send to clients.</param>
+        /// <param name="responseType">The <see cref="IResponse"/> type that is sending
+        /// the message.</param>
+        public void SendResponseMessage (string message, Type responseType) {
+            if (responseType.IsSubclassOf(typeof(IResponse))) {
+                throw new ArgumentException(String.Format("Response message must be sent from type of {0}; was sent from {1}.",
+                    (typeof(IResponse)).FullName, responseType.FullName));
+            }
+
+            if (responseType == typeof(UpdatedResponse)) {
+                this.UpdatedResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
+            } else if (responseType == typeof(SetStaticDirectoryResponse)) {
+                this.SetStaticDirectoryResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
+            } else if (responseType == typeof(ErrorResponse)) {
+                this.ErrorResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.ERROR_PREFIX));
+            }
+            else {
+                this.UnspecifiedResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
+            }
         }
 
         /// <summary>
@@ -416,7 +458,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
             //SubmitRequest(new CaseRequest());
 
         }
-	
+    
         private void HandleExtAuthentication () {
             StringBuilder processArgs = new StringBuilder ();
             processArgs.Append ("-l ").Append (repository.CvsRoot.User);
@@ -481,7 +523,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
             tcpclient.Connect(repository.CvsRoot.Host, repository.CvsRoot.Port);
             inputStream  = outputStream = new CvsStream(tcpclient.GetStream());
 
-            for (int i=0; i < 5; i++) {
+            int MAX_RETRY = 1;
+            for (int i=0; i < MAX_RETRY; i++) {
                 try {
                     SubmitRequest(new PServerAuthRequest(repository.CvsRoot.CvsRepository,
                         repository.CvsRoot.User,
@@ -507,31 +550,31 @@ namespace ICSharpCode.SharpCvsLib.Client {
             return retStr;
         }
 
-	    ///<summary>Either accept the pserver authentication response from the server or if the user
-	    ///	is invalid then throw an authentication exception.</summary>
-	    ///<param name="password">The password to send.</param>
-	    ///<exception cref="AuthenticationException">If the user is not valid.</exception>
-	    private void HandlePserverAuthentication(String password) {
+        ///<summary>Either accept the pserver authentication response from the server or if the user
+        /// is invalid then throw an authentication exception.</summary>
+        ///<param name="password">The password to send.</param>
+        ///<exception cref="AuthenticationException">If the user is not valid.</exception>
+        private void HandlePserverAuthentication(String password) {
             String retStr = this.SendPserverAuthentication(password);
-		if (retStr.Equals(PSERVER_AUTH_SUCCESS)) {
-	                SendMessage("Connection established");
-		} else if (retStr.Equals(PSERVER_AUTH_FAIL)) {
-	                try {
-	                    tcpclient.Close();
-	                } finally {
-	                    throw new AuthenticationException();
-	                }
-		} else {
-	                StringBuilder msg = new StringBuilder ();
-	                msg.Append("Unknown Server response : >").Append(retStr).Append("<");
-	                SendMessage(msg.ToString());
-	                try {
-	                    tcpclient.Close();
-	                } finally {
-	                    throw new AuthenticationException(msg.ToString());
-	                }
-	            }	
-	    }
+        if (retStr.Equals(PSERVER_AUTH_SUCCESS)) {
+                    SendMessage("Connection established");
+        } else if (retStr.Equals(PSERVER_AUTH_FAIL)) {
+                    try {
+                        tcpclient.Close();
+                    } finally {
+                        throw new AuthenticationException();
+                    }
+        } else {
+                    StringBuilder msg = new StringBuilder ();
+                    msg.Append("Unknown Server response : >").Append(retStr).Append("<");
+                    SendMessage(msg.ToString());
+                    try {
+                        tcpclient.Close();
+                    } finally {
+                        throw new AuthenticationException(msg.ToString());
+                    }
+                }   
+        }
 
         /// <summary>
         /// The repository information.

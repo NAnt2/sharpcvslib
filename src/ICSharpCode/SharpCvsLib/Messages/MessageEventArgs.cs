@@ -51,6 +51,8 @@ namespace ICSharpCode.SharpCvsLib.Messages {
         public const string CLIENT_PREFIX = "sharpcvslib";
         /// <summary>Prefix that is appended to server responses.</summary>
         public const string SERVER_PREFIX = "cvs server";
+        /// <summary>Prefix that is appended to error responses.</summary>
+        public const string ERROR_PREFIX = "cvs error";
 
         /// <summary>
         /// The prefix to decorate the message with.

@@ -298,7 +298,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 
             LOGGER.Debug(String.Format("root1: {0}; root2: {1}; are equal {2}",
                 root1, root2, root1.ToString().Equals(root2.ToString())));
-            return root1.ToString().Equals(root2.ToString());
+            return root1.ToString() == root2.ToString();
         }
 
     }

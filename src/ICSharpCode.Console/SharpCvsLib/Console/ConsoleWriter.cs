@@ -51,6 +51,21 @@ namespace ICSharpCode.SharpCvsLib.Console
         private static Regex TextRegex = new Regex(REGEX_TEXT, RegexOptions.Multiline);
         private static Regex FNameRegex = new Regex(REGEX_FNAME, RegexOptions.Multiline);
 
+        private const string DEFAULT_PREFIX = "[sharpcvslib]";
+        private const bool DEFAULT_USE_PREFIX = true;
+
+
+        private bool usePrefix = DEFAULT_USE_PREFIX;
+
+        /// <summary>
+        /// <code>true</code> if a prefix should be appended to the message; <code>false</code> otherwise.
+        /// </summary>
+        /// <value>Default value is <code>true</code>.</value>
+        public bool UsePrefix {
+            get {return this.usePrefix;}
+            set {this.usePrefix = value;}
+        }
+
         /// <summary>
         /// Create a new instance of the console writer.
         /// </summary>
@@ -58,15 +73,53 @@ namespace ICSharpCode.SharpCvsLib.Console
 		}
 
         /// <summary>
+        /// Write the message, without an ending line return.
+        /// </summary>
+        /// <param name="message"></param>
+        public void Write(string message) {
+            System.Console.Write(message);
+        }
+
+        /// <summary>
+        /// Write the message using the default prefix.
+        /// </summary>
+        /// <param name="message"></param>
+        public void WriteLine(string message)  {
+            this.WriteLine(message, DEFAULT_PREFIX);
+        }
+
+        /// <summary>
+        /// Write the message with the given prefix in front.
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="prefix"></param>
+        public void WriteLine(string message, string prefix) {
+            string formattedMessage = null;
+            if (UsePrefix && null != prefix && String.Empty != prefix) {
+                formattedMessage = String.Format("[{0}]: {1}", prefix, message);
+            } else {
+                formattedMessage = String.Format("{0}", message);
+            }
+            System.Console.WriteLine(formattedMessage);
+        }
+
+        /// <summary>
         /// Write the given message to the console and include a carriage return at line end.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         public void WriteLine(object sender, MessageEventArgs e) {
-            string message = e.Message;
-            string prefix = e.Prefix;
+            this.WriteLine(e.Message, e.Prefix);
+        }
 
-            System.Console.WriteLine(String.Format("[{0}]: [{1}]", prefix, message));
+        /// <summary>
+        /// Send a beep to the console and the write the error message.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void WriteError(object sender, MessageEventArgs e) {
+            System.Console.WriteLine( "\a" );
+            this.WriteLine(e.Message, e.Prefix);
         }
 	}
 }

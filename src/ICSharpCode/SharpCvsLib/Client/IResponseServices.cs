@@ -32,6 +32,8 @@
 //                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
+using System;
+
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileHandler;
 using ICSharpCode.SharpCvsLib.FileSystem;
@@ -53,9 +55,29 @@ namespace ICSharpCode.SharpCvsLib.Client {
         event MessageEventHandler ResponseMessageEvent;
 
         /// <summary>
-        /// Occurs when a file is being updated from the repository.
+        /// Occurs when a <see cref="ICSharpCode.SharpCvsLib.Responses.UpdatedResponse"/> 
+        /// is sent from the cvs server.
         /// </summary>
-        event MessageEventHandler FileUpdatedMessageEvent;
+        event MessageEventHandler UpdatedResponseMessageEvent;
+        /// <summary>
+        /// Occurs when a <see cref="ICSharpCode.SharpCvsLib.Responses.SetStaticDirectoryResponse"/> 
+        /// is sent from the cvs server.
+        /// </summary>
+        event MessageEventHandler SetStaticDirectoryResponseMessageEvent;
+
+        /// <summary>
+        /// Occurs when a <see cref="ICSharpCode.SharpCvsLib.Responses.ErrorResponse"/> is sent
+        /// from the cvs server.
+        /// </summary>
+        event MessageEventHandler ErrorResponseMessageEvent;
+
+        /// <summary>
+        /// Occurs when a message event is sent from an object
+        /// implementing <see cref="ICSharpCode.SharpCvsLib.Responses.IResponse"/> that does not
+        /// have it's own specific event handler.  If the response is used often enough it 
+        /// will be removed from this event handler and moved to it's own specific event handler.
+        /// </summary>
+        event MessageEventHandler UnspecifiedResponseMessageEvent;
 
         /// <summary>
         /// Send message
@@ -70,10 +92,12 @@ namespace ICSharpCode.SharpCvsLib.Client {
         void SendErrorMessage(string msg);
 
         /// <summary>
-        /// Provide notification to listeners that a file on the local file system has been
-        /// updated from the server.
+        /// Send a message to the appropriate response message handler, or the default handler if
+        /// the specific response type is not implemented.
         /// </summary>
-        void SendFileUpdatedMessage(string msg);
+        /// <param name="msg"></param>
+        /// <param name="responseType"></param>
+        void SendResponseMessage(string msg, Type responseType);
 
         /// <summary>
         /// The repository object, contains information about

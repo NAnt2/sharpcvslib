@@ -148,6 +148,15 @@ namespace ICSharpCode.SharpCvsLib.Console {
             return stream;
         }
 
+        private ConsoleWriter writer;
+        private ConsoleWriter Writer {
+            get {
+                if (null == this.writer) {
+                    writer = new ConsoleWriter();
+                }
+                return this.writer;}
+        }
+
         /// <summary>
         /// 
         /// </summary>
@@ -167,7 +176,7 @@ namespace ICSharpCode.SharpCvsLib.Console {
                 this.DoExecute();
             } catch (Exception e) {
                 LOGGER.Error(e);
-                System.Console.WriteLine("Something very bad has happened.");
+                Writer.WriteLine("Something very bad has happened.");
                 System.Environment.Exit(-1);
             }
         }
@@ -180,7 +189,7 @@ namespace ICSharpCode.SharpCvsLib.Console {
             try {
                 command = parser.Execute ();
             } catch (CommandLineParseException e) {
-                System.Console.WriteLine(
+                Writer.WriteLine(
                     String.Format("{0}{1}{2}",
                         Usage.General, Environment.NewLine, e.Message));
                 return;
@@ -191,21 +200,22 @@ namespace ICSharpCode.SharpCvsLib.Console {
                 //  directory a public property??  Not sure.
                 WorkingDirectory workingDirectory = parser.CurrentWorkingDirectory;
 
-                string password = parser.Password;
+                string password = this.GetPassword(parser, workingDirectory);
 
                 // Create CVSServerConnection object that has the ICommandConnection
                 CVSServerConnection serverConn = new CVSServerConnection(workingDirectory);
-                ConsoleWriter writer = new ConsoleWriter();
 
                 if (parser.Verbose) {
-                    serverConn.RequestMessageEvent += new MessageEventHandler(writer.WriteLine);
-                    serverConn.ResponseMessageEvent += new MessageEventHandler(writer.WriteLine);
+                    serverConn.RequestMessageEvent += new MessageEventHandler(Writer.WriteLine);
+                    serverConn.ResponseMessageEvent += new MessageEventHandler(Writer.WriteLine);
                 }
 
-                serverConn.FileUpdatedMessageEvent += new MessageEventHandler(writer.WriteLine);
+                serverConn.UpdatedResponseMessageEvent += new MessageEventHandler(Writer.WriteLine);
+                serverConn.SetStaticDirectoryResponseMessageEvent += new MessageEventHandler(Writer.WriteLine);
+                serverConn.ErrorResponseMessageEvent += new MessageEventHandler(Writer.WriteError);
 
                 if (null == serverConn) {
-                    System.Console.WriteLine("Unable to connect to server.");
+                    Writer.WriteLine("Unable to connect to server.");
                     Environment.Exit(-1);
                 }
 
@@ -217,41 +227,33 @@ namespace ICSharpCode.SharpCvsLib.Console {
                         serverConn.Connect(workingDirectory, password);
                     }
                     catch (AuthenticationException eDefault){
-                        LOGGER.Info("Authentication failed using empty password, trying .cvspass file.", eDefault);
-                        try{
-                            //string scrambledpassword;
-                            // check to connect with password from .cvspass file
-                            // check for .cvspass file and get password
-                            //password = PasswordScrambler.Descramble(scrambledpassword);
-                            LoginCommand loginCommand = new LoginCommand(workingDirectory.CvsRoot);
-                            password = loginCommand.GetPassword();
-                            serverConn.Connect(workingDirectory, password);
-                        }
-                        catch (AuthenticationException eCvsPass){
-                            try {
-                                LOGGER.Info("Authentication failed using .cvspass file, prompting for password.", eCvsPass);
-                                // prompt user for password by using login command?
-                                LoginCommand login = new LoginCommand(workingDirectory.CvsRoot);
-                                login.Password = login.GetPassword();
-                                serverConn.Connect(workingDirectory, login.Password);
-                                throw eCvsPass;
-                            } catch (AuthenticationException e) {
-                                StringBuilder msg = new StringBuilder();
-                                msg.Append("Fatal error, aborting.");
-                                msg.Append("cvs [login aborted]: ")
-                                    .Append(workingDirectory.CvsRoot.User)
-                                    .Append(": unknown user or bad password.");
-                                LOGGER.Error(msg, e);
-                                System.Console.WriteLine(msg.ToString());
-                                Environment.Exit(-1);
-                            }
-                        }
+                        string msg = String.Format("Fatal error, aborting.  cvs [login aborted]: {0}: unknown user or bad password.",
+                            workingDirectory.CvsRoot.User);
+                        LOGGER.Error(msg, eDefault);
+                        Writer.WriteLine(msg);
+                        Environment.Exit(-1);
                     }
                     // Execute the command on cvs repository.
                     command.Execute(serverConn);
                     serverConn.Close();
                 }
             }
+        }
+
+        private string GetPassword(CommandLineParser parser, WorkingDirectory workingDir) {
+            string pwd = null;
+            if (null != parser && null != parser.Password && String.Empty != parser.Password) {
+                pwd = parser.Password;
+            } else {
+                LoginCommand loginCommand = new LoginCommand(workingDir.CvsRoot);
+                pwd = loginCommand.GetPassword();
+            }
+
+            if (null == pwd) {
+                pwd = String.Empty;
+            }
+
+            return pwd;
         }
     }
 }

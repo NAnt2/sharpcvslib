@@ -129,7 +129,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             message.Repository =  orgPath.RelativePath;
             message.Filename = e.Name;
             Services.SendMessage (message.Message);
-            Services.SendFileUpdatedMessage(message.Message);
+            Services.SendResponseMessage(message.Message, this.GetType());
         }
 
         /// <summary>
