@@ -38,6 +38,7 @@ using System.Text;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.Streams;
 
 using log4net;
 

@@ -34,6 +34,7 @@ using System;
 using log4net;
 
 using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.Streams;
 
 namespace ICSharpCode.SharpCvsLib.Responses { 
 	

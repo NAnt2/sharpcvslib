@@ -31,6 +31,8 @@
 
 using System;
 
+using ICSharpCode.SharpCvsLib.Streams;
+
 namespace ICSharpCode.SharpCvsLib.FileHandler { 
 	
 	/// <summary>

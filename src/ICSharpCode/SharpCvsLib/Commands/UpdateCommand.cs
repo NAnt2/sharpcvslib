@@ -182,7 +182,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		                           Folder folder) {
             String absoluteDir = 
                 connection.Repository.CvsRoot.CvsRepository + "/" +
-                        folder.Repos.FileContents;
+                        folder.Repository.FileContents;
             
     		try {
     			connection.SubmitRequest(new DirectoryRequest(".",
@@ -190,7 +190,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     		}
     		catch (Exception e) {
     		    String msg = "Exception while submitting directory request.  " +
-    		        "path=[" + folder.Repos.FileContents + "]";
+    		        "path=[" + folder.Repository.FileContents + "]";
                 LOGGER.Error (e);
     		}
 		}

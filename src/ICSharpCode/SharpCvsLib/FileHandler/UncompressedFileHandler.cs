@@ -33,6 +33,8 @@ using System;
 using System.IO;
 using System.Text;
 
+using ICSharpCode.SharpCvsLib.Streams;
+
 namespace ICSharpCode.SharpCvsLib.FileHandler { 
 	
 	/// <summary>

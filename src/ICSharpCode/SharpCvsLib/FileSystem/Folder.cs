@@ -28,44 +28,71 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
-//                Clayton Harbour
+//    <author>Mike Krueger</author>
+//    <author>Clayton Harbour</author>
 //
 #endregion
 
+using System;
 using System.Collections;
 
 using ICSharpCode.SharpCvsLib.FileSystem;
 
-namespace ICSharpCode.SharpCvsLib.Misc { 
+namespace ICSharpCode.SharpCvsLib.FileSystem { 
 	
     /// <summary>
     /// Represents a list of entries in the repository or
     ///     in simple terms a folder or directory on the
     ///     cvs server.
     /// </summary>
-	public class Folder
-	{
+	public class Folder {
 		private ArrayList entries = new ArrayList();
-		private Repository repos;
+		private Repository repository;
+	    private Root root;
+	    private Tag tag;
 	    
 	    /// <summary>
 	    ///     The repository object.
 	    /// </summary>
+	    [Obsolete ("Please use Repository")]
 		public Repository Repos {
-		    get {return this.repos;}
-		    set {this.repos = value;}
+		    get {return this.repository;}
+		    set {this.repository = value;}
 		}
+
+        /// <summary>
+        /// Root file, holds cvsroot information.
+        /// </summary>
+        public Root Root {
+            get {return this.root;}
+            set {this.root = value;}
+        }
+        
+        /// <summary>
+        /// Repository file, holds information about the relative path to the
+        ///     folder on the server.
+        /// </summary>
+		public Repository Repository {
+		    get {return this.repository;}
+		    set {this.repository = value;}
+		}
+		
+		/// <summary>
+		/// Tag file: Optional file that records the current revision that
+		///     is checked out.  Only present if the revision is not the HEAD
+		///     revision.
+		/// </summary>
+		public Tag Tag {
+		    get {return this.tag;}
+		    set {this.tag = value;}
+		}
+		
         /// <summary>
         /// List of entries.
         /// </summary>
 		public ArrayList Entries {
-			get {
-				return entries;
-			}
-			set {
-			    this.entries = value;
-			}
+			get {return entries;}
+			set {this.entries = value;}
 		}
 	}
 	

@@ -50,6 +50,7 @@ using ICSharpCode.SharpCvsLib.Responses;
 using ICSharpCode.SharpCvsLib.FileHandler;
 using ICSharpCode.SharpCvsLib.Messages;
 using ICSharpCode.SharpCvsLib.FileSystem;
+using ICSharpCode.SharpCvsLib.Streams;
 
 using log4net;
 

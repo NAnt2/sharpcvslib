@@ -28,6 +28,7 @@
 // exception statement from your version.
 //
 //    <author>Gerald Evans</author>
+//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
@@ -37,6 +38,7 @@ using System.Threading;
 
 using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpZipLib.GZip;
+using ICSharpCode.SharpCvsLib.Streams;
 
 using log4net;
 using NUnit.Framework;

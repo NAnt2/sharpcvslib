@@ -1,6 +1,6 @@
 #region "Copyright"
-// ClearStickyResponse.cs
-// Copyright (C) 2001 Mike Krueger
+// FolderTest.cs 
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,48 +28,38 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
+//    <author>Clayton Harbour</author>
+//
 #endregion
 
 using System;
+using System.Collections;
 
-using log4net;
-
-using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
-using ICSharpCode.SharpCvsLib.Client;
-using ICSharpCode.SharpCvsLib.Streams;
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
+using NUnit.Framework;
+
+namespace ICSharpCode.SharpCvsLib.FileSystem { 
 	
     /// <summary>
-    /// Handle a clear sticky tag response.
+    /// Represents a list of entries in the repository or
+    ///     in simple terms a folder or directory on the
+    ///     cvs server.
     /// </summary>
-	public class ClearStickyResponse : IResponse
-	{
-	    private readonly ILog LOGGER = 
-	        LogManager.GetLogger (typeof (ClearStickyResponse));
+    [TestFixture]
+	public class FolderTest {
         /// <summary>
-        /// Process a clear sticky tag response.
+        /// Perform setup operations.
         /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-	    public void Process(CvsStream cvsStream, IResponseServices services)
-	    {
-            string localPath      = cvsStream.ReadLine();
-            string reposPath = cvsStream.ReadLine();
-
-            // TODO: Do something useful with this response.
-	    }
-	    
-        /// <summary>
-        /// Return true if this response cancels the transaction
-        /// </summary>
-		public bool IsTerminating {
-			get {
-				return false;
-			}
-		}
+    	[SetUp]
+    	public void SetUp () {
+    	}
+    	
+    	/// <summary>Perform tear down operations.</summary>
+    	[TearDown]
+    	public void TearDown () {
+    	    
+    	}
+	
 	}
 }

@@ -111,7 +111,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public Folder[] FetchFilesToUpdate (String directory) {
             ArrayList folders = new ArrayList ();
             Folder folder = new Folder ();
-            folder.Repos = (Repository)this.FetchSingle (directory, 
+            folder.Repository = (Repository)this.FetchSingle (directory, 
                                                          Factory.FileType.Repository);
             folder.Entries = new ArrayList (this.Fetch (directory, 
                                                         Factory.FileType.Entries));
@@ -125,7 +125,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                                                   String directory) {
             foreach (String subDir in Directory.GetDirectories (directory)) {
                 Folder folder = new Folder ();
-                folder.Repos = (Repository)this.FetchSingle (directory, 
+                folder.Repository = (Repository)this.FetchSingle (directory, 
                                                              Factory.FileType.Repository);
                 folder.Entries = new ArrayList (this.Fetch (directory, 
                                                             Factory.FileType.Entries));

@@ -30,6 +30,7 @@
 #endregion
 
 using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.Streams;
 
 namespace ICSharpCode.SharpCvsLib.Responses { 
 	

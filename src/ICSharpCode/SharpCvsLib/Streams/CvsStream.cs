@@ -36,255 +36,255 @@ using System.Threading;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib { 
-	
+namespace ICSharpCode.SharpCvsLib.Streams { 
+    
     /// <summary>
     /// Class for handling streams to the cvs server.
     /// </summary>
-	public class CvsStream : Stream
-	{
-	    private readonly ILog LOGGER = LogManager.GetLogger (typeof (CvsStream));
-		Stream baseStream;
-		
+    public class CvsStream : Stream
+    {
+        private readonly ILog LOGGER = LogManager.GetLogger (typeof (CvsStream));
+        Stream baseStream;
+        
         /// <summary>
         /// Base stream object.
         /// </summary>
-		public Stream BaseStream {
-			get {return baseStream;}
-			set {baseStream = value;}
-		}
-		
+        public Stream BaseStream {
+            get {return baseStream;}
+            set {baseStream = value;}
+        }
+        
         /// <summary>
         /// Cvs server stream object.
         /// </summary>
         /// <param name="baseStream"></param>
-		public CvsStream(Stream baseStream)
-		{
-			this.baseStream = baseStream;
-		}
-		
-		/// <summary>
-		/// I needed to implement the abstract member.
-		/// </summary>
-		public override bool CanRead {
-			get {
-				return baseStream.CanRead;
-			}
-		}
-		
-		/// <summary>
-		/// I needed to implement the abstract member.
-		/// </summary>
-		public override bool CanSeek {
-			get {
-				return baseStream.CanSeek;
-			}
-		}
-		
-		/// <summary>
-		/// I needed to implement the abstract member.
-		/// </summary>
-		public override bool CanWrite {
-			get {
-				return baseStream.CanWrite;
-			}
-		}
-		
-		/// <summary>
-		/// I needed to implement the abstract member.
-		/// </summary>
-		public override long Length {
-			get {
-				return baseStream.Length;
-			}
-		}
-		
-		/// <summary>
-		/// I needed to implement the abstract member.
-		/// </summary>
-		public override long Position {
-			get {
-				return baseStream.Position;
-			}
-			set {
-				baseStream.Position = value;
-			}
-		}
-		
-		/// <summary>
-		/// Flushes the baseInputStream
-		/// </summary>
-		public override void Flush()
-		{
-			baseStream.Flush();
-		}
-		
-		/// <summary>
-		/// I needed to implement the abstract member.
-		/// </summary>
-		public override long Seek(long offset, SeekOrigin origin)
-		{
-			return baseStream.Seek(offset, origin);
-		}
-		
-		/// <summary>
-		/// I needed to implement the abstract member.
-		/// </summary>
-		public override void SetLength(long val)
-		{
-			baseStream.SetLength(val);
-		}
-		
+        public CvsStream(Stream baseStream)
+        {
+            this.baseStream = baseStream;
+        }
+        
+        /// <summary>
+        /// I needed to implement the abstract member.
+        /// </summary>
+        public override bool CanRead {
+            get {
+                return baseStream.CanRead;
+            }
+        }
+        
+        /// <summary>
+        /// I needed to implement the abstract member.
+        /// </summary>
+        public override bool CanSeek {
+            get {
+                return baseStream.CanSeek;
+            }
+        }
+        
+        /// <summary>
+        /// I needed to implement the abstract member.
+        /// </summary>
+        public override bool CanWrite {
+            get {
+                return baseStream.CanWrite;
+            }
+        }
+        
+        /// <summary>
+        /// I needed to implement the abstract member.
+        /// </summary>
+        public override long Length {
+            get {
+                return baseStream.Length;
+            }
+        }
+        
+        /// <summary>
+        /// I needed to implement the abstract member.
+        /// </summary>
+        public override long Position {
+            get {
+                return baseStream.Position;
+            }
+            set {
+                baseStream.Position = value;
+            }
+        }
+        
+        /// <summary>
+        /// Flushes the baseInputStream
+        /// </summary>
+        public override void Flush()
+        {
+            baseStream.Flush();
+        }
+        
+        /// <summary>
+        /// I needed to implement the abstract member.
+        /// </summary>
+        public override long Seek(long offset, SeekOrigin origin)
+        {
+            return baseStream.Seek(offset, origin);
+        }
+        
+        /// <summary>
+        /// I needed to implement the abstract member.
+        /// </summary>
+        public override void SetLength(long val)
+        {
+            baseStream.SetLength(val);
+        }
+        
         /// <summary>
         /// Write the specified byte array to the stream.
         /// </summary>
         /// <param name="array"></param>
-		public void Write(byte[] array)
-		{
-			baseStream.Write(array, 0, array.Length);
-		}
-		
-		/// <summary>
-		/// I needed to implement the abstract member.
-		/// </summary>
-		public override void Write(byte[] array, int offset, int count)
-		{
-			baseStream.Write(array, offset, count);
-		}
-		
-		/// <summary>
-		/// I needed to implement the abstract member.
-		/// </summary>
-		public override void WriteByte(byte val)
-		{
-			baseStream.WriteByte(val);
-		}
-		
-		/// <summary>
-		/// Closes the base stream
-		/// </summary>
-		public override void Close()
-		{
-			baseStream.Close();
-		}
-	
-			
-		/// <summary>
-		/// Reads one byte of decompressed data.
-		///
-		/// The byte is baseInputStream the lower 8 bits of the int.
-		/// </summary>
-		public override int ReadByte()
-		{
-			return baseStream.ReadByte();
-		}
-		
-		/// <summary>
-		/// Decompresses data into the byte array
-		/// </summary>
-		/// <param name ="b">
-		/// the array to read and decompress data into
-		/// </param>
-		/// <param name ="off">
-		/// the offset indicating where the data should be placed
-		/// </param>
-		/// <param name ="len">
-		/// the number of bytes to decompress
-		/// </param>
-		public override int Read(byte[] b, int off, int len)
-		{
-			return baseStream.Read(b, off, len);
-		}
+        public void Write(byte[] array)
+        {
+            baseStream.Write(array, 0, array.Length);
+        }
+        
+        /// <summary>
+        /// I needed to implement the abstract member.
+        /// </summary>
+        public override void Write(byte[] array, int offset, int count)
+        {
+            baseStream.Write(array, offset, count);
+        }
+        
+        /// <summary>
+        /// I needed to implement the abstract member.
+        /// </summary>
+        public override void WriteByte(byte val)
+        {
+            baseStream.WriteByte(val);
+        }
+        
+        /// <summary>
+        /// Closes the base stream
+        /// </summary>
+        public override void Close()
+        {
+            baseStream.Close();
+        }
+    
+            
+        /// <summary>
+        /// Reads one byte of decompressed data.
+        ///
+        /// The byte is baseInputStream the lower 8 bits of the int.
+        /// </summary>
+        public override int ReadByte()
+        {
+            return baseStream.ReadByte();
+        }
+        
+        /// <summary>
+        /// Decompresses data into the byte array
+        /// </summary>
+        /// <param name ="b">
+        /// the array to read and decompress data into
+        /// </param>
+        /// <param name ="off">
+        /// the offset indicating where the data should be placed
+        /// </param>
+        /// <param name ="len">
+        /// the number of bytes to decompress
+        /// </param>
+        public override int Read(byte[] b, int off, int len)
+        {
+            return baseStream.Read(b, off, len);
+        }
 
         /// <summary>
         /// Read the stream from the cvs server.
         /// </summary>
         /// <param name="b"></param>
         /// <returns></returns>
-		public int Read(byte[] b)
-		{
-			return baseStream.Read(b, 0, b.Length);
-		}
+        public int Read(byte[] b)
+        {
+            return baseStream.Read(b, 0, b.Length);
+        }
  
         /// <summary>
         /// Read from the stream until a line termination
         ///     character is reached.
         /// </summary>
         /// <returns></returns>
-		private string ReadLineBlock()
-		{
-			StringBuilder builder = new StringBuilder(1024);
-			while (true) {
-				int i = ReadByte();
-				if (i == '\n' || i == -1) {
-					break;
-				}
-				builder.Append((char)i);
-			}
-			return builder.ToString();
-		}
-		
+        private string ReadLineBlock()
+        {
+            StringBuilder builder = new StringBuilder(1024);
+            while (true) {
+                int i = ReadByte();
+                if (i == '\n' || i == -1) {
+                    break;
+                }
+                builder.Append((char)i);
+            }
+            return builder.ToString();
+        }
+        
         /// <summary>
         /// Read from the stream until the end of the line.
         /// </summary>
         /// <returns></returns>
-		public string ReadLine()
-		{
-			string line = "";
-			int x = 0;
-			while (line.Length == 0 && ++x < 10) {
-				line = ReadLineBlock();
-				if (line.Length == 0) {
-					Thread.Sleep(10);
-				}
-			}
-			return line;			
-		}
-		
+        public string ReadLine()
+        {
+            string line = "";
+            int x = 0;
+            while (line.Length == 0 && ++x < 10) {
+                line = ReadLineBlock();
+                if (line.Length == 0) {
+                    Thread.Sleep(10);
+                }
+            }
+            return line;            
+        }
+        
         /// <summary>
         /// Read from the stream until the first whitespace
         ///     character is reached.
         /// </summary>
         /// <returns></returns>
-		public string ReadToFirstWS()
-		{
-			StringBuilder builder = new StringBuilder(1024);
-			while (true) {
-				int i = ReadByte();
-				
-				builder.Append((char)i);
-				if (i == '\n' || i ==' ' || i == -1) {
-					break;
-				}
-			}
-			return builder.ToString();
-		}
-				
+        public string ReadToFirstWS()
+        {
+            StringBuilder builder = new StringBuilder(1024);
+            while (true) {
+                int i = ReadByte();
+                
+                builder.Append((char)i);
+                if (i == '\n' || i ==' ' || i == -1) {
+                    break;
+                }
+            }
+            return builder.ToString();
+        }
+                
         /// <summary>
         /// Read a block of data from the stream.
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="size"></param>
-		public void ReadBlock(byte[] buffer, int size)
-		{
-			for (int i = 0; i < size;) {
-				int back = Read(buffer, i, size - i);
-				i += back;
-				if (i < size) {
-					Thread.Sleep(10);
-				}
-			}
-		}
-		
+        public void ReadBlock(byte[] buffer, int size)
+        {
+            for (int i = 0; i < size;) {
+                int back = Read(buffer, i, size - i);
+                i += back;
+                if (i < size) {
+                    Thread.Sleep(10);
+                }
+            }
+        }
+        
         /// <summary>
         /// Send the specified string message to the cvs server.
         /// </summary>
         /// <param name="dataStr"></param>
-		public void SendString(string dataStr)
-		{
-			byte[] buff = System.Text.Encoding.ASCII.GetBytes(dataStr);
-			baseStream.Write(buff, 0, buff.Length);
-			Flush();
-		}
-	}
+        public void SendString(string dataStr)
+        {
+            byte[] buff = System.Text.Encoding.ASCII.GetBytes(dataStr);
+            baseStream.Write(buff, 0, buff.Length);
+            Flush();
+        }
+    }
 }

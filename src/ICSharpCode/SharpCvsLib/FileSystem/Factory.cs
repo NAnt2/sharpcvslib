@@ -27,8 +27,8 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author: Clayton Harbour
-//     claytonharbour@sporadicism.com
+//    <author>Clayton Harbour</author>
+//
 #endregion
 
 using System;
@@ -122,6 +122,20 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                     throw new Exception (msg);
                     
             }            
+        }
+        
+        /// <summary>
+        /// Get a folder collection that is filled with the given entries for the
+        ///     specified files.
+        /// </summary>
+        public ICollection GetFolders (String[] files) {
+            Probe probe = new Probe ();
+            probe.OriginalFiles = files;
+            probe.Execute ();
+            
+            ICollection allFiles = probe.ExistingFiles;
+            
+            throw new NotImplementedException ("Not finished");
         }
     }
 }

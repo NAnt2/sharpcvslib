@@ -34,6 +34,7 @@ using System.IO;
 using System.Text;
 
 using ICSharpCode.SharpZipLib.GZip;
+using ICSharpCode.SharpCvsLib.Streams;
 
 namespace ICSharpCode.SharpCvsLib.FileHandler { 
 	

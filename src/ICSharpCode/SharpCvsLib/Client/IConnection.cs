@@ -31,6 +31,7 @@
 
 using System.IO;
 using ICSharpCode.SharpCvsLib.Requests;
+using ICSharpCode.SharpCvsLib.Streams;
 
 namespace ICSharpCode.SharpCvsLib.Client {
 	

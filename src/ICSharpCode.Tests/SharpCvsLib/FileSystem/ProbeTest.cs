@@ -1,6 +1,5 @@
 #region "Copyright"
-// ClearStickyResponse.cs
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,48 +27,40 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
+//    <author>Clayton Harbour</author>
+//
 #endregion
 
-using System;
 
-using log4net;
+using NUnit.Framework;
 
-using ICSharpCode.SharpCvsLib.Misc;
-using ICSharpCode.SharpCvsLib.FileSystem;
-using ICSharpCode.SharpCvsLib.Client;
-using ICSharpCode.SharpCvsLib.Streams;
-
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
+namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
-    /// Handle a clear sticky tag response.
+    /// Test the file system probe finds and returns the correct number of
+    ///     existing and non-existing files given the list of original files.
     /// </summary>
-	public class ClearStickyResponse : IResponse
-	{
-	    private readonly ILog LOGGER = 
-	        LogManager.GetLogger (typeof (ClearStickyResponse));
-        /// <summary>
-        /// Process a clear sticky tag response.
-        /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-	    public void Process(CvsStream cvsStream, IResponseServices services)
-	    {
-            string localPath      = cvsStream.ReadLine();
-            string reposPath = cvsStream.ReadLine();
+    public class ProbeTest {
 
-            // TODO: Do something useful with this response.
-	    }
-	    
         /// <summary>
-        /// Return true if this response cancels the transaction
+        /// Create the test files.
+        /// </summary>        
+        [SetUp]
+        public void SetUp () {
+        }
+
+        /// <summary>
+        /// Remove the test files.
         /// </summary>
-		public bool IsTerminating {
-			get {
-				return false;
-			}
-		}
-	}
+        [TearDown]        
+        public void TearDown () {
+        }
+        
+        /// <summary>
+        /// Tests that probe works correctly with only files specified 
+        ///     (i.e. no recursion).
+        /// </summary>
+        public void TestAllFiles () {
+            
+        }
+    }
 }
