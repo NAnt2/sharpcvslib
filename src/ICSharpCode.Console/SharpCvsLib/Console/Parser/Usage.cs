@@ -40,16 +40,21 @@ using System;
 using System.Text;
 using System.Reflection;
 
+using log4net;
+
 namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
 /// <summary>
 /// Contains the usage message for the command line interface.
 /// </summary>
 public class Usage {
+	private static String version;
 	private static String titleInfo;
 	private static String copyrightInfo;
 	private static String companyInfo;
 	private static String description;
+
+	private static ILog LOGGER = LogManager.GetLogger(typeof(Usage));
 
     /// <summary>Private constructor so the class is never instantiated.</summary>
     private Usage () {
@@ -202,23 +207,40 @@ Thanks for using the command line tool.";
     private static readonly String currentVersion = Usage.GetVersion();
     
     private static String GetVersion () {
-        Assembly a = typeof(Usage).Assembly;
-        String version = a.GetName().Version.ToString();
+		if (null == version) {
+			try {
+				Assembly a = typeof(Usage).Assembly;
+				version = a.GetName().Version.ToString();
+			} catch (Exception e) {
+				version = "Unable to retrieve version information.";
+				LOGGER.Error(version, e);
+			}
+		}
         return version;
     }
 
 	private static String GetTitleInfo () {
 		if (null == titleInfo) {
-			titleInfo = ((System.Reflection.AssemblyTitleAttribute)
-				System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyTitleAttribute), false)[0]).Title; 
+			try {
+				titleInfo = ((System.Reflection.AssemblyTitleAttribute)
+					System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyTitleAttribute), false)[0]).Title; 
+			} catch (Exception e) {
+				titleInfo = "Unable to retrieve AssemblyTitleAttribute.";
+				LOGGER.Error(titleInfo, e);
+			}
 		}
 		return titleInfo;
 	}
 
 	private static String GetCopyrightInfo () {
 		if (null == copyrightInfo) {
-			copyrightInfo = ((System.Reflection.AssemblyCopyrightAttribute)
-				System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyCopyrightAttribute), false)[0]).Copyright; 
+			try {
+				copyrightInfo = ((System.Reflection.AssemblyCopyrightAttribute)
+					System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyCopyrightAttribute), false)[0]).Copyright; 
+			} catch (Exception e) {
+				copyrightInfo = "Unable to retrieve AssemblyCopyrightAttribute.";
+				LOGGER.Error (copyrightInfo, e);
+			}
 		}
 		return copyrightInfo;
 
@@ -226,16 +248,26 @@ Thanks for using the command line tool.";
 
 	private static String GetDescription () {
 		if (null == description) {
-			description = ((System.Reflection.AssemblyDescriptionAttribute)
-				System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyDescriptionAttribute), false)[0]).Description; 
+			try {
+				description = ((System.Reflection.AssemblyDescriptionAttribute)
+					System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyDescriptionAttribute), false)[0]).Description; 
+			} catch (Exception e) {
+				description = "Unable to retieve AssemblyDescriptionAttribute.";
+				LOGGER.Error(description, e);
+			}
 		}
 		return description;
 	}
 
 	private static String GetCompanyInfo () {
 		if (null == companyInfo) {
-			companyInfo = ((System.Reflection.AssemblyCompanyAttribute)
-				System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyCompanyAttribute), false)[0]).Company; 
+			try {
+				companyInfo = ((System.Reflection.AssemblyCompanyAttribute)
+					System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyCompanyAttribute), false)[0]).Company; 
+			} catch (Exception e) {
+				companyInfo = "Unable to retrieve AssemblyCompanyAttribute.";
+				LOGGER.Error(companyInfo, e);
+			}
 		}
 		return companyInfo;
 	}
