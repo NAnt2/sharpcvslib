@@ -88,6 +88,7 @@
                     <attribute type="AssemblyTitleAttribute" value="${name.project}" />
                     <attribute type="AssemblyDescriptionAttribute" value="${assembly.description}" />
                     <attribute type="AssemblyCopyrightAttribute" value="${assembly.copyright.text}" />
+                    <attribute type="AssemblyCompanyAttribute" value="${assembly.company}" />
                     <attribute type="ApplicationNameAttribute" value="${name.project}" />
                 </attributes>
                 <references>

@@ -15,7 +15,7 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisibleAttribute(false)]
 [assembly: CLSCompliantAttribute(true)]
-[assembly: AssemblyVersionAttribute("0.34.3621.8477")]
+[assembly: AssemblyVersionAttribute("0.34.3623.1804")]
 [assembly: AssemblyTitleAttribute("SharpCvsLib")]
 [assembly: AssemblyDescriptionAttribute("Cvs client library written in c#")]
 [assembly: AssemblyCopyrightAttribute("Mike Krueger 2001-2002, SharpCvsLib Developers 2003")]
