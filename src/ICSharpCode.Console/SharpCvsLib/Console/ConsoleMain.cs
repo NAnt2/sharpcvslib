@@ -64,7 +64,8 @@ public class ConsoleMain {
         case "checkout":
         case "co":
             CheckoutCommand coCommand =
-                new CheckoutCommand(parser.Cvsroot, parser.Repository);
+                new CheckoutCommand(parser.Cvsroot, parser.Repository,
+                                    parser.Options);
             coCommand.Execute();
             break;
         case "login":
@@ -83,6 +84,7 @@ public class ConsoleMain {
             System.Console.WriteLine ("Not a valid comand.");
             break;
         }
+        System.Console.WriteLine ("Thanks for using the command line tool.");
     }
 }
 
