@@ -91,7 +91,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		    
 		    string buildFile = 
 		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.BUILD_FILE);
-		    Assertion.Assert ("Should have found the build file.", File.Exists (buildFile));
+		    Assertion.Assert ("Should have found the build file.  file=[" + 
+		                      buildFile + "]", File.Exists (buildFile));
 		    
 		    ICollection entries = manager.ReadEntries (TestConstants.LOCAL_PATH);
 		    IEnumerator entriesEnum = entries.GetEnumerator ();

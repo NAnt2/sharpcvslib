@@ -77,8 +77,8 @@
     <File name=".\src\ICSharpCode\SharpCvsLib\Requests\RDiffRequest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode\SharpCvsLib\Requests\AbstractRequest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode\SharpCvsLib\Streams\CvsStream.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\src\ICSharpCode\SharpCvsLib\Exceptions\CantExecuteShellException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\src\ICSharpCode\SharpCvsLib\Exceptions\AuthentificationFailedException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode\SharpCvsLib\Exceptions\ExecuteShellException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode\SharpCvsLib\Exceptions\AuthenticationException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode\SharpCvsLib\FileHandler\IFileHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode\SharpCvsLib\FileHandler\UncompressedFileHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode\SharpCvsLib\FileHandler\CompressedFileHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />

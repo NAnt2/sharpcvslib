@@ -5,6 +5,12 @@
     <File name=".\conf\ICSharpCode.SharpCvsLib.dll.log4net" subtype="Code" buildaction="Nothing" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Misc\CvsFileManagerTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Misc\EntryTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Commands" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Commands\CheckoutModuleCommandTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\TestConstants.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Client" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Client\CVSServerConnectionTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode.Tests\SharpCvsLib\Commands\UpdateCommandTest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto=".\lib\log4net.dll" />
