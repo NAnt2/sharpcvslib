@@ -90,7 +90,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 factory.CreateCvsObject (path, Factory.FileType.Entries.ToString(), ENTRY_LINE);
             Assert.IsTrue (cvsFile is Entry);
             Assert.AreEqual (path, cvsFile.Path);
-            Assert.AreEqual (Path.Combine(path, ENTRY_NAME_OF_FILE), cvsFile.ParentDir.FullName);
+            Assert.AreEqual (Path.Combine(path, ENTRY_NAME_OF_FILE), cvsFile.FullPath);
             Assert.AreEqual (ENTRY_LINE, cvsFile.FileContents);
         }
 
@@ -103,7 +103,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Repository.FILE_NAME, REPOSITORY_LINE);
             Assert.IsTrue (cvsFile is Repository);
-            Assert.AreEqual (fullPath, cvsFile.ParentDir.FullName);
+            Assert.AreEqual (fullPath, cvsFile.Path);
             Assert.AreEqual (REPOSITORY_LINE, cvsFile.FileContents);
         }
 
@@ -116,7 +116,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Root.ToString(), ROOT_LINE);
             Assert.IsTrue (cvsFile is Root);
-            Assert.AreEqual (fullPath, cvsFile.ParentDir.FullName);
+            Assert.AreEqual(Path.Combine(fullPath, "CVS"), cvsFile.ParentDir.FullName);
+            Assert.AreEqual (fullPath, cvsFile.Path);
             Assert.AreEqual (ROOT_LINE, cvsFile.FileContents);
         }
 
@@ -129,7 +130,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Tag.ToString(), TAG_LINE);
             Assert.IsTrue (cvsFile is Tag);
-            Assert.AreEqual (fullPath, cvsFile.ParentDir.FullName);
+            Assert.AreEqual(Path.Combine(fullPath, "CVS"), cvsFile.ParentDir.FullName);
+            Assert.AreEqual (fullPath, cvsFile.Path);
             Assert.AreEqual ("N" + TAG_LINE.Substring (1),
                                     cvsFile.FileContents);
         }
