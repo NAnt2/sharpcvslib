@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = ""
+                PostBuildEvent = "..\..\..\..\..\tools\nant\nant -nologo -f:..\..\..\..\..\build\SharpCvsLib.build deploy -D:project.outputdir=$(TargetDir)"
                 RootNamespace = "ICSharpCode.SharpCvsLib"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
@@ -36,7 +36,7 @@
                     NoStdLib = "false"
                     NoWarn = ""
                     Optimize = "false"
-                    OutputPath = "..\bin-vs.net\SharpCvsLib.Console.Lib\"
+                    OutputPath = "ICSharpCode.Console\Lib\bin\Debug\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -56,7 +56,7 @@
                     NoStdLib = "false"
                     NoWarn = ""
                     Optimize = "true"
-                    OutputPath = "..\bin\"
+                    OutputPath = "ICSharpCode.Console\Lib\bin\Release\"
                     RegisterForComInterop = "false"
                     RemoveIntegerChecks = "false"
                     TreatWarningsAsErrors = "false"
@@ -70,29 +70,19 @@
                     HintPath = "C:\WINNT\Microsoft.NET\Framework\v1.0.3705\System.dll"
                 />
                 <Reference
-                    Name = "System.Data"
-                    AssemblyName = "System.Data"
-                    HintPath = "C:\WINNT\Microsoft.NET\Framework\v1.0.3705\System.Data.dll"
-                />
-                <Reference
-                    Name = "System.XML"
-                    AssemblyName = "System.Xml"
-                    HintPath = "C:\WINNT\Microsoft.NET\Framework\v1.0.3705\System.XML.dll"
-                />
-                <Reference
                     Name = "log4net"
                     AssemblyName = "log4net"
                     HintPath = "..\lib\ext\log4net.dll"
                 />
                 <Reference
-                    Name = "System.EnterpriseServices"
-                    AssemblyName = "System.EnterpriseServices"
-                    HintPath = "C:\WINNT\Microsoft.NET\Framework\v1.0.3705\System.EnterpriseServices.dll"
-                />
-                <Reference
                     Name = "SharpCvsLib"
                     Project = "{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}"
                     Package = "{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}"
+                />
+                <Reference
+                    Name = "System.XML"
+                    AssemblyName = "System.Xml"
+                    HintPath = "..\..\..\WINDOWS\Microsoft.NET\Framework\v1.1.4322\System.XML.dll"
                 />
             </References>
         </Build>

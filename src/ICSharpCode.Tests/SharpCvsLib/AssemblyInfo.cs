@@ -1,6 +1,6 @@
 using System;
 using System.Reflection;
-using System.EnterpriseServices;
+//using System.EnterpriseServices;
 using System.Runtime.InteropServices;
 
 [assembly: ComVisibleAttribute(false)]
@@ -11,4 +11,4 @@ using System.Runtime.InteropServices;
 "y under the terms of the GNU General Public License,\r\na copy of which can be fou" +
 "nd with the CVS distribution kit.")]
 [assembly: AssemblyCompanyAttribute("SharpCvsLib - http://sharpcvslib.sourceforge.net")]
-[assembly: ApplicationNameAttribute("SharpCvsLib")]
+//[assembly: ApplicationNameAttribute("SharpCvsLib")]

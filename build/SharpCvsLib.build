@@ -10,7 +10,7 @@
        <!-- To run locally you must have your public key uploaded to sf.net -->
        <property name="cvs.command" value="update -Pd" />
        <echo message="Updating ${dir.base} using cvs command: ${cvs.command}." />
-       
+
         <cvs-update destination="${dir.base}" 
                     cvsroot="${cvs.root}" 
                     password="" 
@@ -63,7 +63,6 @@
                 <imports>
                     <import name="System" />
                     <import name="System.Reflection" />
-                    <import name="System.EnterpriseServices" />
                     <import name="System.Runtime.InteropServices" />
                     <import name="log4net.Config" />
                 </imports>
@@ -75,11 +74,9 @@
                     <attribute type="AssemblyDescriptionAttribute" value="${assembly.description}" />
                     <attribute type="AssemblyCopyrightAttribute" value="${assembly.copyright.text}" />
                     <attribute type="AssemblyCompanyAttribute" value="${assembly.company}" />
-                    <attribute type="ApplicationNameAttribute" value="${name.project}" />
                     <attribute type="log4net.Config.XmlConfigurator" value="Watch=true" asis="true" />
                 </attributes>
                 <references>
-                    <include name="System.EnterpriseServices.dll" />
                     <include name="log4net.dll" />
                 </references>
             </asminfo>    
@@ -112,11 +109,11 @@
                 <include name="NamespaceSummary.xml" />
             </fileset>
         </copy>
-        
+
         <call target="update.version" />
         <echo message="Building assembly version ${assembly.version}" />
     </target>
-       
+
     <target name="build.all" depends="clean" description="Build all sources by calling all targets in project build files.">
         <call target="setup" />
         <call target="build.lib" />

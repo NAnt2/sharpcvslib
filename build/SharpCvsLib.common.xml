@@ -113,9 +113,17 @@ a copy of which can be found with the CVS distribution kit." />
                         task.Execute();
                      }
                  ]]>
-            </code>          
-        </script>   
-    </target>    
+            </code>
+        </script>
+    </target>
+    <target name="deploy" description="Used by VS.NET build events to deploy compiled output">
+        <copy overwrite="true" todir="${dir.bin}">
+            <fileset basedir="${project.outputdir}">
+                <include name="*"/>
+                <exclude name="*BuildEvent.bat"/>
+            </fileset>
+        </copy>
+    </target>
     <!-- U T I L I T Y  T A S K S -->
     
 </project>
