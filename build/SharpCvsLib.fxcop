@@ -32,7 +32,43 @@
    <RuleFile Name="$(FxCopDir)\Rules\NamingRules.dll" Enabled="True" AllRulesEnabled="True" />
    <RuleFile Name="$(FxCopDir)\Rules\PerformanceRules.dll" Enabled="True" AllRulesEnabled="True" />
    <RuleFile Name="$(FxCopDir)\Rules\SecurityRules.dll" Enabled="True" AllRulesEnabled="True" />
-   <RuleFile Name="$(FxCopDir)\Rules\UsageRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\UsageRules.dll" Enabled="True" AllRulesEnabled="False">
+    <Rule Name="ExceptionsShouldNotBeThrownFromFilterBlocks" Enabled="True" />
+    <Rule Name="DisposeMethodsCallBaseClassDispose" Enabled="True" />
+    <Rule Name="ResourceFilesAreBuiltUsingReleaseVersions" Enabled="True" />
+    <Rule Name="AssembliesHaveValidStrongNames" Enabled="True" />
+    <Rule Name="AssembliesHavePermissionRequests" Enabled="True" />
+    <Rule Name="AvoidNonConstantStaticFields" Enabled="True" />
+    <Rule Name="FinalizeMethodsCallBaseClassFinalize" Enabled="True" />
+    <Rule Name="UseParamsForVariableArguments" Enabled="True" />
+    <Rule Name="OperatorOverloadsHaveNamedAlternativeMethods" Enabled="True" />
+    <Rule Name="OperatorEqualsOverridesRequireEqualsOverride" Enabled="True" />
+    <Rule Name="ParameterNamesShouldBeSpelledCorrectly" Enabled="True" />
+    <Rule Name="ValueTypesEqualsOverridesRequireOperatorEqualsOverride" Enabled="True" />
+    <Rule Name="ExceptionsAreMarkedSerializable" Enabled="True" />
+    <Rule Name="NamespaceNamesShouldBeSpelledCorrectly" Enabled="True" />
+    <Rule Name="TypeNamesShouldBeSpelledCorrectly" Enabled="True" />
+    <Rule Name="DisposeMethodsRequireFinalizeMethod" Enabled="True" />
+    <Rule Name="PropertiesReturningCollectionsShouldBeReadOnly" Enabled="True" />
+    <Rule Name="ValueTypesWithStaticConstructorsAreMarkedBeforeFieldInit" Enabled="True" />
+    <Rule Name="EqualsOverridesRequireGetHashCodeOverride" Enabled="True" />
+    <Rule Name="WindowsFormsApplicationsAreMarkedStaThread" Enabled="True" />
+    <Rule Name="PInvokeOnlyValidEntryPoints" Enabled="True" />
+    <Rule Name="EnumerationsShouldNotBeFlagsAttributed" Enabled="True" />
+    <Rule Name="AvoidWebMethodAttributedServicedComponentMembers" Enabled="True" />
+    <Rule Name="OperatorsHaveSymmetricalOverloads" Enabled="True" />
+    <Rule Name="ValueTypesWithRvaFieldsDoNotHaveNonPublicFields" Enabled="True" />
+    <Rule Name="ConstructorsShouldNotCallBaseClassVirtualMethods" Enabled="True" />
+    <Rule Name="MembersDifferByMoreThanReturnType" Enabled="True" />
+    <Rule Name="OperationsDoNotOverflowDataTypeCapacity" Enabled="True" />
+    <Rule Name="ConsiderCallingDataMembersDisposeMethod" Enabled="True" />
+    <Rule Name="SerializableTypesShouldHaveMagicConstructor" Enabled="True" />
+    <Rule Name="FinalizeMethodsHaveProtectedAccessLevel" Enabled="True" />
+    <Rule Name="CallArgumentExceptionWithCorrectArguments" Enabled="True" />
+    <Rule Name="InheritedPublicMembersDoNotChangeToPrivate" Enabled="True" />
+    <Rule Name="PassSystemUriObjectsInsteadOfStrings" Enabled="True" />
+    <Rule Name="ResourceStringsShouldBeSpelledCorrectly" Enabled="True" />
+   </RuleFile>
   </RuleFiles>
   <Groups />
   <Settings />
