@@ -52,6 +52,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         private SharpCvsLibTestsConfig settings = 
             SharpCvsLibTestsConfig.GetInstance();
 
+        private readonly String RELATIVE_PATH = "src";
         private readonly String TAG_ENTRY1 =
             "TVer1.1";
         private readonly String TAG_ENTRY2 =
@@ -70,17 +71,19 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void CreateTagTest () {
-            String fullPath = this.settings.Config.LocalPath;
-            Tag tag = new Tag (fullPath, this.TAG_ENTRY1);
+            String fullPath =
+                Path.Combine (this.settings.Config.LocalPath, RELATIVE_PATH);
+            Tag tag = new Tag(fullPath,
+                this.TAG_ENTRY1);
 
             String cvsPath = Path.Combine (fullPath, "CVS");
-            Assertion.AssertNotNull ("Path not set/returned", tag.Path);
-            Assertion.AssertEquals ("Path not equal", fullPath, tag.Path);
+            Assertion.AssertNotNull ("Path not set/returned", tag.FullPath);
+            Assertion.AssertEquals ("Path not equal", fullPath, tag.FullPath);
             Assertion.AssertNotNull ("FileContents not equal", tag.FileContents);
             Assertion.AssertEquals ("FileContents not set/returned", "N" + this.TAG_ENTRY1.Substring (1), tag.FileContents);
             Assertion.AssertEquals ("Filename not correct", this.TAG_FILE_NAME, tag.Filename);
             Assertion.AssertEquals ("Type not correct", Factory.FileType.Tag, tag.Type);
-            Assertion.Assert ("IsMultiLined not correct", tag.IsMultiLined == false);
+            Assertion.AssertEquals ("IsMultiLined not correct", false, tag.IsMultiLined);
         }
 
         /// <summary>
