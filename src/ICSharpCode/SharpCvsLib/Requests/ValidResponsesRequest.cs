@@ -43,7 +43,8 @@ public class ValidResponsesRequest : AbstractRequest
 //            return "Valid-responses ok error Valid-requests Checked-in New-entry Checksum Copy-file Updated Created Update-existing Merged Patched Rcs-diff Mode Mod-time Removed Remove-entry Set-static-directory Clear-static-directory Set-sticky Clear-sticky Template Set-checkin-prog Set-update-prog Notified Module-expansion Wrapper-rcsOption M Mbinary E F MT\n";
 // However we have to come clean and admit that currently we only support the following responses
 // TODO: We have to claim Merged and Removed are supported or some cvs servers refuse to talk to us!
-            return "Valid-responses ok error Valid-requests Checked-in Updated Created Merged Mod-time Removed Set-static-directory Clear-static-directory Set-sticky Clear-sticky Module-expansion M E MT\n";
+            // I have stubbed out Merged, Removed and New-entry responses.  The Merged response should also have Copy-file response implemented to create a local pre-merge copy of merged responses but currently it does not.
+            return "Valid-responses ok error Valid-requests Checked-in New-entry Updated Created Merged Mod-time Removed Set-static-directory Clear-static-directory Set-sticky Clear-sticky Module-expansion M E MT\n";
         }
     }
 

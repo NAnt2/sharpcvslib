@@ -1,6 +1,5 @@
 #region "Copyright"
-// CreatedResponse.cs
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,11 +27,11 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger,
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
+//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
+
 using System.IO;
 using System.Text;
 
@@ -45,59 +44,53 @@ using ICSharpCode.SharpCvsLib.Streams;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
-    /// <summary>
-    /// Command:
-    ///     Created pathname \n
-    ///
-    ///     This is just like Updated and takes the same additional
-    ///     data, but is used only if no Entry, Modified, or Unchanged
-    ///     request has been sent for the file in question. The
-    ///     distinction between Created and Update-existing is so that
-    ///     the client can give an error message in several cases:
-    ///         (1) there is a file in the working directory,
-    ///             but not one for which Entry, Modified, or Unchanged
-    ///             was sent (for example, a file which was ignored,
-    ///             or a file for which Questionable was sent),
-    ///         (2) there is a file in the working directory whose name
-    ///             differs from the one mentioned in Created in ways that
-    ///             the client is unable to use to distinguish files.
-    ///             For example, the client is case-insensitive and the names
-    ///             differ only in case.
-    /// </summary>
-    public class CreatedResponse : IResponse {
-        private readonly ILog LOGGER =
-            LogManager.GetLogger (typeof (CreatedResponse));
 
+    /// <summary>
+    /// Merged pathname \n
+    ///     This is just like Updated and takes the same additional data, with the 
+    ///     one difference that after the new copy of the file is enclosed, it will 
+    ///     still not be up to date. Used for the results of a merge, with or without 
+    ///     conflicts. It is useful to preserve an copy of what the file looked like 
+    ///     before the merge. This is basically handled by the server; before sending 
+    ///     Merged it will send a Copy-file response. For example, if the file is 
+    ///     `aa' and it derives from revision 1.3, the Copy-file response will tell 
+    ///     the client to copy `aa' to `.#aa.1.3'. It is up to the client to decide 
+    ///     how long to keep this file around; traditionally clients have left it 
+    ///     around forever, thus letting the user clean it up as desired. But another 
+    ///     answer, such as until the next commit, might be preferable.
+    /// </summary>
+    public class MergedResponse : IResponse {
+        private readonly ILog LOGGER = LogManager.GetLogger(typeof (MergedResponse));
         /// <summary>
-        /// Process a created file response.
+        /// Process a merged response.
+        /// 
+        /// TODO: Implementation copied from the UpdatedResponse, need to verify 
+        ///     this is correctly implemented.
         /// </summary>
         /// <param name="cvsStream"></param>
         /// <param name="services"></param>
         public void Process(CvsStream cvsStream, IResponseServices services) {
             Manager manager = new Manager (services.Repository.WorkingPath);
+            string localPath = cvsStream.ReadLine();
+            string reposPath = cvsStream.ReadLine ();
+            string entry     = cvsStream.ReadLine();
+            string flags     = cvsStream.ReadLine();
+            string sizeStr   = cvsStream.ReadLine();
 
-            String localPath = cvsStream.ReadLine();
-            String reposPath = cvsStream.ReadLine ();
-
-            String entry     = cvsStream.ReadLine();
-            String flags     = cvsStream.ReadLine();
-            String sizeStr   = cvsStream.ReadLine();
-
-            PathTranslator orgPath =
-                new PathTranslator (services.Repository, reposPath);
-            String localPathAndFilename = orgPath.LocalPathAndFilename;
-            String directory = orgPath.LocalPath;
+            PathTranslator orgPath   =
+                new PathTranslator (services.Repository,
+                reposPath);
+            string localPathAndFilename = orgPath.LocalPathAndFilename;
+            string directory = orgPath.LocalPath;
 
             bool compress = sizeStr[0] == 'z';
 
             if (LOGGER.IsDebugEnabled) {
-                String msg = "In created response process.  " +
-                            "orgPath=[" + orgPath.ToString () + "]" +
-                            "localPathAndFilename=[" + localPathAndFilename + "]" +
-                            "directory=[" + directory + "]" +
-                            "entry=[" + entry + "]" +
-                            "flags=[" + flags + "]" +
-                            "sizestr=[" + sizeStr + "]";
+                StringBuilder msg = new StringBuilder ();
+                msg.Append ("reposPath=[").Append (reposPath).Append ("]");
+                msg.Append ("entry=[").Append (entry).Append ("]");
+                msg.Append ("flags=[").Append (flags).Append ("]");
+                msg.Append ("sizestr=[").Append (sizeStr).Append ("]");
                 LOGGER.Debug (msg);
             }
 
@@ -109,8 +102,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 
             if (!Directory.Exists(orgPath.LocalPath)) {
                 Directory.CreateDirectory(orgPath.LocalPath);
-            }
 
+            }
 
             if (services.NextFile != null && services.NextFile.Length > 0) {
                 localPathAndFilename = services.NextFile;
@@ -118,22 +111,21 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             }
 
             Entry e = new Entry(orgPath.LocalPath, entry);
-            
+
             if (e.IsBinaryFile) {
                 services.UncompressedFileHandler.ReceiveBinaryFile(cvsStream,
-                        localPathAndFilename,
-                        size);
+                    localPathAndFilename,
+                    size);
             } else {
                 services.UncompressedFileHandler.ReceiveTextFile(cvsStream,
-                        localPathAndFilename,
-                        size);
+                    localPathAndFilename,
+                    size);
             }
 
             e.Date = services.NextFileDate;
             services.NextFileDate = null;
 
             manager.Add(e);
-            System.Console.WriteLine("In created response, just added entry.  File date=[" + e.Date + "]");
             manager.SetFileTimeStamp (localPathAndFilename, e.TimeStamp, e.IsUtcTimeStamp);
 
             UpdateMessage message = new UpdateMessage ();

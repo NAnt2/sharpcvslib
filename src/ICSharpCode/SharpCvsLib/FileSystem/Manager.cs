@@ -459,7 +459,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             }
 
             String cvsDir = path;
-            this.ValidateInSandbox(cvsDir);
             if (!this.HasCvsDir(cvsDir)) {
                 cvsDir = Path.Combine(cvsDir, CVS);
             }
@@ -473,6 +472,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 throw new Exception(msg.ToString());
             }
             
+            this.ValidateInSandbox(cvsDir);
             if (!Directory.Exists(cvsDir)) {
                 Directory.CreateDirectory(cvsDir);
             }
@@ -664,10 +664,19 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         /// <param name="filenameAndPath">The file name and path.</param>
         /// <param name="timeStamp">The timestamp to set on the file.</param>
-        public void SetFileTimeStamp (String filenameAndPath, DateTime timeStamp) {
+        /// <param name="correctTimeStampForUtc">Indicates whether the file time stamp
+        ///     should be corrected to the UTC timezone, or if it should adopt the
+        ///     time for the local time zone.</param>
+        public void SetFileTimeStamp (String filenameAndPath, DateTime timeStamp, 
+            bool correctTimeStampForUtc) {
             if (File.Exists (filenameAndPath)) {
-                DateTime fileTimeStamp =
-                    DateParser.GetCorrectedTimeStamp (timeStamp);
+                DateTime fileTimeStamp;
+                if (correctTimeStampForUtc) {
+                    fileTimeStamp = DateParser.GetCorrectedTimeStamp (timeStamp);
+                } else {
+                    fileTimeStamp = timeStamp.AddHours(1);
+                    System.Console.WriteLine("fileTimeStamp=[" + fileTimeStamp + "]");
+                }
 
                 File.SetCreationTime(filenameAndPath, fileTimeStamp);
                 File.SetLastAccessTime(filenameAndPath, fileTimeStamp);
@@ -937,6 +946,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 LOGGER.Debug (msg);
             }
 
+            System.Console.WriteLine("pathTranslator.LocalPathAndFilename=[" + 
+                pathTranslator.LocalPathAndFilename + "]");
             Entry cvsEntry = Entry.CreateEntry(pathTranslator.LocalPathAndFilename);
 
 //            if (pathTranslator.IsDirectory) {
@@ -1054,8 +1065,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             if (!IsInSandbox(PathTranslator.ConvertToOSSpecificPath(path))) {
                 StringBuilder msg = new StringBuilder();
                 msg.Append("Unable to write outside of sandbox.  ");
-                msg.Append("writing to path=[").Append(path).Append("]");
-                msg.Append("sandbox path=[").Append(this.workingPath).Append("]");
+                msg.Append("Attempting to write to path=[").Append(path).Append("]");
+                msg.Append("Sandbox path=[").Append(this.workingPath).Append("]");
                 throw new InvalidPathException(msg.ToString());
             }
         }

@@ -137,7 +137,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                     connection.SubmitRequest(new ArgumentRequest(workingDirectory.GetDateAsString()));
                 }
                 
-                foreach (Entry entry  in folder.Entries) {
+                foreach (DictionaryEntry dicEntry  in folder.Entries) {
+                    Entry entry = (Entry)dicEntry.Value;
                     // Only submit the entry information if the entry is not
                     // a directory.
                     if (!entry.IsDirectory) {

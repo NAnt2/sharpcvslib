@@ -603,6 +603,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\ICSharpCode\SharpCvsLib\Responses\MergedResponse.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src\ICSharpCode\SharpCvsLib\Responses\MessageResponse.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -624,6 +629,11 @@
                 />
                 <File
                     RelPath = "src\ICSharpCode\SharpCvsLib\Responses\OkResponse.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\ICSharpCode\SharpCvsLib\Responses\RemovedResponse.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

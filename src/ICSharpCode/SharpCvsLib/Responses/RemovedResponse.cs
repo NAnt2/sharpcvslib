@@ -1,6 +1,5 @@
 #region "Copyright"
-// CheckedInResponse.cs
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,8 +27,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger,
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
+//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
@@ -46,10 +44,12 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// <summary>
     /// Handle a checked in response.
     /// </summary>
-    public class CheckedInResponse : IResponse {
-        private readonly ILog LOGGER = LogManager.GetLogger(typeof (CheckedInResponse));
+    public class RemovedResponse : IResponse {
+        private readonly ILog LOGGER = LogManager.GetLogger(typeof (RemovedResponse));
         /// <summary>
-        /// Process a checked in response.
+        /// Removed pathname \n
+        ///     The file has been removed from the repository (this is the case where 
+        ///     cvs prints `file foobar.c is no longer pertinent').
         /// </summary>
         /// <param name="cvsStream"></param>
         /// <param name="services"></param>
@@ -62,21 +62,14 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                 new PathTranslator (services.Repository,
                 repositoryPath);
 
-            string fileName = orgPath.LocalPathAndFilename;
-            Entry  entry = new Entry(orgPath.LocalPath, entryLine);
-            LOGGER.Debug ("CheckedInResponse adding entry=[" + entry + "]");
-
-            Manager manager = new Manager (services.Repository.WorkingPath);
-            manager.Add (entry);
+            LOGGER.Error("TODO: Implement RemovedResponse; This response is currently does not do anything.");
         }
 
         /// <summary>
         /// Return true if this response cancels the transaction
         /// </summary>
         public bool IsTerminating {
-            get {
-                return false;
-            }
+            get {return false;}
         }
     }
 }

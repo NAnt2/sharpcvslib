@@ -121,22 +121,27 @@ namespace ICSharpCode.SharpCvsLib.Misc {
     ///         a combination of the root/ sandbox directory and the module
     ///         or override directory.
     /// </summary>
+    /// <exception cref="InvalidPathException">If the local directory and/ or the 
+    ///     working directory name are null.</exception>
     public String WorkingPath {
         get {
             if (null != this.LocalDirectory &&
                 null != this.WorkingDirectoryName) {
-                return Path.Combine (this.LocalDirectory, 
-                    this.WorkingDirectoryName);
-                } else {
-                    StringBuilder msg = new StringBuilder ();
-                    msg.Append ("Unable to determine working path, you must specify ");
-                    msg.Append ("a local directory and a module/ override directory.");
-                    msg.Append ("\nLocalDirectory=[").Append (this.LocalDirectory).Append ("]");
-                    msg.Append ("\nWorkingDirectoryName=[").Append (this.WorkingDirectoryName).Append ("]");
-                    throw new Exception (msg.ToString ());
+                String tempWorkingPath = Path.Combine(this.LocalDirectory, this.WorkingDirectoryName);
+                if (!tempWorkingPath.EndsWith(Path.DirectorySeparatorChar.ToString())) {
+                    tempWorkingPath = tempWorkingPath + Path.DirectorySeparatorChar;
                 }
+                return tempWorkingPath;
+            } else {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append ("Unable to determine working path, you must specify ");
+                msg.Append ("a local directory and a module/ override directory.");
+                msg.Append ("\nLocalDirectory=[").Append (this.LocalDirectory).Append ("]");
+                msg.Append ("\nWorkingDirectoryName=[").Append (this.WorkingDirectoryName).Append ("]");
+                throw new InvalidPathException (msg.ToString ());
             }
         }
+    }
 
 
         /// <summary>

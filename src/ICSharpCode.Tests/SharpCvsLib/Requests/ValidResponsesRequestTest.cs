@@ -44,111 +44,111 @@ using NUnit.Framework;
 
 namespace ICSharpCode.SharpCvsLib.Requests {
 
-/// <summary>
-///     Test ValidResponsesRequest
-///
-///     cvsclient.info from the 1.11.6 release of cvs (http://ccvs.cvshome.org)
-///     was used as the basis for these tests.
-/// </summary>
-[TestFixture]
-public class ValidResponsesRequestTest {
-    private static readonly ILog LOGGER =
-        LogManager.GetLogger (typeof (ValidResponsesRequestTest));
-
     /// <summary>
-    ///     Just tests the request name and virtual boolean values.
+    ///     Test ValidResponsesRequest
+    ///
+    ///     cvsclient.info from the 1.11.6 release of cvs (http://ccvs.cvshome.org)
+    ///     was used as the basis for these tests.
     /// </summary>
-    [Test]
-    public void BasicTest()
-    {
-        IRequest request = new ValidResponsesRequest();
-        string requestString = request.RequestString;
-        string[] responses;
+    [TestFixture]
+    public class ValidResponsesRequestTest {
+        private static readonly ILog LOGGER =
+            LogManager.GetLogger (typeof (ValidResponsesRequestTest));
 
-        // split the responses in the request into seperate strings
-        responses = requestString.Split(null);
+        /// <summary>
+        ///     Just tests the request name and virtual boolean values.
+        /// </summary>
+        [Test]
+        public void BasicTest()
+        {
+            IRequest request = new ValidResponsesRequest();
+            string requestString = request.RequestString;
+            string[] responses;
 
-        Assertion.Assert(responses.Length > 1);
-        Assertion.AssertEquals(responses[0], "Valid-responses");
+            // split the responses in the request into seperate strings
+            responses = requestString.Split(null);
 
-        Assertion.Assert(!request.IsResponseExpected);
-        Assertion.Assert(!request.DoesModifyConnection);
-    }
+            Assertion.Assert(responses.Length > 1);
+            Assertion.AssertEquals(responses[0], "Valid-responses");
 
-    /// <summary>
-    ///     Tests that the responses that we say we support
-    ///     in this message really are supported.
-    ///
-    ///     We determine if a message is supported or not
-    ///     by whether the ResponseFactory can create the response class or not.
-    ///
-    ///     TODO: Check if there are any responses that we want to tell the server
-    ///     that we support, but can safely ignore if the server actually
-    ///     sends them to us.
-    /// </summary>
-    [Test]
-    public void AllResponsesSupportedTest()
-    {
-        IRequest request = new ValidResponsesRequest();
-        string requestString = request.RequestString;
-        string[] responses;
-
-        // Need to remove terminating '\n' to simplify Split()
-        if (requestString.Length > 0 && requestString[requestString.Length - 1] == '\n') {
-            requestString = requestString.Substring(0, requestString.Length - 1);
+            Assertion.Assert(!request.IsResponseExpected);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
-        // split the responses in the request into seperate strings
-        responses = requestString.Split(null);
 
-        // Check that we really do support each of these responses
-        for (int responseNum = 1; responseNum < responses.Length; responseNum++) {
-            IResponse response = ResponseFactory.CreateResponse(responses[responseNum]);
-            Assertion.AssertNotNull(responses[responseNum] + " not really supported", response);
-        }
-    }
+        /// <summary>
+        ///     Tests that the responses that we say we support
+        ///     in this message really are supported.
+        ///
+        ///     We determine if a message is supported or not
+        ///     by whether the ResponseFactory can create the response class or not.
+        ///
+        ///     TODO: Check if there are any responses that we want to tell the server
+        ///     that we support, but can safely ignore if the server actually
+        ///     sends them to us.
+        /// </summary>
+        [Test]
+        public void AllResponsesSupportedTest()
+        {
+            IRequest request = new ValidResponsesRequest();
+            string requestString = request.RequestString;
+            string[] responses;
 
-    /// <summary>
-    ///     The idea here is to check that when a new response class is written
-    ///     it is also added into the Valid-responses request.
-    ///
-    ///     We can easily look in the assembly to find the response classes
-    ///     but what we can't do is from this class fins its corresponding
-    ///     request string as this is hard coded in the factory.
-    ///
-    ///     So instead we just check that the counts match.
-    /// </summary>
-    [Test]
-    public void NoMissingResponsesTest()
-    {
-        IRequest request = new ValidResponsesRequest();
-        string requestString = request.RequestString;
-        string[] responses;
-        int responseClasses = 0;
+            // Need to remove terminating '\n' to simplify Split()
+            if (requestString.Length > 0 && requestString[requestString.Length - 1] == '\n') {
+                requestString = requestString.Substring(0, requestString.Length - 1);
+            }
+            // split the responses in the request into seperate strings
+            responses = requestString.Split(null);
 
-        // Need to remove terminating '\n' to simplify Split()
-        if (requestString.Length > 0 && requestString[requestString.Length - 1] == '\n') {
-            requestString = requestString.Substring(0, requestString.Length - 1);
-        }
-        // split the responses in the request into seperate strings
-        // remember first entry will be the response name
-        responses = requestString.Split(null);
-
-        Assembly cvsLibAssembly = Assembly.GetAssembly(request.GetType());
-        Assertion.AssertNotNull("Can't load sharpcvslib assembly", cvsLibAssembly);
-
-        Type[] types = cvsLibAssembly.GetTypes();
-        foreach(Type t in types) {
-            // There are several ways of looking for the response classes.
-            // The method chosen here is to look for all classes that
-            // implement IResponse
-            if (t.IsClass && t.GetInterface("IResponse") != null) {
-                System.Console.WriteLine(t.Name);
-                responseClasses++;
+            // Check that we really do support each of these responses
+            for (int responseNum = 1; responseNum < responses.Length; responseNum++) {
+                IResponse response = ResponseFactory.CreateResponse(responses[responseNum]);
+                Assertion.AssertNotNull(responses[responseNum] + " not really supported", response);
             }
         }
 
-        Assertion.AssertEquals("Mismatch betwen response classes and the Valid-responses request",
-                               responseClasses, responses.Length - 1);
+        /// <summary>
+        ///     The idea here is to check that when a new response class is written
+        ///     it is also added into the Valid-responses request.
+        ///
+        ///     We can easily look in the assembly to find the response classes
+        ///     but what we can't do is from this class fins its corresponding
+        ///     request string as this is hard coded in the factory.
+        ///
+        ///     So instead we just check that the counts match.
+        /// </summary>
+        [Test]
+        public void NoMissingResponsesTest()
+        {
+            IRequest request = new ValidResponsesRequest();
+            string requestString = request.RequestString;
+            string[] responses;
+            int responseClasses = 0;
+
+            // Need to remove terminating '\n' to simplify Split()
+            if (requestString.Length > 0 && requestString[requestString.Length - 1] == '\n') {
+                requestString = requestString.Substring(0, requestString.Length - 1);
+            }
+            // split the responses in the request into seperate strings
+            // remember first entry will be the response name
+            responses = requestString.Split(null);
+
+            Assembly cvsLibAssembly = Assembly.GetAssembly(request.GetType());
+            Assertion.AssertNotNull("Can't load sharpcvslib assembly", cvsLibAssembly);
+
+            Type[] types = cvsLibAssembly.GetTypes();
+            foreach(Type t in types) {
+                // There are several ways of looking for the response classes.
+                // The method chosen here is to look for all classes that
+                // implement IResponse
+                if (t.IsClass && t.GetInterface("IResponse") != null) {
+                    System.Console.WriteLine(t.Name);
+                    responseClasses++;
+                }
+            }
+
+            Assertion.AssertEquals("Mismatch betwen response classes and the Valid-responses request",
+                                responseClasses, responses.Length - 1);
+        }
     }
-}
 }

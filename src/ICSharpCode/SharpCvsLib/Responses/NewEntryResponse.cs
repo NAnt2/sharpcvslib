@@ -1,6 +1,5 @@
 #region "Copyright"
-// CheckedInResponse.cs
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,8 +27,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger,
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
+//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
@@ -44,12 +42,17 @@ using log4net;
 namespace ICSharpCode.SharpCvsLib.Responses {
 
     /// <summary>
-    /// Handle a checked in response.
+    /// New-entry pathname \n
+    ///     Additional data: New Entries line, \n. Like Checked-in, but the file is 
+    ///     not up to date.
     /// </summary>
-    public class CheckedInResponse : IResponse {
-        private readonly ILog LOGGER = LogManager.GetLogger(typeof (CheckedInResponse));
+    public class NewEntryResponse : IResponse {
+        private readonly ILog LOGGER = LogManager.GetLogger(typeof (NewEntryResponse));
         /// <summary>
-        /// Process a checked in response.
+        /// Process a new entry response.
+        /// 
+        /// TODO: Copied implementation from CheckedInResponse, determine if this
+        ///     is correct or not.
         /// </summary>
         /// <param name="cvsStream"></param>
         /// <param name="services"></param>

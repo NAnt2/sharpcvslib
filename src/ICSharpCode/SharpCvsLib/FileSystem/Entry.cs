@@ -70,6 +70,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
         private Tag tagFile        = null;
 
+        private bool isUtcTimeStamp= true;
+
 
         /// <summary>
         ///     The name of the entries file.
@@ -109,6 +111,14 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public DateTime TimeStamp {
         get {return timestamp;}
         set {timestamp = value;}
+        }
+
+        /// <summary>
+        /// Indicates whether the UTC timestamp should be used for files, or if the
+        ///     timestamp from the current timezone should be used.
+        /// </summary>
+        public bool IsUtcTimeStamp {
+            get {return this.isUtcTimeStamp;}
         }
 
         /// <summary>
@@ -304,6 +314,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     entry information.</returns>
         public static Entry CreateEntry (String fullPath) {
             String path;
+            String fileName;
             if (PathTranslator.ContainsCVS(fullPath) ||
                 fullPath.EndsWith("/")) {
                 throw new Exception("Unable to create an entry for CVS files.");
@@ -314,15 +325,18 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 fullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
                 fullPath.EndsWith("/")) {
                 entryString.Append("D");
-                // get the directory if the path ends with a slash
-                if (fullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
-                    fullPath.EndsWith("/")) {
-                    // strip the slash off so the filename is derived correctly
-                    fullPath = fullPath.Substring(0, fullPath.Length - 1);
-                } 
             } 
             path = System.IO.Path.GetDirectoryName(fullPath);
-            entryString.Append("/").Append(System.IO.Path.GetFileName(fullPath));
+            // get the directory if the path ends with a slash
+            if (fullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
+                fullPath.EndsWith("/")) {
+                // strip the slash off so the filename is derived correctly
+                fileName = 
+                    System.IO.Path.GetFileName(fullPath.Substring(0, fullPath.Length - 1));
+            } else {
+                fileName = System.IO.Path.GetFileName(fullPath);
+            }
+            entryString.Append("/").Append(System.IO.Path.GetFileName(fileName));
             entryString.Append("/0///");
 
             LOGGER.Error("entryString=[" + entryString.ToString() + "]");
@@ -338,7 +352,22 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// Set the file timestamp.
         /// </summary>
         public void SetTimeStamp() {
-            this.timestamp = DateParser.ParseCvsDate (date);
+            if (null == date) {
+                DateTime now = DateTime.Now;
+                // File system time is stored without regards to daylight savings time
+                //  therefore if the file time is different then we can assume
+                //  that daylight savings is in effect.
+//                if (now.ToFileTime() != now.Ticks) {
+//                    now = now.AddHours(-1);
+//                } 
+                now = now.AddHours(-1);
+                date = DateParser.GetCvsDateString(now);
+                this.timestamp = now;
+                this.isUtcTimeStamp = false;
+            } else {
+                this.timestamp = DateParser.ParseCvsDate (date);
+                this.isUtcTimeStamp = true;
+            }
             if (LOGGER.IsDebugEnabled) {
                 StringBuilder msg = new StringBuilder ();
                 msg.Append ("timestamp=[").Append (timestamp).Append ("]");

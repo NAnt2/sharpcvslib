@@ -50,12 +50,16 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                 return new MessageTaggedResponse();
             case "Checked-in":
                 return new CheckedInResponse();
+            case "New-entry":
+                return new NewEntryResponse();
             case "Mod-time":
                 return new ModTimeResponse();
             case "ok":
                 return new OkResponse();
             case "error":
                 return new ErrorResponse();
+            case "Merged":
+                return new MergedResponse();
             case "Updated":
                 return new UpdatedResponse();
             case "Created":
@@ -72,6 +76,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                 return new ValidRequestsResponse();
             case "Set-sticky":
                 return new SetStickyResponse ();
+            case "Removed":
+                return new RemovedResponse();
             default:
                 return null;
             }

@@ -474,7 +474,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             DateTime fileTime = entry.TimeStamp;
 
-            manager.SetFileTimeStamp (filenameAndPath, entry.TimeStamp);
+            manager.SetFileTimeStamp (filenameAndPath, entry.TimeStamp, entry.IsUtcTimeStamp);
 
             System.Console.WriteLine ("entry timestamp=[" + entry.TimeStamp + "]");
             System.Console.WriteLine ("filestamp time=[" +
