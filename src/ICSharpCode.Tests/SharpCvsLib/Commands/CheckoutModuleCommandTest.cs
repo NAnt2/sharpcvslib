@@ -53,6 +53,11 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     /// </summary>
     [TestFixture]
     public class CheckoutModuleCommandTest  {
+        string cvsPath;
+        string checkFile;
+        
+        Manager manager;
+
         private ILog LOGGER = 
             LogManager.GetLogger (typeof(CheckoutModuleCommandTest));
                 
@@ -67,42 +72,31 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         [SetUp]
         public void SetUp () { 
+            this.cvsPath =
+                Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
+            this.checkFile =
+                Path.Combine (cvsPath, TestConstants.TARGET_FILE);
+            this.manager = new Manager (); 
         }
+        
+        /// <summary>
+        ///     Remove the local path directory that we were testing with.
+        /// </summary>
+        [TearDown]
+        public void TearDown () {
+//            this.CleanTempDirectory ();
+        }
+
         
         /// <summary>
         ///     Test that a checkout with all parameters is successful.
         /// </summary>
         [Test]
         public void CheckoutTest () {
-            Manager manager = new Manager (); 
-            string cvsPath = 
-                Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
-            string buildFile =
-                Path.Combine (cvsPath, TestConstants.TARGET_FILE);
+            this.Checkout ();
             
-            CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
-            WorkingDirectory working = 
-                new WorkingDirectory (root, 
-                                        TestConstants.LOCAL_PATH, 
-                                        TestConstants.MODULE);
-
-            CVSServerConnection connection = new CVSServerConnection ();
-            Assertion.AssertNotNull ("Should have a connection object.", connection);
-            
-            ICommand command = new CheckoutModuleCommand (working);
-            Assertion.AssertNotNull ("Should have a command object.", command);
-            
-            try {
-                connection.Connect (working, TestConstants.PASSWORD_VALID);
-            } catch (AuthenticationException) {
-                Assertion.Assert ("Failed to authenticate with server.", true);
-            }
-
-            command.Execute (connection);
-            connection.Close ();
-            
-            Assertion.Assert ("Should have found the build file.  file=[" + 
-                              buildFile + "]", File.Exists (buildFile));
+            Assertion.Assert ("Should have found the check file.  file=[" + 
+                              checkFile + "]", File.Exists (checkFile));
             
             ICvsFile[] entries = 
                 manager.Fetch (cvsPath, Factory.FileType.Entries);
@@ -136,39 +130,88 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         ///     revision tag and creates a tag file in the cvs folder.
         /// </summary>
         [Test]
-        public void CheckoutRevisionTest () {
-            Manager manager = new Manager (); 
-            string cvsPath = 
-                Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
-            string buildFile =
-                Path.Combine (cvsPath, TestConstants.TARGET_FILE);
+        public void CheckoutRevisionTest_Revision_1 () {
+            this.CheckoutRevisionTest (TestConstants.Revision.TAG_1, 
+                                       TestConstants.Revision.CONTENT_1);
+        }
+        
+        /// <summary>
+        ///     Test that specifying a revision produces a checkout of the specific
+        ///     revision tag and creates a tag file in the cvs folder.
+        /// </summary>
+        [Test]
+        public void CheckoutRevisionTest_Revision_2 () {
+            this.CheckoutRevisionTest (TestConstants.Revision.TAG_2, 
+                                       TestConstants.Revision.CONTENT_2);
+        }
+        
+        /// <summary>
+        ///     Test that specifying a revision produces a checkout of the specific
+        ///     revision tag and creates a tag file in the cvs folder.
+        /// </summary>
+        /// <param name="revision">The revision tag to checkout.</param>
+        /// <param name="expectedContent">The file contents that are expected.</param>
+        private void CheckoutRevisionTest (String revision, String expectedContent) {
+            this.Checkout (revision, expectedContent);
+            Assertion.Assert ("Should have found the check file.  file=[" + 
+                              checkFile + "]", File.Exists (checkFile));
             
-            CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
-            WorkingDirectory working = 
-                new WorkingDirectory (root, 
-                                        TestConstants.LOCAL_PATH, 
-                                        TestConstants.MODULE);
+            ICvsFile[] entries = 
+                manager.Fetch (cvsPath, Factory.FileType.Entries);
+            int foundFileEntry = 0; 
+            int foundDirectoryEntry = 0;
             
-            System.Console.WriteLine (TestConstants.LOCAL_PATH);
-
-            working.Revision = TestConstants.REVISION;
-            CVSServerConnection connection = new CVSServerConnection ();
-            Assertion.AssertNotNull ("Should have a connection object.", connection);
-            
-            ICommand command = new CheckoutModuleCommand (working);
-            Assertion.AssertNotNull ("Should have a command object.", command);
-            
-            try {
-                connection.Connect (working, TestConstants.PASSWORD_VALID);
-            } catch (AuthenticationException) {
-                Assertion.Assert ("Failed to authenticate with server.", true);
+            foreach (ICvsFile cvsEntry in entries) {
+                Entry entry = (Entry)cvsEntry;
+                System.Console.WriteLine ("entry=[" + entry + "]");
+                if (entry.Name.Equals (TestConstants.TARGET_FILE)) {
+                    foundFileEntry++;
+                }
+                
+                if (entry.Name.Equals (TestConstants.TARGET_DIRECTORY)) {
+                    foundDirectoryEntry++;
+                }
             }
-
-            command.Execute (connection);
-            connection.Close ();
             
-            Assertion.Assert ("Should have found the build file.  file=[" + 
-                              buildFile + "]", File.Exists (buildFile));
+            Assertion.Assert ("Build file should have a cvs entry.", foundFileEntry == 1);
+            Assertion.Assert (TestConstants.TARGET_DIRECTORY + " directory should have a cvs entry.", foundDirectoryEntry == 1);
+            Assertion.Assert ("Should not have a cvs directory above module path.", 
+                              !Directory.Exists (Path.Combine (TestConstants.LOCAL_PATH, manager.CVS)));
+            Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
+                              !Directory.Exists (Path.Combine (TestConstants.MODULE, manager.CVS))); 
+
+            String tagFile = 
+                Path.Combine (Path.Combine (TestConstants.MODULE, manager.CVS), Tag.FILE_NAME);
+            Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
+                              !Directory.Exists (tagFile)); 
+            
+            StreamReader reader = new StreamReader (checkFile);
+            String actualContent = reader.ReadToEnd ();
+            
+            // Note the read to end method appends a carriage return (^M)/ line feed (^F)
+            //    to the string read so this is removed manually:
+            actualContent = actualContent.Substring (0, actualContent.Length -2);
+            reader.Close ();
+            Assertion.AssertEquals ("Files should be equal.", 
+                                    expectedContent,
+                                    actualContent);
+        }
+
+        
+        /// <summary>
+        ///     Test that specifying a revision produces a checkout of the specific
+        ///     revision tag and creates a tag file in the cvs folder.
+        /// </summary>
+        [Test]
+        public void CheckoutOverrideDirectoryTest () {
+            this.cvsPath =
+                Path.Combine (TestConstants.LOCAL_PATH, TestConstants.OVERRIDE_DIRECTORY);
+            this.checkFile =
+                Path.Combine (cvsPath, TestConstants.TARGET_FILE);
+
+            this.Checkout (null, TestConstants.OVERRIDE_DIRECTORY);
+            Assertion.Assert ("Should have found the check file.  file=[" + 
+                              checkFile + "]", File.Exists (checkFile));
             
             ICvsFile[] entries = 
                 manager.Fetch (cvsPath, Factory.FileType.Entries);
@@ -199,15 +242,81 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
                               !Directory.Exists (tagFile)); 
         }
+                
+        /// <summary>
+        ///     Check if the temporary directory exists.  If it does then
+        ///         remove the directory.
+        /// </summary>
+        private void CleanTempDirectory () {
+            if (Directory.Exists(TestConstants.LOCAL_PATH)) {
+                Directory.Delete (TestConstants.LOCAL_PATH, true);
+            }            
+        }
         
         /// <summary>
-        ///     Remove the local path directory that we were testing with.
+        ///     Perform a checkout command using the values in the
+        ///         <code>TestConstants</code> class.
         /// </summary>
-        [TearDown]
-        public void TearDown () {
-//            if (Directory.Exists(TestConstants.LOCAL_PATH)) {
-//                Directory.Delete (TestConstants.LOCAL_PATH, true);
-//            }
+        private void Checkout () {
+            this.Checkout (null);
         }
+
+        /// <summary>
+        ///     Perform a checkout command using the values in the 
+        ///         <code>TestConstants</code> class.  The revision tag
+        ///         (if specified) is also used to select the code
+        ///         to checkout.
+        /// </summary>
+        /// <param name="revision">The specific revision of the module
+        ///     to checkout from the repository.  If <code>null</code> 
+        ///     is specified then the default revision, usually the 
+        ///     <code>HEAD</code> is checked out.</param>
+        /// <param name="overrideDirectory">The override directory to 
+        ///     checkout the repository to.  If <code>null</code>
+        ///     is specified then the directory is not overridden
+        ///     and the module name is used.</param>
+        private void Checkout (String revision, String overrideDirectory) {
+            CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
+            WorkingDirectory working = 
+                new WorkingDirectory (root, 
+                                        TestConstants.LOCAL_PATH, 
+                                        TestConstants.MODULE);
+            
+            System.Console.WriteLine (TestConstants.LOCAL_PATH);
+
+            if (revision != null) {
+                working.Revision = revision;
+            }
+            
+            CVSServerConnection connection = new CVSServerConnection ();
+            Assertion.AssertNotNull ("Should have a connection object.", connection);
+            
+            ICommand command = new CheckoutModuleCommand (working);
+            Assertion.AssertNotNull ("Should have a command object.", command);
+            
+            try {
+                connection.Connect (working, TestConstants.PASSWORD_VALID);
+            } catch (AuthenticationException) {
+                Assertion.Assert ("Failed to authenticate with server.", true);
+            }
+
+            command.Execute (connection);
+            connection.Close ();            
+        }
+        
+        /// <summary>
+        ///     Perform a checkout command using the values in the 
+        ///         <code>TestConstants</code> class.  The revision tag
+        ///         (if specified) is also used to select the code
+        ///         to checkout.
+        /// </summary>
+        /// <param name="revision">The specific revision of the module
+        ///     to checkout from the repository.  If <code>null</code> 
+        ///     is specified then the default revision, usually the 
+        ///     <code>HEAD</code> is checked out.</param>
+        private void Checkout (String revision) {
+            this.Checkout (revision, null);
+        }
+        
     }
 }

@@ -54,10 +54,11 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 	    private Manager manager = new Manager ();
 	    private readonly ILog LOGGER = 
 	        LogManager.GetLogger (typeof (WorkingDirectory));
-		private CvsRoot cvsroot;
-		private string  localdirectory;
-		private string  repositoryname;
-	    private String revision;
+		CvsRoot cvsroot;
+		String  localdirectory;
+		String  repositoryname;
+	    String revision;
+	    String overrideDirectory;
 		
 		private Hashtable folders = new Hashtable();
 	    
@@ -82,6 +83,9 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </summary>
 		public string WorkingDirectoryName {
 			get {
+			    if (this.HasOverrideDirectory) {
+			        return this.OverrideDirectory;
+			    }
 				return repositoryname;
 			}
 			set {
@@ -112,6 +116,9 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </summary>
 		public string LocalDirectory {
 			get {
+			    if (this.HasOverrideDirectory) {
+			        return this.OverrideDirectory;
+			    }
 				return localdirectory;
 			}
 			set {
@@ -142,13 +149,34 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		    }
 		}
 		
-		/// <summary>Determine if a revision has been specified.</summary>
+		/// <summary>
+		///     Determine if a revision has been specified.
+		/// </summary>
 		/// <returns><code>true</code> if a specific revision has been 
 		/// specified and the <code>Revision</code> field is non-null;
 		/// <code>false</code> otherwise.</returns>
 		public bool HasRevision {
-		    get {return String.Empty != this.Revision ||
-		                null != this.Revision;}
+		    get {return !(null == this.Revision);}
+		}
+	    
+	    /// <summary>
+	    ///     Specifies the local root directory that the module will be checked
+	    ///         out to.  This overrides the module name that is being checked
+	    ///         out which is by default the local root directory.
+	    /// </summary>
+	    public String OverrideDirectory {
+	        get {return this.overrideDirectory;}
+	        set {this.overrideDirectory = value;}
+	    }
+	    
+	    /// <summary>
+	    ///     Determine if a local working directory overrides the repository
+	    ///         working directory (i.e. the module directory).
+	    /// </summary>
+	    /// <returns><code>true</code> if a local working directory has been
+	    ///     specified; <code>false</code> otherwise.</returns>
+		public bool HasOverrideDirectory {
+		    get {return !(null == this.OverrideDirectory);}
 		}
 
         /// <summary>

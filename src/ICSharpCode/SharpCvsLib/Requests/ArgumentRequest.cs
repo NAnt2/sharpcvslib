@@ -47,6 +47,10 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             /// <summary>Cvs command to specify that the name of a cvs
             /// module is comming.</summary>
             public const String MODULE_NAME = "-N";
+            
+            /// <summary>Cvs argument to specify that the local directory
+            /// will be different than the module directory.</summary>
+            public const String OVERRIDE_DIRECTORY = "-d";
         }
     
         /// <summary>

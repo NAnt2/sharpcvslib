@@ -50,7 +50,7 @@ namespace ICSharpCode.SharpCvsLib {
         /// <summary>
         ///     Project/ module to use.
         /// </summary>
-        public const String MODULE = "Sporadicism.Blogger";
+        public const String MODULE = "sharpcvslib-test-repository";
         /// <summary>
         ///     The valid password for a login.
         /// </summary>
@@ -62,14 +62,39 @@ namespace ICSharpCode.SharpCvsLib {
         /// <summary>
         ///     The file that will be checked after update/ checkout.
         /// </summary>
-        public const String TARGET_FILE = "blogger.build";
+        public const String TARGET_FILE = "test-file.txt";
         /// <summary>
         ///     The directory that will be searched for after an update/ checkout.
         /// </summary>
         public const String TARGET_DIRECTORY = "src";
         
-        /// <summary>The revision to fetch.</summary>
-        public const String REVISION = "TEST_TAG_1";
-        
+        /// <summary>
+        ///     The override directory that will be used instead of the module
+        ///         name.
+        /// </summary>
+        public const String OVERRIDE_DIRECTORY = "override_root";
+       
+        /// <summary>
+        ///     Holds constants for the revision tests.
+        /// </summary>
+        public class Revision {
+            /// <summary>The revision to fetch.</summary>
+            public const String TAG_1 = "V0_1";
+            
+            /// <summary>The revision to fetch.</summary>
+            public const String TAG_2 = "V0_2";
+            
+            /// <summary>Contents of the test file that should match the contents
+            ///     at the time of the first revision tag.</summary>
+            public const string CONTENT_1 = "Original File checkin.";
+            
+            /// <summary>Contents of the test file that should match the contents
+            ///     at the time of the first revision tag.</summary>
+            public const string CONTENT_2 = @"Original File checkin.
+
+Modified file, added line after initial tag.";
+           
+        }
+
     }
 }

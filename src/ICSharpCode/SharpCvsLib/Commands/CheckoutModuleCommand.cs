@@ -80,10 +80,15 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             
             if (workingDirectory.HasRevision) {
                 connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.REVISION));
-            }
-            if (workingDirectory.HasRevision) {
                 connection.SubmitRequest(new ArgumentRequest(workingDirectory.Revision));
             }
+            if (workingDirectory.HasOverrideDirectory) {
+                connection.SubmitRequest (
+                    new ArgumentRequest (ArgumentRequest.Options.OVERRIDE_DIRECTORY));
+                connection.SubmitRequest (
+                    new ArgumentRequest (workingDirectory.OverrideDirectory));
+            }
+            
             connection.SubmitRequest(new ArgumentRequest(workingDirectory.ModuleName));
 
             connection.SubmitRequest(new DirectoryRequest(".", 

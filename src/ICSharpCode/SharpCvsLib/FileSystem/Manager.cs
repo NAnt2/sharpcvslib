@@ -493,6 +493,30 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
         
         /// <summary>
+        ///     Fetch a single entry.  If more than one entry is found then an
+        ///         exception is thrown.
+        /// </summary>
+        /// <param name="path">The path to the current working directory
+        ///    or to the cvs directory.</param>
+        /// <param name="fileType">The type of cvs file to fetch.</param>
+        /// <param name="filename">The name of the specific entry to search for.</param>
+        /// <returns>A single <see cref="ICvsFile">Cvs file</see></returns>
+        public ICvsFile FetchSingle (String path, Factory.FileType fileType, String filename) {
+            ICvsFile [] entries = this.Fetch (path, fileType);
+
+            foreach (ICvsFile file in entries) {
+                if (file.FileContents.IndexOf (filename) != -1) {
+                    return file;
+                }
+            }
+
+            String msg = "File not found.  " +
+                "path=[" + path + "]";
+            throw new FileNotFoundException (msg);
+            
+        }
+        
+        /// <summary>
         ///     Fetch all of the entry objects for the specified cvs filename
         ///         in the specified path.
         /// </summary>
@@ -580,6 +604,58 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         private DateTime GetCorrectTimeStamp (String filenameAndPath, 
                                               DateTime timeStamp) {
             return timeStamp.Add (System.TimeZone.CurrentTimeZone.GetUtcOffset (timeStamp));
+        }
+        
+        /// <summary>
+        ///     Load the cvs entry from the file.  Each cvs entry contains all
+        ///         of the information that is needed to update the individual 
+        ///         file from the cvs repository.  
+        /// </summary>
+        public Entry LoadEntry (String directory, String filename) {
+            Entry entry = 
+                (Entry)this.FetchSingle (directory, Factory.FileType.Entries, filename);
+            
+            try {
+                Tag tag = (Tag)this.FetchSingle (directory, Factory.FileType.Tag);
+            } catch (FileNotFoundException e) {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append ("No tag information found for file.");
+                msg.Append ("Path=[").Append (directory).Append ("]");
+                LOGGER.Debug (msg, e);
+            }
+            Repository repository = 
+                (Repository)this.FetchSingle (directory, Factory.FileType.Repository);
+            Root root = 
+                (Root)this.FetchSingle (directory, Factory.FileType.Root);
+            
+            return entry;
+        }
+        
+        /// <summary>
+        ///     Load the entry files in the given directory.
+        /// 
+        /// NOTE: This should be recursive (and will be) just lazy tonight.
+        /// </summary>
+        /// <param name="directory">The directory to start loading the 
+        ///     file name from.</param>
+        /// <returns>A collection of <see cref="Entry">Entries</see>.</returns>
+        public ICollection LoadEntries (String directory) {
+            String[] files = Directory.GetFiles (directory);
+            
+            ArrayList entries = new ArrayList ();
+            
+            foreach (String file in files) {
+                Entry entry = this.LoadEntry (Path.GetDirectoryName (directory), 
+                                              Path.GetFileName (file));
+                if (LOGGER.IsDebugEnabled) {
+                    StringBuilder msg = new StringBuilder ();
+                    msg.Append ("Entry=[").Append (entry).Append ("]");
+                    LOGGER.Debug (msg);
+                }
+                entries.Add (entry);
+            }
+            
+            return entries;
         }
     }
     

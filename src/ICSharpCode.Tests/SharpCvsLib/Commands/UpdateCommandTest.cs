@@ -82,22 +82,22 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		}
 		
 		/// <summary>
-		///     Test that the update command brings the build file back
+		///     Test that the update command brings the check file back
 		///         down after it is deleted.
 		/// </summary>
 		[Test]
 		public void UpdateTest () {
 		    string rootDir = 
 		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
-		    string buildFile = 
+		    string checkFile = 
 		        Path.Combine (rootDir, TestConstants.TARGET_FILE);
 		    
-		    File.Delete (buildFile);
+		    File.Delete (checkFile);
 		    
-		    Assertion.Assert ("File should be gone now.  file=[" + buildFile + "]", !File.Exists (buildFile));
+		    Assertion.Assert ("File should be gone now.  file=[" + checkFile + "]", !File.Exists (checkFile));
 		    this.UpdateAllRecursive (rootDir);
-		    Assertion.Assert ("Should have found the build file.  file=[" + 
-		                      buildFile + "]", File.Exists (buildFile));
+		    Assertion.Assert ("Should have found the file.  file=[" + 
+		                      checkFile + "]", File.Exists (checkFile));
 		    
 		    ICvsFile[] entries = 
 		        this.manager.Fetch(rootDir, Factory.FileType.Entries);

@@ -65,6 +65,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		private string date        = null;
 	    
 	    private string cvsEntry;
+	    
+	    private Tag tagFile        = null;
 
         /// <summary>
         ///     Date format for the <code>RFC1123</code> specification.
@@ -426,5 +428,24 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public bool IsMultiLined {
             get {return true;}
         }
+        
+        /// <summary>
+        ///     Holds information on a tag file if there is a 
+        ///         <code>sticky-tag</code> in the cvs directory.  If there
+        ///         is no tag in the cvs directory then this value is null.
+        /// </summary>
+        public Tag TagFile {
+            get {return this.tagFile;}
+            set {this.tagFile = value;}
+        }
+        
+        /// <summary>
+        ///     <code>true</code> if the cvs entry contains a 
+        ///         <code>sticky-tag</code>; otherwise <code>false</code>.
+        /// </summary>
+        public bool HasTag {
+            get {return null == this.Tag;}
+        }
+        
 	}
 }
