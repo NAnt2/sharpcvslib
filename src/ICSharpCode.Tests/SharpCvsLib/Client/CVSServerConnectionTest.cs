@@ -36,6 +36,9 @@ using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Misc;
 
+[assembly: log4net.Config.DOMConfigurator(
+	ConfigFileExtension="config", Watch=true)]
+
 namespace ICSharpCode.SharpCvsLib.Client {
 
     /// <summary>

@@ -89,8 +89,40 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </summary>
         /// <param name="path">The current path where the file exists.</param>
         /// <param name="entry">The cvs entry for the file being added locally.</param>
-        private void AddEntry (String path, String entry) {            
-            this.WriteToFile (path, this.ENTRIES, entry, true);
+        private void AddEntry (String path, String entry) {
+            Entry newEntry = new Entry (entry);
+            ArrayList workingEntries;
+            ICollection existingEntries = this.ReadEntries (path);
+            
+            if (LOGGER.IsDebugEnabled) {
+                String msg = "Add entries, just read entries.  " +
+                    "existingEntries.Count=[" + existingEntries.Count + "]" +
+                    "path=[" + path + "]" +
+                    "entry=[" + entry + "]";
+                LOGGER.Debug (msg);
+            }
+            // TODO: Clean this bad boy up, it is pretty dirty...
+            workingEntries = new ArrayList ();
+            
+            bool exists = false;
+            foreach (Entry existingEntry in existingEntries) {
+                if (existingEntry.Name.Equals (newEntry.Name)) {
+                    workingEntries.Add (newEntry);
+                    exists = true;
+                }
+                else {
+                    workingEntries.Add (existingEntry);
+                }
+            }
+            if (!exists) {
+                workingEntries.Add (newEntry);
+            }
+
+            
+            this.WriteToFile (path, 
+                              this.ENTRIES, 
+                              (Entry[])workingEntries.ToArray (typeof (Entry)));
+            
         }
         
         /// <summary>
@@ -139,7 +171,9 @@ namespace ICSharpCode.SharpCvsLib.Misc {
                     newFileLines.Add (line);
                 }
             }
-            this.WriteToFile (path, file, newFileLines);
+            this.WriteToFile (path, 
+                              file, 
+                              (String[])newFileLines.ToArray (typeof (String)));
         }
         
         /// <summary>
@@ -200,10 +234,10 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </summary>
         /// <param name="path">The current working directory.</param>
         /// <param name="file">The cvs file to write to.</param>
-        /// <param name="lines">A collection of lines to add to the cvs file.</param>
-        private void WriteToFile (    String path,
-                                      String file, 
-                                      ICollection lines) {
+        /// <param name="lines">A collection of String value lines to add to the cvs file.</param>
+        private void WriteToFile (String path,
+                                  String file, 
+                                  String[] lines) {
             bool overWriteFile = true;
             foreach (String line in lines) {
                 this.WriteToFile (path, file, line, overWriteFile);
@@ -211,9 +245,29 @@ namespace ICSharpCode.SharpCvsLib.Misc {
                     overWriteFile = false;
                 }
             }
-
         }
-        
+        /// <summary>
+        ///     Adds a collection of lines to the cvs file.  The first
+        ///         entry overwrites any file currently in the directory
+        ///         and all other following entries are appended to the
+        ///         file.
+        /// </summary>
+        /// <param name="path">The current working directory.</param>
+        /// <param name="file">The cvs file to write to.</param>
+        /// <param name="lines">A collection of String value lines to add to 
+        ///     the cvs file.</param>        
+        private void WriteToFile (String path,
+                                  String file,
+                                  Entry[] entries) {
+            bool append = false;
+            foreach (Entry entry in entries) {
+                this.WriteToFile (path, file, entry.CvsEntry, append);
+                if (!append) {
+                    append = true;
+                }
+            }
+        }
+                
         /// <summary>
         ///     Write to the cvs file.
         /// </summary>
@@ -245,6 +299,12 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 			sw.Close();            
         }
         
+        /// <summary>
+        ///     Checks if a cvs directory exists in the specified path,
+        ///         if it does not then it is created.
+        /// </summary>
+        /// <param name="path">The full directory path of the
+        ///     directory.</param>
         private void CreateDirectory (String path) {
 			if (!Directory.Exists(path + this.CVS)) {
 			    string cvsDir = 
@@ -291,9 +351,10 @@ namespace ICSharpCode.SharpCvsLib.Misc {
                 }
                 entries.Add (new Entry (entryString));
             }    
-            if (entries.Count > 0) {
-                this.SyncEntriesWithLog (path, entries);
-            }
+            // TODO: Move this somewhere else.  It looks like a side-effect ready to happen
+//            if (entries.Count > 0) {
+//                this.SyncEntriesWithLog (path, entries);
+//            }
             
             return entries;
         }
@@ -387,5 +448,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 			
 			return fileContents;
         }
+
     }
+    
 }			

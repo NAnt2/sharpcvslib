@@ -164,10 +164,13 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 			return directory.Substring(
 			                           localdirectory.Length).Replace(Path.DirectorySeparatorChar, '/');
 		}
-		
+				
         /// <summary>
         /// Convert the directory name to a win32 directory name
         ///     with the appropriate slashes.
+        /// 
+        /// TODO: Clean up this dirty bad boy and move the functionality
+        ///     to the CvsFileManager
         /// </summary>
         /// <param name="directory">The directory path.</param>
         /// <returns></returns>
@@ -202,77 +205,6 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 			return localPathAndFileName;
 		}
 				
-		private void CreateFilesIn(string path, string repository, ArrayList entries)
-		{
-			if (!Directory.Exists(path + this.manager.CVS)) {
-			    string newDir = Path.Combine (path, this.manager.CVS);
-			    if (LOGGER.IsDebugEnabled) {
-			        String msg = "Creating a cvs directory.  " +
-			            "directory=[" + newDir + "]";
-			        LOGGER.Debug (msg);
-			    }
-				Directory.CreateDirectory(newDir);
-			}
-			
-			string repositoryFile = 
-			    Path.Combine (path, this.manager.REPOSITORY);
-			StreamWriter sw = 
-			    new StreamWriter(repositoryFile, false, Encoding.ASCII);
-			sw.Write(repository.Substring(cvsroot.CvsRepository.Length + 1));
-			sw.Close();
-			
-			string rootFile = 
-			    Path.Combine (path, this.manager.ROOT);
-			sw = new StreamWriter(rootFile, false, Encoding.ASCII);
-			sw.Write(cvsroot.ToString());
-			sw.Close();
-			
-			string entriesFile = 
-			    Path.Combine (path, this.manager.ENTRIES);
-			sw = new StreamWriter(entriesFile, false, Encoding.ASCII);
-			
-			bool created = false;
-			if (entries != null && entries.Count > 0) {
-				foreach (Entry entry in entries) {
-					sw.WriteLine(entry.ToString());
-				}
-				sw.WriteLine("D");
-				sw.Close();
-				created = true;
-			    
-			    string entriesLogFile = 
-			        Path.Combine (path, this.manager.ENTRIES_LOG);
-				sw = new StreamWriter(entriesLogFile, false, Encoding.ASCII);
-			}
-			
-			bool empty = true;
-			Hashtable taken = new Hashtable();
-			foreach (DictionaryEntry entry2 in folders) {
-				string s1 = entry2.Key.ToString();
-				if (s1.StartsWith(repository) && s1.Length != repository.Length) {
-					Entry e = new Entry();
-					e.IsDirectory = true;
-					e.Name  = s1.Substring(repository.Length + 1);
-										
-					if (e.Name.IndexOf('/') >= 0)
-						e.Name = e.Name.Substring(0, e.Name.IndexOf('/'));
-					
-					if (taken[e.ToString()] == null) {
-						if (created)
-							sw.WriteLine("A " + e.ToString());
-						else
-							sw.WriteLine(e.ToString());
-						taken[e.ToString()] = true;
-					}
-					empty = false;
-				}
-			}
-			sw.Close();
-			if (empty && created) {
-				File.Delete(path + this.manager.ENTRIES_LOG);
-			}
-		}
-		
 		/// <summary>
 		/// Uses the assumption that ASCII 0 or ASCII 255 are only
 		///     found in non-text files to determine if the file
@@ -280,6 +212,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		/// Also the assumption is made that a non-text file will
 		///     have an ASCII 0 or ASCII 255 character.
 		/// </summary>
+//        [Obsolete ("This is moving to the CvsFileManager class")]
 		private bool IsBinary(string filename)
 		{
 			FileStream fs = File.OpenRead(filename);
@@ -306,6 +239,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         ///     to the folder collection.
         /// </summary>
         /// <param name="directory">The name of the directory.</param>
+//        [Obsolete ("This is moving to the CvsFileManager class")]
 		public void AddEntriesIn(string directory)
 		{
 		    if (LOGGER.IsDebugEnabled) {
@@ -344,64 +278,11 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 				}
 			}
 		}
-		
-        /// <summary>
-        /// Add all files in the specified directory.
-        /// </summary>
-        /// <param name="directory">The directory to search in.</param>
-		public void AddAllFiles(string directory)
-		{
-			string[] directories = Directory.GetDirectories(directory);
-			string[] files       = Directory.GetFiles(directory);
-			
-			string cvsdir        = ToRemotePath(directory);
-			
-			if (files != null) {
-				foreach (string file in files) {
-					string dir = Path.GetDirectoryName(file);
-					Entry entry = new Entry();
-					entry.Name = Path.GetFileName(file);
-					entry.IsBinaryFile = IsBinary(file);
-					AddEntry(cvsdir, entry);
-					
-//					Entry entry = null;
-//					
-//					Entry[] entries = Entry.RetrieveEntries(dir);
-//					foreach (Entry entry2 in entries) {
-//						if (entry2.Name == Path.GetFileName(file)) {
-//							AddEntry(cvsdir, entry);
-//						}
-//					}
-//					
-//					if (entry == null) {
-//					}
-				}
-			}
-			
-			foreach (string dir in directories) {
-				if (Path.GetFileName(dir) != "CVS") {
-					AddAllFiles(dir);
-				}
-			}
-		}
-		
-		/// <summary>
-		/// Reads the whole repository with all sub directories and
-		/// creates new entries for all files.
-		/// (used for the import command).
-		/// </summary>
-		public void CreateNewEntries()
-		{
-			Clear();
-		    if (LOGGER.IsDebugEnabled){
-			    LOGGER.Debug(localdirectory);
-		    }
-			AddAllFiles(localdirectory);
-		}
-		
+						
         /// <summary>
         /// Read all the existing entries.
         /// </summary>
+//        [Obsolete ("This is moving to the CvsFileManager class")]
 		public void ReadAllExistingEntries()
 		{
 			Clear();
@@ -414,52 +295,6 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		    if (null == this.Folders || 0 == this.Folders.Count) {
 		        AddEntriesIn (Path.Combine (localdirectory, this.ModuleName));
 		    }
-		}
-		
-        /// <summary>
-        /// Create the cvs folder and the files used by cvs to track the
-        ///     sources locally.
-        /// </summary>
-		public void CreateCVSFiles()
-		{
-		    if (LOGGER.IsDebugEnabled) {
-		        String msg = "Creating cvs files.  " +
-		            "workingDirectory=[" + this + "]";
-		        LOGGER.Debug (msg);
-		    }
-			Hashtable created = new Hashtable();
-			foreach (DictionaryEntry entry in folders) {
-				Folder folder = (Folder)entry.Value;
-				string r      = entry.Key.ToString();
-				
-				string localdir = ToLocalPath(r);
-				
-				CreateFilesIn(localdir, r, folder.Entries);
-				created[localdir] = true;
-			}
-			
-			foreach (DictionaryEntry entry in folders) {
-				string r = entry.Key.ToString();
-				while (r.Length > 0) {
-					r = r.Substring(0, r.LastIndexOf('/'));
-					if (r.Length > cvsroot.CvsRepository.Length) {
-						string localdir = ToLocalPath(r);
-					    if (LOGGER.IsDebugEnabled) {
-					        String msg = "Creating cvs files in " +
-					            "local path=[" + localdir + "]" + 
-					            "r=[" + r + "]";
-					        LOGGER.Debug (msg);
-					    }
-					    
-						if (created[localdir] == null) {
-							CreateFilesIn(localdir, r, null);
-							created[localdir] = true;
-						}
-					} else {
-						break;
-					}
-				}
-			}
-		}
+		}		
 	}
 }

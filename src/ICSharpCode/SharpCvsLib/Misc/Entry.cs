@@ -68,7 +68,8 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 	    public const String RFC1123 = 
 	        "dd MMM yyyy HH':'mm':'ss '-0000'";
 	    public const String FORMAT_1 =
-	        "ddd MMM dd HH':'mm':'ss yyyy";
+//	        "ddd MMM dd HH':'mm':'ss yyyy";
+	        "ddd MMM dd HH:mm:ss yyyy";	    
 		
         /// <summary>
         /// Timestamp for the file.
@@ -216,32 +217,34 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </summary>
 		public void SetTimeStamp()
 		{
+		    if (LOGGER.IsDebugEnabled){
+		        String msg = "Converting date string.  " +
+		            "date=[" + date + "]" +
+		            "RFC1123Pattern=[" + RFC1123 + "]" +
+		            "FORMAT_1=[" + FORMAT_1 + "]";
+			    LOGGER.Debug(msg);
+		    }				
+		    
 			if (date != null && date.Length > 0)  {
 				try {
 					timestamp = DateTime.ParseExact(date, 
-				            RFC1123, 
-				            DateTimeFormatInfo.InvariantInfo);
+					                                RFC1123,
+					                                DateTimeFormatInfo.InvariantInfo);
 				} catch (Exception) {
 					try {
-						timestamp = DateTime.ParseExact("0" + date, RFC1123, DateTimeFormatInfo.InvariantInfo);  
+						timestamp = DateTime.ParseExact("0" + date, 
+						                                RFC1123, 
+						                                DateTimeFormatInfo.InvariantInfo);
 					} catch (Exception) {
-					    try {
-    						timestamp = DateTime.ParseExact(date, FORMAT_1, DateTimeFormatInfo.InvariantInfo);
-					    }
-					    catch (Exception) {
-					        timestamp = DateTime.ParseExact (date, RFC1123, DateTimeFormatInfo.InvariantInfo);
-					    }
-					    
+   						timestamp = DateTime.ParseExact(date, 
+   						                                FORMAT_1, 
+   						                                DateTimeFormatInfo.InvariantInfo);
 					}
-				}
-				
-			    if (LOGGER.IsDebugEnabled){
-			        String msg = "Converting date string.  " +
-			            "date=[" + date + "]" +
-			            "RFC1123Pattern=[" + DateTimeFormatInfo.CurrentInfo.RFC1123Pattern + "]" +
-			            "timestamp=[" + timestamp + "]";
-				    LOGGER.Debug(msg);
-			    }				
+				}				
+			}
+			if (LOGGER.IsDebugEnabled) {
+			    String msg = "timestamp=[" + timestamp + "]";
+			    LOGGER.Debug (msg);
 			}
 		}
 		
@@ -251,14 +254,26 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <param name="line"></param>
 		public void Parse(string line)
 		{
+		    if (LOGGER.IsDebugEnabled) {
+		        String msg = "cvsEntry=[" + line + "]";
+		        LOGGER.Debug (msg);
+		    }
+		    
 			if (line.StartsWith("D/")) {
 				this.isDir = true;
 				line = line.Substring(1);
 			}
 			string[] tokens = line.Split( new char[] { '/' });
 			if (tokens.Length < 6) {
-				throw new ArgumentException( "not enough tokens in entry line (#" + tokens.Length + ")\n" + line);
+				throw new ArgumentException("not enough tokens in entry line (#" + 
+				                            tokens.Length + ")\n" + line);
 			}
+			/* TODO: See if I should be checking for > 6 tokens...
+			else if (tokens.Length > 6) {
+			    throw new ArgumentException ("Too many tokens in entry line." +
+			                                 "tokens.Length=[" + tokens.Length + "]" +
+			                                 "line=[" + line + "]");
+			}*/
 			
 			name      = tokens[1];
 			revision  = tokens[2];

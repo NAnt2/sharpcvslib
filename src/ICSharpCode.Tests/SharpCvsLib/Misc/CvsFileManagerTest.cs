@@ -47,6 +47,16 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		private ILog LOGGER = 
 			LogManager.GetLogger (typeof(CvsFileManagerTest));
 	    
+	    private String[] cvsEntries = 
+	        {
+	            "/CvsFileManager.cs/1.1/Sun May 11 08:02:05 2003//",
+	            "/SharpCvsLib.build/1.1/Sun May 11 18:02:05 2003//",
+                "/SharpCvsLib.cmbx/1.1/Sun May 11 18:02:05 2003//",
+                "/SharpCvsLib.prjx/1.1/Sun May 11 18:02:05 2003//",
+                "/SharpCvsLib.Tests.prjx/1.1/Sun May 11 18:02:05 2003//",
+                "D/conf////"
+	        };
+	    
 	    private CvsFileManager manager;
 		
 		/// <summary>
@@ -63,6 +73,14 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         public void SetUp () {
             this.manager = new CvsFileManager ();
         }
+        
+        [TearDown]
+        public void TearDown () {
+            string cvsFile = 
+                Path.Combine (TestConstants.LOCAL_PATH, this.manager.ENTRIES);
+            File.Delete (cvsFile);
+        }
+        
 		/// <summary>
 		/// Test that a cvs entry is added to the correct location and 
 		///     contains the correct data.  This tests read and write 
@@ -70,9 +88,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		/// </summary>
 		[Test]
 		public void EntryWriteReadTest ()	{
-		    const string entryString = 
-		        "/CvsFileManager.cs/1.1/Sun May 11 09:07:28 2003//";
-		    Entry entry = new Entry (entryString);
+		    Entry entry = new Entry (cvsEntries[0]);
 		    this.manager.AddEntry (TestConstants.LOCAL_PATH, entry);
 
 		    string entryFile = 
@@ -89,13 +105,11 @@ namespace ICSharpCode.SharpCvsLib.Misc {
             entryEnumerator.MoveNext ();
             Entry readEntry = (Entry)entryEnumerator.Current;
             Assertion.Assert ("Cvs entry should match the entryString.", 
-                              readEntry.CvsEntry.Equals (entryString));
+                              readEntry.CvsEntry.Equals (cvsEntries[0]));
 		}
 		
 		public void EntryLogWriteReadTest () {
-		    const string entryString = 
-		        "/CvsFileManager.cs/1.1/Sun May 11 09:07:28 2003//";
-		    Entry entry = new Entry (entryString);
+		    Entry entry = new Entry (this.cvsEntries[0]);
 		    this.manager.AddEntry (TestConstants.LOCAL_PATH, entry);
 
 		    string entryFile = 
@@ -107,6 +121,55 @@ namespace ICSharpCode.SharpCvsLib.Misc {
                 "A/SharpCvsLib.build/1.1/Sun May 11 09:07:28 2003//";
 		    Entry logEntry = new Entry (addEntryString);
 		    this.manager.AddLogEntry (TestConstants.LOCAL_PATH, logEntry);
+		}
+		
+		/// <summary>
+		///     Insert a number of entries into the cvs entries file.
+		///     
+		///     Verify that all entries were added correctly.
+		/// 
+		///     Add another entry to the file that has the same name as another
+		///         entry.  
+		/// 
+		///     Verify that there are not duplicate entries.
+		/// </summary>
+		[Test]
+		public void WriteManyEntriesThenAddOneSame () {
+		    ArrayList entries = new ArrayList ();
+		    LOGGER.Debug ("Enter write many");
+		    foreach (String cvsEntry in this.cvsEntries) {
+	            LOGGER.Debug ("cvsEntry=[" + cvsEntry + "]");
+		        entries.Add (new Entry (cvsEntry));
+		    }
+		    
+		    this.manager.AddEntries (TestConstants.LOCAL_PATH, 
+		                             (Entry[])entries.ToArray (typeof (Entry)));
+		    		    
+		    this.verifyEntryCount (TestConstants.LOCAL_PATH, 
+		                           this.cvsEntries.Length);
+		    
+		    string newEntry = 
+		        "/MyNewFile.cs/1.1/Sun May 11 09:07:28 2003//";
+		    
+		    this.manager.AddEntry (TestConstants.LOCAL_PATH, 
+		                           new Entry (newEntry));
+		    
+		    this.verifyEntryCount (TestConstants.LOCAL_PATH,
+		                           this.cvsEntries.Length + 1);
+		    
+		}
+		
+		private void verifyEntryCount (String path, int entriesExpected) {
+		    ICollection currentEntries =
+		        this.manager.ReadEntries (path);
+		    
+		    int entriesFound = currentEntries.Count;
+		    Assertion.Assert ("Should have found " + entriesExpected + 
+		                      "entr(y)(ies) in the file " +
+		                      "for each entry in our entries array.  " +
+		                      "Instead found=[" + entriesFound + "]" +
+		                      "but was expecting=[" + entriesExpected + "]", 
+		                      entriesFound == entriesExpected);
 		}
 	}
 }
