@@ -74,12 +74,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
             Environment.CurrentDirectory = settings.Config.LocalPath;
             
             String commandLine = 
-               "-d" + settings.Config.Cvsroot + " ci " + settings.Config.Module;
+               "-d" + settings.Config.Cvsroot + " ci " + 
+               Path.Combine(settings.Config.LocalPath, settings.Config.TargetFile);
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a CommitCommand object
             ConsoleMain consoleMain = new ConsoleMain ();
             consoleMain.Execute (commandLineArgs);
-            //Assertion.Assert (Directory.Exists(Path.Combine(settings.Config.LocalPath, settings.Config.Module)));
+            //Assertion.Assert (Directory.Exists(Path.Combine(settings.Config.LocalPath, settings.Config.TargetFile)));
         }
         /// <summary>
         ///     Commit files based on revision specified in -r option.
@@ -92,7 +93,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
             
             String commandLine = 
                 "-d" + settings.Config.Cvsroot + " ci -r " + settings.Config.Tag1 +
-                " " + settings.Config.Module;
+                " " + Path.Combine(settings.Config.LocalPath, settings.Config.TargetFile);
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a CommitCommand object
             ConsoleMain consoleMain = new ConsoleMain ();
@@ -109,7 +110,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
             
             String commandLine = 
                 "-d" + settings.Config.Cvsroot + " ci -F " + settings.Config.LocalPath +
-                settings.Config.TargetFile + " " + settings.Config.Module;
+                settings.Config.TargetFile + " " + Path.Combine(settings.Config.LocalPath,
+                settings.Config.TargetFile);
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a CommitCommand object
             ConsoleMain consoleMain = new ConsoleMain ();
@@ -126,7 +128,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
             
             String commandLine = 
                 "-d" + settings.Config.Cvsroot + " ci -m thismessage " +
-                settings.Config.Module;
+                Path.Combine(settings.Config.LocalPath, settings.Config.TargetFile);
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a CommitCommand object
             ConsoleMain consoleMain = new ConsoleMain ();
