@@ -65,6 +65,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             /// TODO: Figure out what the dash request actually does.
             /// </summary>
             public const String DASH = "--";
+
+            /// <summary>Reset any sticky tags/date/kopts.</summary>
+            public const string RESET_STICKY_TAGS = "-A";
         }
 
         /// <summary>
