@@ -79,7 +79,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 this.ROOT_ENTRY1);
 
             String cvsPath = Path.Combine (fullPath, "CVS");
-            Assertion.AssertEquals ("Path not set/returned", fullPath, root.Path);
+            Assertion.AssertEquals ("Full path to the Root file is incorrect.", fullPath, root.FullPath);
             Assertion.AssertEquals ("FileContents not set/returned", this.ROOT_ENTRY1, root.FileContents);
             Assertion.AssertEquals ("Filename not correct", this.ROOT_FILE_NAME, root.Filename);
             Assertion.AssertEquals ("Type not correct", Factory.FileType.Root, root.Type);
