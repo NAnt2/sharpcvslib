@@ -110,7 +110,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
                 if (revision != null) {
                     this.currentWorkingDirectory.Revision = revision;
                 }
-                if (date.Equals(null)) {
+                if (!date.Equals(DateTime.MinValue)) {
                     this.currentWorkingDirectory.Date = date;
                 }
                 // Create new CheckoutModuleCommand object
