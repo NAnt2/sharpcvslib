@@ -97,7 +97,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                         Entry entry = Entry.CreateEntry(directory);
                         LOGGER.Debug("entry=[" + entry + "]");
                         LOGGER.Debug("entry.FullPath=[" + entry.FullPath + "]");
-                        this.Add (entry);
+                        this.AddEntry (entry);
                         this.AddDirectories (directory);
                     }
                 }
@@ -291,19 +291,20 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             String errorMsg = "Entry not found.  " +
                             "path=[" + path + "]" +
                             "name=[" + name + "]";
-            ICvsFile[] cvsEntries;
+            Entries cvsEntries;
+            String fullPath = Path.Combine(path, name);
             try {
-                cvsEntries = this.Fetch (path, Factory.FileType.Entries);
-            } catch (IOException e) {
+                cvsEntries = this.FetchEntries (Path.Combine(path, Entry.FILE_NAME));
+            } catch (CvsFileNotFoundException e) {
                 LOGGER.Error (e);
                 throw new EntryNotFoundException (errorMsg);
             }
 
-            foreach (ICvsFile cvsEntry in cvsEntries) {
-                Entry entry = (Entry)cvsEntry;
-                if (entry.Name.Equals (name)) {
-                    return entry;
-                }
+            foreach (DictionaryEntry entry in cvsEntries) {
+                LOGGER.Debug("found entry=[" + entry.Value + "]");
+            }
+            if (cvsEntries.Contains(fullPath)) {
+                return cvsEntries[fullPath];
             }
             throw new EntryNotFoundException (errorMsg);
         }
@@ -438,23 +439,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                     throw e;
                 }
             }
-        }
-
-        /// <summary>
-        /// Indicates whether the path that is being written to is inside or outside
-        ///     of the sandbox on the local system.
-        /// </summary>
-        /// <param name="path">The path that is being written to.</param>
-        /// <returns>Returns <code>true</code> if the path being written to is
-        ///     inside the working path, otherwise returns <code>false</code>.</returns>
-        private bool IsInSandbox (String path) {
-            String tempPath = PathTranslator.ConvertToOSSpecificPath(path);
-            String tempWorkingPath = PathTranslator.ConvertToOSSpecificPath(this.workingPath);
-            if (Path.DirectorySeparatorChar.Equals("\\")) {
-                tempPath = tempPath.ToLower();
-                tempWorkingPath = tempWorkingPath.ToLower();
-            }
-            return tempPath.IndexOf(tempWorkingPath) >= 0;
         }
 
         /// <summary>
@@ -1081,6 +1065,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             } catch (CvsFileNotFoundException e) {
                 LOGGER.Debug(e);
                 // if the repository does not exist then add it
+                this.CreateCvsDir(entry);
                 this.WriteToFile(entry);
                 // TODO: Remove this, just verifying the write operation
                 return this.FetchEntry(entry.FullPath);
@@ -1219,6 +1204,35 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             return newFolder;
         }
 
+        /// <summary>
+        /// Indicates whether the path that is being written to is inside or outside
+        ///     of the sandbox on the local system.
+        ///
+        /// If the directory seperator character is equal to the seperator found on a 
+        ///     Windows machine then the paths are compared without taking case into
+        ///     account.
+        /// </summary>
+        /// <param name="path">The path that is being written to.</param>
+        /// <returns>Returns <code>true</code> if the path being written to is
+        ///     inside the working path, otherwise returns <code>false</code>.</returns>
+        private bool IsInSandbox (String path) {
+            String tempPath = PathTranslator.ConvertToOSSpecificPath(path);
+            String tempWorkingPath = PathTranslator.ConvertToOSSpecificPath(this.workingPath);
+            if (Path.DirectorySeparatorChar.Equals("\\")) {
+                tempPath = tempPath.ToLower();
+                tempWorkingPath = tempWorkingPath.ToLower();
+            }
+            return tempPath.IndexOf(tempWorkingPath) >= 0;
+        }
+
+        /// <summary>
+        /// Determines if the given path is inside of the cvs sandbox or local working directory
+        ///     on the file system.  If the path is not inside the sandbox then an exception
+        ///     is thrown.
+        /// <param name="path">A path to evaluate.</param>
+        /// </summary>
+        /// <exception cref="InvalidPathException">If the path specified is outside
+        ///     of the sandbox.</exception>
         private void ValidateInSandbox (String path) {
             if (!IsInSandbox(path)) {
                 StringBuilder msg = new StringBuilder();

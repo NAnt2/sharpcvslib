@@ -95,9 +95,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         [Test]
         public void AddRootTest () {
             String path = Path.Combine (this.settings.Config.LocalPath,
-                                        this.settings.Config.Module);
-            this.AddCvsFileTest (path + Path.DirectorySeparatorChar, 
-                this.ROOT_ENTRY, Factory.FileType.Root);
+                                        this.settings.Config.Module) +
+                Path.DirectorySeparatorChar;
+            Root root = new Root(path, this.ROOT_ENTRY);
+            Manager manager = new Manager(path);
+            manager.AddRoot(root);
         }
 
         /// <summary>
@@ -106,10 +108,14 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void AddRootTwiceTest () {
-            String path = this.settings.Config.LocalPath + Path.DirectorySeparatorChar;
-            this.AddCvsFileTest (path, this.ROOT_ENTRY, Factory.FileType.Root);
-            this.AddCvsFileTest (path, this.ROOT_ENTRY, Factory.FileType.Root);
+            String path = Path.Combine(this.settings.Config.LocalPath,
+                    this.settings.Module) + Path.DirectorySeparatorChar;
+            Manager manager = new Manager(path);
+            Root root = new Root(path, this.ROOT_ENTRY);
+            manager.AddRoot(root);
 
+            Root secondRoot = new Root(path, this.ROOT_ENTRY);
+            manager.AddRoot(secondRoot);
             this.verifyEntryCount (path, Factory.FileType.Root, 1);
         }
 
@@ -119,10 +125,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void AddDiffRootTest () {
-            String path = this.settings.Config.LocalPath + Path.DirectorySeparatorChar;
-            this.AddCvsFileTest (path, this.ROOT_ENTRY, Factory.FileType.Root);
-            this.AddCvsFileTest (path, this.ROOT_ENTRY + "/changed",
-                                Factory.FileType.Root);
+            String path = this.settings.LocalPath;
+            Manager manager = new Manager(path);
+            Root root = new Root(path, this.ROOT_ENTRY);
+            manager.AddRoot(root);
+
+            Root rootChanged = new Root(path, this.ROOT_ENTRY + "/changed");
 
             this.verifyEntryCount (path, Factory.FileType.Root, 1);
         }
@@ -133,36 +141,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         [Test]
         public void AddRepositoryTest () {
             String path = Path.Combine (this.settings.Config.LocalPath,
-                                        this.settings.Config.Module);
-            this.AddCvsFileTest (path + Path.DirectorySeparatorChar,
-                                this.REPOSITORY_ENTRY,
-                                Factory.FileType.Repository);
-        }
-
-        private void AddCvsFileTest (String path,
-                                    String line,
-                                    Factory.FileType fileType) {
-            Factory factory = new Factory ();
-
-            ICvsFile cvsEntry = factory.CreateCvsObject (path,
-                                fileType,
-                                line);
-
-            Manager manager = 
-                new Manager (Path.Combine(this.settings.LocalPath, this.settings.Module));
-            manager.Add (cvsEntry);
-
-            String cvsPath = Path.Combine (path, manager.CVS);
-            String file = Path.Combine (cvsPath, cvsEntry.Filename);
-
-            Assertion.Assert ("File does not exist=[" + file + "]",
-                            File.Exists (file));
-            String cvsUnderCvs = Path.Combine (cvsPath, manager.CVS);
-            System.Console.WriteLine (cvsUnderCvs);
-            Assertion.Assert ("File should not exist=[" +
-                            cvsUnderCvs + "]",
-                            !Directory.Exists (cvsUnderCvs));
-
+                                        this.settings.Config.Module) + 
+                            Path.DirectorySeparatorChar;
+            Repository repository = new Repository(path, this.REPOSITORY_ENTRY);
+            Manager manager = new Manager(path);
+            manager.AddRepository(repository);
         }
 
         /// <summary>
@@ -217,6 +200,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 if (!PathTranslator.ContainsCVS(path)) {
                     Entry entry = new Entry (path, cvsEntry);
                     entries.Add (entry);
+                    manager.AddEntry(entry);
                     String newFile = entry.FullPath;
                     StreamWriter writer;
                     if (!entry.IsDirectory) {
@@ -230,9 +214,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 }
             }
 
-            manager.Add ((ICvsFile[])entries.ToArray (typeof (ICvsFile)));
-
-            Entries entriesTest = manager.FetchEntries(path);
+            Entries entriesTest = manager.FetchEntries(((Entry)(entries[0])).FullPath);
 
             Assertion.Assert(File.Exists(Path.Combine(Path.Combine(path, "CVS"), "Entries")));
         }
@@ -254,12 +236,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             String entryCvsDir = Path.Combine (entryDir, manager.CVS);
 
             Directory.CreateDirectory (entryCvsDir);
-            this.AddCvsFileTest (entryDir,
-                                this.REPOSITORY_ENTRY,
-                                Factory.FileType.Repository);
-            this.AddCvsFileTest (entryDir,
-                                this.cvsEntries[0],
-                                Factory.FileType.Entries);
+            manager.AddRepository(new Repository(path, this.REPOSITORY_ENTRY));
+            manager.AddEntry(new Entry(path, this.cvsEntries[0]));
 
             Entry entry = manager.CreateDirectoryEntry (entryDir);
             manager.Add (entry);
@@ -338,20 +316,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 manager.AddDirectories (path);
             }
 
-// Not sure why this is here.
-//            try {
-//                manager.Find (path, NEW_DIRECTORY);
-//                Assertion.Assert ("If program got here a directory was found.  " +
-//                                "Because there should not be a cvs entry under " +
-//                                "the new directory this should not happen.",
-//                                !true);
-//            } catch (EntryNotFoundException) {}
             this.WriteTestEntries (path);
             Directory.CreateDirectory (Path.Combine (newDirectory, manager.CVS));
 
             manager.AddDirectories (path);
             Assertion.Assert ("Should contain the directory entry.",
-                            null != manager.Find (path, NEW_DIRECTORY));
+                            null != manager.Find (path, NEW_DIRECTORY + Path.DirectorySeparatorChar));
             Assertion.Assert ("There should be no cvs entry above the root directory.",
                             !Directory.Exists (Path.Combine (this.settings.Config.LocalPath,
                                                             manager.CVS)));
@@ -360,7 +330,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Assertion.Assert("Should not create cvs entry for module path.",
                 !Directory.Exists(Path.Combine(modulePath, this.settings.Module)));
 
-            Entries entries = manager.FetchEntries(modulePath);
+            Entries entries = manager.FetchEntries(Path.Combine(modulePath, Entry.FILE_NAME));
             entries.Contains(Path.Combine(modulePath, "CvsFileManager"));
             entries.Contains(Path.Combine(modulePath, "SharpCvsLib.build"));
             entries.Contains(Path.Combine(modulePath, "SharpCvsLib.cmbx"));
@@ -389,9 +359,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                                     this.settings.Config.Module);
 
             this.WriteTestDirectoryEntries (rootDir);
-            this.AddCvsFileTest (rootDir,
-                                this.REPOSITORY_ENTRY,
-                                Factory.FileType.Repository);
+            Repository repository = new Repository(rootDir, this.REPOSITORY_ENTRY);
+            manager.AddRepository(repository);
             working.FoldersToUpdate = manager.FetchFilesToUpdate (rootDir);
 
             Assertion.Assert ("Working folders count should be greater than 1.",
@@ -462,9 +431,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 Path.Combine (this.settings.Config.LocalPath, this.settings.Config.Module);
             Manager manager = new Manager (rootDir);
 
-            Entry entry = new Entry (rootDir, EntryTest.CHECKOUT_ENTRY_2);
+            Entry entry = new Entry(rootDir, EntryTest.CHECKOUT_ENTRY_2);
 
-            manager.Add (entry);
+            LOGGER.Debug("Entry.FullPath=[" + entry.FullPath + "]");
+            manager.AddEntry (entry);
             String filenameAndPath = Path.Combine (rootDir, entry.Name);
             System.IO.StreamWriter writer = File.CreateText (filenameAndPath);
 
@@ -576,7 +546,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             
             String modulePath = Path.Combine(this.settings.LocalPath, this.settings.Module);
             Manager manager = new Manager(modulePath);
-            Entries entries1= manager.FetchEntries(modulePath);
+            Entries entries1= manager.FetchEntries(Path.Combine(modulePath, Entry.FILE_NAME));
 
             foreach (DictionaryEntry dicEntry in entries1) {
                 Entry entry = (Entry)dicEntry.Value;
