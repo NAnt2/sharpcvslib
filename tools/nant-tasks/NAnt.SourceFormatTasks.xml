@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>NAnt.SourceFormatTasks</name>
+    </assembly>
+    <members>
+        <member name="T:NAnt.SourceFormat.Tasks.Astyle">
+            <summary>
+            Formats source code in a given directory to a specified code
+                format.
+            </summary>
+            <example>
+              <code>
+                <![CDATA[
+            <astyle option-file="/path/to/option/file">
+                <sources>
+                    <includes name="**/**.cs" />
+                </sources>
+            </astyle>
+                ]]>
+              </code>
+            </example>
+        </member>
+        <member name="F:NAnt.SourceFormat.Tasks.Astyle.DEFAULT_STYLE">
+            <summary>The default style seems to be the closest 
+                to c# standards.</summary>
+        </member>
+        <member name="M:NAnt.SourceFormat.Tasks.Astyle.PrepareProcess(System.Diagnostics.Process)">
+            <summary>
+            Prepare the atyle task to parameters.
+            </summary>
+            <param name="process"></param>
+        </member>
+        <member name="P:NAnt.SourceFormat.Tasks.Astyle.OptionFile">
+            <summary>
+            The location of the option file.
+            </summary>
+        </member>
+        <member name="P:NAnt.SourceFormat.Tasks.Astyle.Sources">
+            <summary>
+            Used to select the files to copy. To use a <see cref="T:NAnt.Core.Types.FileSet"/>, 
+            the <see cref="!:ToDirectory"/> attribute must be set.
+            </summary>
+        </member>
+        <member name="P:NAnt.SourceFormat.Tasks.Astyle.StyleOptions">
+            <summary>
+                A collection of options that can be used to override the
+                    default style options.
+            </summary>
+        </member>
+        <member name="P:NAnt.SourceFormat.Tasks.Astyle.ProgramArguments">
+            <summary>
+            Gets the command-line arguments for the external program.
+            </summary>
+            <value>
+            The command-line arguments for the external program.
+            </value>
+        </member>
+    </members>
+</doc>
