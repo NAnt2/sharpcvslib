@@ -57,6 +57,22 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private string unparsedOptions;
 
         /// <summary>
+        /// Create a new instance of the <see cref="UpdateCommandParser"/>.
+        /// </summary>
+        /// <returns></returns>
+        public static ICommandParser GetInstance() {
+            return GetInstance(typeof(UpdateCommandParser));
+        }
+
+        /// <summary>
+        /// Name of the command being parsed.
+        /// </summary>
+        public override string CommandName {
+            get {return "update";}
+        }
+
+
+        /// <summary>
         /// Update module files from a cvs repository.
         /// </summary>
         /// <param name="cvsroot">User information</param>
