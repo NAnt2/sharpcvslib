@@ -236,6 +236,10 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         
         /// <summary>
         /// Read from the stream until the end of the line.
+        /// 
+        /// TODO: If an empty line is found, then this will
+        /// skip this line and try the next line (up to 10
+        /// times).  Is this the required behaviour?
         /// </summary>
         /// <returns></returns>
         public string ReadLine() {
@@ -247,6 +251,16 @@ namespace ICSharpCode.SharpCvsLib.Streams {
                     Thread.Sleep(10);
                 }
             }
+            ResponseMessage.SendMessage(line);
+            return line;            
+        }
+        
+        /// <summary>
+        /// Read from the stream until the end of the line.
+        /// </summary>
+        /// <returns></returns>
+        public string ReadToEndOfLine() {
+            string line = ReadLineBlock();
             ResponseMessage.SendMessage(line);
             return line;            
         }

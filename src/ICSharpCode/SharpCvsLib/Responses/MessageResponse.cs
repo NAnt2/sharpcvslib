@@ -54,7 +54,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// <param name="services"></param>
 		public void Process(CvsStream cvsStream, IResponseServices services)
 		{
-			string message = cvsStream.ReadLine();
+			string message = cvsStream.ReadToEndOfLine();
 			terminating = message.Trim().ToUpper() == "OK";
 		    // Fire message event to the client app
 			services.SendMessage("M " + message);
