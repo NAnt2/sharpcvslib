@@ -105,6 +105,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 //    is not in a CVS repository directory tree.
                 currentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
                     Environment.CurrentDirectory, repository.FileContents);
+                currentWorkingDirectory.OverrideDirectory = Environment.CurrentDirectory;
                 // If fileNames has a wild card (*) like '*.txt'
                 // Create new AddCommand object
                 addCommand = new ICSharpCode.SharpCvsLib.Commands.AddCommand(
