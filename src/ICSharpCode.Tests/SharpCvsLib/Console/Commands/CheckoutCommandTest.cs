@@ -117,7 +117,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         /// </summary>
         [Test]
         public void MinusDOptionCheckoutByCertainDate (){
-            String commandLine = "-d" + settings.Config.Cvsroot + " co -D 01.28.03 " + settings.Config.Module;
+            String commandLine = "-d" + settings.Config.Cvsroot + " co -D 09.13.03 " + settings.Config.Module;
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a ConsoleMain object
             ConsoleMain consoleMain = new ConsoleMain();
