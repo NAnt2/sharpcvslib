@@ -93,9 +93,9 @@
     <File name=".\src\ICSharpCode\SharpCvsLib\FileSystem\PathTranslator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode\SharpCvsLib\Exceptions\EntryNotFoundException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode\SharpCvsLib\Misc\TraceUtil.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\src\ICSharpCode\SharpCvsLib\MessageHandler" subtype="Directory" buildaction="Compile" dependson="" data="" />
-    <File name=".\src\ICSharpCode\SharpCvsLib\MessageHandler\IMessageHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name=".\src\ICSharpCode\SharpCvsLib\MessageHandler\EmptyC#file.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode\SharpCvsLib\Messages" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode\SharpCvsLib\Messages\IMessage.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode\SharpCvsLib\Messages\UpdateMessage.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto=".\lib\log4net.dll" />

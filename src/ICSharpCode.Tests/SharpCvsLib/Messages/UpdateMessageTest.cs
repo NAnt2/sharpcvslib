@@ -1,6 +1,5 @@
 #region "Copyright"
-// ModTimeResponse.cs
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,36 +26,41 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    Author        Clayton Harbour
+//
 #endregion
 
-using ICSharpCode.SharpCvsLib.Client;
+using System;
+using System.Text;
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
-    /// <summary>
-    /// Handles a response from the server containing the modified
-    ///     time.
-    /// </summary>
-	public class ModTimeResponse : IResponse
-	{
+using log4net;
+using NUnit.Framework;
+
+using ICSharpCode.SharpCvsLib.Messages;
+
+namespace ICSharpCode.SharpCvsLib.Messages { 
+
+    [TestFixture]
+    public class UpdateMessageTest {
+        
         /// <summary>
-        /// Process the server response.
+        ///     Test that the message output is formatted correctly.
         /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-	    public void Process(CvsStream cvsStream, IResponseServices services)
-	    {
-	    	string date = cvsStream.ReadLine();
-	    	services.NextFileDate = date;
-	    }
-	    
-        /// <summary>
-        /// Response terminates transaction: <code>false</code>.
-        /// </summary>
-		public bool IsTerminating {
-			get {
-				return false;
-			}
-		}
-	}
+        [Test]
+        public void MessageFormattedCorrectly () {
+            const String MODULE = "Sharpcvslib";
+            const String REPOSITORY = "sharpcvslib/";
+            const String FILENAME = "theFile.txt";
+            
+            UpdateMessage message = new UpdateMessage ();
+            message.Module = MODULE;
+            message.Repository = REPOSITORY;
+            message.Filename = FILENAME;
+            
+            String cvsMessage = "U " + MODULE + REPOSITORY + FILENAME;
+            Assertion.AssertEquals ("Expecting result=[" + cvsMessage + "]",
+                              message.Message, cvsMessage);
+        }
+    }    
 }

@@ -17,10 +17,11 @@
     <target name="setup">
         <mkdir dir="${build.dir}" />
    	    <copy todir="${build.dir}">
-	        <fileset basedir="${lib.dir}">
-                <includes name="ICSharpCode.SharpZipLib.dll" />
+	         <fileset basedir="${lib.dir}">
+                    <includes name="ICSharpCode.SharpZipLib.dll" />
       	        <includes name="log4net.dll" />
-            </fileset>
+                    <includes name="conf/**/*.conf" />
+               </fileset>
 		</copy>        
     </target>
 

@@ -28,7 +28,7 @@
 // exception statement from your version.
 //
 //    Author: Clayton Harbour
-//     claytonharbour@sporadicism.com
+// 
 #endregion
 
 using System;

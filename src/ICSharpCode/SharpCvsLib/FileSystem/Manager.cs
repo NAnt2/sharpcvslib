@@ -455,23 +455,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
         
         /// <summary>
-        ///     Sends the cvs message to a logging target and/ or the
-        ///         console.
-        /// 
-        ///     Messages typically include responses from the server
-        ///         and are used to determine which files have been
-        ///         updated.  An example of an update/ created message
-        ///         would like like the following:
-        /// 
-        ///         cvs server: U sharpcvslib/Cvslib/Streams/CvsStream
-        /// </summary>
-        /// <param name="message">The message to send.</param>
-        public void SendCvsMessage (String message) {
-            System.Console.WriteLine (message);
-            LOGGER.Info (message);
-        }
-        
-        /// <summary>
         ///     Fetch a single entry.  If more than one entry is found then an
         ///         exception is thrown.
         /// </summary>
@@ -577,26 +560,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     			File.SetCreationTime(filenameAndPath, fileTimeStamp);
     			File.SetLastAccessTime(filenameAndPath, fileTimeStamp);
     			File.SetLastWriteTime(filenameAndPath, fileTimeStamp);
-
-//                DateTime correctTimeStamp = 
-//                    this.GetCorrectTimeStamp (filenameAndPath, timeStamp);
-//                
-//                if (!correctTimeStamp.Equals (timeStamp)) {
-//        			File.SetCreationTime(filenameAndPath, correctTimeStamp);
-//        			File.SetLastAccessTime(filenameAndPath, correctTimeStamp);
-//        			File.SetLastWriteTime(filenameAndPath, correctTimeStamp);
-//                }
             }
         }
         
-        private DateTime GetCorrectTimeStamp (String filenameAndPath, DateTime timeStamp) {
-//            DateTime fileTime = File.GetLastWriteTime (filenameAndPath);
-//            
-//            if (TimeZone.CurrentTimeZone.GetUtcOffset (DateTime.Now) !=
-//                TimeZone.CurrentTimeZone.GetUtcOffset (fileTime)) {
-//                return timeStamp.AddHours (-1);
-//            }
-//            return timeStamp;
+        private DateTime GetCorrectTimeStamp (String filenameAndPath, 
+                                              DateTime timeStamp) {
             return timeStamp.Add (System.TimeZone.CurrentTimeZone.GetUtcOffset (timeStamp));
         }
 

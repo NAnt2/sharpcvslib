@@ -1,6 +1,5 @@
 #region "Copyright"
-// ModTimeResponse.cs
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,36 +26,32 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    Author        Clayton Harbour
+//
 #endregion
 
-using ICSharpCode.SharpCvsLib.Client;
+using System;
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
+namespace ICSharpCode.SharpCvsLib.Messages { 
+
     /// <summary>
-    /// Handles a response from the server containing the modified
-    ///     time.
+    ///     Interface for handling message related to the cvs client/ server
+    ///         protocol.  Used to output useful server messages usually to
+    ///         some sort of interactive client.
+    /// 
+    ///     NOTE: This is not for debugging purposes, log4net will be used
+    ///         for debugging.
     /// </summary>
-	public class ModTimeResponse : IResponse
-	{
-        /// <summary>
-        /// Process the server response.
-        /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-	    public void Process(CvsStream cvsStream, IResponseServices services)
-	    {
-	    	string date = cvsStream.ReadLine();
-	    	services.NextFileDate = date;
-	    }
-	    
-        /// <summary>
-        /// Response terminates transaction: <code>false</code>.
-        /// </summary>
-		public bool IsTerminating {
-			get {
-				return false;
-			}
-		}
-	}
+    public interface IMessage {
+
+        String Module {get;set;}
+        
+        String Repository {get;set;}
+        
+        String Filename {get;set;}
+        
+        String Message {get;}
+        
+    }
 }

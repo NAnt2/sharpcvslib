@@ -46,6 +46,7 @@ using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Responses;
 using ICSharpCode.SharpCvsLib.FileHandler;
+using ICSharpCode.SharpCvsLib.Messages;
 using ICSharpCode.SharpCvsLib.FileSystem;
 
 using log4net;
@@ -123,17 +124,34 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// Message event.
         /// </summary>
 		public event MessageEventHandler MessageEvent;
-
+	    
         /// <summary>
         /// Send the message to the message event handler.
         /// </summary>
         /// <param name="message"></param>
 		public void SendMessage(string message)
 		{
-			if (MessageEvent != null) {
-				MessageEvent(message);
-			}
+		    System.Console.WriteLine (message);
+		    LOGGER.Info (message);
+//			if (MessageEvent != null) {
+//				MessageEvent(message);
+//			}
 		}
+		
+        /// <summary>
+        /// Send the message to the message event handler.
+        /// </summary>
+        /// <param name="message"></param>
+		public void SendMessage (String module, 
+		                         String repositoryPath, 
+		                         String filename) {
+            StringBuilder sb = new StringBuilder ();
+            sb.Append (module);
+            sb.Append (repositoryPath);
+            sb.Append (filename);
+		                             
+            this.SendMessage (sb.ToString ());
+         }
 		
         /// <summary>
         /// Module to execute cvs commands on.

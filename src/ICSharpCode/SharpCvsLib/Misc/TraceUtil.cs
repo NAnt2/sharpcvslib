@@ -1,5 +1,5 @@
 #region "Copyright"
-// ModTimeResponse.cs
+// WorkingDirectory.cs 
 // Copyright (C) 2001 Mike Krueger
 //
 // This program is free software; you can redistribute it and/or
@@ -27,36 +27,57 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    Author:     Clayton Harbour
+//
 #endregion
 
-using ICSharpCode.SharpCvsLib.Client;
+using System;
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
-	
+using log4net;
+
+namespace ICSharpCode.SharpCvsLib.Misc { 
+    
     /// <summary>
-    /// Handles a response from the server containing the modified
-    ///     time.
+    ///     The trace utility class logs a stack trace to the log4net file
+    ///         if DEBUG logging is enabled.  This is used as an alternative
+    ///         to the .net trace mechanism.
     /// </summary>
-	public class ModTimeResponse : IResponse
-	{
+    public class TraceUtil {
+        
+        private static readonly ILog LOGGER =
+            LogManager.GetLogger (typeof (TraceUtil));
+        
         /// <summary>
-        /// Process the server response.
+        ///     Create a new instance of the trace util.
         /// </summary>
-        /// <param name="cvsStream"></param>
-        /// <param name="services"></param>
-	    public void Process(CvsStream cvsStream, IResponseServices services)
-	    {
-	    	string date = cvsStream.ReadLine();
-	    	services.NextFileDate = date;
-	    }
-	    
+        public TraceUtil () {
+        }
+        
         /// <summary>
-        /// Response terminates transaction: <code>false</code>.
+        ///     Log a debug message with a stack trace.
         /// </summary>
-		public bool IsTerminating {
-			get {
-				return false;
-			}
-		}
-	}
+        /// <param name="message">The message to log with the stack 
+        ///     trace.</param>
+        public static void Debug (String message) {
+            if (LOGGER.IsDebugEnabled) {
+    	        System.Diagnostics.StackTrace trace = 
+    	            new System.Diagnostics.StackTrace ();		        
+
+                String msg = "";
+                if (null != message) {
+                    msg = msg + "message=[" + message + "]";
+                }
+    	        msg = msg + "stackTrace=[" + trace.ToString () + "]";
+    	        LOGGER.Debug (msg);            
+            }
+        }
+        
+        /// <summary>
+        ///     Log stack trace.
+        /// </summary>
+        public static void Debug () {
+            TraceUtil.Debug (null);
+        }
+    }
 }

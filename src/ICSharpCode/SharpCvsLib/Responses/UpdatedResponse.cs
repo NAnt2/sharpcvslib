@@ -37,6 +37,7 @@ using System.IO;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.Messages;
 
 using log4net;
 
@@ -111,6 +112,13 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 			services.NextFileDate = null;
 			
 	        manager.SetFileTimeStamp (localPathAndFilename, e.TimeStamp);
+	        
+	        UpdateMessage message = new UpdateMessage ();
+	        message.Module = services.Repository.ModuleName;
+	        message.Repository =  orgPath.RelativePath;
+	        message.Filename = e.Name;
+	        services.SendMessage (message.Message);
+
 	    }
 	    
         /// <summary>
