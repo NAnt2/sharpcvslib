@@ -95,35 +95,55 @@ namespace ICSharpCode.SharpCvsLib.Console {
 </configuration>
 ";
 
+        private static string DefaultConfig {
+            get {return DEFAULT_CONFIG.Replace("'", "\"");}
+        }
+
         /// <summary>
         /// Command line arguments.
         /// </summary>
         public string[] Args {
             get {return this._args;}
             set {this._args = value;}
+        } 
+
+        /// <summary>
+        /// Initialize the logger class.
+        /// </summary>
+        public static void InitLog4net () {
+            try {
+                FileInfo configFile = new FileInfo(
+                    Path.Combine(Path.GetTempPath(), "ICSharpCode.Console" + ".dll.config"));
+                if (!configFile.Exists) {
+                    StreamWriter writer = null;
+                    try {
+                        writer = configFile.CreateText();
+                        writer.Write(DefaultConfig);
+                    } finally {
+                        if (null != writer) {
+                            writer.Close();
+                        }
+                    }
+                }
+                log4net.Config.DOMConfigurator.Configure(configFile);
+            } catch (Exception) {
+                BasicConfigurator.Configure();
+            }
         }
 
         /// <summary>Constructor.
         ///     TODO: Fill in more of a usage/ explanation.</summary>
         public ConsoleMain () {
             try {
-                LOGGER = LogManager.GetLogger(typeof(ConsoleMain));
-            } catch (Exception) {
-                try {
-                    DOMConfigurator.Configure(WriteDefaultConfig());
-                } catch (Exception) {
-                    BasicConfigurator.Configure();
-                }
+                LOGGER = log4net.LogManager.GetLogger(typeof(ConsoleMain));
+            } finally {
+                // do nothing
             }
         }
 
-        private MemoryStream WriteDefaultConfig () {
-            MemoryStream stream = new MemoryStream();
-            try {
-                stream.Write(Encoding.UTF8.GetBytes(DEFAULT_CONFIG), 0, DEFAULT_CONFIG.Length);
-            }catch (Exception) {
-                //System.Console.WriteLine(e);
-            }
+        private static MemoryStream WriteDefaultConfig () {
+            byte[] data = new byte[DefaultConfig.Length];
+            MemoryStream stream = new MemoryStream(data, 0, DefaultConfig.Length);;
             return stream;
         }
 
@@ -145,26 +165,15 @@ namespace ICSharpCode.SharpCvsLib.Console {
             string[] args = this._args;
             CommandLineParser parser = new CommandLineParser (args);
 
-//            if (LOGGER.IsDebugEnabled) {
-//                StringBuilder msg = new StringBuilder();
-//                msg.Append(Environment.NewLine).Append("Using arguments:");
-//                foreach (String arg in args) {
-//                    msg.Append(Environment.NewLine).Append("\t arg1=[").Append(arg).Append("]");
-//                }
-//                LOGGER.Debug(msg);
-//            }
             ICommand command = null;
             try {
                 command = parser.Execute ();
             } catch (CommandLineParseException e) {
-//                LOGGER.Debug (e);
                 System.Console.WriteLine(
                     String.Format("{0}{1}{2}",
                         Usage.General, Environment.NewLine, e.Message));
                 return;
             }
-
-//            LOGGER.Debug("command type: " + command.GetType());
 
             if (null != command) {
                 // might need to move this up to the library, make working
