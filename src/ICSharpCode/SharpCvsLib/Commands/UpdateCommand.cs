@@ -62,17 +62,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         bool hasDate = false;    // DateTime is a value type so we can't use null to indicate it hasn't been set
         DateTime date = new DateTime();
 
-        private class Arguments {
-            /// <summary>
-            /// Purge any local directories that are empty.  This is a client function
-            ///     and nothing is done on the server.
-            /// </summary>
-            public const String PURGE = "-P";
-            /// <summary>
-            /// Create any new directories that do not exist on the client.
-            /// </summary>
-            public const String CREATE_NEW_DIRECTORIES = "-d";
-        }
+        private bool resetStickyTags;
+
         /// <summary>
         /// Log message.
         /// </summary>
@@ -169,6 +160,18 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         }
 
         /// <summary>
+        /// Reset any sticky tags/date/kopts.
+        /// </summary>
+        /// <value><code>true</code> to send the reset sticky tag request to
+        ///     the server.  
+        ///     <br/>
+        ///     [Default = false]</value>
+        public bool ResetStickyTags {
+            get { return this.resetStickyTags; }
+            set { this.resetStickyTags = value; }
+        }
+
+        /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="workingDirectory"></param>
@@ -207,6 +210,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                 if (workingDirectory.HasDate) {
                     connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.DATE));
                     connection.SubmitRequest(new ArgumentRequest(workingDirectory.GetDateAsString()));
+                }
+
+                if (this.ResetStickyTags) {
+                    connection.SubmitRequest (new ArgumentRequest(ArgumentRequest.Options.RESET_STICKY_TAGS));
                 }
                 
                 foreach (DictionaryEntry dicEntry  in folder.Entries) {
