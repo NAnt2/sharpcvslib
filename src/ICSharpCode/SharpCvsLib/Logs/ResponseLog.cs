@@ -69,7 +69,7 @@ namespace ICSharpCode.SharpCvsLib.Logs {
         /// </summary>
         /// <param name="message">A message to output to the log.</param>
         public void Log (String message) {
-            if (null != message || String.Empty != message) {
+            if (null != message || message.Length != 0) {
                 StringBuilder msg = new StringBuilder ();
                 msg.Append(message);
                 if (this.settings.Log.DebugLog.LogStackTrace) {

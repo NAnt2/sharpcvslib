@@ -68,7 +68,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
         /// </summary>
         public String Password {
             get {
-                if (null == this.password || String.Empty == this.password) {
+                if (null == this.password || this.password.Length == 0) {
                     String home = Environment.GetEnvironmentVariable(VAR_HOME);
                     if (null != home) {
                         String varHomePath = 
@@ -85,7 +85,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
                                 String passFilePassword = passLine.Substring(passLine.IndexOf(" "), passLine.Length);
 
                                 if (null != passFileCvsRoot && 
-                                    String.Empty != passFileCvsRoot &&
+                                    passFileCvsRoot.Length != 0 &&
                                     this.cvsroot.Equals (passFileCvsRoot)) {
                                     this.password = passFilePassword;
                                     break;

@@ -150,8 +150,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Assert.AreEqual ("1.1", entry.Revision);
             Assert.AreEqual ("Tue May 13 05:10:17 2003", entry.Date);
             Assert.IsTrue (entry.Conflict == null);
-            Assert.IsTrue (entry.Options.Equals (""));
-            Assert.IsTrue (entry.Tag.Equals (""));
+            Assert.IsTrue (entry.Options.Length == 0);
+            Assert.IsTrue (entry.Tag.Length == 0);
 
             Assert.IsTrue (entry.TimeStamp.Day == 13);
             Assert.IsTrue (entry.TimeStamp.Month == 5);
@@ -186,8 +186,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             //Assert.IsTrue (entry.Date, entry.Date.Equals ("Fri Jan 03 04:07:36"));
             Assert.AreEqual ("03 Jan 2003 04:07:36 -0000", entry.Date);
             Assert.AreEqual (null, entry.Conflict);
-            Assert.AreEqual ("", entry.Options);
-            Assert.AreEqual ("", entry.Tag);
+            Assert.AreEqual (0, entry.Options.Length);
+            Assert.AreEqual (0, entry.Tag.Length);
 
             Assert.AreEqual (3, entry.TimeStamp.Day);
             Assert.AreEqual (1, entry.TimeStamp.Month);

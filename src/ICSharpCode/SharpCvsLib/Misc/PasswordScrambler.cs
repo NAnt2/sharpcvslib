@@ -98,7 +98,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
                 String msg = "text to scramble=[" + text + "]";
                 LOGGER.Debug (msg);
             }
-            if (text == null || text == String.Empty) {
+            if (text == null || text.Length == 0) {
                 return str;
             }
 

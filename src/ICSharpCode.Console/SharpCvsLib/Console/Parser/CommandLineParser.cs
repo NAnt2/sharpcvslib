@@ -148,7 +148,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             if (match.Groups.Count > 0) {
                 string newLevelString = match.Groups[1].Value;
 
-                if (null != newLevelString && String.Empty != newLevelString) {
+                if (null != newLevelString && newLevelString.Length != 0) {
                     log4net.Core.LevelMap map = log4net.LogManager.GetRepository().LevelMap;
                     log4net.Core.Level newLevel = map[newLevelString];
                     log4net.LogManager.GetRepository().Threshold = newLevel;

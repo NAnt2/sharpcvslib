@@ -62,7 +62,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.LogReporter
 		/// </summary>
 	    public string WorkingFnm {
 	        get { 
-                if ((null == this.workingFnm || String.Empty == this.workingFnm) 
+                if ((null == this.workingFnm || this.workingFnm.Length == 0) 
                     && this.RepositoryFnm.Length >= 2) {
                     // remove the ,v from the end of the file.
                     string temp = this.RepositoryFnm.Substring(0, this.RepositoryFnm.Length - 2);

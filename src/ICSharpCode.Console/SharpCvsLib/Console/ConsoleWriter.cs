@@ -98,7 +98,7 @@ namespace ICSharpCode.SharpCvsLib.Console
         /// <param name="prefix"></param>
         public void WriteLine(string message, string prefix) {
             string formattedMessage = null;
-            if (UsePrefix && null != prefix && String.Empty != prefix) {
+            if (UsePrefix && null != prefix && prefix.Length != 0) {
                 formattedMessage = String.Format("[{0}]: {1}", prefix, message);
             } else {
                 formattedMessage = String.Format("{0}", message);

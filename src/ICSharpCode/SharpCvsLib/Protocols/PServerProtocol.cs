@@ -93,7 +93,7 @@ namespace ICSharpCode.SharpCvsLib.Protocols
         /// Connect to the cvs server.
         /// </summary>
         public override void Connect () {
-            if (null == this.Password || string.Empty == this.Password) {
+            if (null == this.Password || this.Password.Length == 0) {
                 this.Password = this.GetPassword();
             }
             this.HandlePserverAuthentication(this.Password);

@@ -160,7 +160,7 @@ Thanks for using the command line tool.";
             msg.Append ("CVS command synonyms are:").Append(Environment.NewLine);
             // loop through commands for synonyms
             foreach(Command command in commands.Values) {
-                if (command.Nick1 != null && command.Nick1 != String.Empty) {
+                if (command.Nick1 != null && command.Nick1.Length != 0) {
                     string syn_output = String.Format("        {0,-11}  {1} {2}",
                                                       command.First, command.Nick1, command.Nick2);
                     msg.Append (syn_output);

@@ -62,7 +62,7 @@ public class EncodedMessage {
     public void SendMessage (String message) {
         if (null != MessageEvent && 
             null != message && 
-            String.Empty != message) {
+            message.Length != 0) {
             MessageEvent(message);
         }
     }

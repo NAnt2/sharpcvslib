@@ -182,7 +182,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
             try {
                 // create CvsRoot object parameter
-                if (localDirectory == null || localDirectory == String.Empty) {
+                if (localDirectory == null || localDirectory.Length == 0) {
                     localDirectory = Environment.CurrentDirectory;
                 }
                 this.CurrentWorkingDirectory = new WorkingDirectory(this.CvsRoot,

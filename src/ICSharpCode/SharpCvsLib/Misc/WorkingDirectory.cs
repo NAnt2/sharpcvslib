@@ -130,7 +130,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         get {
             if (null != this.LocalDirectory) {
                 string tempWorkingPath;
-                if (null == this.WorkingDirectoryName || string.Empty == this.WorkingDirectoryName) {
+                if (null == this.WorkingDirectoryName || this.WorkingDirectoryName.Length == 0) {
                     tempWorkingPath = this.LocalDirectory;
                 } else {
                     tempWorkingPath = Path.Combine(this.LocalDirectory, this.WorkingDirectoryName);
@@ -250,7 +250,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         ///     specified; <code>false</code> otherwise.</returns>
         public bool HasOverrideDirectory {
             get {return !(null == this.OverrideDirectory) && 
-                     !(String.Empty == this.OverrideDirectory);}
+                     !(this.OverrideDirectory.Length == 0);}
         }
 
         /// <summary>

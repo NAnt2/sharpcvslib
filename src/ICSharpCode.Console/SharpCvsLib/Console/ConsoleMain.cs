@@ -275,8 +275,8 @@ namespace ICSharpCode.SharpCvsLib.Console {
 
         private string GetPassword(CommandLineParser parser, WorkingDirectory workingDir) {
             string pwd = null;
-            if (null != parser && null != parser.Password && String.Empty 
-                != parser.Password) {
+            if (null != parser && null != parser.Password &&
+				parser.Password.Length != 0) {
                 pwd = parser.Password;
             } else {
                 LoginCommand loginCommand = new LoginCommand(workingDir.CvsRoot);

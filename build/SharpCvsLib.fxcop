@@ -41,6 +41,25 @@
   <Targets>
    <Target Name="$(ProjectDir)/../bin/ICSharpCode.SharpCvsLib.Tests.dll">
     <Messages>
+     <Message Status="Excluded" Created="2004-11-01 20:25:45Z">
+      <Rule TypeName="AssembliesHaveStrongNames" />
+      <Issues>
+       <Issue Certainty="95" Level="Error">
+        <Resolution>
+         <Data>
+          <Items>
+           <Item>ICSharpCode.SharpCvsLib.Tests</Item>
+          </Items>
+         </Data>
+        </Resolution>
+       </Issue>
+      </Issues>
+      <Notes>
+       <User Name="nicke">
+        <Note ID="1" />
+       </User>
+      </Notes>
+     </Message>
      <Message Status="Excluded" Created="2004-10-17 14:44:03Z">
       <Rule TypeName="AssembliesHaveVersionNumbers" />
       <Issues>
@@ -61,14 +80,93 @@
       </Notes>
      </Message>
     </Messages>
+    <Modules>
+     <Module Name="icsharpcode.sharpcvslib.tests.dll">
+      <Namespaces>
+       <Namespace Name="ICSharpCode.SharpCvsLib.Misc">
+        <Classes>
+         <Class Name="PasswordScramblerTest">
+          <Constructors>
+           <Constructor Name=".ctor()">
+            <Messages>
+             <Message Status="Excluded" Created="2004-11-01 20:25:45Z">
+              <Rule TypeName="ConsiderJaggedArrayInsteadOfMultiDimensionalArray" />
+              <Issues>
+               <Issue Certainty="25" Level="Warning">
+                <SourceCode Path="c:\Develop\sharpcvslib\src\ICSharpCode.Tests\SharpCvsLib\Misc" File="PasswordScramblerTest.cs" Line="56" />
+                <Resolution>
+                 <Data>
+                  <Id>Uses</Id>
+                  <Items>
+                   <Item>PasswordScramblerTest..ctor()</Item>
+                   <Item>System.Char[,]</Item>
+                  </Items>
+                 </Data>
+                </Resolution>
+               </Issue>
+              </Issues>
+              <Notes>
+               <User Name="nicke">
+                <Note ID="2" />
+               </User>
+              </Notes>
+             </Message>
+            </Messages>
+           </Constructor>
+          </Constructors>
+          <Fields>
+           <Field Name="charMapping">
+            <Messages>
+             <Message Status="Excluded" Created="2004-11-01 20:25:45Z">
+              <Rule TypeName="ConsiderJaggedArrayInsteadOfMultiDimensionalArray" />
+              <Issues>
+               <Issue Certainty="25" Level="Warning">
+                <Resolution>
+                 <Data>
+                  <Id>Default</Id>
+                  <Items>
+                   <Item>charMapping</Item>
+                  </Items>
+                 </Data>
+                </Resolution>
+               </Issue>
+              </Issues>
+              <Notes>
+               <User Name="nicke">
+                <Note ID="2" />
+               </User>
+              </Notes>
+             </Message>
+            </Messages>
+           </Field>
+          </Fields>
+         </Class>
+        </Classes>
+       </Namespace>
+      </Namespaces>
+     </Module>
+    </Modules>
    </Target>
   </Targets>
   <Notes>
    <User Name="nicke">
     <Note ID="0" Modified="2004-10-17 14:45:21Z">The attribute is set to 0.0.0.0 since the test assembly is not a part of a production release. This message therefore has no bearing</Note>
+    <Note ID="1" Modified="2004-11-01 20:29:52Z">As this is a test assembly it won't be released and hence needs not be signed.</Note>
+    <Note ID="2" Modified="2004-11-01 20:38:59Z">We want CLS compliance, this rule does not apply.</Note>
    </User>
   </Notes>
   <Rules>
+   <Rule TypeName="AssembliesHaveStrongNames">
+    <Name>Assemblies have strong names</Name>
+    <Description>Assemblies with strong names can be placed in the global assembly cache and can be checked for tampering at run time.</Description>
+    <LongDescription>The common language runtime compares the key in the assembly's manifest to the key used to generate the strong name, to ensure that the assembly's bits have not been tampered with.</LongDescription>
+    <GroupOwner>MS FxCopDev</GroupOwner>
+    <DevOwner />
+    <Url>http://www.gotdotnet.com/team/fxcop/docs/rules/DesignRules/AssembliesHaveStrongNames.html</Url>
+    <Email>askfxcop@microsoft.com</Email>
+    <MessageLevel Certainty="95">Error</MessageLevel>
+    <File Name="DesignRules.dll" Version="1.30.0.0" />
+   </Rule>
    <Rule TypeName="AssembliesHaveVersionNumbers">
     <Name>Assemblies have version numbers</Name>
     <Description>Assemblies should use version numbers. The version number is considered part of an assembly's identity.</Description>
@@ -79,6 +177,17 @@
     <Email>askfxcop@microsoft.com</Email>
     <MessageLevel Certainty="95">Error</MessageLevel>
     <File Name="DesignRules.dll" Version="1.30.0.0" />
+   </Rule>
+   <Rule TypeName="ConsiderJaggedArrayInsteadOfMultiDimensionalArray">
+    <Name>Consider using jagged arrays instead of multidimensional arrays</Name>
+    <Description>Multidimensional arrays can have a negative impact on performance.  Use a jagged array if possible.</Description>
+    <LongDescription> Jagged arrays are not CLS-compliant. If CLS compliance is needed, exclude violations of this rule.</LongDescription>
+    <GroupOwner>MS FxCopDev</GroupOwner>
+    <DevOwner />
+    <Url>http://www.gotdotnet.com/team/fxcop/docs/rules/Performance/JaggedArray.html</Url>
+    <Email>askfxcop@microsoft.com</Email>
+    <MessageLevel Certainty="25">Warning</MessageLevel>
+    <File Name="PerformanceRules.dll" Version="1.30.0.0" />
    </Rule>
   </Rules>
  </FxCopReport>

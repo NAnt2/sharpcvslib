@@ -161,7 +161,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 
         private string PortString {
             set {
-                if (value != null || value != String.Empty) {
+                if (value != null || value.Length != 0) {
                     try {
                         this.Port = Convert.ToInt32(value);
                     } catch (FormatException) {
@@ -284,7 +284,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         }
 
         private void AssertNotEmpty(string value, string fieldName) {
-            if (null == value || String.Empty == value) {
+            if (null == value || value.Length == 0) {
                 throw new CvsRootParseException(
                     String.Format("{0} must contain a value.", fieldName));
             }

@@ -299,7 +299,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             if (this.LocalTime) {
                 connection.SubmitRequest(new ArgumentRequest(Option.LOCAL_TIME));
             }
-            if (null != this.Tag && string.Empty != this.Tag) {
+            if (null != this.Tag && this.Tag.Length != 0) {
                 connection.SubmitRequest(new ArgumentRequest(Option.TAG));
             }
             if (this.Prune) {

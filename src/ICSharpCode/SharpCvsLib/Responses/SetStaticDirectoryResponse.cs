@@ -68,7 +68,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 
             if (!Directory.Exists (pathTranslator.LocalPath)) {
                 if (!(pathTranslator.LocalPath == null && 
-                    pathTranslator.LocalPath == String.Empty)) {
+                    pathTranslator.LocalPath.Length == 0)) {
                     Directory.CreateDirectory (pathTranslator.LocalPath);
                 }
             }

@@ -229,7 +229,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                     str += "/";
 
                     if (date != null &&
-                            date != String.Empty &&
+                            date.Length != 0 &&
                             !this.IsDirectory) {
                         String dateString;
                         dateString =
