@@ -62,6 +62,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private string options;
         private string repository;
         private string singleOptions;
+        private string files;
 
         private const String ENV_CVS_ROOT = "CVS_ROOT";
 
@@ -87,6 +88,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// </summary>
         public String Command {
             get {return this.command;}
+        }
+        /// <summary>
+        /// Value of the repository to use as a string.  This will be passed
+        ///     into the RemoveCommand object which will know which files to get.
+        /// </summary>
+        public String Files {
+            get {return this.files;}
         }
 
         /// <summary>
@@ -218,11 +226,56 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         }
                         break;
                     case "login":
+                    case "logon":
+                    case "lgn":
                         // login to server
                         this.command = arguments[i];
                         break;
                     case "passwd":
+                    case "password":
+                    case "setpass":
                         this.command = arguments[i];
+                        break;
+                    case "remove":
+                    case "delete":
+                    case "rm":
+                        singleOptions = "Rfl";
+                        this.command = arguments[i++];
+                        // get rest of arguments which is options on the update command.
+                        while (arguments[i].IndexOf("-", 0, 1) >= 0) {
+                            // Get options with second parameters?
+                            if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
+                                for ( int cnt=1; cnt < arguments[i].Length; cnt++ ) {
+                                    this.options = this.options + "-" + arguments[i][cnt] + " "; // No
+                                }
+                            } 
+                            else {
+                                this.options = this.options + arguments[i];       // Yes
+                                this.options = this.options + arguments[i] + " ";
+                            }
+                            i++;
+                        }
+                        if (arguments.Length > i) {
+                            // Safely grab the module, if not specified then
+                            //  pass null into the repository...the cvs command
+                            //  line for cvsnt/ cvs seems to bomb out when
+                            //  it sends to the server
+                            this.files = arguments[i++];
+                        } 
+                        else {
+                            this.files = String.Empty;
+                        }
+                        try {
+                            ICSharpCode.SharpCvsLib.Console.Commands.RemoveCommand removeCommand = 
+                                new ICSharpCode.SharpCvsLib.Console.Commands.RemoveCommand(this.CvsRoot, files, options);
+                            command = removeCommand.CreateCommand ();
+                            this.currentWorkingDirectory = 
+                                removeCommand.CurrentWorkingDirectory;
+                        } 
+                        catch (Exception e) {
+                            LOGGER.Error(e);
+                            throw new CommandLineParseException("Unable to create remove command.", e);
+                        }
                         break;
                     case "up":
                     case "upd":
@@ -242,17 +295,26 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             }
                             i++;
                         }
-                        if (arguments.Length > i)
-                        {
+                        if (arguments.Length > i) {
                             // Safely grab the module, if not specified then
                             //  pass null into the repository...the cvs command
                             //  line for cvsnt/ cvs seems to bomb out when
                             //  it sends to the server
                             this.repository = arguments[i++];
                         } 
-                        else 
-                        {
+                        else {
                             this.repository = String.Empty;
+                        }
+                        try {
+                            UpdateCommand updateCommand = 
+                                new UpdateCommand(this.CvsRoot, repository, options);
+                            command = updateCommand.CreateCommand ();
+                            this.currentWorkingDirectory = 
+                                updateCommand.CurrentWorkingDirectory;
+                        } 
+                        catch (Exception e) {
+                            LOGGER.Error(e);
+                            throw new CommandLineParseException("Unable to create update command.", e);
                         }
                         break;
                     default:
