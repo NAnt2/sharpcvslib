@@ -1,19 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<FxCopProject Version="1.3" Name="SharpCvsLib FxCop Project">
+<FxCopProject Version="1.312" Name="SharpCvsLib FxCop Project">
  <ProjectOptions>
   <SharedProject>True</SharedProject>
   <Stylesheet Apply="False">c:\program files\microsoft fxcop 1.30\Xml\FxCopReport.Xsl</Stylesheet>
   <SaveMessages>
    <Project Status="Excluded" NewOnly="False" />
-   <Report Status="0" NewOnly="False" />
+   <Report Status="None" NewOnly="False" />
   </SaveMessages>
   <ProjectFile Compress="True" DefaultTargetCheck="True" DefaultRuleCheck="True" SaveByRuleGroup="" Deterministic="True" />
   <PermitAnalysis>True</PermitAnalysis>
-  <EnableControlFlowAnalysis>True</EnableControlFlowAnalysis>
+  <EnableMultithreadedLoad>True</EnableMultithreadedLoad>
+  <EnableMultithreadedAnalysis>True</EnableMultithreadedAnalysis>
   <SourceLookup>True</SourceLookup>
   <AnalysisExceptionsThreshold>1000</AnalysisExceptionsThreshold>
   <RuleExceptionsThreshold>1000</RuleExceptionsThreshold>
   <Spelling Locale="en-us" />
+  <VersionAware>False</VersionAware>
+  <OverrideRuleVisibilities>False</OverrideRuleVisibilities>
+  <CustomDictionaries SearchFxCopDir="True" SearchUserProfile="True" SearchProjectDir="True" />
  </ProjectOptions>
  <Targets>
   <AssemblyReferenceDirectories>
@@ -26,158 +30,111 @@
  </Targets>
  <Rules>
   <RuleFiles>
-   <RuleFile Name="$(FxCopDir)\Rules\ComRules.dll" Enabled="True" AllRulesEnabled="True" />
    <RuleFile Name="$(FxCopDir)\Rules\DesignRules.dll" Enabled="True" AllRulesEnabled="True" />
    <RuleFile Name="$(FxCopDir)\Rules\GlobalizationRules.dll" Enabled="False" AllRulesEnabled="False" />
+   <RuleFile Name="$(FxCopDir)\Rules\InteroperabilityRules.dll" Enabled="True" AllRulesEnabled="True" />
+   <RuleFile Name="$(FxCopDir)\Rules\MobilityRules.dll" Enabled="True" AllRulesEnabled="True" />
    <RuleFile Name="$(FxCopDir)\Rules\NamingRules.dll" Enabled="True" AllRulesEnabled="True" />
    <RuleFile Name="$(FxCopDir)\Rules\PerformanceRules.dll" Enabled="True" AllRulesEnabled="True" />
    <RuleFile Name="$(FxCopDir)\Rules\SecurityRules.dll" Enabled="True" AllRulesEnabled="True" />
    <RuleFile Name="$(FxCopDir)\Rules\UsageRules.dll" Enabled="True" AllRulesEnabled="False">
-    <Rule Name="ExceptionsShouldNotBeThrownFromFilterBlocks" Enabled="True" />
-    <Rule Name="DisposeMethodsCallBaseClassDispose" Enabled="True" />
-    <Rule Name="ResourceFilesAreBuiltUsingReleaseVersions" Enabled="True" />
-    <Rule Name="AssembliesHaveValidStrongNames" Enabled="True" />
-    <Rule Name="AssembliesHavePermissionRequests" Enabled="True" />
-    <Rule Name="AvoidNonConstantStaticFields" Enabled="True" />
-    <Rule Name="FinalizeMethodsCallBaseClassFinalize" Enabled="True" />
-    <Rule Name="UseParamsForVariableArguments" Enabled="True" />
-    <Rule Name="OperatorOverloadsHaveNamedAlternativeMethods" Enabled="True" />
-    <Rule Name="OperatorEqualsOverridesRequireEqualsOverride" Enabled="True" />
-    <Rule Name="ParameterNamesShouldBeSpelledCorrectly" Enabled="True" />
-    <Rule Name="ValueTypesEqualsOverridesRequireOperatorEqualsOverride" Enabled="True" />
-    <Rule Name="ExceptionsAreMarkedSerializable" Enabled="True" />
-    <Rule Name="NamespaceNamesShouldBeSpelledCorrectly" Enabled="True" />
-    <Rule Name="TypeNamesShouldBeSpelledCorrectly" Enabled="True" />
-    <Rule Name="DisposeMethodsRequireFinalizeMethod" Enabled="True" />
-    <Rule Name="PropertiesReturningCollectionsShouldBeReadOnly" Enabled="True" />
-    <Rule Name="ValueTypesWithStaticConstructorsAreMarkedBeforeFieldInit" Enabled="True" />
-    <Rule Name="EqualsOverridesRequireGetHashCodeOverride" Enabled="True" />
-    <Rule Name="WindowsFormsApplicationsAreMarkedStaThread" Enabled="True" />
-    <Rule Name="PInvokeOnlyValidEntryPoints" Enabled="True" />
-    <Rule Name="EnumerationsShouldNotBeFlagsAttributed" Enabled="True" />
-    <Rule Name="AvoidWebMethodAttributedServicedComponentMembers" Enabled="True" />
-    <Rule Name="OperatorsHaveSymmetricalOverloads" Enabled="True" />
-    <Rule Name="ValueTypesWithRvaFieldsDoNotHaveNonPublicFields" Enabled="True" />
-    <Rule Name="ConstructorsShouldNotCallBaseClassVirtualMethods" Enabled="True" />
-    <Rule Name="MembersDifferByMoreThanReturnType" Enabled="True" />
-    <Rule Name="OperationsDoNotOverflowDataTypeCapacity" Enabled="True" />
-    <Rule Name="ConsiderCallingDataMembersDisposeMethod" Enabled="True" />
-    <Rule Name="SerializableTypesShouldHaveMagicConstructor" Enabled="True" />
-    <Rule Name="FinalizeMethodsHaveProtectedAccessLevel" Enabled="True" />
-    <Rule Name="CallArgumentExceptionWithCorrectArguments" Enabled="True" />
-    <Rule Name="InheritedPublicMembersDoNotChangeToPrivate" Enabled="True" />
+    <Rule Name="AssembliesShouldDeclareMinimumSecurity" Enabled="True" />
+    <Rule Name="CollectionPropertiesShouldBeReadOnly" Enabled="True" />
+    <Rule Name="DisposableFieldsShouldBeDisposed" Enabled="True" />
+    <Rule Name="DisposableTypesShouldDeclareFinalizer" Enabled="True" />
+    <Rule Name="DisposeMethodsShouldCallBaseClassDispose" Enabled="True" />
+    <Rule Name="DoNotCallOverridableMethodsInConstructors" Enabled="True" />
+    <Rule Name="DoNotDecreaseInheritedMemberVisibility" Enabled="True" />
+    <Rule Name="DoNotMarkEnumsWithFlags" Enabled="True" />
+    <Rule Name="DoNotMarkServicedComponentsWithWebMethod" Enabled="True" />
+    <Rule Name="DoNotRaiseExceptionsInFilterBlocks" Enabled="True" />
+    <Rule Name="DoNotShipUnreleasedResourceFormats" Enabled="True" />
+    <Rule Name="FinalizersShouldBeProtected" Enabled="True" />
+    <Rule Name="FinalizersShouldCallBaseClassFinalizer" Enabled="True" />
+    <Rule Name="ImplementSerializationConstructors" Enabled="True" />
+    <Rule Name="InitializeValueTypeStaticFieldsInline" Enabled="True" />
+    <Rule Name="InstantiateArgumentExceptionsCorrectly" Enabled="True" />
+    <Rule Name="MarkISerializableTypesWithSerializable" Enabled="True" />
+    <Rule Name="MarkWindowsFormsEntryPointsWithStaThread" Enabled="True" />
+    <Rule Name="MembersShouldDifferByMoreThanReturnType" Enabled="True" />
+    <Rule Name="NonConstantFieldsShouldNotBeVisible" Enabled="True" />
+    <Rule Name="OperationsShouldNotOverflow" Enabled="True" />
+    <Rule Name="OperatorOverloadsHaveNamedAlternates" Enabled="True" />
+    <Rule Name="OperatorsShouldHaveSymmetricalOverloads" Enabled="True" />
+    <Rule Name="OverrideEqualsOnOverridingOperatorEquals" Enabled="True" />
+    <Rule Name="OverrideGetHashCodeOnOverridingEquals" Enabled="True" />
+    <Rule Name="OverrideOperatorEqualsOnOverridingValueTypeEquals" Enabled="True" />
     <Rule Name="PassSystemUriObjectsInsteadOfStrings" Enabled="True" />
-    <Rule Name="ResourceStringsShouldBeSpelledCorrectly" Enabled="True" />
+    <Rule Name="UseParamsForVariableArguments" Enabled="True" />
    </RuleFile>
   </RuleFiles>
   <Groups />
   <Settings />
  </Rules>
- <FxCopReport Version="1.3">
+ <FxCopReport Version="1.312">
   <Targets>
    <Target Name="$(ProjectDir)/../bin/ICSharpCode.SharpCvsLib.Tests.dll">
-    <Messages>
-     <Message Status="Excluded" Created="2004-11-01 20:25:45Z">
-      <Rule TypeName="AssembliesHaveStrongNames" />
-      <Issues>
-       <Issue Certainty="95" Level="Error">
-        <Resolution>
-         <Data>
-          <Items>
-           <Item>ICSharpCode.SharpCvsLib.Tests</Item>
-          </Items>
-         </Data>
-        </Resolution>
-       </Issue>
-      </Issues>
-      <Notes>
-       <User Name="nicke">
-        <Note ID="1" />
-       </User>
-      </Notes>
-     </Message>
-     <Message Status="Excluded" Created="2004-10-17 14:44:03Z">
-      <Rule TypeName="AssembliesHaveVersionNumbers" />
-      <Issues>
-       <Issue Certainty="95" Level="Error">
-        <Resolution>
-         <Data>
-          <Items>
-           <Item>ICSharpCode.SharpCvsLib.Tests</Item>
-          </Items>
-         </Data>
-        </Resolution>
-       </Issue>
-      </Issues>
-      <Notes>
-       <User Name="nicke">
-        <Note ID="0" />
-       </User>
-      </Notes>
-     </Message>
-    </Messages>
     <Modules>
      <Module Name="icsharpcode.sharpcvslib.tests.dll">
+      <Messages>
+       <Message TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210" Status="Excluded" Created="2004-11-01 20:25:45Z" FixCategory="Breaking">
+        <Issue Name="NoStrongName">
+         <Item>ICSharpCode.SharpCvsLib.Tests</Item>
+        </Issue>
+        <Notes>
+         <User Name="nicke">
+          <Note Id="0" />
+         </User>
+        </Notes>
+       </Message>
+       <Message TypeName="MarkAssembliesWithAssemblyVersion" Category="Microsoft.Design" CheckId="CA1016" Status="Excluded" Created="2004-10-17 14:44:03Z" FixCategory="Breaking">
+        <Issue>
+         <Item>ICSharpCode.SharpCvsLib.Tests</Item>
+        </Issue>
+        <Notes>
+         <User Name="nicke">
+          <Note Id="1" />
+         </User>
+        </Notes>
+       </Message>
+      </Messages>
       <Namespaces>
        <Namespace Name="ICSharpCode.SharpCvsLib.Misc">
-        <Classes>
-         <Class Name="PasswordScramblerTest">
-          <Constructors>
-           <Constructor Name=".ctor()">
+        <Types>
+         <Type Name="PasswordScramblerTest">
+          <Members>
+           <Member Name=".ctor()">
             <Messages>
-             <Message Status="Excluded" Created="2004-11-01 20:25:45Z">
-              <Rule TypeName="ConsiderJaggedArrayInsteadOfMultiDimensionalArray" />
-              <Issues>
-               <Issue Certainty="25" Level="Warning">
-                <SourceCode Path="c:\Develop\sharpcvslib\src\ICSharpCode.Tests\SharpCvsLib\Misc" File="PasswordScramblerTest.cs" Line="56" />
-                <Resolution>
-                 <Data>
-                  <Id>Uses</Id>
-                  <Items>
-                   <Item>PasswordScramblerTest..ctor()</Item>
-                   <Item>System.Char[,]</Item>
-                  </Items>
-                 </Data>
-                </Resolution>
-               </Issue>
-              </Issues>
+             <Message TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814" Status="Excluded" Created="2004-11-01 20:25:45Z">
+              <Issue Name="Uses">
+               <Item>PasswordScramblerTest..ctor()</Item>
+               <Item>System.Char[,]</Item>
+              </Issue>
               <Notes>
                <User Name="nicke">
-                <Note ID="2" />
+                <Note Id="2" />
                </User>
               </Notes>
              </Message>
             </Messages>
-           </Constructor>
-          </Constructors>
-          <Fields>
-           <Field Name="charMapping">
+           </Member>
+           <Member Name="charMapping">
             <Messages>
-             <Message Status="Excluded" Created="2004-11-01 20:25:45Z">
-              <Rule TypeName="ConsiderJaggedArrayInsteadOfMultiDimensionalArray" />
-              <Issues>
-               <Issue Certainty="25" Level="Warning">
-                <Resolution>
-                 <Data>
-                  <Id>Default</Id>
-                  <Items>
-                   <Item>charMapping</Item>
-                  </Items>
-                 </Data>
-                </Resolution>
-               </Issue>
-              </Issues>
+             <Message TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814" Status="Excluded" Created="2004-11-01 20:25:45Z">
+              <Issue>
+               <Item>charMapping</Item>
+              </Issue>
               <Notes>
                <User Name="nicke">
-                <Note ID="2" />
+                <Note Id="2" />
                </User>
               </Notes>
              </Message>
             </Messages>
-           </Field>
-          </Fields>
-         </Class>
-        </Classes>
+           </Member>
+          </Members>
+         </Type>
+        </Types>
        </Namespace>
       </Namespaces>
      </Module>
@@ -186,44 +143,43 @@
   </Targets>
   <Notes>
    <User Name="nicke">
-    <Note ID="0" Modified="2004-10-17 14:45:21Z">The attribute is set to 0.0.0.0 since the test assembly is not a part of a production release. This message therefore has no bearing</Note>
-    <Note ID="1" Modified="2004-11-01 20:29:52Z">As this is a test assembly it won't be released and hence needs not be signed.</Note>
-    <Note ID="2" Modified="2004-11-01 20:38:59Z">We want CLS compliance, this rule does not apply.</Note>
+    <Note Id="0" Modified="2004-11-01 20:29:52Z">As this is a test assembly it won't be released and hence needs not be signed.</Note>
+    <Note Id="1" Modified="2004-10-17 14:45:21Z">The attribute is set to 0.0.0.0 since the test assembly is not a part of a production release. This message therefore has no bearing</Note>
+    <Note Id="2" Modified="2004-11-01 20:38:59Z">We want CLS compliance, this rule does not apply.</Note>
    </User>
   </Notes>
   <Rules>
-   <Rule TypeName="AssembliesHaveStrongNames">
-    <Name>Assemblies have strong names</Name>
-    <Description>Assemblies with strong names can be placed in the global assembly cache and can be checked for tampering at run time.</Description>
-    <LongDescription>The common language runtime compares the key in the assembly's manifest to the key used to generate the strong name, to ensure that the assembly's bits have not been tampered with.</LongDescription>
-    <GroupOwner>MS FxCopDev</GroupOwner>
-    <DevOwner />
-    <Url>http://www.gotdotnet.com/team/fxcop/docs/rules/DesignRules/AssembliesHaveStrongNames.html</Url>
+   <Rule TypeName="AssembliesShouldHaveValidStrongNames" Category="Microsoft.Design" CheckId="CA2210">
+    <Name>Assemblies should have valid strong names</Name>
+    <Description>Either the assembly has no strong name, an invalid one, or the strong name is valid only because of the computer configuration. The assembly should not be deployed in this state. The most common causes of this are: 1) The assembly's contents were modified after it was signed. 2) The signing process failed. 3) The assembly was delay-signed. 4) A registry key existed that allowed the check to pass (where it would not have otherwise).</Description>
+    <Resolution Name="Default">Sign '{0}' with a strong name key.</Resolution>
+    <Resolution Name="NoStrongName">Sign '{0}' with a strong name key.</Resolution>
+    <Owner />
+    <Url>http://www.gotdotnet.com/team/fxcop/docs/rules.aspx?version=1.312&amp;&amp;url=/Design/AssembliesShouldHaveValidStrongNames.html</Url>
+    <Email>askfxcop@microsoft.com</Email>
+    <MessageLevel Certainty="95">CriticalError</MessageLevel>
+    <File Name="DesignRules.dll" Version="1.312.0.0" />
+   </Rule>
+   <Rule TypeName="MarkAssembliesWithAssemblyVersion" Category="Microsoft.Design" CheckId="CA1016">
+    <Name>Mark assemblies with assembly version</Name>
+    <Description>Assemblies should use version numbers. The version number is considered part of an assembly's identity. Versioning is applied by means of the AssemblyVersion attribute.</Description>
+    <Resolution Name="Default">Add an AssemblyVersion attribute to '{0}'.</Resolution>
+    <Owner />
+    <Url>http://www.gotdotnet.com/team/fxcop/docs/rules.aspx?version=1.312&amp;&amp;url=/Design/MarkAssembliesWithAssemblyVersion.html</Url>
     <Email>askfxcop@microsoft.com</Email>
     <MessageLevel Certainty="95">Error</MessageLevel>
-    <File Name="DesignRules.dll" Version="1.30.0.0" />
+    <File Name="DesignRules.dll" Version="1.312.0.0" />
    </Rule>
-   <Rule TypeName="AssembliesHaveVersionNumbers">
-    <Name>Assemblies have version numbers</Name>
-    <Description>Assemblies should use version numbers. The version number is considered part of an assembly's identity.</Description>
-    <LongDescription>Versioning is applied by means of the AssemblyVersion attribute.</LongDescription>
-    <GroupOwner>MS FxCopDev</GroupOwner>
-    <DevOwner />
-    <Url>http://www.gotdotnet.com/team/fxcop/docs/rules/DesignRules/AssembliesHaveVersionNumbers.html</Url>
-    <Email>askfxcop@microsoft.com</Email>
-    <MessageLevel Certainty="95">Error</MessageLevel>
-    <File Name="DesignRules.dll" Version="1.30.0.0" />
-   </Rule>
-   <Rule TypeName="ConsiderJaggedArrayInsteadOfMultiDimensionalArray">
-    <Name>Consider using jagged arrays instead of multidimensional arrays</Name>
-    <Description>Multidimensional arrays can have a negative impact on performance.  Use a jagged array if possible.</Description>
-    <LongDescription> Jagged arrays are not CLS-compliant. If CLS compliance is needed, exclude violations of this rule.</LongDescription>
-    <GroupOwner>MS FxCopDev</GroupOwner>
-    <DevOwner />
-    <Url>http://www.gotdotnet.com/team/fxcop/docs/rules/Performance/JaggedArray.html</Url>
+   <Rule TypeName="PreferJaggedArraysOverMultidimensional" Category="Microsoft.Performance" CheckId="CA1814">
+    <Name>Prefer jagged arrays over multidimensional</Name>
+    <Description>Multidimensional arrays can have a negative impact on performance.  Use a jagged array if possible. Jagged arrays are not CLS-compliant. If CLS compliance is needed, exclude violations of this rule.</Description>
+    <Resolution Name="Default">'{0}' is a multidimensional array. Replace it with a jagged array if possible. (Jagged arrays are not CLS Compliant.)</Resolution>
+    <Resolution Name="Uses">'{0}' uses a multidimensional array of '{1}'. Replace with a jagged array, if possible (Jagged array's are not CLS Compliant).</Resolution>
+    <Owner />
+    <Url>http://www.gotdotnet.com/team/fxcop/docs/rules.aspx?version=1.312&amp;&amp;url=/Performance/PreferJaggedArraysOverMultidimensional.html</Url>
     <Email>askfxcop@microsoft.com</Email>
     <MessageLevel Certainty="25">Warning</MessageLevel>
-    <File Name="PerformanceRules.dll" Version="1.30.0.0" />
+    <File Name="PerformanceRules.dll" Version="1.312.0.0" />
    </Rule>
   </Rules>
  </FxCopReport>
