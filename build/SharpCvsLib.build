@@ -262,6 +262,16 @@
                 <include name="**"/>
             </fileset>
         </copy>
+        <zip zipfile="${ccnet.log.dir}/${label-to-apply}/${assembly.version}-src.zip">
+            <fileset basedir="${dir.dist}/src">
+                <include name="**" />
+            </fileset>
+        </zip>
+        <zip zipfile="${ccnet.log.dir}/${label-to-apply}/${assembly.version}-bin.zip">
+            <fileset basedir="${dir.dist}/bin">
+                <include name="**" />
+            </fileset>
+        </zip>
     </target>
     
     <target name="build-release.common">
