@@ -15,10 +15,12 @@ using System.Runtime.InteropServices;
 
 [assembly: ComVisibleAttribute(false)]
 [assembly: CLSCompliantAttribute(true)]
-[assembly: AssemblyVersionAttribute("0.36.3813.2969")]
-[assembly: AssemblyTitleAttribute("SharpCvsLib")]
-[assembly: AssemblyDescriptionAttribute("Cvs client library written in c#")]
-[assembly: AssemblyCopyrightAttribute("Mike Krueger 2001-2002, SharpCvsLib Developers 2003")]
-[assembly: AssemblyCompanyAttribute("SharpCvsLib")]
+[assembly: AssemblyVersionAttribute("0.36.3813.8537")]
+[assembly: AssemblyTitleAttribute("Concurrent Versions System (sharpCVS) (client)")]
+[assembly: AssemblyDescriptionAttribute("win32; net-1.0; 2004/03/13 11:42:58")]
+[assembly: AssemblyCopyrightAttribute("Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004\r\n\r\nCVS may be copied onl" +
+"y under the terms of the GNU General Public License,\r\na copy of which can be fou" +
+"nd with the CVS distribution kit.")]
+[assembly: AssemblyCompanyAttribute("SharpCvsLib - http://sharpcvslib.sourceforge.net")]
 [assembly: ApplicationNameAttribute("SharpCvsLib")]
 

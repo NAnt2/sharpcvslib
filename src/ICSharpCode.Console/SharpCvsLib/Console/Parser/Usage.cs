@@ -40,12 +40,21 @@ using System;
 using System.Text;
 using System.Reflection;
 
+using log4net;
+
 namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
 /// <summary>
 /// Contains the usage message for the command line interface.
 /// </summary>
 public class Usage {
+	private static String version;
+	private static String titleInfo;
+	private static String copyrightInfo;
+	private static String companyInfo;
+	private static String description;
+
+	private static ILog LOGGER = LogManager.GetLogger(typeof(Usage));
 
     /// <summary>Private constructor so the class is never instantiated.</summary>
     private Usage () {
@@ -198,27 +207,93 @@ Thanks for using the command line tool.";
     private static readonly String currentVersion = Usage.GetVersion();
     
     private static String GetVersion () {
-        Assembly a = typeof(Usage).Assembly;
-        String version = a.GetName().Version.ToString();
+		if (null == version) {
+			try {
+				Assembly a = typeof(Usage).Assembly;
+				version = a.GetName().Version.ToString();
+			} catch (Exception e) {
+				version = "Unable to retrieve version information.";
+				LOGGER.Error(version, e);
+			}
+		}
         return version;
     }
+
+	private static String GetTitleInfo () {
+		if (null == titleInfo) {
+			try {
+				titleInfo = ((System.Reflection.AssemblyTitleAttribute)
+					System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyTitleAttribute), false)[0]).Title; 
+			} catch (Exception e) {
+				titleInfo = "Unable to retrieve AssemblyTitleAttribute.";
+				LOGGER.Error(titleInfo, e);
+			}
+		}
+		return titleInfo;
+	}
+
+	private static String GetCopyrightInfo () {
+		if (null == copyrightInfo) {
+			try {
+				copyrightInfo = ((System.Reflection.AssemblyCopyrightAttribute)
+					System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyCopyrightAttribute), false)[0]).Copyright; 
+			} catch (Exception e) {
+				copyrightInfo = "Unable to retrieve AssemblyCopyrightAttribute.";
+				LOGGER.Error (copyrightInfo, e);
+			}
+		}
+		return copyrightInfo;
+
+	}
+
+	private static String GetDescription () {
+		if (null == description) {
+			try {
+				description = ((System.Reflection.AssemblyDescriptionAttribute)
+					System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyDescriptionAttribute), false)[0]).Description; 
+			} catch (Exception e) {
+				description = "Unable to retieve AssemblyDescriptionAttribute.";
+				LOGGER.Error(description, e);
+			}
+		}
+		return description;
+	}
+
+	private static String GetCompanyInfo () {
+		if (null == companyInfo) {
+			try {
+				companyInfo = ((System.Reflection.AssemblyCompanyAttribute)
+					System.Reflection.Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(System.Reflection.AssemblyCompanyAttribute), false)[0]).Company; 
+			} catch (Exception e) {
+				companyInfo = "Unable to retrieve AssemblyCompanyAttribute.";
+				LOGGER.Error(companyInfo, e);
+			}
+		}
+		return companyInfo;
+	}
     
     /// <summary>Gets a string that contains information about the program and version.</summary>
     public static String Version {
         get{
 		
 		String programInfo = @"
-Concurrent Versions System (CVS) {0} (client)
- 
-Copyright (c) 2001-2004 Mike Krueger, Clayton Harbour, 
-			Gerald Evans, Steve Kenzell and other authors.
- 
-CVS may be copied only under the terms of the GNU General Public License,
-a copy of which can be found with the CVS distribution kit.
- 
-Specify the --help option for further information about CVS";
+{0} - {1}
+  Build  : {2}
+  Runtime: {3}; {4}
 
-            return String.Format (programInfo, currentVersion);
+Copyright (c) {5}
+
+Specify the --help option for further information about CVS
+  or see {6}";
+			object[] args = {GetTitleInfo(), 
+								GetVersion(), 
+								GetDescription(),
+								Environment.OSVersion.Platform.ToString(),
+								Environment.OSVersion.Version.ToString(), 
+								GetCopyrightInfo(),
+								GetCompanyInfo()
+								};
+            return String.Format (programInfo, args);
         }
     }    
 

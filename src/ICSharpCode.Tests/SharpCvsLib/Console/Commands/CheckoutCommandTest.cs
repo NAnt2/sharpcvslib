@@ -36,11 +36,14 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Diagnostics;
+using System.Text;
 
 using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Misc;
 
+using ICSharpCode.SharpCvsLib.Tests;
 using ICSharpCode.SharpCvsLib.Tests.Config;
 using ICSharpCode.SharpCvsLib.Console.Parser;
 
@@ -53,7 +56,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
     ///         and test invalid ones.
     /// </summary>
     [TestFixture]
-    public class CheckoutCommandTest{
+    public class CheckoutCommandTest : AbstractTest{
 
         private SharpCvsLibTestsConfig settings = SharpCvsLibTestsConfig.GetInstance();
         private readonly ILog LOGGER = LogManager.GetLogger(typeof(CheckoutCommandTest));
@@ -133,5 +136,62 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
             //    checkFile + "]", File.Exists (checkFile));
 
         }
+
+        /// <summary>
+        /// Test for bug 884798.  This reveals a known issue with multiple options not
+        ///     being recognized by the command line client.
+        ///     
+        /// <see cref="http://sourceforge.net/tracker/index.php?func=detail&aid=884798&group_id=78334&atid=552888"/>
+        /// </summary>
+        [Test]
+        public void TestBug884798_TwoSpaces () {
+            Environment.CurrentDirectory = this.GetTempPath();
+            String commandLine = 
+                "-d:pserver:anonymous@linux.sporadicism.com:/home/cvs/src co -d sharpcvslib-new -r HEAD  sharpcvslib-test-repository";
+            // Create new process
+
+            ConsoleMain main = new ConsoleMain();
+            try {
+                main.Execute(commandLine.Split(' '));
+            } catch (Exception e) {
+                LOGGER.Error(e);
+                Assertion.Fail(e.ToString());
+            }
+
+            Manager manager = new Manager(this.GetTempPath());
+            String modDir = Path.Combine(this.GetTempPath(), this.settings.Config.Module);
+            Tag tag = manager.FetchTag(Path.Combine(modDir, "src"));
+            Assertion.AssertNotNull(tag);
+            Assertion.AssertEquals("NHEAD", tag.FileContents);
+ 
+        }
+
+        /// <summary>
+        /// Test for bug 884798.  This reveals a known issue with multiple options not
+        ///     being recognized by the command line client.
+        ///     
+        /// <see cref="http://sourceforge.net/tracker/index.php?func=detail&aid=884798&group_id=78334&atid=552888"/>
+        /// </summary>
+        [Test]
+        public void TestBug884798_OneSpace () {
+            Environment.CurrentDirectory = this.GetTempPath();
+            String commandLine = 
+                "-d:pserver:anonymous@linux.sporadicism.com:/home/cvs/src co -d sharpcvslib-new -r HEAD sharpcvslib-test-repository";
+            // Create new process
+
+            ConsoleMain main = new ConsoleMain();
+            try {
+                main.Execute(commandLine.Split(' '));
+            } catch (Exception e) {
+                LOGGER.Error(e);
+                Assertion.Fail(e.ToString());
+            }
+            Manager manager = new Manager(this.GetTempPath());
+            String modDir = Path.Combine(this.GetTempPath(), this.settings.Config.Module);
+            Tag tag = manager.FetchTag(Path.Combine(modDir, "src"));
+            Assertion.AssertNotNull(tag);
+            Assertion.AssertEquals("NHEAD", tag.FileContents);
+        }
+
     }
 }

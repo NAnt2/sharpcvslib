@@ -375,7 +375,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             } catch (CvsFileNotFoundException e) {
                 if (!(entries[0] is Repository) &&
                     !(entries[0] is Root) &&
-                    !(entries[0] is Entry)) {
+                    !(entries[0] is Entry) &&
+                    !(entries[0] is Tag)) {
                     throw e;
                 } else if (!File.Exists(entries[0].FullPath) &&
                     !Directory.Exists(entries[0].FullPath) &&
@@ -780,14 +781,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <returns>The tag file object that holds the contents of the tag
         ///     in the given directory (if any).</returns>
         public Tag FetchTag (String directory) {
-            try {
-                return
-                    (Tag)this.FetchSingle (directory, Factory.FileType.Tag);
-            } catch (CvsFileNotFoundException e) {
-                LOGGER.Debug (e);
-                // No tag information found, this is normal.  Return null.
-                return null;
-            }
+            return
+                (Tag)this.FetchSingle (directory, Factory.FileType.Tag);
         }
 
         /// <summary>
@@ -1034,10 +1029,29 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             Tag tag =
                 (Tag)factory.CreateCvsObject (pathTranslator.LocalPath,
-                Factory.FileType.Tag, pathTranslator.CvsRoot.ToString ());
-            this.Add (tag);
+                Factory.FileType.Tag, stickyTag);
 
-            return tag;
+            return this.AddTag (tag);;
+        }
+
+        /// <summary>
+        /// Add a tag file if it does not already exist.  If the tag
+        ///     file already exists then it is NOT overwritten.
+        /// </summary>
+        /// <param name="tag">An object that represents the tag
+        ///     file on the file system.</param>
+        /// <returns>The tag object.</returns>
+        public Tag AddTag (Tag tag) {
+            try {
+                // check if the root exists, if so it does not get modified
+                return this.FetchTag(tag.FullPath);
+            } catch (CvsFileNotFoundException e) {
+                LOGGER.Debug(e);
+                // if the repository does not exist then add it
+                this.WriteToFile(tag);
+                // TODO: Remove this, just verifying the write operation
+                return this.FetchTag(tag.FullPath);
+            }
         }
 
         /// <summary>

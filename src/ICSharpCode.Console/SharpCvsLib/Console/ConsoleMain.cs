@@ -68,6 +68,14 @@ namespace ICSharpCode.SharpCvsLib.Console {
         public void Execute (String[] args) {
             CommandLineParser parser = new CommandLineParser (args);
 
+            if (LOGGER.IsDebugEnabled) {
+                StringBuilder msg = new StringBuilder();
+                msg.Append(Environment.NewLine).Append("Using arguments:");
+                foreach (String arg in args) {
+                    msg.Append(Environment.NewLine).Append("\t arg1=[").Append(arg).Append("]");
+                }
+                LOGGER.Debug(msg);
+            }
             ICommand command = null;
             try {
                 command = parser.Execute ();
