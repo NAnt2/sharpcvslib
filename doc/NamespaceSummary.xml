@@ -1,0 +1,44 @@
+<namespaces>
+    <namespace name="ICSharpCode.SharpCvsLib.Client">
+        <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </namespace>
+    <namespace name="ICSharpCode.SharpCvsLib.Commands">
+        <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </namespace>
+    <namespace name="ICSharpCode.SharpCvsLib.Console">
+        <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </namespace>
+    <namespace name="ICSharpCode.SharpCvsLib.Console.Parser">
+        <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </namespace>
+    <namespace name="ICSharpCode.SharpCvsLib.Config">
+        <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </namespace>
+    <namespace name="ICSharpCode.SharpCvsLib.Exceptions">
+        <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </namespace>
+    <namespace name="ICSharpCode.SharpCvsLib.FileHandler">
+        <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </namespace>
+    <namespace name="ICSharpCode.SharpCvsLib.FileSystem">
+        <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </namespace>
+    <namespace name="ICSharpCode.SharpCvsLib.Messages">
+        <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </namespace>
+    <namespace name="ICSharpCode.SharpCvsLib.Misc">
+        <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </namespace>
+    <namespace name="ICSharpCode.SharpCvsLib.Requests">
+        <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </namespace>
+    <namespace name="ICSharpCode.SharpCvsLib.Responses">
+        <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </namespace>
+    <namespace name="ICSharpCode.SharpCvsLib.Streams">
+        <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </namespace>
+    <namespace name="ICSharpCode.SharpCvsLib.Util">
+        <b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </namespace>
+</namespaces>

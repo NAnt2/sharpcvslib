@@ -3,6 +3,8 @@
         http://sharpcvslib.sourceforge.net
 -->
 <project name="${name.top-level}-${name.project}" default="build.all">
+    <property name="util.copy" value="pscp" />
+
     <!-- Names of the files generated -->
     <property name="name.top-level" value="ICSharpCode" />
     <property name="name.project" value="SharpCvsLib" />
@@ -26,6 +28,7 @@
     <property name="dir.build" value="${dir.base}/build/bin" /> 
     <property name="dir.conf" value="${dir.base}/conf" />
     <property name="dir.dist" value="${dir.base}/dist" />
+    <property name="dir.doc" value="${dir.base}/doc" />
     <property name="dir.src" value="${dir.base}/src" />
     <property name="dir.lib" value="${dir.base}/lib" />
     <property name="dir.lib.ext" value="${dir.lib}/ext" />
@@ -70,6 +73,11 @@
                 <includes name="*.config" />
             </fileset>
         </copy>
+        <copy todir="${dir.build}">
+            <fileset basedir="${dir.doc}">
+                <includes name="NamespaceSummary.xml" />
+            </fileset>
+        </copy>
     </target>
    
     <target name="build.all">
@@ -109,41 +117,48 @@
         <property name="doc.empty-namespaces" value="False" />
 
         <property name="doc.include-assembly-version" value="True" />
+        
+        <!-- Hack to get upload to work on mono -->
+        <if uptodatefile="${doc.exe}" comparefile="temp.cs">
+            <ndoc verbose="true">
+                <assemblies basedir="${dir.build}">
+                    <includes name="${name.top-level}.${name.lib}.dll" />
+                    <includes name="${name.console.exe}.exe" />
+                    <excludes name="${name.top-level}.${name.lib}.${name.tests}.dll"/>
+                </assemblies>
+                <summaries basedir="${dir.build}">
+                    <includes name="NamespaceSummary.xml"/>
+                </summaries>
+                <documenters>
+                    <documenter name="MSDN">
+                        <property name="Title" value="${doc.title}" />
+                        <property name="OutputDirectory" value="${dir.doc.msdn}" />
 
-        <if uptodatefile="doc.exe" comparefile="temp.cs">
-        <ndoc>
-            <assemblies basedir="${dir.build}">
-                <includes name="${name.top-level}.${name.lib}.dll"/>
-            </assemblies>
-            <documenters>
-                <documenter name="MSDN">
-                    <property name="Title" value="${doc.title}" />
-                    <property name="OutputDirectory" value="${dir.doc.msdn}" />
+                        <property name="ShowMissingSummaries" value="${doc.show-missing-summaries}" />
+                        <property name="ShowMissingRemarks" value="${doc.show-missing-remarks}" />
+                        <property name="ShowMissingParams" value="${doc.show-missing-params}" />
+                        <property name="ShowMissingReturns" value="${doc.show-missing-returns}" />
+                        <property name="ShowMissingValues" value="${doc.show-missing-values}" />
 
-                    <property name="ShowMissingSummaries" value="${doc.show-missing-summaries}" />
-                    <property name="ShowMissingRemarks" value="${doc.show-missing-remarks}" />
-                    <property name="ShowMissingParams" value="${doc.show-missing-params}" />
-                    <property name="ShowMissingReturns" value="${doc.show-missing-returns}" />
-                    <property name="ShowMissingValues" value="${doc.show-missing-values}" />
+                        <property name="DocumentInternals" value="${doc.internals}" />
+                        <property name="DocumentProtected" value="${doc.protected}" />
+                        <property name="DocumentPrivates" value="${doc.privates}" />
+                        <property name="DocumentEmptyNamespaces" value="${doc.empty-namespaces}" />
 
-                    <property name="DocumentInternals" value="${doc.internals}" />
-                    <property name="DocumentProtected" value="${doc.protected}" />
-                    <property name="DocumentPrivates" value="${doc.privates}" />
-                    <property name="DocumentEmptyNamespaces" value="${doc.empty-namespaces}" />
+                        <property name="IncludeAssemblyVersion" value="${doc.include-assembly-version}" />
+                        <property name="CopyrightText" value="${doc.copyright.text}" />
+                        <property name="CopyrightHref" value="${doc.copyright.href}" />
 
-                    <property name="IncludeAssemblyVersion" value="${doc.include-assembly-version}" />
-                    <property name="CopyrightText" value="${doc.copyright.text}" />
-                    <property name="CopyrightHref" value="${doc.copyright.href}" />
-
-                    <property name="HtmlHelpName" value="${doc.title}" />
-                    <property name="HtmlHelpCompilerFilename" value="${doc.exe}" />
-                    <property name="IncludeFavorites" value="False" />
-                    <property name="SplitTOCs" value="False" />
-                    <property name="DefaulTOC" value="" />
-                    <property name="ShowVisualBasic" value="True" />
-                </documenter>
-            </documenters> 
-        </ndoc>
+                        <property name="HtmlHelpName" value="${doc.title}" />
+                        <property name="HtmlHelpCompilerFilename" value="${doc.exe}" />
+                        <property name="IncludeFavorites" value="False" />
+                        <property name="SplitTOCs" value="False" />
+                        <property name="DefaulTOC" value="" />
+                        <property name="ShowVisualBasic" value="True" />
+                    </documenter>
+                </documenters> 
+            </ndoc>
+            <style style="${dir.doc}/NamespaceSummary.xslt" in="${dir.doc}/NamespaceSummary.xml" out="${dir.doc.msdn}/index.html" />
         </if>
     </target>
     
@@ -208,17 +223,19 @@
     </target>
     
     <target name="build-release.nightly">
-        <tstamp property="assembly.version" pattern="yyyyMMdd-HHmm" verbose="true"/>    
+        <tstamp property="assembly.version" pattern="yyyyMMdd-HHmm" verbose="true"/>
         <property name="dir.output" value="${dir.release}/${assembly.version}" />
+
         <call target="build-release.common" />
+        
+        <property name="sf.username" value="drakmar@shell.sourceforge.net" />
+        <property name="sf.location" value="/home/groups/s/sh/sharpcvslib/htdocs/nightly-build" />
 
-        <property name="user.sf" value="drakmar@shell.sourceforge.net" />
-        <property name="dir.local" value="${dir.output}/" />
-        <property name="dir.sf" value="/home/groups/s/sh/sharpcvslib/htdocs/nightly-build" />
-
-        <property name="arg.line" value="-e 'ssh -1' -rCavz ${dir.local} ${user.sf}:${dir.sf}" />
-        <echo message="Rsync command line args: ${arg.line}" />
-        <exec program="rsync" commandline="${arg.line}" />
+        <property name="args.copy-program" value="${dir.output}/* ${sf.username}:${sf.location}/" />
+        <exec program="${util.copy}" commandline="${args.copy-program}"/>
+        
+        <property name="args.copy-docs" value="${dir.doc.msdn}/*.html ${sf.username}:${sf.location}/doc/api" />
+        <exec program="${util.copy}" commandline="${args.copy-docs}"/>
     </target>
     
     <target name="clean">
