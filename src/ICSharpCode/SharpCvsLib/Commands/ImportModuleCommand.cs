@@ -139,10 +139,11 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 					connection.SubmitRequest(new DirectoryRequest(modulepath, path));
 					connection.SubmitRequest(new ModifiedRequest(entry.Name));
 					
-					path = workingdirectory.CvsRoot.CvsRepository + folder.Key.ToString();
+					path = Path.Combine (workingdirectory.CvsRoot.CvsRepository, 
+					                     folder.Key.ToString());
 					
 										
-					string fileName = workingdirectory.ToLocalPath(path + "/" + entry.Name);
+					string fileName = Path.Combine (path, entry.Name);
 					
 					if (entry.IsBinaryFile) {
 						connection.UncompressedFileHandler.SendBinaryFile(connection.OutputStream, fileName);

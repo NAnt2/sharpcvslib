@@ -99,6 +99,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             
             Assertion.Assert (entry.CvsEntry.Equals (CHECKOUT_ENTRY));
         }
+        
 	}
 }
 

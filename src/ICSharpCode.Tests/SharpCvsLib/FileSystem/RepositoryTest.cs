@@ -75,5 +75,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Assertion.Assert (repos.Path.Equals (fullPath));
             Assertion.Assert (repos.FileContents.Equals (this.REPOSITORY_ENTRY));
         }
+
     }
 }

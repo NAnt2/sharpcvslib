@@ -57,20 +57,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	    {
             string localPath      = cvsStream.ReadLine();
             string reposPath = cvsStream.ReadLine();
-	        PathTranslator repositoryPath = new PathTranslator (services.Repository, 
-	                                                            reposPath);
-	        
-	        // TODO: Remove this duplication, find good common place for 
-	        //    the directory entry creation.
-	        if (LOGGER.IsDebugEnabled) {
-	            String msg = "Clear sticky response.  " +
-	                "; localPath=[" + localPath + "]" +
-	                "; repositoryPath=[" + repositoryPath.ToString () + "]";
-	            LOGGER.Debug (msg);
-	        }
-	        Manager manager = new Manager ();
-	        manager.Add (manager.CreateDirectoryEntryFromPath (repositoryPath.LocalPath));
 
+            // TODO: Do something useful with this response.
 	    }
 	    
         /// <summary>

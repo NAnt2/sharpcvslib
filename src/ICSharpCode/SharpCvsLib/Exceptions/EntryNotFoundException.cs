@@ -1,4 +1,4 @@
-#region "Copyright"
+#region Copyright
 // Copyright (C) 2003 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
@@ -26,53 +26,40 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
-//    Author: Clayton Harbour
-//     claytonharbour@sporadicism.com
+//
+//    Author:     Clayton Harbour 
 #endregion
 
 using System;
 using System.Collections;
 using System.IO;
-
-using ICSharpCode.SharpCvsLib;
-using ICSharpCode.SharpCvsLib.Client;
-using ICSharpCode.SharpCvsLib.Misc;
+using System.Globalization;
 
 using log4net;
-using NUnit.Framework;
 
-namespace ICSharpCode.SharpCvsLib.FileSystem {
-
+namespace ICSharpCode.SharpCvsLib.Exceptions {
+    
     /// <summary>
-    ///     Test the repository file parses the input string correctly
-    ///         and assigns the correct values to the properties.
+    ///     This exception is thrown if there is no entry matching the specifed
+    ///         criteria.
     /// </summary>
-    [TestFixture]
-    public class RootTest {
+    public class EntryNotFoundException : Exception {
         
-        private readonly String ROOT_ENTRY = 
-            ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
         /// <summary>
-        ///     Constructory for test case.
+        ///     Constructor.
         /// </summary>
-        public RootTest () {
+        public EntryNotFoundException () {
             
         }
         
         /// <summary>
-        ///     Ensure that the values the repository is initialized with 
-        ///         can be determined.
+        ///     Constructor.
         /// </summary>
-        [Test]
-        public void CreateRepositoryTest () {
-            String fullPath = TestConstants.LOCAL_PATH;
-            Repository repos = new Repository (fullPath, 
-                                               this.ROOT_ENTRY);
-            
-            String cvsPath = Path.Combine (fullPath, "CVS");
-            Assertion.Assert (repos.Path.Equals (fullPath));
-            Assertion.Assert (repos.FileContents.Equals (this.ROOT_ENTRY));
+        /// <param name="message">Additional information to pass on in the 
+        ///     exception.</param>
+        public EntryNotFoundException (String message) : base (message) {
         }
-
+        
     }
+
 }

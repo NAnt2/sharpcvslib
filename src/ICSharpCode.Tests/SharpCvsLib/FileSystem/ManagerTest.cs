@@ -36,6 +36,7 @@ using System.Collections;
 using System.IO;
 
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Exceptions;
 
 using log4net;
 using NUnit.Framework;
@@ -57,9 +58,20 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 "/SharpCvsLib.Tests.prjx/1.1/Sun May 11 18:02:05 2003//",
                 "D/conf////"
 	        };
+        
+	    private String[] directories = 
+	        {
+                "conf",
+	            "doc",
+                "lib",
+                "src"
+	        };
+
 
         private readonly String ROOT_ENTRY = 
             ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
+        private readonly String REPOSITORY_ENTRY =
+            "sharpcvslib";
         private readonly ILog LOGGER = 
             LogManager.GetLogger (typeof (ManagerTest));
         
@@ -75,20 +87,44 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void AddRootTest () {
-            ICvsFile root = new Root (TestConstants.LOCAL_PATH, this.ROOT_ENTRY);
+            String path = Path.Combine (TestConstants.LOCAL_PATH, 
+                            TestConstants.MODULE);
+            this.AddCvsFileTest (path, this.ROOT_ENTRY, Root.FILE_NAME);
+        }
+        
+        /// <summary>
+        ///     Test that a repository file can be created successfully.
+        /// </summary>
+        [Test]
+        public void AddRepositoryTest () {
+            String path = Path.Combine (TestConstants.LOCAL_PATH, 
+                            TestConstants.MODULE);
+            this.AddCvsFileTest (path, 
+                                 this.REPOSITORY_ENTRY, 
+                                 Repository.FILE_NAME);
+        }
+        
+        private void AddCvsFileTest (String path, 
+                                     String line, 
+                                     String filename) {
+            Factory factory = new Factory ();
+            
+            ICvsFile cvsEntry = factory.CreateCvsObject (path, filename, line);
             
             Manager manager = new Manager ();
-            manager.Add (root);
+            manager.Add (cvsEntry);
             
-            String cvsPath = Path.Combine (TestConstants.LOCAL_PATH, "CVS");
-            String file = Path.Combine (cvsPath, root.Filename);
+            String cvsPath = Path.Combine (path, manager.CVS);
+            String file = Path.Combine (cvsPath, cvsEntry.Filename);
+            
             Assertion.Assert ("File does not exist=[" + file + "]", 
                               File.Exists (file));
-            String shouldNotExist = Path.Combine (cvsPath, "CVS");
+            String shouldNotExist = Path.Combine (cvsPath, manager.CVS);
             System.Console.WriteLine (shouldNotExist);
             Assertion.Assert ("File should not exist=[" + 
                                   shouldNotExist + "]",
                               !Directory.Exists (shouldNotExist));
+
         }
         
 		/// <summary>
@@ -104,19 +140,15 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		[Test]
 		public void WriteManyEntriesThenAddOneSame () {
 		    Manager manager = new Manager ();
-		    ArrayList entries = new ArrayList ();
 		    
-		    String path = TestConstants.LOCAL_PATH;
+		    String path = Path.Combine (TestConstants.LOCAL_PATH, 
+		                                TestConstants.MODULE);
 		    
 		    LOGGER.Debug ("Enter write many");
-		    foreach (String cvsEntry in this.cvsEntries) {
-	            LOGGER.Debug ("cvsEntry=[" + cvsEntry + "]");
-		        entries.Add (new Entry (path, cvsEntry));
-		    }
 		    
-		    manager.Add ((ICvsFile[])entries.ToArray (typeof (ICvsFile)));
+		    this.WriteTestEntries (path);
 		    		    
-		    this.verifyEntryCount (TestConstants.LOCAL_PATH, 
+		    this.verifyEntryCount (path, 
 		                           this.cvsEntries.Length);
 		    
 		    string newEntry = 
@@ -124,9 +156,48 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		    
 		    manager.Add (new Entry (path, newEntry));
 		    
-		    this.verifyEntryCount (TestConstants.LOCAL_PATH,
+		    this.verifyEntryCount (path,
 		                           this.cvsEntries.Length + 1);
 		    
+		}
+		
+		private void WriteTestEntries (String path) {
+		    ArrayList entries = new ArrayList ();
+		    Manager manager = new Manager ();
+		    foreach (String cvsEntry in this.cvsEntries) {
+	            LOGGER.Debug ("cvsEntry=[" + cvsEntry + "]");
+		        entries.Add (new Entry (path, cvsEntry));
+		    }
+		    
+		    manager.Add ((ICvsFile[])entries.ToArray (typeof (ICvsFile)));
+		}
+		
+		private void WriteTestDirectoryEntries (String path) {
+		    Manager manager = new Manager ();
+            LOGGER.Debug ("path=[" + path + "]");
+		    
+		    Directory.CreateDirectory (Path.Combine (path, manager.CVS));
+		    this.CreateDirAndCvsEntry (path, directories[0]);
+		    this.CreateDirAndCvsEntry (path, directories[1]);
+		    this.CreateDirAndCvsEntry (path, directories[2]);
+		    this.CreateDirAndCvsEntry (path, directories[3]);
+		}
+		
+		private void CreateDirAndCvsEntry (String path, String dirEntry) {
+		    Manager manager = new Manager ();
+		    String entryDir = Path.Combine (path, dirEntry);
+		    String entryCvsDir = Path.Combine (entryDir, manager.CVS);
+		    
+		    Directory.CreateDirectory (entryCvsDir);
+            this.AddCvsFileTest (entryDir, 
+                                 this.REPOSITORY_ENTRY, 
+                                 Repository.FILE_NAME);
+		    this.AddCvsFileTest (entryDir,
+		                         this.cvsEntries[0],
+		                         Entry.FILE_NAME);
+		                         
+		    Entry entry = manager.CreateDirectoryEntry (entryDir);
+		    manager.Add (entry);
 		}
 		
 		/// <summary>
@@ -148,42 +219,21 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		                      "but was expecting=[" + entriesExpected + "]", 
 		                      entriesFound == entriesExpected);
 		}
-		
-		/// <summary>
-		///     Remove the test directory that we were working with.
-		/// </summary>
-		[TearDown]
-		public void TearDown () {
-		    // TODO: Uncomment this when the fear of deleting something wrong goes away.
-		    //Directory.Delete (TestConstants.LOCAL_PATH);
-		}
-		
+
+        /// <summary>
+        ///     Tests that directory entries are created given the full local
+        ///         path to the directory.
+        /// </summary>		
 		[Test]
 		public void WriteDirectoryEntriesFromPathTest () {
 		    Manager manager = new Manager ();
 		    String rootDir = Path.Combine (TestConstants.LOCAL_PATH, 
 		                                   TestConstants.MODULE);
 		    
-		    LOGGER.Debug ("rootDir=[" + rootDir + "]");
-		    String[] directories = {"conf",
-		                            "doc",
-		                            "lib",
-		                            "src"};
-		    
-		    manager.Add (manager.CreateDirectoryEntry (Path.Combine (rootDir,
-		                                                             directories[0])));
-		    manager.Add (manager.CreateDirectoryEntry (Path.Combine (rootDir,
-		                                                             directories[1])));
-		    manager.Add (manager.CreateDirectoryEntry (Path.Combine (rootDir, 
-		                                                             directories[2])));
-		    manager.Add (manager.CreateDirectoryEntry (Path.Combine (rootDir,
-		                                                             directories[3])));
+		    this.WriteTestDirectoryEntries (rootDir);
 		    
 		    ICvsFile[] currentEntries = 
 		        manager.Fetch (rootDir, Entry.FILE_NAME);
-		    
-		    Assertion.Assert ("Current entries should = directory count, which is 4", 
-		                      currentEntries.Length == 4);
 		    
 		    int found = 0;
 		    foreach (Entry entry in currentEntries) {
@@ -202,6 +252,42 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		}
 		
 		[Test]
+		public void AddDirectoryEntriesFromPath () {
+		    const String NEW_DIRECTORY = "test";
+		    Manager manager = new Manager ();
+		    String path = Path.Combine (TestConstants.LOCAL_PATH, 
+		                                TestConstants.MODULE);
+		    
+		    String newDirectory = Path.Combine (path, NEW_DIRECTORY);
+		    Directory.CreateDirectory (newDirectory);
+		    
+		    manager.AddDirectories (path);
+		    
+		    try {
+		        manager.Find (path, NEW_DIRECTORY);
+		        Assertion.Assert ("If program got here a directory was found.  " +
+		                          "Because there should not be a cvs entry under " +
+		                          "the new directory this should not happen.",
+		                          !true);
+		    } catch (EntryNotFoundException) {}
+            this.WriteTestEntries (path);
+		    Directory.CreateDirectory (Path.Combine (newDirectory, manager.CVS));
+		    
+		    manager.AddDirectories (path);		    
+		    Assertion.Assert ("Should contain the directory entry.", 
+		                      null != manager.Find (path, NEW_DIRECTORY));
+		    Assertion.Assert ("There should be no cvs entry above the root directory.",
+		                      !Directory.Exists (Path.Combine (TestConstants.LOCAL_PATH,
+		                                                       manager.CVS)));
+		                      
+		}
+		
+		/// <summary>
+		///     Find all of the working folders in the cvs entries files and
+		///         add them to the folders to update collection on the working
+		///         directory object.
+		/// </summary>
+		[Test]
 		public void FindAllWorkingFolders () {
 		    Manager manager = new Manager ();
 		    string rootDir = 
@@ -212,13 +298,25 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 new WorkingDirectory (root, 
                                         rootDir, 
                                         TestConstants.MODULE);
-            // Update all files...
+		    
+		    this.WriteTestDirectoryEntries (rootDir);
+            this.AddCvsFileTest (rootDir, 
+                                 this.REPOSITORY_ENTRY, 
+                                 Repository.FILE_NAME);
             working.FoldersToUpdate = manager.FetchFilesToUpdate (rootDir);
 		    
 		    Assertion.Assert ("Working folders count should be greater than 1.",
 		                      working.FoldersToUpdate.Length > 1);
-		                    
+		}
 
+		/// <summary>
+		///     Remove the local path directory that we were testing with.
+		/// </summary>
+		[TearDown]
+		public void TearDown () {
+		    if (Directory.Exists (TestConstants.LOCAL_PATH)) {
+    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    }
 		}
 
 

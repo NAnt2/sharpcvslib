@@ -66,9 +66,9 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		[SetUp]
 		public void SetUp () {
 		    this.manager = new Manager ();
-//		    CheckoutModuleCommandTest checkout =
-//		        new CheckoutModuleCommandTest ();
-//		    checkout.CheckoutTest ();
+		    CheckoutModuleCommandTest checkout =
+		        new CheckoutModuleCommandTest ();
+		    checkout.CheckoutTest ();
 		}
 		
 		/// <summary>
@@ -80,7 +80,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		    string rootDir = 
 		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
 		    string buildFile = 
-		        Path.Combine (rootDir, TestConstants.BUILD_FILE);
+		        Path.Combine (rootDir, TestConstants.TARGET_FILE);
 		    
 		    //Assertion.Assert ("File should be there, have not deleted it yet.  " +
 		    //                  "file=[" + buildFile + "]",
@@ -121,8 +121,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		        Directory.GetFiles (rootDir);
 		    String[] directories = 
 		        Directory.GetDirectories (rootDir);
-		    // Plus the root folder.
-		    int total = files.Length + directories.Length + 1;
+		    // Minus the cvs directory
+		    int total = files.Length + directories.Length - 1;
 		    Assertion.Assert ("Count of directories and files should be equal to " +
 		                      "the entries in the CVS/Entries file.  They are not.  " +
 		                      "entriesCount=[" + entries.Length + "]" + 
@@ -134,13 +134,22 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		        Entry entry = (Entry)cvsEntry;
 		        
 		        System.Console.WriteLine ("entry=[" + entry + "]");
-		        if (entry.Name.Equals (TestConstants.BUILD_FILE)) {
+		        if (entry.Name.Equals (TestConstants.TARGET_FILE)) {
 		            found++;
 		        }
 		    }
 		    
 		    Assertion.Assert ("Build file should have a cvs entry.", found == 1);		    
 		}
+		
+		/// <summary>
+		///     Remove the local path directory that we were testing with.
+		/// </summary>
+		[TearDown]
+		public void TearDown () {
+		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		}
+
 
 	}
 }

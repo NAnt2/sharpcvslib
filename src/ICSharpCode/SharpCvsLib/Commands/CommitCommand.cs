@@ -122,9 +122,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 						DateTime old = entry.TimeStamp;
 						entry.TimeStamp = entry.TimeStamp;
 						
-						string path = workingdirectory.CvsRoot.CvsRepository +  "/" + folder.Key.ToString();
+						string path = Path.Combine (workingdirectory.CvsRoot.CvsRepository,
+						                folder.Key.ToString());
 						
-						string fileName = workingdirectory.ToLocalPath(workingdirectory.CvsRoot.CvsRepository + "/" + entry.Name);
+						string fileName = Path.Combine (path,entry.Name);
 						
 						if (File.GetLastAccessTime(fileName) != entry.TimeStamp) {
 							connection.SubmitRequest(new DirectoryRequest(".", path));

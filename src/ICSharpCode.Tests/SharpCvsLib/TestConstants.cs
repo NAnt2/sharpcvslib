@@ -36,11 +36,11 @@ namespace ICSharpCode.SharpCvsLib {
     public class TestConstants {
         public const String LOCAL_PATH = "c:/test/sharpcvslib-tests/";
         public const String CVSROOT = 
-            ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-        public const String MODULE = "sharpcvslib";
-        public const String PASSWORD_VALID = "";
+            ":pserver:charbour@linux.sporadicism.com:/home/cvs/src";
+        public const String MODULE = "Logger";
+        public const String PASSWORD_VALID = "William";
         public const String PASSWORD_INVALID = "I_HATE_YOU_TOO";
-        public const String BUILD_FILE = "SharpCvsLib.build";
-        public const String CONF_DIRECTORY = "conf";
+        public const String TARGET_FILE = "Logger.sln";
+        public const String TARGET_DIRECTORY = "lib";
     }
 }

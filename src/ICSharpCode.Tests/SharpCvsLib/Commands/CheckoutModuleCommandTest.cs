@@ -54,8 +54,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 	public class CheckoutModuleCommandTest	{
 		private ILog LOGGER = 
 			LogManager.GetLogger (typeof(CheckoutModuleCommandTest));
-	    
-	    private Manager manager;	    
+	    	    
 		/// <summary>
 		/// Constructor for customer db test.
 		/// </summary>
@@ -66,8 +65,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		///     
 		/// </summary>
 		[SetUp]
-		public void SetUp () {
-		    this.manager = new Manager ();    
+		public void SetUp () { 
 		}
 		
 		/// <summary>
@@ -75,10 +73,11 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// </summary>
 		[Test]
 		public void CheckoutTest () {
+		    Manager manager = new Manager (); 
 		    string cvsPath = 
 		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
 		    string buildFile =
-		        Path.Combine (cvsPath, TestConstants.BUILD_FILE);
+		        Path.Combine (cvsPath, TestConstants.TARGET_FILE);
 		    
             CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
             WorkingDirectory working = 
@@ -108,19 +107,29 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		    foreach (ICvsFile cvsEntry in entries) {
 		        Entry entry = (Entry)cvsEntry;
 		        System.Console.WriteLine ("entry=[" + entry + "]");
-		        if (entry.Name.Equals (TestConstants.BUILD_FILE)) {
+		        if (entry.Name.Equals (TestConstants.TARGET_FILE)) {
 		            foundFileEntry++;
 		        }
 		        
-		        if (entry.Name.Equals (TestConstants.CONF_DIRECTORY)) {
+		        if (entry.Name.Equals (TestConstants.TARGET_DIRECTORY)) {
 		            foundDirectoryEntry++;
 		        }
 		    }
 		    
 		    Assertion.Assert ("Build file should have a cvs entry.", foundFileEntry == 1);
-		    Assertion.Assert ("Conf directory should have a cvs entry.", foundDirectoryEntry == 1);
+		    Assertion.Assert (TestConstants.TARGET_DIRECTORY + " directory should have a cvs entry.", foundDirectoryEntry == 1);
 		    Assertion.Assert ("Should not have a cvs directory above module path.", 
-		                      Directory.Exists (Path.Combine (TestConstants.LOCAL_PATH, manager.CVS)));
+		                      !Directory.Exists (Path.Combine (TestConstants.LOCAL_PATH, manager.CVS)));
+		    Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
+		                      !Directory.Exists (Path.Combine (TestConstants.MODULE, manager.CVS)));
+		}
+		
+		/// <summary>
+		///     Remove the local path directory that we were testing with.
+		/// </summary>
+		[TearDown]
+		public void TearDown () {
+		    Directory.Delete (TestConstants.LOCAL_PATH, true);
 		}
 	}
 }

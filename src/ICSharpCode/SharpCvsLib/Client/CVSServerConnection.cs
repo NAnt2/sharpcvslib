@@ -289,7 +289,17 @@ namespace ICSharpCode.SharpCvsLib.Client {
 					tcpclient = new TcpClient();
 					tcpclient.Connect(repository.CvsRoot.Host, DEFAULT_PORT);
 					inputstream  = outputstream = new CvsStream(tcpclient.GetStream());
-					SubmitRequest(new PServerAuthRequest(repository.CvsRoot.CvsRepository, repository.CvsRoot.User, password));
+			        
+			        if (LOGGER.IsDebugEnabled) {
+			            String msg = "Before submitting pserver connect request.  " +
+			                "repository.CvsRoot.CvsRepository=[" + repository.CvsRoot.CvsRepository + "]" +
+			                "repository.CvsRoot.User=[" + repository.CvsRoot.User + "]" +
+			                "password=[" + password + "]";
+			            LOGGER.Debug (msg);
+			        }
+					SubmitRequest(new PServerAuthRequest(repository.CvsRoot.CvsRepository, 
+					                                     repository.CvsRoot.User, 
+					                                     password));
 					inputstream.Flush();
 			        
 			        string retStr;
@@ -299,8 +309,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
 			        }
 			        catch (IOException e) {
 			            String msg = "Failed to read line from server.  " +
-			                "It is possible that there was a problem connecting " +
-			                "to the remote server.";
+			                "It is possible that the remote server was down.";
 			            LOGGER.Error (msg, e);
 			            throw new Exception (msg);
 			        }

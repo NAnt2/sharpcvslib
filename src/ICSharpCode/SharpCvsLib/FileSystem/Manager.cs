@@ -39,6 +39,7 @@ using System.IO;
 using log4net;
 
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Exceptions;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     
@@ -67,18 +68,42 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         /// <param name="path">The path to look in for directory entries.</param>
         public void AddDirectories (String path) {
-            foreach (String directory in Directory.GetDirectories (path)) {
+            String [] directories;
+            try {
+                directories = Directory.GetDirectories (path);
+            } catch (IOException e) {
+                LOGGER.Error (e);
+                return;
+            }
+            foreach (String directory in directories) {
                 // Only add the directory if the folder already contains a
                 //    cvs directory.
-                if (this.HasCvsDir (directory)) {
+                try {
                     Entry dirEntry = 
                         this.CreateDirectoryEntryFromPath (path);
+                    if (LOGGER.IsDebugEnabled) {
+                        String msg = "Adding cvs entry for directory.  " +
+                            "directory=[" + directory + "]" +
+                            "dirEntry=[" + dirEntry + "]";
+                        LOGGER.Debug (msg);    
+                    }
                     this.Add (dirEntry);
+
+                } catch (EntryNotFoundException e) {
+                    LOGGER.Debug (e);
                 }
+
                 this.AddDirectories (directory);
             }
         }
         
+        /// <summary>
+        ///     Fetch the cvs file information to update.
+        /// </summary>
+        /// <param name="directory">The directory to fetch the files information
+        ///        from.</param>
+        /// <returns>A collection of folders that contain the cvs entries for
+        ///       each directory.</returns>
         public Folder[] FetchFilesToUpdate (String directory) {
             ArrayList folders = new ArrayList ();
             Folder folder = new Folder ();
@@ -102,91 +127,86 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 this.FetchFilesToUpdateRecursive (folders, subDir);
             }
         }
-                
+        
+        /// <summary>
+        ///     Create a directory entry based on the local directory path.
+        /// </summary>
+        /// <param name="localPath">The local path to create the directory 
+        ///     entry for.</param>
         public Entry CreateDirectoryEntry (String localPath) {
             return this.CreateDirectoryEntryFromPath (localPath);            
         }
         
+        /// <summary>
+        ///     Create a directory entry from the specified path translator.
+        /// </summary>
+        /// <param name="path">The information about the path to create the
+        ///     directory entry for.</param>
+        /// <returns>An entry object that contains information about the directory
+        ///       entry.</returns>
         public Entry CreateDirectoryEntry (PathTranslator path) {
             return this.CreateDirectoryEntryFromPath (path.LocalPath);
         }
-        
-        /// <summary>
-        ///     Get all of the folders in the local base directory.
-        /// </summary>
-        /// <param name="localBaseDir">The path to the local basedir.</param>
-        public Hashtable getFolders (String localBaseDir) {
-            Hashtable folders = new Hashtable ();
-            this.getFolders (folders, localBaseDir);
-            return folders;
-        }
-        
-        private void getFolders (Hashtable folders, String path) {
-            foreach (String directory in Directory.GetDirectories (path)) {
-                ICvsFile[] entries = this.Fetch (directory, Entry.FILE_NAME);
-                Entry dirEntry = 
-                    this.CreateDirectoryEntryFromPath (path);
-                ICvsFile repository = 
-                    this.FetchSingle (path, Repository.FILE_NAME);
                 
-                if (!dirEntry.Name.Equals ("CVS")) {
-                    ICSharpCode.SharpCvsLib.Misc.Folder folder = 
-                        new ICSharpCode.SharpCvsLib.Misc.Folder ();
-                    folder.Entries = new ArrayList (entries);
-                    folders.Add (repository, folder);
-                    this.getFolders (folders, directory);
-                }
-            }
-        }
-        
         /// <summary>
         ///     Create a directory entry from the given path.
         /// </summary>
         /// <param name="path">The path to use in creating the entry.</param>
         /// <returns>The directory entry.</returns>
-        public Entry CreateDirectoryEntryFromPath (String path) {
-            path = path.Replace ('\\', '/');
-            string[] dirTokens = path.Split ('/');
-            
-            string dirToken = dirTokens[dirTokens.Length - 1];
-            string dirEntry = "D/" + dirToken;
-            
-            // If there is some path information append empty slashes,
-            //     otherwise just leave the entry as 'D/'.
-            if (dirEntry.Length > 2) {
-                int addSlashes = 6 - dirEntry.Split ('/').Length;
-                for (int slashes = 0; slashes < addSlashes; slashes++) {
-                    dirEntry = dirEntry + "/";
-                }
-            }
+        private Entry CreateDirectoryEntryFromPath (String path) {
+            bool hasCvsDir = this.HasCvsDir (path);
             if (LOGGER.IsDebugEnabled) {
-                String msg = "Create directory entry from path.  " +
-                    "dirEntry=[" + dirEntry + "]" +
-                    "dirToken=[" + dirToken + "]" +
-                    "path=[" + path + "]";
+                String msg = "CreateDirectory from path.  " + 
+                    "path=[" + path + "]" +
+                    "hasCvsDir=[" + hasCvsDir + "]";
                 LOGGER.Debug (msg);
             }
-            
-            String upPath = this.UpPath (path);
-            Entry entry = new Entry (upPath, dirEntry);
-            return entry;
+            if (hasCvsDir) {
+                String upPath = Directory.GetParent (path).FullName;
+                if (!this.HasCvsDir (upPath)) {
+                    String msg = "No cvs directory found in the parent " +
+                        "path.  This may be the root folder.  " +
+                        "upPath=[" + upPath + "]";
+                    throw new EntryNotFoundException (msg);
+                }
+                path = path.Replace ('\\', '/');
+                string[] dirTokens = path.Split ('/');
+                
+                string dirToken = dirTokens[dirTokens.Length - 1];
+                if (LOGGER.IsDebugEnabled) {
+                    String msg = "Looking at dir tokens.  ";
+                    
+                    foreach (String token in dirTokens) {
+                        msg = msg + ";  token=[" + token + "]";
+                    }
+                    LOGGER.Debug (msg);
+                }
+                string dirEntry = "D/" + dirToken;
+                
+                // If there is some path information append empty slashes,
+                //     otherwise just leave the entry as 'D/'.
+                if (dirEntry.Length > 2) {
+                    int addSlashes = 6 - dirEntry.Split ('/').Length;
+                    for (int slashes = 0; slashes < addSlashes; slashes++) {
+                        dirEntry = dirEntry + "/";
+                    }
+                }
+                if (LOGGER.IsDebugEnabled) {
+                    String msg = "Create directory entry from path.  " +
+                        "dirEntry=[" + dirEntry + "]" +
+                        "dirToken=[" + dirToken + "]" +
+                        "path=[" + path + "]";
+                    LOGGER.Debug (msg);
+                }
+                Entry entry = new Entry (upPath, dirEntry);
+                return entry;
+            }
+            String errorMsg = "No cvs directory found under this path.  " +
+                "This directory may not be part of cvs.  " +
+                "path=[" + path + "]";
+            throw new EntryNotFoundException (errorMsg);
         }
         
-        private String UpPath (String path) {
-            path = path.Replace ('\\', '/');
-            String [] dirs = path.Split ('/');
-            
-            String upPath = path.Substring (0, 
-                                            path.Length - dirs[dirs.Length - 1].Length);
-            if (LOGGER.IsDebugEnabled) {
-                String msg = "in uppath.  " + 
-                    "path=[" + path + "]" +
-                    "upPath=[" + upPath + "]";
-                LOGGER.Debug (msg);
-            }
-            return upPath;
-        }
-
         public void Add (ICvsFile[] cvsEntries) {
             foreach (ICvsFile entry in cvsEntries) {
                 this.Add (entry);
@@ -214,8 +234,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                         newCvsEntries.Add (currentCvsEntry);
                     }
                 }
-            }
-            catch (FileNotFoundException e) {
+            } catch (FileNotFoundException e) {
                 // If we can't find the file, chances are this is the first
                 //    entry that we are adding.
                 LOGGER.Debug (e);
@@ -229,6 +248,37 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             this.WriteToFile (
                               (ICvsFile[])newCvsEntries.ToArray 
                                   (typeof (ICvsFile)));
+        }
+        
+        /// <summary>
+        ///     Find an entry given the name of the entry and a starting
+        ///         search path.
+        /// </summary>
+        /// <param name="path">The path to the entry.</param>
+        /// <param name="name">The name of the entry to search for.</param>
+        /// <returns>The entry object found in the directory path specified if
+        ///     found.  If no entry is found then an exception is thrown.</returns>
+        /// <exception cref="ICSharpCode.SharpCvsLib.Exceptions.EntryNotFoundException">
+        ///     If no directory entry is found.</exception>
+        public Entry Find (String path, String name) {
+            String errorMsg = "Entry not found.  " +
+                "path=[" + path + "]" + 
+                "name=[" + name + "]";
+            ICvsFile[] cvsEntries;
+            try {
+                cvsEntries = this.Fetch (path, Entry.FILE_NAME);
+            } catch (IOException e) {
+                LOGGER.Debug (e);
+                throw new EntryNotFoundException (errorMsg);
+            }
+            
+            foreach (ICvsFile cvsEntry in cvsEntries) {
+                Entry entry = (Entry)cvsEntry;
+                if (entry.Name.Equals (name)) {
+                    return entry;
+                }
+            }
+            throw new EntryNotFoundException (errorMsg);
         }
         
         /// <summary>
@@ -357,6 +407,14 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <returns><code>true</code> if the path ends with the <code>CVS</code>
         ///     constant, <code>false</code> otherwise.</returns>
         private bool HasCvsDir (String path) {
+            String cvsDir = Path.Combine (path, this.CVS);
+            
+            return Directory.Exists (cvsDir);
+        }
+        
+        private bool HasCvsDirInPath (String path) {
+            String cvsDir = Path.Combine (path, this.CVS);
+            
             String[] dirs = path.Replace ('\\', '/').Split ('/');
             bool hasCvsDir = (dirs[dirs.Length - 1].Equals (this.CVS));
             
@@ -377,7 +435,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     constant, or the path plus the <code>CVS</code> constant if it
         ///     does not already contain this.</returns>
         private String CombineCvsDir (String path) {
-            bool hasCvs = this.HasCvsDir (path);            
+            bool hasCvs = this.HasCvsDirInPath (path);            
             String cvsDir;            
             if (hasCvs) {
                 cvsDir = path;

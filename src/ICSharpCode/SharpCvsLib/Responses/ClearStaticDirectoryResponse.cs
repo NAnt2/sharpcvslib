@@ -84,10 +84,12 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	        ICvsFile root = factory.CreateCvsObject (repositoryPath.LocalPath,
 	                                                 Root.FILE_NAME,
 	                                                 services.Repository.CvsRoot.ToString ());
-	        ICvsFile entry = manager.CreateDirectoryEntryFromPath (localPath);
 		    manager.Add (repository);
 		    manager.Add (root);
-	        manager.Add (entry);
+	        // TODO: Work some magic so directory entries are created when the
+	        //    module is checked out...
+	        //ICvsFile entry = manager.CreateDirectoryEntry (localPath);
+	        //manager.Add (entry);
 	        
 	    }
 	    
