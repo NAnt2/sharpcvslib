@@ -72,6 +72,16 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		}
 		
 		/// <summary>
+		///     Remove the local path directory that we were testing with.
+		/// </summary>
+		[TearDown]
+		public void TearDown () {
+		    if (Directory.Exists(TestConstants.LOCAL_PATH)) {
+    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    }
+		}
+		
+		/// <summary>
 		///     Test that the update command brings the build file back
 		///         down after it is deleted.
 		/// </summary>
@@ -149,18 +159,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             
             command.Execute (connection);
             connection.Close ();  
-		}
-		
-		/// <summary>
-		///     Remove the local path directory that we were testing with.
-		/// </summary>
-		[TearDown]
-		public void TearDown () {
-		    if (Directory.Exists(TestConstants.LOCAL_PATH)) {
-    		    Directory.Delete (TestConstants.LOCAL_PATH, true);
-		    }
-		}
-
-
+		}		
 	}
 }

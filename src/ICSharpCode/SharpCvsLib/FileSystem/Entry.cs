@@ -304,26 +304,34 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 				            "timestamp=[" + timestamp + "]";
 				        LOGGER.Debug (msg);
 				    }
-				} catch (Exception) {
+				} catch (Exception e1) {
+				    LOGGER.Error (this, e1);
 					try {
 						timestamp = DateTime.ParseExact("0" + date, 
 						                                RFC1123, 
 						                                DateTimeFormatInfo.InvariantInfo);
-				    if (LOGGER.IsDebugEnabled) {
-				        String msg = "Converted using pattern=[0 + " + RFC1123 + "]" +
-				            "timestamp=[" + timestamp + "]";
-				        LOGGER.Debug (msg);
-				    }
-
-					} catch (Exception) {
-   						timestamp = DateTime.ParseExact(date, 
-   						                                FORMAT_1, 
-   						                                DateTimeFormatInfo.InvariantInfo);
     				    if (LOGGER.IsDebugEnabled) {
-    				        String msg = "Converted using pattern=[" + FORMAT_1 + "]" +
-    				            "timestamp=[" + timestamp + "]";
-    				        LOGGER.Debug (msg);
+    				        String msg = "Converted using pattern=[0 + " + 
+    				        RFC1123 + "]" +
+    				        "timestamp=[" + timestamp + "]";
+    				        LOGGER.Debug (msg, e1);
     				    }
+
+					} catch (Exception e2) {
+				        LOGGER.Error (this, e2);
+					    try {
+       						timestamp = DateTime.ParseExact(date, 
+       						                                FORMAT_1, 
+       						                                DateTimeFormatInfo.InvariantInfo);
+        				    if (LOGGER.IsDebugEnabled) {
+        				        String msg = "Converted using pattern=[" + FORMAT_1 + "]" +
+        				            "timestamp=[" + timestamp + "]";
+        				        LOGGER.Debug (msg, e2);
+        				    }
+					    } catch (Exception e3) {
+    				        LOGGER.Error (this, e3);
+					        throw new System.FormatException (this.ToString (), e3);
+					    }
 					}
 				}				
 			}
@@ -333,7 +341,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 			}
 			this.timestamp = timestamp;
 		}
-		
+				
         /// <summary>
         /// Parses the cvs entries file.
         /// </summary>
