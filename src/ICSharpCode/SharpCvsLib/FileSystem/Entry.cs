@@ -325,26 +325,34 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 fullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
                 fullPath.EndsWith("/")) {
                 entryString.Append("D");
+                if (fullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
+                    fullPath.EndsWith("/")) {
+                    // strip the slash off so the filename is derived correctly
+                    fullPath = fullPath.Substring(0, fullPath.Length - 1);
+
+                }
             } 
             path = System.IO.Path.GetDirectoryName(fullPath);
             // get the directory if the path ends with a slash
-            if (fullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
-                fullPath.EndsWith("/")) {
-                // strip the slash off so the filename is derived correctly
-                fileName = 
-                    System.IO.Path.GetFileName(fullPath.Substring(0, fullPath.Length - 1));
-            } else {
+//            if (fullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
+//                fullPath.EndsWith("/")) {
+//                // strip the slash off so the filename is derived correctly
+//                fileName = 
+//                    System.IO.Path.GetFileName(fullPath.Substring(0, fullPath.Length - 1));
+//            } else {
                 fileName = System.IO.Path.GetFileName(fullPath);
-            }
+//            }
             entryString.Append("/").Append(System.IO.Path.GetFileName(fileName));
             entryString.Append("/0///");
 
             LOGGER.Error("entryString=[" + entryString.ToString() + "]");
             Entry entry = new Entry(path, 
                 entryString.ToString());
-            LOGGER.Error("Created entry=[" + entry + "]");
-            LOGGER.Error("Path=[" + entry.Path + "]");
-            LOGGER.Error("FullPath=[" + fullPath + "]");
+            LOGGER.Debug("Created entry=[" + entry + "]");
+            LOGGER.Debug("entry.Path=[" + entry.Path + "]");
+            LOGGER.Debug("entry.FullPath=[" + entry.FullPath + "]");
+            LOGGER.Debug("fullPath=[" + fullPath + "]");
+
             return entry;
         }
 

@@ -555,7 +555,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Manager manager = new Manager(workingPath);
             for (int i = 0; i < cvsDirIn.Length; i++) {
                 Assertion.AssertEquals("cvsDir number=[" + i + "]", 
-                    cvsDirOut[i], manager.GetCvsDir(cvsDirIn[i]));
+                    cvsDirOut[i], manager.GetCvsDir(Entry.CreateEntry(cvsDirIn[i])));
             }
         }
     }

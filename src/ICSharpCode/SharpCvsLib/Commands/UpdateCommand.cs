@@ -145,7 +145,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                         DateTime old = entry.TimeStamp;
                         entry.TimeStamp = entry.TimeStamp;
     				
-                        String fileName = entry.FullPath;
                         this.SendFileRequest (connection, entry);
                     }
                 }

@@ -62,7 +62,6 @@ namespace ICSharpCode.SharpCvsLib.Logs {
             this.settings = SharpCvsLibConfig.GetInstance();
         }
 
-        private static String duplicateResponseChecker;
         /// <summary>
         /// Log the message.
         ///
@@ -76,13 +75,6 @@ namespace ICSharpCode.SharpCvsLib.Logs {
                 if (this.settings.Log.DebugLog.LogStackTrace) {
                     msg.Append("\n Stack Trace:");
                     msg.Append(Environment.StackTrace);
-                }
-
-                if (message.Equals(duplicateResponseChecker)) {
-                    LOGGER.Debug("duplicate logging call.  stack trace=[" + Environment.StackTrace + "]");
-                    duplicateResponseChecker = message;
-                } else if (null == duplicateResponseChecker || String.Empty == duplicateResponseChecker) {
-                    duplicateResponseChecker = message;
                 }
                 LOGGER.Debug(msg);
             }

@@ -76,7 +76,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             Entry entry = Entry.CreateEntry(pathTranslator.LocalPathAndFilename);
             // the root module directory does not get a cvs Entries line.
             if (!services.Repository.WorkingPath.Equals(pathTranslator.LocalPathAndFilename)) {
-                manager.AddEntry(services.Repository, localPath, reposPath, entry.FileContents);
+                manager.Add(entry);
+                //manager.AddEntry(services.Repository, localPath, reposPath, entry.FileContents);
             }
 
             if (LOGGER.IsDebugEnabled) {

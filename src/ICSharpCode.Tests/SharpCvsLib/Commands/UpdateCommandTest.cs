@@ -38,6 +38,8 @@ using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
+
+using ICSharpCode.SharpCvsLib.Tests;
 using ICSharpCode.SharpCvsLib.Tests.Config;
 
 using log4net;
@@ -49,7 +51,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     ///         with an update.
     /// </summary>
     [TestFixture]
-    public class UpdateCommandTest	{
+    public class UpdateCommandTest : AbstractTest	{
         private ILog LOGGER =
             LogManager.GetLogger (typeof(CheckoutModuleCommandTest));
 
@@ -65,14 +67,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// Constructor for customer db test.
         /// </summary>
         public UpdateCommandTest () {
-        }
-
-        /// <summary>
-        ///     Checkout the sharpcvslib module so we have something
-        ///         to test the update command with.
-        /// </summary>
-        [SetUp]
-        public void SetUp () {
             this.moduleDir = this.settings.Config.Module;
             this.rootDir =
                 Path.Combine (this.settings.Config.LocalPath, this.moduleDir);
@@ -99,20 +93,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             CheckoutModuleCommandTest checkout =
                 new CheckoutModuleCommandTest ();
             checkout.Checkout (revision, overrideDirectory);
-        }
-
-        /// <summary>
-        ///     Remove the local path directory that we were testing with.
-        /// </summary>
-        [TearDown]
-        public void TearDown () {
-            this.CleanUp ();
-        }
-
-        private void CleanUp () {
-            if (Directory.Exists(this.settings.Config.LocalPath)) {
-                Directory.Delete (this.settings.Config.LocalPath, true);
-            }
         }
 
         /// <summary>

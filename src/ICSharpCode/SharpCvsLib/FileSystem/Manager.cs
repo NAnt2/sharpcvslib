@@ -205,7 +205,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// Add the contents of the cvs file object to the respective file.
         /// </summary>
         public void Add (ICvsFile newCvsEntry) {
-            String cvsPath = this.GetCvsDir (newCvsEntry.FullPath);
+            String cvsPath = this.GetCvsDir (newCvsEntry);
             LOGGER.Debug("Add ICvsFile cvsPath=[" + cvsPath + "]");
 
             Hashtable newCvsEntries = new Hashtable();
@@ -288,7 +288,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// Remove the contents from the cvs control file.
         /// </summary>
         public void Remove (ICvsFile file) {
-            String cvsPath = this.GetCvsDir(file.Path);
+            String cvsPath = this.GetCvsDir(file);
             this.RemoveFromFile (cvsPath, file.Filename, file.FileContents);
         }
 
@@ -331,7 +331,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             bool append = false;
             foreach (ICvsFile entry in entries) {
                 LOGGER.Debug("fullPath=[" + entry.FullPath + "]");
-                String cvsPath = this.GetCvsDir(entry.Path);
+                String cvsPath = this.GetCvsDir(entry);
                 String cvsFullPath = Path.Combine(cvsPath, entry.Filename);
                 this.WriteToFile (cvsFullPath,
                                 entry.FileContents,
@@ -401,10 +401,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///         already exists at the end of the path specified, then it
         ///         is returned untouched.
         /// </summary>
-        /// <param name="fullPath">The full path to the file or directory.</param>
+        /// <param name="cvsFile">The full path to the file or directory.</param>
         /// <returns>The path to the cvs directory.</returns>
-        internal String GetCvsDir (String fullPath) {
-            String path = fullPath;
+        internal String GetCvsDir (ICvsFile cvsFile) {
+            String path = cvsFile.FullPath;
             if ((path.EndsWith(Path.DirectorySeparatorChar.ToString()) ||
                 path.EndsWith("/")) && !this.HasCvsDir(path)) {
                 // If the full path was passed in then get the directory above.
@@ -417,8 +417,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 path = Path.GetDirectoryName(path);
 
                 //msg.Append("need the directory name above this=[").Append(path).Append("]");
-
-                //path = Path.GetDirectoryName(path);
 
                 msg.Append("this should be the directory the passed in folder is managed by=[").Append(path).Append("]");
                 LOGGER.Debug(msg);
@@ -443,7 +441,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 path = Path.GetDirectoryName(path);
 
                 LOGGER.Debug(msg);
-            }  else {
+            }  else if (cvsFile is Entry) {
+                LOGGER.Info("Is entry file=[" + (cvsFile is Entry) + "], it is a " + cvsFile.GetType().FullName.ToString());
+                Entry entry = (Entry)cvsFile;
+                if (entry.IsDirectory) {
+                    path = Path.GetDirectoryName(path);
+                }
+            } else {
                 StringBuilder msg = new StringBuilder();
                 msg.Append("Unable to determine whether this is a file or a directory, ");
                 msg.Append("however the path does not end with a directory seperator ");
