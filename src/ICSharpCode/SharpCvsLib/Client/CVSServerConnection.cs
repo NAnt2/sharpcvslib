@@ -207,11 +207,16 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// <summary>
         /// Occurs when a message is sent to the cvs server.
         /// </summary>
-        public event MessageEventHandler MessageSentEvent;
+        public event MessageEventHandler RequestMessageEvent;
         /// <summary>
         /// Occurs when a message is received from the cvs server.
         /// </summary>
-        public event MessageEventHandler MessageReceivedEvent;
+        public event MessageEventHandler ResponseMessageEvent;
+
+        /// <summary>
+        /// Occurs when a file is being updated from the repository.
+        /// </summary>
+        public event MessageEventHandler FileUpdatedMessageEvent;
 
         /// <summary>
         /// This message event is fired when there is an error message returned
@@ -254,6 +259,16 @@ namespace ICSharpCode.SharpCvsLib.Client {
         }
 
         /// <summary>
+        /// Send notification to event handlers that a file has been updated from the repository.
+        /// Clients that wish to handle this message should listen for the 
+        /// <see cref="FileUpdatedMessageEvent"/>.
+        /// </summary>
+        /// <param name="message"></param>
+        public void SendFileUpdatedMessage(string message) {
+            this.FileUpdatedMessageEvent(this, new MessageEventArgs(message));
+        }
+
+        /// <summary>
         /// Module to execute cvs commands on.
         /// </summary>
         private class Module {
@@ -269,7 +284,6 @@ namespace ICSharpCode.SharpCvsLib.Client {
                 if (LOGGER.IsDebugEnabled) {
                     LOGGER.Debug ("Response : " + responseStr);
                 }
-                this.MessageReceivedEvent(this, new MessageEventArgs(responseStr, "--debug-server--"));
 
                 if (responseStr.Length == 0) {
                     SendMessage("server timed out");
@@ -292,8 +306,12 @@ namespace ICSharpCode.SharpCvsLib.Client {
                 if (response.IsTerminating) {
                     break;
                 }
-                if (response.ResponseString != null) {
-                    this.MessageReceivedEvent(this, new MessageEventArgs(response));
+                if (null != response && null != response.ResponseString) {
+                    try {
+                        this.ResponseMessageEvent(this, new MessageEventArgs(response));
+                    } catch (NullReferenceException) {
+                        LOGGER.Debug("No one is listening to the response message event.");
+                    }
                 }
             }
         }
@@ -310,8 +328,12 @@ namespace ICSharpCode.SharpCvsLib.Client {
                 LOGGER.Debug (msg);
             }
 
-            if (request.RequestString != null) {
-                this.MessageSentEvent(this, new MessageEventArgs(request));
+            if (null != request && null != request.RequestString) {
+                try {
+                    this.RequestMessageEvent(this, new MessageEventArgs(request));
+                } catch (NullReferenceException) {
+                    LOGGER.Debug("No one is listening to request message event.");
+                }
             }
 
             outputStream.SendString(request.RequestString);

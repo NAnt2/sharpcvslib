@@ -35,56 +35,65 @@
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileHandler;
 using ICSharpCode.SharpCvsLib.FileSystem;
+using ICSharpCode.SharpCvsLib.Messages;
 
 
 namespace ICSharpCode.SharpCvsLib.Client {
-
-/// <summary>
-/// Response services interface.
-/// </summary>
-public interface IResponseServices
-{
     /// <summary>
-    /// Send message
+    /// Response services interface.
     /// </summary>
-    /// <param name="msg"></param>
-    void   SendMessage(string msg);
+    public interface IResponseServices {
+        /// <summary>
+        /// Occurs when a message is sent to the cvs server.
+        /// </summary>
+        event MessageEventHandler RequestMessageEvent;
+        /// <summary>
+        /// Occurs when a message is received from the cvs server.
+        /// </summary>
+        event MessageEventHandler ResponseMessageEvent;
 
-    /// <summary>
-    /// Send an error message.
-    /// </summary>
-    /// <param name="msg"></param>
-    void SendErrorMessage(string msg);
+        /// <summary>
+        /// Occurs when a file is being updated from the repository.
+        /// </summary>
+        event MessageEventHandler FileUpdatedMessageEvent;
 
-    /// <summary>
-    /// The repository object, contains information about
-    ///     cvsroot, working directory, etc.
-    /// </summary>
-    WorkingDirectory Repository {
-        get;
+        /// <summary>
+        /// Send message
+        /// </summary>
+        /// <param name="msg"></param>
+        void   SendMessage(string msg);
+
+        /// <summary>
+        /// Send an error message.
+        /// </summary>
+        /// <param name="msg"></param>
+        void SendErrorMessage(string msg);
+
+        /// <summary>
+        /// Provide notification to listeners that a file on the local file system has been
+        /// updated from the server.
+        /// </summary>
+        void SendFileUpdatedMessage(string msg);
+
+        /// <summary>
+        /// The repository object, contains information about
+        ///     cvsroot, working directory, etc.
+        /// </summary>
+        WorkingDirectory Repository {get;}
+
+        /// <summary>
+        /// The next file date.
+        /// </summary>
+        string NextFileDate {get;set;}
+
+        /// <summary>
+        /// The next file.
+        /// </summary>
+        string NextFile {get;set;}
+
+        /// <summary>
+        /// Handler for uncompressed files.
+        /// </summary>
+        IFileHandler UncompressedFileHandler {get;}
     }
-
-    /// <summary>
-    /// The next file date.
-    /// </summary>
-    string NextFileDate {
-        get;
-        set;
-    }
-
-    /// <summary>
-    /// The next file.
-    /// </summary>
-    string NextFile {
-        get;
-        set;
-    }
-
-    /// <summary>
-    /// Handler for uncompressed files.
-    /// </summary>
-    IFileHandler UncompressedFileHandler {
-        get;
-    }
-}
 }

@@ -67,7 +67,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private string singleOptions;
         private string files;
 
+        private bool verbose = false;
+
         private const string REGEX_LOG_LEVEL = @"[-]*log:[\s]*(debug|info|warn|error)";
+        private const string REGEX_VERBOSE = @"[-]*verbose]";
 
         private const String ENV_CVS_ROOT = "CVS_ROOT";
 
@@ -143,10 +146,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             Match match = regex.Match(commandline);
             if (match.Groups.Count > 0) {
                 string newLevelString = match.Groups[1].Value;
-                System.Console.WriteLine(String.Format("Changing logging level to {0}.", newLevelString));
-                log4net.Core.LevelMap map = log4net.LogManager.GetRepository().LevelMap;
-                log4net.Core.Level newLevel = map[newLevelString];
-                log4net.LogManager.GetRepository().Threshold = newLevel;
+
+                if (null != newLevelString && String.Empty != newLevelString) {
+                    System.Console.WriteLine(String.Format("Changing logging level to {0}.", newLevelString));
+                    log4net.Core.LevelMap map = log4net.LogManager.GetRepository().LevelMap;
+                    log4net.Core.Level newLevel = map[newLevelString];
+                    log4net.LogManager.GetRepository().Threshold = newLevel;
+                }
             }
             // hack to remove the logging level parameter so the rest of the parsing goes correctly
             this.RemoveArg("log:");
@@ -189,6 +195,24 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             this.password = thePassword;
         }
 
+        private void SetVerbose(string commandLine) {
+            Regex regex = new Regex(REGEX_VERBOSE);
+            Match match = regex.Match(commandLine);
+            if (match.Groups.Count > 0) {
+                this.verbose = true;
+            }
+
+            this.RemoveArg("verbose");
+        }
+
+        /// <summary>
+        /// <code>true</code> if the server response and requests should be sent to the appropriate
+        /// logger (usually standard out); otherwise <code>false</code>.
+        /// </summary>
+        public bool Verbose {
+            get {return this.verbose;}
+        }
+
         /// <summary>Create a new instance of the command line parser and
         ///     initialize the arguments object.</summary>
         /// <param name="args">A collection of strings that represent the command
@@ -201,6 +225,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
             this.SetLogLevel(this.CommandLine);
             this.SetPassword(this.CommandLine);
+            this.SetVerbose(this.CommandLine);
 
         }
 

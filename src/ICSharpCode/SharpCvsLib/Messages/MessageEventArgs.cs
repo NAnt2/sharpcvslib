@@ -44,8 +44,6 @@ namespace ICSharpCode.SharpCvsLib.Messages {
         private string message;
         private string prefix = String.Empty;
 
-        private IResponse response;
-
         /// <summary>Default prefix that is appended to all requests without a 
         /// prefix specified.</summary>
         public const string DEFAULT_PREFIX = "--message--";
@@ -60,13 +58,6 @@ namespace ICSharpCode.SharpCvsLib.Messages {
         public string Prefix {
             get {return this.prefix;}
             set {this.prefix = value;}
-        }
-
-        /// <summary>
-        /// Temorary hack to get console logging working.
-        /// </summary>
-        public IResponse Response {
-            get {return this.response;}
         }
 
         /// <summary>
@@ -118,7 +109,6 @@ namespace ICSharpCode.SharpCvsLib.Messages {
         /// object used to construct the message argument.</param>
         public MessageEventArgs(IResponse response) : 
             this(response.ResponseString, MessageEventArgs.SERVER_PREFIX) {
-            this.response = response;
         }
 	}
 }

@@ -58,7 +58,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// </summary>
         /// <param name="line"></param>
         protected void AddLine (string line) {
-            this.msg.Append(line).Append(" ");
+            this.msg.Append(line).Append(Environment.NewLine);
         }
 
         /// <summary>

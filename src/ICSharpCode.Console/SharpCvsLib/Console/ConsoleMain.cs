@@ -196,8 +196,13 @@ namespace ICSharpCode.SharpCvsLib.Console {
                 // Create CVSServerConnection object that has the ICommandConnection
                 CVSServerConnection serverConn = new CVSServerConnection(workingDirectory);
                 ConsoleWriter writer = new ConsoleWriter();
-                serverConn.MessageSentEvent += new MessageEventHandler(writer.WriteLine);
-                serverConn.MessageReceivedEvent += new MessageEventHandler(writer.WriteLine);
+
+                if (parser.Verbose) {
+                    serverConn.RequestMessageEvent += new MessageEventHandler(writer.WriteLine);
+                    serverConn.ResponseMessageEvent += new MessageEventHandler(writer.WriteLine);
+                }
+
+                serverConn.FileUpdatedMessageEvent += new MessageEventHandler(writer.WriteLine);
 
                 if (null == serverConn) {
                     System.Console.WriteLine("Unable to connect to server.");

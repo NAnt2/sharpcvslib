@@ -66,26 +66,7 @@ namespace ICSharpCode.SharpCvsLib.Console
             string message = e.Message;
             string prefix = e.Prefix;
 
-            if (e.Response != null && 
-                e.Response.GetType() == typeof(ICSharpCode.SharpCvsLib.Responses.UpdatedResponse)) {
-                System.Console.WriteLine(String.Format("[{0}]: [{1}]", prefix, message));
-            }
-        }
-
-        private string GetText(string line) {
-            Match match = null;
-            StringBuilder text = new StringBuilder(String.Empty);
-            
-            match = TextRegex.Match(line);
-            if (match.Groups.Count != 0) {
-                text.Append(match.Groups[1].Value);
-            }
-
-            match = FNameRegex.Match(line);
-            if (match.Groups.Count != 0) {
-                text.Append(match.Groups[1].Value);
-            }
-            return text.ToString();
+            System.Console.WriteLine(String.Format("[{0}]: [{1}]", prefix, message));
         }
 	}
 }

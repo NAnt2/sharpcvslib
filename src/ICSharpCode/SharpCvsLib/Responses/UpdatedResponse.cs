@@ -67,7 +67,6 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// </summary>
         public override void Process() {
             Manager manager = new Manager (Services.Repository.WorkingPath);
-            this.AddLine("U ");
             string localPath = this.ReadLine();
             string reposPath = this.ReadLine();
             string entry     = this.ReadLine();
@@ -130,6 +129,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             message.Repository =  orgPath.RelativePath;
             message.Filename = e.Name;
             Services.SendMessage (message.Message);
+            Services.SendFileUpdatedMessage(message.Message);
         }
 
         /// <summary>
