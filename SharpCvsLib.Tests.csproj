@@ -818,12 +818,22 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\ICSharpCode.Tests\SharpCvsLib\Console\Commands\AddCommandTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src\ICSharpCode.Tests\SharpCvsLib\Console\Commands\CheckoutCommandTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
                 <File
                     RelPath = "src\ICSharpCode.Tests\SharpCvsLib\Console\Commands\CommitCommandTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\ICSharpCode.Tests\SharpCvsLib\Console\Commands\InitCommandTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
