@@ -171,8 +171,12 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             Manager manager = new Manager(Environment.CurrentDirectory);
 
             Repository repository = null;
+            Root root = null;
+            DirectoryInfo dir = 
+                new DirectoryInfo(Path.Combine(Directory.GetCurrentDirectory(), "CVS"));
             try {
-                repository = manager.FetchRepository(Environment.CurrentDirectory); 
+                repository = Repository.Load(dir); 
+                root = Root.Load(dir);
             } catch (NullReferenceException) {
                 this.InvalidRepository();
             } catch (CvsFileNotFoundException) {
@@ -183,10 +187,16 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 this.InvalidRepository();
             }
 
+            try {
+                this.cvsRootVar = new CvsRoot(root.FileContents);
+            } catch (CvsRootParseException) {
+                this.InvalidRepository();
+            }
+
             // If this fails error out and state the user
             //    is not in a CVS repository directory tree.
             if (localDirectory == null) {
-                localDirectory = Environment.CurrentDirectory;
+                localDirectory = dir.Parent.FullName;
             }
             CurrentWorkingDirectory = new WorkingDirectory( this.CvsRootVar,
                 localDirectory, repository.FileContents);
