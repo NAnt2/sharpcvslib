@@ -29,6 +29,7 @@
 // exception statement from your version.
 //
 //    <author>Steve Kenzell</author>
+//    <author>Clayton Harbour</author>
 #endregion
 using System;
 using System.Globalization;
@@ -42,35 +43,26 @@ using ICSharpCode.SharpCvsLib.Console.Parser;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Console.Commands {
+namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
     /// <summary>
     /// Update modules in the cvs repository.
     /// </summary>
-    public class UpdateCommand {
-        private WorkingDirectory currentWorkingDirectory;
+    public class UpdateCommandParser : AbstractCommandParser {
         private CvsRoot cvsRoot;
         private string fileNames;
         private string revision;
         private string localDirectory;
         private DateTime date;
         private string unparsedOptions;
-        private readonly ILog LOGGER = 
-            LogManager.GetLogger (typeof(UpdateCommand));
 
-        /// <summary>
-        /// The current working directory.
-        /// </summary>
-        public WorkingDirectory CurrentWorkingDirectory {
-            get {return this.currentWorkingDirectory;}
-        }
         /// <summary>
         /// Update module files from a cvs repository.
         /// </summary>
         /// <param name="cvsroot">User information</param>
         /// <param name="fileNames">Files</param>
         /// <param name="upOptions">Options</param>
-        public UpdateCommand(string cvsroot, string fileNames, string upOptions) : 
+        public UpdateCommandParser(string cvsroot, string fileNames, string upOptions) : 
             this(new CvsRoot(cvsroot), fileNames, upOptions){
         }
 
@@ -80,7 +72,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <param name="cvsroot">User Information</param>
         /// <param name="fileNames">Files</param>
         /// <param name="upOptions">Options</param>
-        public UpdateCommand(CvsRoot cvsroot, string fileNames, string upOptions) {
+        public UpdateCommandParser(CvsRoot cvsroot, string fileNames, string upOptions) {
             this.cvsRoot = cvsroot;
             this.fileNames = fileNames;
             this.unparsedOptions = upOptions;
@@ -94,7 +86,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <exception cref="Exception">TODO: Make a more specific exception</exception>
         /// <exception cref="NotImplementedException">If the command argument
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
-        public ICommand CreateCommand () {
+        public override ICommand CreateCommand () {
             UpdateCommand2 updateCommand;
 
             this.ParseOptions(this.unparsedOptions);
@@ -108,18 +100,18 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 if (localDirectory == null) {
                     localDirectory = Environment.CurrentDirectory;
                 }
-                currentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
+                CurrentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
                     localDirectory, repository.FileContents);
                 if (revision != null) {
-                    currentWorkingDirectory.Revision = revision;
+                    CurrentWorkingDirectory.Revision = revision;
                 }
                 if (!date.Equals(DateTime.MinValue)) {
-                    currentWorkingDirectory.Date = date;
+                    CurrentWorkingDirectory.Date = date;
                 }
-                currentWorkingDirectory.FoldersToUpdate =
+                CurrentWorkingDirectory.FoldersToUpdate =
                     manager.FetchFilesToUpdate (Environment.CurrentDirectory);
                 // Create new UpdateCommand2 object
-                updateCommand = new UpdateCommand2(currentWorkingDirectory);
+                updateCommand = new UpdateCommand2(CurrentWorkingDirectory);
             }
             catch (Exception e) {
                 LOGGER.Error (e);
@@ -293,5 +285,38 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 }
             }
         }
+
+        /// <summary>
+        /// Output the command usage and arguements.
+        /// </summary>
+        public override string Usage {
+            get {
+                string usage = 
+@"Usage: cvs update [-APCdflRpbm] [-k kopt] [-r rev] [-D date] [-j rev]
+    [-I ign] [-W spec] [files...]
+        -A      Reset any sticky tags/date/kopts.
+        -P      Prune empty directories.
+        -C      Overwrite locally modified files with clean repository copies.
+        -d      Build directories, like checkout does.
+        -f      Force a head revision match if tag/date not found.
+        -l      Local directory only, no recursion.
+        -R      Process directories recursively.
+        -p      Send updates to standard output (avoids stickiness).
+        -k kopt Use RCS kopt -k option on checkout. (is sticky)
+        -r rev  Update using specified revision/tag (is sticky).
+        -D date Set date to update from (is sticky).
+        -j rev  Merge in changes made between current revision and rev.
+        -b      Perform -j merge from branch point.
+        -m      Perform -j merge from last merge point (default).
+        -I ign  More files to ignore (! to reset).
+        -W spec Wrappers specification line.
+        -3      Produce 3-way conflicts.
+        -S      Use case insensitive update to select between conflicting names.
+(Specify the --help global option for a list of other help options)";
+
+                return usage;
+            }
+        }
+
     }
 }
