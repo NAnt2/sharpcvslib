@@ -300,7 +300,6 @@
                 <include name="**" />
             </fileset>
         </zip>
-        <call target="src.commit"/>
     </target>
     
     <target name="build-release.common">
