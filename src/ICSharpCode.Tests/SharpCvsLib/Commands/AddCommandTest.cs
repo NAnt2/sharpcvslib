@@ -115,7 +115,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             connection.Close ();
 
             Manager manager = new Manager(working.WorkingPath);
-            Entries entries = manager.FetchEntries(modulePath + Path.DirectorySeparatorChar);
+            Entries entries = manager.FetchEntries(Path.Combine(modulePath, "Entries"));
             foreach (String addedFile in copiedFiles) {
                 Assertion.Assert(entries.Contains(Path.Combine(modulePath, addedFile)));
             }

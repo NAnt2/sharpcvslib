@@ -790,7 +790,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             try {
                 return
                     (Tag)this.FetchSingle (directory, Factory.FileType.Tag);
-            } catch (FileNotFoundException e) {
+            } catch (CvsFileNotFoundException e) {
                 LOGGER.Debug (e);
                 // No tag information found, this is normal.  Return null.
                 return null;
