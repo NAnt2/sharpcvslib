@@ -75,4 +75,47 @@ a copy of which can be found with the CVS distribution kit." />
     <property name="doc.copyright.text" value="${assembly.copyright.text}" />
     <property name="doc.copyright.href" value="${assembly.copyright.href}" />
     <!-- D O C U M E N T A T I O N -->
+    
+    
+    <!-- U T I L I T Y  T A S K S -->
+    <target name="guid" description="Output a guid value.">
+        <script language="C#" failonerror="true">
+            <references>
+                <include name="System.Xml.dll"/>
+            </references>
+            <code>
+                <![CDATA[
+                    public static void ScriptMain(Project project)
+                    {
+                        try
+                        {
+                            //setNewGuid(project, "msi.guid.product");
+                            //setNewGuid(project, "msi.guid.upgrade");
+                            System.Console.WriteLine(String.Format("Guid: {0}", GetNewGuid()));
+                        }
+                        finally
+                        {
+                        }
+                    }
+                    
+                    private static string GetNewGuid () {
+                        return System.Guid.NewGuid().ToString().ToUpper();
+                    }
+
+                    private static void setNewGuid(Project project, string propertyName)
+                    {
+                        string template = "<property name=\"" + propertyName + "\" value=\"{0}\" />";
+                        string guidstring = GetNewGuid();
+                        System.Xml.XmlDocument TaskDocument = new System.Xml.XmlDocument();
+                        TaskDocument.LoadXml(String.Format(template, guidstring));
+                        System.Xml.XmlNode taskNode = TaskDocument.SelectSingleNode("property");
+                        NAnt.Core.Task task = project.CreateTask(taskNode);
+                        task.Execute();
+                     }
+                 ]]>
+            </code>          
+        </script>   
+    </target>    
+    <!-- U T I L I T Y  T A S K S -->
+    
 </project>
