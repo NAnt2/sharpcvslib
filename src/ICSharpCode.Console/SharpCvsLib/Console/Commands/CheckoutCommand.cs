@@ -44,11 +44,11 @@ using ICSharpCode.SharpCvsLib.Misc;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Console.Commands{
+namespace ICSharpCode.SharpCvsLib.Console.Parser{
     /// <summary>
     /// Check out module files from a cvs repository.
     /// </summary>
-    public class CheckoutCommand{
+    public class CheckoutCommandParser : AbstractCommandParser{
         private CvsRoot cvsRoot;
         private string repository;
         private string revision;
@@ -56,24 +56,42 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         private DateTime date;
 
         private string unparsedOptions;
-        private readonly ILog LOGGER = 
-            LogManager.GetLogger (typeof(CheckoutCommand));
-        private WorkingDirectory currentWorkingDirectory;
+
         /// <summary>
-        /// The current working directory.
+        /// Create a new instance of the <see cref="CheckoutCommandParser"/>.
         /// </summary>
-        public WorkingDirectory CurrentWorkingDirectory {
-            get {return this.currentWorkingDirectory;}
+        /// <returns></returns>
+        public static ICommandParser GetInstance() {
+            return GetInstance(typeof(CheckoutCommandParser));
         }
 
         /// <summary>
-        /// Check out module files from a cvs repository.
+        /// Name of the command being parsed.
         /// </summary>
-        /// <param name="cvsroot">User information</param>
-        /// <param name="repositoryName">Repository</param>
-        /// <param name="coOptions">Options</param>
-        public CheckoutCommand(string cvsroot, string repositoryName, string coOptions) : 
-            this(new CvsRoot(cvsroot), repositoryName, coOptions){
+        public override string CommandName {
+            get {return "checkout";}
+        }
+
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        public CheckoutCommandParser () {
+
+        }
+
+        /// <summary>
+        /// Create a new checkout command, initialize the variables that are used
+        ///     in a checkout.
+        /// </summary>
+        /// <param name="cvsRoot">The cvs root to use for this checkout.</param>
+        /// <param name="args">Commandline arguments to be parsed out and used for the command.</param>
+        public CheckoutCommandParser (CvsRoot cvsRoot, string[] args) {
+            this.cvsRoot = cvsRoot;
+            StringBuilder coOptions = new StringBuilder ();
+            foreach (string arg in args) {
+                coOptions.Append(arg);
+            }
+            this.unparsedOptions = coOptions.ToString();
         }
 
         /// <summary>
@@ -83,7 +101,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         /// <param name="cvsRoot">The cvs root to use for this checkout.</param>
         /// <param name="repositoryName">Name of the local repository path.</param>
         /// <param name="coOptions">All unparsed checkout options.</param>
-        public CheckoutCommand (CvsRoot cvsRoot, string repositoryName, string coOptions) {
+//        [Obsolete("Use CheckCommandParser(CvsRoot, string[])")]
+        public CheckoutCommandParser (CvsRoot cvsRoot, string repositoryName, string coOptions) {
             this.cvsRoot = cvsRoot;
             repository = repositoryName;
             this.unparsedOptions = coOptions;
@@ -97,7 +116,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
         /// <exception cref="Exception">TODO: Make a more specific exception</exception>
         /// <exception cref="NotImplementedException">If the command argument
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
-        public ICommand CreateCommand () {
+        public override ICommand CreateCommand () {
             CheckoutModuleCommand checkoutCommand;
             try {
                 this.ParseOptions(this.unparsedOptions);
@@ -105,16 +124,16 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
                 if (localDirectory == null) {
                     localDirectory = Environment.CurrentDirectory;
                 }
-                this.currentWorkingDirectory = new WorkingDirectory(this.cvsRoot,
+                this.CurrentWorkingDirectory = new WorkingDirectory(this.cvsRoot,
                     localDirectory, repository);
                 if (revision != null) {
-                    this.currentWorkingDirectory.Revision = revision;
+                    this.CurrentWorkingDirectory.Revision = revision;
                 }
                 if (!date.Equals(DateTime.MinValue)) {
-                    this.currentWorkingDirectory.Date = date;
+                    this.CurrentWorkingDirectory.Date = date;
                 }
                 // Create new CheckoutModuleCommand object
-                checkoutCommand = new CheckoutModuleCommand(this.currentWorkingDirectory);
+                checkoutCommand = new CheckoutModuleCommand(this.CurrentWorkingDirectory);
             }
             catch (Exception e) {
                 LOGGER.Error (e);
@@ -235,6 +254,36 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands{
                         "implemented.";
                     throw new NotImplementedException (msg);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Output the command usage and arguements.
+        /// </summary>
+        public override string Usage {
+            get {
+                string usage = 
+@"Usage:
+  cvs checkout [-ANPRcflnps] [-r rev] [-D date] [-d dir]
+    [-j rev1] [-j rev2] [-k kopt] modules...
+        -A      Reset any sticky tags/date/kopts.
+        -N      Don't shorten module paths if -d specified.
+        -P      Prune empty directories.
+        -R      Process directories recursively.
+        -c      ""cat"" the module database.
+        -f      Force a head revision match if tag/date not found.
+        -l      Local directory only, not recursive
+        -n      Do not run module program (if any).
+        -p      Check out files to standard output (avoids stickiness).
+        -s      Like -c, but include module status.
+        -r rev  Check out revision or tag. (implies -P) (is sticky)
+        -D date Check out revisions as of date. (implies -P) (is sticky)
+        -d dir  Check out into dir instead of module name.
+        -k kopt Use RCS kopt -k option on checkout. (is sticky)
+        -j rev  Merge in changes made between current revision and rev.
+(Specify the --help global option for a list of other help options)";
+
+                return usage;
             }
         }
     }
