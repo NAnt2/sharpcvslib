@@ -8,7 +8,7 @@
                 output="${dir.build}/${name.top-level}.${name.lib}.dll" 
                 debug="${compile.debug}" 
                 define="${compile.define}" 
-                doc="${dir.build}/${name.top-level}.${name.project}.${name.lib}.xml">
+                doc="${dir.build}/${name.top-level}.${name.lib}.xml">
                 
             <arg value="${compile.unsafe}" />
             <arg value="${compile.checked}" />
