@@ -411,37 +411,13 @@ namespace ICSharpCode.SharpCvsLib.Client {
                     string retStr;
                     try {
                         retStr = inputStream.ReadLine();
-                    }
-                    catch (IOException e) {
+                    } catch (IOException e) {
                         String msg = "Failed to read line from server.  " +
                             "It is possible that the remote server was down.";
                         LOGGER.Error (msg, e);
                         throw new AuthenticationException (msg);
                     }
-
-                    switch (retStr) {
-                        case PSERVER_AUTH_SUCCESS: {
-                            SendMessage("Connection established");
-                            break;
-                        }
-                        case PSERVER_AUTH_FAIL: {
-                            try {
-                                tcpclient.Close();
-                            } finally {
-                                throw new AuthenticationException();
-                            }
-                        }
-                        default: {
-                            StringBuilder msg = new StringBuilder ();
-                            msg.Append("Unknown Server response : >").Append(retStr).Append("<");
-                            SendMessage(msg.ToString());
-                            try {
-                                tcpclient.Close();
-                            } finally {
-                                throw new AuthenticationException(msg.ToString());
-                            }
-                        }
-                    }
+		    this.HandlePserverAuthResponse(retStr);
                     break;
                 }
                 default: {
@@ -462,6 +438,36 @@ namespace ICSharpCode.SharpCvsLib.Client {
             SubmitRequest(new CaseRequest());
 
         }
+	
+	<summary>Either accept the pserver authentication response from the server or if the user
+		is invalid then throw an authentication exception.</summary>
+	<param name="retStr">The response from the cvs server.</param>
+	<exception cref="AuthenticationException">If the user is not valid.</exception>
+	private void HandlePserverAuthResponse (String retStr) {
+	        switch (retStr) {
+	            case PSERVER_AUTH_SUCCESS: {
+	                SendMessage("Connection established");
+	                break;
+	            }
+	            case PSERVER_AUTH_FAIL: {
+	                try {
+	                    tcpclient.Close();
+	                } finally {
+	                    throw new AuthenticationException();
+	                }
+	            }
+	            default: {
+	                StringBuilder msg = new StringBuilder ();
+	                msg.Append("Unknown Server response : >").Append(retStr).Append("<");
+	                SendMessage(msg.ToString());
+	                try {
+	                    tcpclient.Close();
+	                } finally {
+	                    throw new AuthenticationException(msg.ToString());
+	                }
+	            }
+	        }	
+	}
 
         /// <summary>
         /// The repository information.
