@@ -48,30 +48,34 @@ using NUnit.Framework;
 
 namespace ICSharpCode.SharpCvsLib.Console.Commands {
 
-/// <summary>
-///     Test the LoginCommand object for valid ones
-///         and test invalid ones.
-/// </summary>
-[TestFixture]
-public class LoginCommandTest
-{
     /// <summary>
-    ///     Constructory for test case.
+    ///     Test the LoginCommand object for valid ones
+    ///         and test invalid ones.
     /// </summary>
-    public LoginCommandTest () {
-    }
+    [TestFixture]
+    public class LoginCommandTest {
+        private TestSettings settings = new TestSettings();
+        private readonly ILog LOGGER = LogManager.GetLogger(typeof(LoginCommandTest));
+        /// <summary>
+        ///     Constructory for test case.
+        /// </summary>
+        public LoginCommandTest () {
+        }
 
-    /// <summary>
-    ///     Create a LoginCommand object.
-    ///
-    /// </summary>
-    [Test]
-    public void MakeLoginCommandTest () {
-        String root = ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
-        // Test Creating a CommandLineParser object
-        LoginCommand command = new LoginCommand(root);
-        Assertion.AssertNotNull ("Should have a command object.", command);
-        command.Execute();
+        /// <summary>
+        ///     Create a LoginCommand object.
+        ///
+        /// </summary>
+        [Test]
+        public void MakeLoginCommandTest () {
+            Directory.CreateDirectory( settings.Config.LocalPath);
+            Environment.CurrentDirectory = settings.Config.LocalPath;
+            String commandLine = "-d" + settings.Config.Cvsroot + " login";
+            String [] commandLineArgs = commandLine.Split(' ');
+            // Create the consoleMain to test the LoginCommand
+            ConsoleMain consoleMain = new ConsoleMain();
+            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
+            consoleMain.Execute(commandLineArgs);
+        }
     }
-}
 }
