@@ -46,23 +46,74 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 	public class FileParser {
         private Hashtable _files = new Hashtable();
         private Entries _cvsEntries = new Entries();
+        private Folders _folders = new Folders();
+
+        private string[] _args;
 
         public IList Files {
             get { return new ArrayList(this._files.Values); }
         }
 
+        public Folders Folders {
+            get { return this._folders; }
+        }
+
 		public FileParser(string[] args) {
+            this._args = args;
             this.Parse(args);
+            this.ConvertToFolders();
 		}
 
         private void Parse(string[] args) {
-            foreach (string arg in args) {
-                if (!arg.StartsWith("-")) {
-                    string file = arg;
-                    if (!Path.IsPathRooted(file)) {
-                        file = Path.Combine(Directory.GetCurrentDirectory(), file);
+            if (args != null && args.Length > 0) {
+                foreach (string arg in args) {
+                    if (!arg.StartsWith("-")) {
+                        string file = arg;
+                        if (!Path.IsPathRooted(file)) {
+                            file = Path.Combine(Directory.GetCurrentDirectory(), file);
+                        }
+
+                        if (Directory.Exists(file)) {
+                            this.GetFilesInDir(new DirectoryInfo(file));
+                        } else {
+                            this._files.Add(file, new FileInfo(file));
+                        }
                     }
-                    this._files.Add(file, new FileInfo(file));
+                }
+            }
+        }
+
+        private void GetFilesInDir(DirectoryInfo dir) {
+            foreach (FileInfo file in dir.GetFiles()) {
+                this._files.Add(file.FullName, file);
+            }
+
+            foreach (DirectoryInfo subDir in dir.GetDirectories()) {
+                this.GetFilesInDir(subDir);
+            }
+        }
+
+        private void ConvertToFolders() {
+            foreach (FileInfo file in this._files.Values) {
+                Folder folder;
+                if (this._folders.Contains(file.Directory.FullName)) {
+                    folder = this._folders[file.Directory.FullName];
+                } else {
+                    folder = new Folder(file.Directory);
+                    this._folders.Add(folder.Path.FullName, folder);
+                }
+
+                // try to load the entry from the CVS\Entries file
+                Entry entry = Entry.Load(file);
+
+                // if the file does not exist in the local cvs management folders, there
+                // is a chance that it has not been brought down, let the server resolve it
+                if (null == entry) {
+                    entry = Entry.CreateEntry(file);
+                }
+
+                if (!folder.Entries.Contains(file.FullName)) {
+                    folder.Entries.Add(file.FullName, entry);
                 }
             }
         }

@@ -223,7 +223,7 @@ namespace ICSharpCode.SharpCvsLib.Console {
                 // Create CVSServerConnection object that has the ICommandConnection
                 CVSServerConnection serverConn = new CVSServerConnection(workingDirectory);
 
-                if (parser.Verbose) {
+                if (CommandLineParser.IsVerbose) {
                     serverConn.RequestMessageEvent += 
                         new MessageEventHandler(Writer.WriteLine);
                     serverConn.ResponseMessageEvent += 
@@ -271,6 +271,9 @@ namespace ICSharpCode.SharpCvsLib.Console {
 
         public static void ExitProgram (string msg, Exception exception) {
             try {
+                if (CommandLineParser.IsVerbose) {
+                    ConsoleWriter.Instance.WriteLine(exception.ToString());
+                }
                 using (StreamWriter fileWriter = new StreamWriter(System.IO.Path.Combine(AppDir.FullName, "Error.log"), true)) {
                     fileWriter.WriteLine(string.Format("[{0}] - {1}\n{2}", 
                         DateTime.Now, msg, exception.ToString()));

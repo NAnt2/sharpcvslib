@@ -45,6 +45,8 @@ namespace ICSharpCode.SharpCvsLib.Console
 	public class ConsoleWriter {
         //private bool debug = false;
 
+        public static ConsoleWriter Instance = new ConsoleWriter();
+
         private const string REGEX_TEXT = @"text[\s]*([\w]*)";
         private const string REGEX_FNAME = @"fname[\s]*([\w]+[/\w]*[.\w]*)";
 

@@ -155,15 +155,17 @@
             <param name="shortcut">The shortcut file to resolve.</param>
             <returns></returns>
         </member>
-        <member name="T:Sporadicism.NAntExtras.Util.Shortcut.ShortcutInfo">
+        <member name="T:Sporadicism.NAntExtras.Functions.FileUtilFunctions">
             <summary>
-            Summary description for ShortcutHelper.
+            Generate guid ids.
             </summary>
         </member>
-        <member name="P:Sporadicism.NAntExtras.Util.Shortcut.ShortcutInfo.WorkingDirectory">
-            <value>
-            Working directory of the shortcut.
-            </value>
+        <member name="M:Sporadicism.NAntExtras.Functions.FileUtilFunctions.Read(System.String)">
+            <summary>
+            Read the given file and return the contents as a string.
+            </summary>
+            <param name="target">The name of the file to read.</param>
+            <returns>The contents of the file.</returns>
         </member>
         <member name="T:Sporadicism.NAntExtras.Util.Shortcut.ShellLink">
             <summary>
@@ -193,6 +195,16 @@
             <param name="replaceString">The replacement string.</param>
             <param name="searchString">The string that will be repalced.</param>
             <returns>The process id of the given process.</returns>
+        </member>
+        <member name="T:Sporadicism.NAntExtras.Util.Shortcut.ShortcutInfo">
+            <summary>
+            Summary description for ShortcutHelper.
+            </summary>
+        </member>
+        <member name="P:Sporadicism.NAntExtras.Util.Shortcut.ShortcutInfo.WorkingDirectory">
+            <value>
+            Working directory of the shortcut.
+            </value>
         </member>
     </members>
 </doc>

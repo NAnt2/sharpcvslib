@@ -51,8 +51,10 @@
     </target>
 
     <target name="update.version" description="Generate the assembly info file for the project.  Pass in the version number.">
+        <property name="assembly.version" value="${FileUtil::Read(dir.build + '\build.number')}"/>
         <!-- Gets the version number and places it in a property called build.version -->
         <if test="${string::contains(BuildType, 'Release')}">
+            <echo message="BuildType is ${BuildType}, getting a new version number."/>
             <version    buildtype="monthday"
                         path="build.number"
                         revisiontype="automatic"
@@ -79,7 +81,7 @@
                     <include name="log4net.dll" />
                 </references>
             </asminfo>    
-        </if>    
+        </if>  
     </target>
     
     <target name="setup">
@@ -113,7 +115,7 @@
         <echo message="Building assembly version ${assembly.version}" />
     </target>
 
-    <target name="build.all" depends="clean" description="Build all sources by calling all targets in project build files.">
+    <target name="build.all" description="Build all sources by calling all targets in project build files.">
         <call target="setup" />
         <call target="build.lib" />
         <call target="build.console" />
@@ -301,7 +303,7 @@
         </zip>
     </target>
     
-    <target name="build-release.common">
+    <target name="build-release.common" depends="clean">
         <call target="dist" />
         <property name="dir.output" value="${dir.release}/${assembly.version}" />
         <echo message="Building release for version ${assembly.version}." />

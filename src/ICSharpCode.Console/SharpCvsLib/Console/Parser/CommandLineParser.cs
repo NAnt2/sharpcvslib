@@ -68,7 +68,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private string singleOptions;
         private string files;
 
-        private bool verbose = false;
+        private static bool _verbose = false;
 
         private const string REGEX_LOG_LEVEL = @"[-]*log:[\s]*(debug|info|warn|error)";
         private const string REGEX_VERBOSE = @"[-]*(verbose)";
@@ -83,11 +83,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             get {return this.currentWorkingDirectory;}
         }
 
-            /// <summary>
-            /// Value of the cvsroot to use as a string.  This will be passed
-            ///     into the CvsRoot object which will know how to parse it.
-            /// </summary>
-            public CvsRoot CvsRoot {
+        /// <summary>
+        /// <code>true</code> if the server response and requests should be sent to the appropriate
+        /// logger (usually standard out); otherwise <code>false</code>.
+        /// </summary>
+        public static bool IsVerbose {
+            get { return _verbose; }
+        }
+
+        /// <summary>
+        /// Value of the cvsroot to use as a string.  This will be passed
+        ///     into the CvsRoot object which will know how to parse it.
+        /// </summary>
+        public CvsRoot CvsRoot {
             get {return this.cvsRoot;}
         }
 
@@ -199,18 +207,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             Regex regex = new Regex(REGEX_VERBOSE);
             Match match = regex.Match(commandLine);
             if (match.Groups.Count > 0 && match.Groups[1].Value == "verbose") {
-                this.verbose = true;
+                _verbose = true;
             }
 
             this.RemoveArg("verbose");
-        }
-
-        /// <summary>
-        /// <code>true</code> if the server response and requests should be sent to the appropriate
-        /// logger (usually standard out); otherwise <code>false</code>.
-        /// </summary>
-        public bool Verbose {
-            get {return this.verbose;}
         }
 
         /// <summary>Create a new instance of the command line parser and
@@ -324,39 +324,15 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "commit":
                     case "ci":
                     case "com":
-                        singleOptions = "DRcfln";
-                        this.commandTxt = arguments[i];
                         i++;
-                        // get rest of arguments which is options on the commit command.
-                        while (arguments.Length > i && arguments[i].IndexOf("-", 0, 1) >= 0) {
-                            LOGGER.Debug("Parsing arguments.  Argument[" + i + "]=[" + arguments[i]);
-                            // Get options with second parameters?
-                            if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
-                                for ( int cnt=1; cnt < arguments[i].Length; cnt++ ) {
-                                    this.options = this.options + "-" + arguments[i][cnt] + " "; // No
-                                }
-                            }
-                            else {
-                                this.options = this.options + arguments[i++];       // Yes
-                                this.options = this.options + arguments[i] + " ";
-                            }
-                            i++;
-                        }
-                        if (arguments.Length > i) {
-                            // Safely grab the module, if not specified then
-                            //  pass null into the repository...the cvs command
-                            //  line for cvsnt/ cvs seems to bomb out when
-                            //  it sends to the server
-                            this.repository = arguments[i];
-                        } 
-                        else {
-                            this.repository = String.Empty;
-                        }
+                        string [] tempCommitArgs = new string[arguments.Length - i];
+                        Array.Copy(arguments, i, tempCommitArgs, 0, arguments.Length - i);
                         CommitCommandParser commitCommand = 
-                            new CommitCommandParser(this.CvsRoot, repository, options);
+                            new CommitCommandParser(this.CvsRoot, tempCommitArgs);
                         command = commitCommand.CreateCommand ();
                         this.currentWorkingDirectory = 
                             commitCommand.CurrentWorkingDirectory;
+                        i = arguments.Length;
                         break;
                     case "checkout":
                     case "co":
@@ -397,10 +373,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "imp":
                     case "im":
                         i++;
-                        string [] tempArgs = new string[arguments.Length - i];
-                        Array.Copy(arguments, i, tempArgs, 0, arguments.Length - i);
+                        string [] tempImportArgs = new string[arguments.Length - i];
+                        Array.Copy(arguments, i, tempImportArgs, 0, arguments.Length - i);
                         ImportCommandParser importCommand = 
-                            new ImportCommandParser(this.CvsRoot, tempArgs);
+                            new ImportCommandParser(this.CvsRoot, tempImportArgs);
                         command = importCommand.CreateCommand();
                         this.currentWorkingDirectory =
                             importCommand.CurrentWorkingDirectory;

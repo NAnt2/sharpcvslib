@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "Library"
                 PreBuildEvent = ""
-                PostBuildEvent = "..\..\..\..\..\tools\nant\nant -nologo -f:..\..\..\..\..\build\SharpCvsLib.build deploy -D:project.outputdir=$(TargetDir)"
+                PostBuildEvent = "..\..\..\..\..\tools\nant\bin\nant -nologo -f:..\..\..\..\..\build\SharpCvsLib.build deploy -D:project.outputdir=$(TargetDir)"
                 RootNamespace = "ICSharpCode.SharpCvsLib"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""

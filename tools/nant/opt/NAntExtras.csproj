@@ -104,6 +104,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\Functions\FileUtil.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src\Functions\GuidFunctions.cs"
                     SubType = "Code"
                     BuildAction = "Compile"

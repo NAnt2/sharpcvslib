@@ -88,6 +88,16 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         }
 
         /// <summary>
+        ///    Commit changes in the cvs repository
+        /// </summary>
+        /// <param name="cvsroot">User Information</param>
+        /// <param name="ciOptions">Options</param>
+        public CommitCommandParser(CvsRoot cvsroot, string[] ciOptions) {
+            this.CvsRoot = cvsroot;
+            this.Args = ciOptions;
+        }
+
+        /// <summary>
         /// Create a new instance of the <see cref="XmlLogCommandParser"/>.
         /// </summary>
         /// <returns></returns>
@@ -122,6 +132,38 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             }
         }
 
+/* Crap from the CommandLineParser
+
+                        singleOptions = "DRcfln";
+                        this.commandTxt = arguments[i];
+                        i++;
+                        // get rest of arguments which is options on the commit command.
+                        while (arguments.Length > i && arguments[i].IndexOf("-", 0, 1) >= 0) {
+                            LOGGER.Debug("Parsing arguments.  Argument[" + i + "]=[" + arguments[i]);
+                            // Get options with second parameters?
+                            if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
+                                for ( int cnt=1; cnt < arguments[i].Length; cnt++ ) {
+                                    this.options = this.options + "-" + arguments[i][cnt] + " "; // No
+                                }
+                            }
+                            else {
+                                this.options = this.options + arguments[i++];       // Yes
+                                this.options = this.options + arguments[i] + " ";
+                            }
+                            i++;
+                        }
+                        if (arguments.Length > i) {
+                            // Safely grab the module, if not specified then
+                            //  pass null into the repository...the cvs command
+                            //  line for cvsnt/ cvs seems to bomb out when
+                            //  it sends to the server
+                            this.repository = arguments[i];
+                        } 
+                        else {
+                            this.repository = String.Empty;
+                        }
+*/
+
         /// <summary>
         /// The add command is implemented in the library and commandline parser.
         /// </summary>
@@ -139,65 +181,26 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
         public override ICommand CreateCommand () {
             ICSharpCode.SharpCvsLib.Commands.CommitCommand2 commitCommand;
-            try {
-                this.ParseOptions(this.unparsedOptions);
-                string cvsFolder = Path.Combine(Environment.CurrentDirectory, "CVS");
+            this.ParseOptions(this.unparsedOptions);
+            string cvsFolder = Path.Combine(Environment.CurrentDirectory, "CVS");
 
-                ArrayList files = new ArrayList();
-                if (fileNames == null || fileNames == string.Empty) {
-                    this.GetFilesRecursive((new DirectoryInfo(cvsFolder)).Parent, files);
-                } else {
-                    DirectoryInfo cvsFolderInfo = new DirectoryInfo(cvsFolder);
-                    files = new ArrayList(cvsFolderInfo.GetFiles(fileNames));
-                }
-
-                CurrentWorkingDirectory.Folders = GetFoldersToCommit(files);
-                // Create new CommitCommand2 object
-                commitCommand = new ICSharpCode.SharpCvsLib.Commands.CommitCommand2(
-                    this.CurrentWorkingDirectory );
-
-                // set public properties on the commit command
-                if (message != null) {
-                    commitCommand.LogMessage = message;
-                }
-         
-                return commitCommand;
-            } catch (CvsFileNotFoundException e) {
-                ConsoleMain.ExitProgram(string.Format("No CVS folder found in path {0}",
-                    Environment.CurrentDirectory), e);
-                return null;
-            } catch (Exception e) {
-                LOGGER.Error (e);
-                throw e;
+            if (fileNames == null || fileNames.Length == 0) {
+                fileNames = Environment.CurrentDirectory;
             }
-        }
-        /// <summary>
-        /// Setup the list of files to be a folder object for the cvs
-        ///     library to process.
-        /// </summary>
-        /// <param name="filesCommitted">An array filenames that are to be committed
-        ///     to the cvs repository.</param>
-        private Folders GetFoldersToCommit (ICollection filesCommitted) {
-            Folders folders = new Folders();
-            Manager manager = new Manager(Environment.CurrentDirectory);
-            foreach (FileInfo file in filesCommitted) {
-                Folder folder;
-                if (!folders.Contains(file.DirectoryName)) {
-                    folder = new Folder();
-                    DirectoryInfo cvsFolder = 
-                        new DirectoryInfo(Path.Combine(file.DirectoryName, "CVS"));
-                    folder.Repository = Repository.Load(cvsFolder);
-                    folder.Root = Root.Load(cvsFolder);
-                    try {
-                        folder.Tag = Tag.Load(cvsFolder);
-                    } catch (CvsFileNotFoundException) {
-                        // ignore, tag missing normal
-                    }
-                    folder.Entries = Entries.Load(cvsFolder);
-                    folders.Add(file.DirectoryName, folder);
-                } 
+
+            FileParser parser = new FileParser(this.Args);
+
+            CurrentWorkingDirectory.Folders = parser.Folders;
+            // Create new CommitCommand2 object
+            commitCommand = new ICSharpCode.SharpCvsLib.Commands.CommitCommand2(
+                this.CurrentWorkingDirectory );
+
+            // set public properties on the commit command
+            if (message != null) {
+                commitCommand.LogMessage = message;
             }
-            return folders;
+        
+            return commitCommand;
         }
 
         private void GetFilesRecursive(DirectoryInfo dir, ArrayList files) {
@@ -222,73 +225,44 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
         private void ParseOptions (String ciOptions) {
             int endofOptions = 0;
-            for (int i = 0; i < ciOptions.Length; i++) {
-                if (ciOptions[i]== '-' && ciOptions[i+1] == 'r') {
-                    i += 2;
-                    // get revision of files to commit
-                    if (ciOptions.IndexOf(" -", i, ciOptions.Length - i) == -1) {
-                        endofOptions = ciOptions.Length - i - 1;
+            for (int i = 0; i < this.Args.Length; i++) {
+                string arg = this.Args[i];
+                if (arg.IndexOf("-") > -1) {
+                    switch (arg) {
+                        case "-r":
+                            revision = this.Args[++i];
+                            break;
+                        case "-F":
+                            logFile = this.Args[++i];
+                            break;
+                        case "-m":
+                            message = this.Args[++i];
+                            break;
+                        case "-c":
+                            throw new NotImplementedException (
+                                "The -c commit option is not implemented.");
+                            break;
+                        case "-D":
+                            throw new NotImplementedException (
+                                "The -D commit option is not implemented.");
+                            break;
+                        case "-f":
+                            throw new NotImplementedException (
+                                "The -f commit option is not implemented.");
+                            break;
+                        case "-l":
+                            throw new NotImplementedException (
+                                "The -l commit option is not implemented.");
+                            break;
+                        case "-n":
+                            throw new NotImplementedException (
+                                "The -n commit option is not implemented.");
+                            break;
+                        case "-R":
+                            throw new NotImplementedException (
+                                "The -R commit option is not implemented.");
+                            break;
                     }
-                    else {
-                        endofOptions = ciOptions.IndexOf(" -", i, ciOptions.Length - i) - 2;
-                    }
-                    revision = ciOptions.Substring(i, endofOptions);
-					i = i + endofOptions;
-				}
-                if (ciOptions[i]== '-' && ciOptions[i+1] == 'F') {
-                    i += 2;
-                    // get filename to get message from
-                    if (ciOptions.IndexOf(" -", i, ciOptions.Length - i) == -1) {
-                        endofOptions = ciOptions.Length - i - 1;
-                    }
-                    else {
-                        endofOptions = ciOptions.IndexOf(" -", i, ciOptions.Length - i) - 2;
-                    }
-                    logFile = ciOptions.Substring(i, endofOptions);
-					i = i + endofOptions;
-				}
-                if (ciOptions[i]== '-' && ciOptions[i+1] == 'm') {
-                    i += 2;
-                    // get message to attach to files 
-                    if (ciOptions.IndexOf(" -", i, ciOptions.Length - i) == -1) {
-                        endofOptions = ciOptions.Length - i - 1;
-                    }
-                    else {
-                        endofOptions = ciOptions.IndexOf(" -", i, ciOptions.Length - i) - 2;
-                    }
-                    message = ciOptions.Substring(i, endofOptions);
-					i = i + endofOptions;
-				}
-                if (ciOptions[i]== '-' && ciOptions[i+1] == 'c') {
-                    String msg = "The -c commit option is not  " +
-                        "implemented.";
-                    throw new NotImplementedException (msg);
-                }
-                if (ciOptions[i]== '-' && ciOptions[i+1] == 'D') {
-                    String msg = "The -D commit option is not  " +
-                        "implemented.";
-                    throw new NotImplementedException (msg);
-                }
-                if (ciOptions[i]== '-' && ciOptions[i+1] == 'f') {
-                    String msg = "The -f commit option is not  " +
-                        "implemented.";
-                    throw new NotImplementedException (msg);
-                }
-                if (ciOptions[i]== '-' && ciOptions[i+1] == 'l') {
-                    String msg = "The -l commit option is not  " +
-                        "implemented.";
-                    throw new NotImplementedException (msg);
-                }
-                if (ciOptions[i]== '-' && ciOptions[i+1] == 'n') {
-                    String msg = "The -n commit option is not  " +
-                        "implemented.";
-                    throw new NotImplementedException (msg);
-                }
-                if (ciOptions[i]== '-' && ciOptions[i+1] == 'R') 
-                {
-                    String msg = "The -R commit option is not  " +
-                        "implemented.";
-                    throw new NotImplementedException (msg);
                 }
             }
         }

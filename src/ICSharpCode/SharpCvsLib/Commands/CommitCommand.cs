@@ -59,44 +59,31 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// Log message
         /// </summary>
         public string LogMessage {
-            get {
-                return logmessage;
-            }
-            set {
-                logmessage = value;
-            }
+            get { return logmessage; }
+            set { logmessage = value; }
         }
 
         /// <summary>
         /// Vendor string
         /// </summary>
         public string VendorString {
-            get {
-                return vendor;
-            }
-            set {
-                vendor = value;
-            }
+            get { return vendor; }
+            set { vendor = value; }
         }
 
         /// <summary>
         /// Release String
         /// </summary>
         public string ReleaseString {
-            get {
-                return release;
-            }
-            set {
-                release = value;
-            }
+            get { return release; }
+            set { release = value; }
         }
 
         /// <summary>
         /// Commit command two constructor
         /// </summary>
         /// <param name="workingdirectory"></param>
-        public CommitCommand2(WorkingDirectory workingdirectory)
-        {
+        public CommitCommand2(WorkingDirectory workingdirectory) {
             this.workingdirectory = workingdirectory;
         }
 
