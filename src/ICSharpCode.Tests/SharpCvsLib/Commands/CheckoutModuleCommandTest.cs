@@ -146,7 +146,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         [Test]
         public void CheckoutRevisionTest_Revision_2 () {
             this.CheckoutRevisionTest (this.settings.Config.Tag2, 
-                                       this.settings.Config.Tag2);
+                                       this.settings.Config.Content2);
         }
         
         /// <summary>
