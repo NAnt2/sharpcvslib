@@ -68,7 +68,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 		
 		/// <summary>The cvs directory information.</summary>
 		public readonly string CVS =
-		    Path.DirectorySeparatorChar + "CVS";
+		    /*Path.DirectorySeparatorChar +*/ "CVS";
 		/// <summary>The cvs repository file information.</summary>	    
 		public readonly string REPOSITORY = 
 		    Path.DirectorySeparatorChar + "CVS" + 

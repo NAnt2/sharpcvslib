@@ -50,7 +50,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
             LogManager.GetLogger (typeof (CvsFileManager));
 		/// <summary>The cvs directory information.</summary>
 		public string CVS {
-		    get {return Path.DirectorySeparatorChar + "CVS";}
+		    get {return "CVS";}
 		}		    
 		
 		/// <summary>The cvs repository file information.</summary>	    
@@ -237,21 +237,36 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         ///     entries were found.</returns>
         public ICollection ReadEntries (String path) {
             ArrayList entries = new ArrayList ();
-            ArrayList entryStrings = new ArrayList ();
+            ICollection entryStrings;
             
-            entryStrings.Add (this.ReadFromFile (path, this.ENTRIES));
+            entryStrings = this.ReadFromFile (path, this.ENTRIES);
 
-// FIXME: Fix the invalid case exception occuring here.            
             foreach (String entryString in entryStrings) {
+                Entry entry = new Entry (entryString);
+                if (LOGGER.IsDebugEnabled) {
+                    String msg = "Adding entry to entries collection.  " +
+                        "entry=[" + entry + "]";
+                }
                 entries.Add (new Entry (entryString));
             }                
             
             return entries;
         }
         
+        /// <summary>
+        ///     Read the contents of the specified file line by line.  
+        ///         The contents are placed in a collection object and 
+        ///         can be later extracted by the specified value object.  
+        ///         This is used to keep the file access in one location.
+        /// </summary>
+        /// <param name="path">The path to the file.</param>
+        /// <param name="file">The name of the file to read.</param>
+        /// <returns>A collection of strings, one for each line
+        ///     in the specified file.</returns>
         private ICollection ReadFromFile (String path, String file) {
             ArrayList fileContents = new ArrayList ();
-            string filePath = path + file;
+            string filePath = 
+                Path.Combine (path, file);
 			if (File.Exists(filePath)) {
 				StreamReader sr = File.OpenText(filePath);
 				
@@ -265,6 +280,15 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 					}
 				}
 				sr.Close();
+			}
+			else {
+			    // TODO: Figure out if I should throw an exception here
+			    //    or if this is normal...
+			    if (LOGGER.IsDebugEnabled) {
+			        String msg = "Unable to find cvs file." +
+			            "filePath=[" + filePath + "]";
+			        LOGGER.Debug (msg);
+			    }
 			}
 			
 			return fileContents;
