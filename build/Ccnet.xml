@@ -9,7 +9,7 @@
                 </properties>
             </nant>
             
-            <zip zipfile="${dir.ccnet.log}/${label-to-apply}/SharpCvsLib-${framework}-${platform-get-name()}.zip">
+            <zip zipfile="${dir.ccnet.log}/${label-to-apply}/SharpCvsLib-${framework}-${platform::get-name()}.zip">
                 <fileset basedir="${dir.dist}/src">
                     <include name="**" />
                     <exclude name=".externalToolBuilders/**"/>
