@@ -35,55 +35,54 @@ using System;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Console.Parser;
 
-namespace ICSharpCode.SharpCvsLib.Console.Commands{
-
-/// <summary>
-/// Login to a cvs repository.
-/// </summary>
-public class LoginCommand{
-
-    private string password;
-    private string username;
-
-    /// <summary>
-    /// The text value of the password that will be used to login.  This should be
-    ///     translated into one of the public API command objects.
-    /// </summary>
-    public String Password {
-        get {return this.password;}
-    }
+namespace ICSharpCode.SharpCvsLib.Console.Commands {
 
     /// <summary>
     /// Login to a cvs repository.
     /// </summary>
-    /// <param name="cvsroot">User information</param>
-    public LoginCommand(string cvsroot){
-        // get cvsroot
-        CvsRoot root = new CvsRoot(cvsroot);
-        // get username from cvsroot
-        username = root.User;
-    }
+    public class LoginCommand {
+        private string password;
+        private string username;
 
-    /// <summary>
-    /// Login to a cvs repository with workDirectory object
-    /// </summary>
-    /// <param name="workingDirectory">User information</param>
-    public LoginCommand(WorkingDirectory workingDirectory){
-        username = workingDirectory.CvsRoot.User;
-        // Is there a password file?
-        //     yes, get password for this username
-        //     no, prompt user for password to use
-    }
+        /// <summary>
+        /// The text value of the password that will be used to login.  This should be
+        ///     translated into one of the public API command objects.
+        /// </summary>
+        public String Password {
+            get {return this.password;}
+        }
 
-    /// <summary>
-    /// Process the login command with cvs library API calls
-    /// </summary>
-    public void Execute (){
-        // Is there a password file?
-        //     yes, get password for this username
-        //     no, prompt user for password to use
-        System.Console.Write("CVS password for {0}: ", username);
-        password = System.Console.ReadLine();
+        /// <summary>
+        /// Login to a cvs repository.
+        /// </summary>
+        /// <param name="cvsroot">User information</param>
+        public LoginCommand(string cvsroot){
+             // get cvsroot
+             CvsRoot root = new CvsRoot(cvsroot);
+             // get username from cvsroot
+             username = root.User;
+        }
+
+        /// <summary>
+        /// Login to a cvs repository with workDirectory object
+        /// </summary>
+        /// <param name="workingDirectory">User information</param>
+        public LoginCommand(WorkingDirectory workingDirectory){
+            username = workingDirectory.CvsRoot.User;
+            // Is there a password file?
+            //     yes, get password for this username
+            //     no, prompt user for password to use
+        }
+
+        /// <summary>
+        /// Process the login command with cvs library API calls
+        /// </summary>
+        public void Execute (){
+            // Is there a password file?
+            //     yes, get password for this username
+            //     no, prompt user for password to use
+            System.Console.Write("CVS password for {0}: ", username);
+            password = System.Console.ReadLine();
+        }
     }
-}
 }
