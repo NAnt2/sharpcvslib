@@ -53,6 +53,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         private SharpCvsLibTestsConfig settings = 
             SharpCvsLibTestsConfig.GetInstance();
 
+        private readonly String RELATIVE_PATH = "src";
+
         private readonly String ROOT_ENTRY1 =
             ":pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib";
         private readonly String ROOT_ENTRY2 =
@@ -71,15 +73,17 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void CreateRootTest () {
-            String fullPath = this.settings.Config.LocalPath;
-            Root root = new Root (fullPath, this.ROOT_ENTRY1);
+            String fullPath =
+                Path.Combine (this.settings.Config.LocalPath, RELATIVE_PATH);
+            Root root = new Root (fullPath,
+                this.ROOT_ENTRY1);
 
             String cvsPath = Path.Combine (fullPath, "CVS");
-            Assertion.Assert ("Path not set/returned", root.Path.Equals (fullPath));
-            Assertion.Assert ("FileContents not set/returned", root.FileContents.Equals (this.ROOT_ENTRY1));
-            Assertion.Assert ("Filename not correct", root.Filename.Equals (this.ROOT_FILE_NAME));
-            Assertion.Assert ("Type not correct", root.Type == Factory.FileType.Root);
-            Assertion.Assert ("IsMultiLined not correct", root.IsMultiLined == false);
+            Assertion.AssertEquals ("Path not set/returned", fullPath, root.Path);
+            Assertion.AssertEquals ("FileContents not set/returned", this.ROOT_ENTRY1, root.FileContents);
+            Assertion.AssertEquals ("Filename not correct", this.ROOT_FILE_NAME, root.Filename);
+            Assertion.AssertEquals ("Type not correct", Factory.FileType.Root, root.Type);
+            Assertion.AssertEquals ("IsMultiLined not correct", false, root.IsMultiLined);
         }
 
         /// <summary>
