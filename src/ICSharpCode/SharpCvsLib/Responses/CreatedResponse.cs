@@ -78,15 +78,15 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	    {
 	        Manager manager = new Manager ();
 	        
-			cvsStream.ReadLine();
-	        String repositoryPath = cvsStream.ReadLine ();
+			String localPath = cvsStream.ReadLine();
+	        String reposPath = cvsStream.ReadLine ();
 	        
 			String entry     = cvsStream.ReadLine();
 			String flags     = cvsStream.ReadLine();
 			String sizeStr   = cvsStream.ReadLine();
 	        
 	        PathTranslator orgPath = 
-	            new PathTranslator (services.Repository, repositoryPath);
+	            new PathTranslator (services.Repository, reposPath);
 			String localPathAndFilename = orgPath.LocalPathAndFilename;
 	        String directory = orgPath.LocalPath;
 
@@ -119,12 +119,10 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 				services.NextFile = null;
 			}
 			
-			Entry e;
-			if (orgPath.IsDirectory) {
-			    e = manager.CreateDirectoryEntry (orgPath);
-			} else {
-    			e = new Entry(directory, entry);
-			}
+			Entry e = manager.AddEntry (services.Repository, 
+			                            localPath, 
+			                            reposPath, 
+			                            entry);
 			
 			if (e.IsBinaryFile) {
 				services.UncompressedFileHandler.ReceiveBinaryFile(cvsStream, 
@@ -137,12 +135,9 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 			}
 			
 			e.Date = services.NextFileDate;
-			//services.Repository.AddEntry(orgPath.Substring(0, orgPath.LastIndexOf('/')), e);
 			services.NextFileDate = null;
 			
 	        manager.SetFileTimeStamp (localPathAndFilename, e.TimeStamp);
-	        
-	        manager.Add (e);
 	        
 	        UpdateMessage message = new UpdateMessage ();
 	        message.Module = services.Repository.WorkingDirectoryName;

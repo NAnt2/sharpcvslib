@@ -54,7 +54,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 	    private readonly ILog LOGGER = 
 	        LogManager.GetLogger (typeof (UpdateCommand2));
 	    
-		private WorkingDirectory workingdirectory;
+		private WorkingDirectory workingDirectory;
 		private string  logmessage;
 		private string  vendor  = "vendor";
 		private string  release = "release";
@@ -98,10 +98,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// <summary>
         /// Constructor.
         /// </summary>
-        /// <param name="workingdirectory"></param>
-		public UpdateCommand2(WorkingDirectory workingdirectory)
+        /// <param name="workingDirectory"></param>
+		public UpdateCommand2(WorkingDirectory workingDirectory)
 		{
-			this.workingdirectory = workingdirectory;
+			this.workingDirectory = workingDirectory;
 		}
 
 		/// <summary>
@@ -113,30 +113,35 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		    if (LOGGER.IsDebugEnabled) {
 		        String msg = "In execute, looking for working folders.  " +
 		            "count of working folders=[" + 
-		                workingdirectory.Folders.Count + "]";
+		                workingDirectory.Folders.Count + "]";
 		        LOGGER.Debug (msg);
 		    }
 		    
 		    Folder[] _foldersToUpdate = 
-		        (Folder[])workingdirectory.FoldersToUpdate.Clone ();
+		        (Folder[])workingDirectory.FoldersToUpdate.Clone ();
 			foreach (Folder folder in _foldersToUpdate) {
 			    this.SetDirectory (connection, folder);
 			    
-			    // TODO: Move this somewhere else when I get the fileset
+			    // TODO: Move this somewhere else (i.e. I am thinking it should exist on the folder object itself) when I get the fileset
 			    //    system working.  This just grabs the tag file at the
 			    //    root folder.
 			    Tag tag = this.FetchTag (connection.Repository.WorkingPath);
 			    if (null != tag) {
 			        connection.SubmitRequest (new StickyRequest (tag.FileContents));
 			    }
+			    if (workingDirectory.HasOverrideDirectory) {
+			        connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.OVERRIDE_DIRECTORY));
+                    connection.SubmitRequest (
+                        new ArgumentRequest (workingDirectory.OverrideDirectory));
+			    }
 			    foreach (Entry entry  in folder.Entries) {
     				if (!entry.IsDirectory) {
-//    					String path = workingdirectory.CvsRoot.CvsRepository + 
+//    					String path = workingDirectory.CvsRoot.CvsRepository + 
 //    					                   "/" +
 //    					                   folder.Repos.FileContents;
 
-    					//string path = workingdirectory.CvsRoot.CvsRepository +  
-    					//			"/" + workingdirectory.WorkingDirectoryName;/* + 
+    					//string path = workingDirectory.CvsRoot.CvsRepository +  
+    					//			"/" + workingDirectory.WorkingDirectoryName;/* + 
     					//			folder.Key.ToString();
     					
 //    					if (LOGGER.IsDebugEnabled) {
@@ -154,13 +159,13 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 //                            LOGGER.Error (e);
 //    					}
     					
-//    					path = workingdirectory.CvsRoot.CvsRepository + 
+//    					path = workingDirectory.CvsRoot.CvsRepository + 
 //    							folder.Repos.FileContents;
     // TODO: Remove the LocalDirectory and swap for WorkingPath...unless I remove it all
 //    				    string fileName =
 //    				        this.getFileNameAndPath (
-//    				                                 Path.GetDirectoryName (workingdirectory.LocalDirectory),
-//    				                                 path.Substring (workingdirectory.CvsRoot.CvsRepository.Length),
+//    				                                 Path.GetDirectoryName (workingDirectory.LocalDirectory),
+//    				                                 path.Substring (workingDirectory.CvsRoot.CvsRepository.Length),
 //    				                                 entry.Name);
     		
     				    //this.FetchFile (connection, entry);

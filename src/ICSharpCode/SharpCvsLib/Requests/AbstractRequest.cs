@@ -24,6 +24,7 @@
 #endregion
 
 using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.Util;
 
 namespace ICSharpCode.SharpCvsLib.Requests { 
 	
@@ -86,11 +87,14 @@ namespace ICSharpCode.SharpCvsLib.Requests {
 		/// </summary>
 		/// <returns>A string representation of the object.</returns>
 		public override string ToString () {
-            return "Request.  " + 
-                "DoesModifyConnection=[" + this.DoesModifyConnection + "]" +
-                "DoesModifyInputStream=[" + this.DoesModifyInputStream + "]" +
-                "IsResponseExpected=[" + this.IsResponseExpected + "]" +
-                "RequestString=[" + this.RequestString + "]";
+		    ToStringFormatter formatter = 
+		        new ToStringFormatter ("Abstract Request");
+		    formatter.AddProperty ("DoesModifyConnection", this.DoesModifyConnection);
+            formatter.AddProperty ("DoesModifyInputStream", this.DoesModifyInputStream);
+            formatter.AddProperty ("IsResponseExpected", this.IsResponseExpected);
+            formatter.AddProperty ("RequestString", this.RequestString);
+		    
+		    return formatter.ToString ();
 		}
 	}
 }

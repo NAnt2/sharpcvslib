@@ -28,12 +28,14 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger, 
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
+//    <author>Mike Krueger</author>
+//    <author>Clayton Harbour  {claytonharbour@sporadicism.com}</author>
 #endregion
 
 using System;
 using System.IO;
+using System.Text;
+
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
@@ -93,66 +95,71 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// <param name="services"></param>
 	    public void Process(CvsStream cvsStream, IResponseServices services)
 	    {
-	        Manager manager = new Manager ();
-			cvsStream.ReadLine();
-			PathTranslator orgPath   = 
-			    new PathTranslator (services.Repository,
-			                                 cvsStream.ReadLine());
-			string localPathAndFilename = orgPath.LocalPathAndFilename;
-	        string directory = orgPath.LocalPath;
-	        
-			string entry     = cvsStream.ReadLine();
-			string flags     = cvsStream.ReadLine();
-			string sizeStr   = cvsStream.ReadLine();
-			bool compress = sizeStr[0] == 'z';
-			
-			if (LOGGER.IsDebugEnabled) {
-			    String msg = "orgpath=[" + orgPath + "]" +
-    			    "entry=[" + entry + "]" +
-    			    "flags=[" + flags + "]" +
-    			    "sizestr=[" + sizeStr + "]";
-			    LOGGER.Debug (msg);
-			}
-	    	
-			if (compress) {
-				sizeStr = sizeStr.Substring(1);
-			}
-			
-			int size  = Int32.Parse(sizeStr);
-			
-			if (!Directory.Exists(orgPath.LocalPath)) {
-				Directory.CreateDirectory(orgPath.LocalPath);
-			    
-			}
-			
-			if (services.NextFile != null && services.NextFile.Length > 0) {
-				localPathAndFilename = services.NextFile;
-				services.NextFile = null;
-			}
-			
-			Entry e = new Entry(directory, entry);
-			
-			if (e.IsBinaryFile) {
-				services.UncompressedFileHandler.ReceiveBinaryFile(cvsStream, 
-				                                                   localPathAndFilename, 
-				                                                   size);
-			} else {
-				services.UncompressedFileHandler.ReceiveTextFile(cvsStream, 
-				                                                 localPathAndFilename, 
-				                                                 size);
-			}
-			
-			e.Date = services.NextFileDate;
-			//services.Repository.AddEntry(orgPath.Substring(0, orgPath.LastIndexOf('/')), e);
-			services.NextFileDate = null;
-			
-	        manager.SetFileTimeStamp (localPathAndFilename, e.TimeStamp);
-	        
-	        UpdateMessage message = new UpdateMessage ();
-	        message.Module = services.Repository.WorkingDirectoryName;
-	        message.Repository =  orgPath.RelativePath;
-	        message.Filename = e.Name;
-	        services.SendMessage (message.Message);
+            Manager manager = new Manager ();
+            string localPath = cvsStream.ReadLine();
+            string reposPath = cvsStream.ReadLine ();
+            string entry     = cvsStream.ReadLine();
+            string flags     = cvsStream.ReadLine();
+            string sizeStr   = cvsStream.ReadLine();
+            
+            PathTranslator orgPath   = 
+                new PathTranslator (services.Repository,
+                                             reposPath); 
+            string localPathAndFilename = orgPath.LocalPathAndFilename;
+            string directory = orgPath.LocalPath;
+            
+            bool compress = sizeStr[0] == 'z';
+            
+            if (LOGGER.IsDebugEnabled) {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append ("reposPath=[").Append (reposPath).Append ("]");
+                msg.Append ("entry=[").Append (entry).Append ("]");
+                msg.Append ("flags=[").Append (flags).Append ("]");
+                msg.Append ("sizestr=[").Append (sizeStr).Append ("]");
+                LOGGER.Debug (msg);
+            }
+            
+            if (compress) {
+            	sizeStr = sizeStr.Substring(1);
+            }
+            
+            int size  = Int32.Parse(sizeStr);
+            
+            if (!Directory.Exists(orgPath.LocalPath)) {
+            	Directory.CreateDirectory(orgPath.LocalPath);
+                
+            }
+            
+            if (services.NextFile != null && services.NextFile.Length > 0) {
+            	localPathAndFilename = services.NextFile;
+            	services.NextFile = null;
+            }
+            
+            Entry e = manager.AddEntry (services.Repository,
+                                        localPath,
+                                        reposPath,
+                                        entry);
+            
+            if (e.IsBinaryFile) {
+            	services.UncompressedFileHandler.ReceiveBinaryFile(cvsStream, 
+            	                                                   localPathAndFilename, 
+            	                                                   size);
+            } else {
+            	services.UncompressedFileHandler.ReceiveTextFile(cvsStream, 
+            	                                                 localPathAndFilename, 
+            	                                                 size);
+            }
+            
+            e.Date = services.NextFileDate;
+            services.NextFileDate = null;
+            
+            manager.SetFileTimeStamp (localPathAndFilename, e.TimeStamp);
+            
+            UpdateMessage message = new UpdateMessage ();
+            message.Module = services.Repository.WorkingDirectoryName;
+            message.Repository =  orgPath.RelativePath;
+            message.Filename = e.Name;
+            services.SendMessage (message.Message);
 
 	    }
 	    

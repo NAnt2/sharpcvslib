@@ -82,7 +82,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             ICvsFile entry;
             switch (fileType) {
                 case (FileType.Entries):
-                    entry = new Entry (path, line);
+                    entry = new Entry(path, line);
                     break;
                 case (FileType.Repository):
                     entry = new Repository (path, line);

@@ -258,7 +258,10 @@ namespace ICSharpCode.SharpCvsLib.Client {
 		{
 		    if (LOGGER.IsDebugEnabled)
 		    {
-			    LOGGER.Debug("cvs client: " + request.RequestString);
+		        StringBuilder msg = new StringBuilder ();
+		        msg.Append ("\nSubmit Request");
+		        msg.Append ("\n\trequest=[").Append (request).Append ("]");
+		        LOGGER.Debug (msg);
 		    }
 			
 			outputstream.SendString(request.RequestString);

@@ -25,6 +25,11 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using System;
+using System.Text;
+
+using log4net;
+
 namespace ICSharpCode.SharpCvsLib.Requests { 
 	
 	/// <summary>
@@ -88,6 +93,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
 	/// </example>
 	public class DirectoryRequest : AbstractRequest
 	{
+	    private ILog LOGGER = LogManager.GetLogger (typeof (DirectoryRequest));
     	private string localdir;
     	private string repository;
     
@@ -100,6 +106,14 @@ namespace ICSharpCode.SharpCvsLib.Requests {
     	{
         	this.localdir   = localdir;
         	this.repository = repository;
+    	    
+    	    if (LOGGER.IsDebugEnabled) {
+    	        StringBuilder msg = new StringBuilder ();
+    	        msg.Append ("\nDirectory Request:");
+    	        msg.Append ("\n\tlocaldir=[").Append (localdir).Append ("]");
+    	        msg.Append ("\n\trepository=[").Append (repository).Append ("]");
+    	        LOGGER.Debug (msg);
+    	    }
     	}
     
         /// <summary>

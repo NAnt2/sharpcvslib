@@ -48,6 +48,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///         - Entries
     ///         - Repository
     ///         - Root
+    ///         - Tag
     /// </summary>
     public class Manager {
 
@@ -688,6 +689,130 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             
             return entries;
         }
+        
+        /// <summary>
+        ///     Create the repository file in the cvs sub directory of the
+        ///         current working directory.
+        /// </summary>
+        /// <param name="workingDirectory">Holds information about the current
+        ///     path and cvs root.</param>
+        /// <param name="localPath">The local path response sent down from 
+        ///     the server.</param>
+        /// <param name="repositoryPath">The path to the file name on the
+        ///     server.</param>
+        /// <returns>The object contents of the newly created repository file.</returns>
+        public Repository AddRepository (WorkingDirectory workingDirectory, 
+                                   String localPath, 
+                                   String repositoryPath) {
+            PathTranslator pathTranslator = 
+	            new PathTranslator (workingDirectory,
+	                                repositoryPath);
+            Factory factory = new Factory ();
+
+            if (LOGGER.IsDebugEnabled) {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append ("\nAdd Repository File.");
+                msg.Append ("\n\tworkingDirectory=[").Append (workingDirectory).Append ("]");
+                msg.Append ("\n\tlocalPath=[").Append (localPath).Append ("]");
+                msg.Append ("\n\trepositoryPath=[").Append (repositoryPath).Append ("]");
+                
+                LOGGER.Debug (msg);
+            }
+            String repositoryContents = workingDirectory.ModuleName + "/" +
+                                    pathTranslator.RelativePath;
+
+	        Repository repository = 
+	            (Repository)factory.CreateCvsObject (pathTranslator.LocalPath,
+                                         Factory.FileType.Repository,
+	                                     repositoryContents);
+            this.Add (repository);
+
+            return repository;
+        }
+        
+        /// <summary>
+        ///     Create the root file in the local cvs directory.  This file holds
+        ///         the details about the cvs root used in this sandbox.
+        /// </summary>
+        /// <param name="workingDirectory">Holds information about the current
+        ///     path and cvs root.</param>
+        /// <param name="localPath">The local path response sent down from 
+        ///     the server.</param>
+        /// <param name="repositoryPath">The path to the file name on the
+        ///     server.</param>
+        /// <returns>The object contents of the newly created root file.</returns>
+        public Root AddRoot (WorkingDirectory workingDirectory,
+                             String localPath,
+                             String repositoryPath) {
+            PathTranslator pathTranslator = 
+	            new PathTranslator (workingDirectory,
+	                                repositoryPath);
+            Factory factory = new Factory ();
+
+            if (LOGGER.IsDebugEnabled) {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append ("\nAdd Root File.");
+                msg.Append ("\n\tworkingDirectory=[").Append (workingDirectory).Append ("]");
+                msg.Append ("\n\tlocalPath=[").Append (localPath).Append ("]");
+                msg.Append ("\n\trepositoryPath=[").Append (repositoryPath).Append ("]");
+                
+                LOGGER.Debug (msg);
+            }
+            
+	        Root root = 
+	            (Root)factory.CreateCvsObject (pathTranslator.LocalPath,
+                                         Factory.FileType.Root,
+	                                     pathTranslator.CvsRoot.ToString ());
+            this.Add (root);
+
+            return root;
+        }
+        
+        /// <summary>
+        ///     Create the root file in the local cvs directory.  This file holds
+        ///         the details about the cvs root used in this sandbox.
+        /// </summary>
+        /// <param name="workingDirectory">Holds information about the current
+        ///     path and cvs root.</param>
+        /// <param name="localPath">The local path response sent down from 
+        ///     the server.</param>
+        /// <param name="repositoryPath">The path to the file name on the
+        ///     server.</param>
+        /// <param name="entry">The string value that represents the cvs 
+        ///     entry.</param>
+        /// <returns>The contents of the newly created entries file that match
+        ///     the given file name created.</returns>
+        public Entry AddEntry (WorkingDirectory workingDirectory, 
+                               String localPath, 
+                               String repositoryPath,
+                               String entry) {
+            PathTranslator pathTranslator = 
+	            new PathTranslator (workingDirectory,
+	                                repositoryPath);
+            Factory factory = new Factory ();
+
+            if (LOGGER.IsDebugEnabled) {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append ("\nAdd Entry.");
+                msg.Append ("\n\tlocalPath=[").Append (localPath).Append ("]");
+                msg.Append ("\n\trepositoryPath=[").Append (repositoryPath).Append ("]");
+                LOGGER.Debug (msg);
+            }
+            
+            Entry _entry = 
+                (Entry)factory.CreateCvsObject (pathTranslator.LocalPath,
+                                                Factory.FileType.Entries, 
+                                                entry);
+
+            if (pathTranslator.IsDirectory) {
+                _entry = this.CreateDirectoryEntry (pathTranslator.LocalPath);
+            } else {
+                this.Add (_entry);
+            }
+
+            return _entry;
+        }
+
     }
     
 }

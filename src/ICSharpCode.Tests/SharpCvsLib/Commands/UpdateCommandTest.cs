@@ -54,6 +54,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 	    
 	    String rootDir;
 	    String checkFile;
+	    String moduleDir;	    
 	    
 	    private Manager manager;	    
 		/// <summary>
@@ -68,9 +69,9 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// </summary>
 		[SetUp]
 		public void SetUp () {
-		    this.Checkout ();
+		    this.moduleDir = TestConstants.MODULE;
 		    this.rootDir = 
-		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE);
+		        Path.Combine (TestConstants.LOCAL_PATH, this.moduleDir);
 		    this.checkFile = 
 		        Path.Combine (rootDir, TestConstants.TARGET_FILE);
         }
@@ -82,10 +83,14 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         
         /// <summary>Wrapper for the checkout command test checkout method.</summary>
         private void Checkout (String revision) {
+            this.Checkout (revision, null);
+        }
+        
+        private void Checkout (String revision, String overrideDirectory) {
             this.manager = new Manager ();
             CheckoutModuleCommandTest checkout =
                 new CheckoutModuleCommandTest ();
-            checkout.Checkout (revision, null);            
+            checkout.Checkout (revision, overrideDirectory);
         }
 
 		/// <summary>
@@ -93,7 +98,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// </summary>
 		[TearDown]
         public void TearDown () {
-            this.CleanUp ();
+//            this.CleanUp ();
         }
 
         private void CleanUp () {
@@ -107,7 +112,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		///         down after it is deleted.
 		/// </summary>
 		[Test]
-		public void UpdateTest () {		    
+		public void UpdateTest () {
+		    this.Checkout ();
 		    File.Delete (checkFile);
 		    
 		    Assertion.Assert ("File should be gone now.  file=[" + checkFile + "]", !File.Exists (checkFile));
@@ -149,18 +155,16 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		    Assertion.Assert ("Should not be a module directory under root folder=[" + doubleModuleDir + "]",
 		                      !Directory.Exists (doubleModuleDir));
 		}
-
-        /// <summary>
-        ///     Update all files recursively starting with the root directory.
-        /// </summary>
-        /// <param name="rootDir">The root directory to start the update from.</param>
-		private void UpdateAllRecursive (String rootDir) {
+		
+		private void UpdateAllRecursive (String rootDir, String overrideDirectory) {
             CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
             WorkingDirectory working = 
                 new WorkingDirectory (root, 
                                         TestConstants.LOCAL_PATH, 
                                         TestConstants.MODULE);
 
+            working.OverrideDirectory = overrideDirectory;
+		    
             CVSServerConnection connection = new CVSServerConnection ();
             Assertion.AssertNotNull ("Should have a connection object.", connection);
 		    
@@ -170,24 +174,50 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             connection.Connect (working, TestConstants.PASSWORD_VALID);
 
             // Update all files...
+            LOGGER.Debug ("Fetching all files from rootDir=[" + rootDir + "]");
             working.FoldersToUpdate = 
                 this.manager.FetchFilesToUpdate (rootDir);
             
             command.Execute (connection);
-            connection.Close ();  
+            connection.Close ();		    
 		}
 
+        private void UpdateAllRecursive (String rootDir) {
+            this.UpdateAllRecursive (rootDir, null);
+        }
+        
         /// <summary>
         ///     Test that a directory checked out as a revision is updated
         ///         successfully.
         /// </summary>
         [Test]
         public void UpdateRevisionTest () {
-            this.CleanUp ();
             this.Checkout (TestConstants.Revision.TAG_1);
             this.UpdateAllRecursive (this.rootDir);
             
             CheckoutModuleCommandTest.AssertFileContentsEqualString (this.checkFile, TestConstants.Revision.CONTENT_1);
+        }
+        
+        /// <summary>
+        ///     Test that a directory checked out with an override directory is
+        ///         updated correctly.
+        /// </summary>
+        [Test]
+        public void UpdateOverrideDirectoryTest () {
+		    this.moduleDir = TestConstants.OVERRIDE_DIRECTORY;
+		    this.rootDir = 
+		        Path.Combine (TestConstants.LOCAL_PATH, this.moduleDir);
+		    this.checkFile = 
+		        Path.Combine (rootDir, TestConstants.TARGET_FILE);
+
+            this.Checkout (null, TestConstants.OVERRIDE_DIRECTORY);
+		    File.Delete (checkFile);
+		    
+		    Assertion.Assert ("File should be gone now.  file=[" + checkFile + "]", !File.Exists (checkFile));
+		    this.UpdateAllRecursive (rootDir, TestConstants.OVERRIDE_DIRECTORY);
+		    Assertion.Assert ("Should have found the file.  file=[" + 
+		                      checkFile + "]", File.Exists (checkFile));
+
         }
 	}
 }

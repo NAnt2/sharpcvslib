@@ -33,6 +33,7 @@
 #endregion
 
 using System;
+using System.Text;
 
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
@@ -68,29 +69,29 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	    {
             string localPath      = cvsStream.ReadLine();
             string reposPath = cvsStream.ReadLine();
-	        PathTranslator repositoryPath = 
-	            new PathTranslator (services.Repository,
-	                                reposPath);
+// TODO: Remove this code, cvs file creation is moving all into the manager class.
+//	        PathTranslator pathTranslator = 
+//	            new PathTranslator (services.Repository,
+//	                                reposPath);
 	        if (LOGGER.IsDebugEnabled) {
-	            String msg = "Clear static directory response.  " +
-	                "; localPath=[" + localPath + "]" +
-	                "; repositoryPath=[" + repositoryPath + "]";
+	            StringBuilder msg = new StringBuilder ();
+	            msg.Append ("\nClear static directory response.  ");
+	            msg.Append ("\n\tlocalPath=[").Append (localPath).Append ("]");
+                msg.Append ("\n\treposPath=[").Append (reposPath).Append ("]");
+//	            msg.Append ("\n\tpathTranslator=[").Append (pathTranslator).Append ("]");
 	            LOGGER.Debug (msg);
 	        }
 	        Manager manager = new Manager ();
-	        Factory factory = new Factory ();
-	        ICvsFile repository = factory.CreateCvsObject (repositoryPath.LocalPath, 
-	                                                       Factory.FileType.Repository,
-	                                                       localPath);
-	        ICvsFile root = factory.CreateCvsObject (repositoryPath.LocalPath,
-	                                                 Factory.FileType.Root,
-	                                                 services.Repository.CvsRoot.ToString ());
-		    manager.Add (repository);
-		    manager.Add (root);
-	        // TODO: Work some magic so directory entries are created when the
-	        //    module is checked out...
-	        //ICvsFile entry = manager.CreateDirectoryEntry (localPath);
-	        //manager.Add (entry);
+//	        Factory factory = new Factory ();
+//	        ICvsFile repository = factory.CreateCvsObject (pathTranslator.LocalPath, 
+//	                                                       Factory.FileType.Repository,
+//	                                                       pathTranslator.RelativePath);
+//	        
+//	        ICvsFile root = factory.CreateCvsObject (pathTranslator.LocalPath,
+//	                                                 Factory.FileType.Root,
+//	                                                 services.Repository.CvsRoot.ToString ());
+		    manager.AddRepository (services.Repository, localPath, reposPath);
+		    manager.AddRoot (services.Repository, localPath, reposPath);
 	        
 	    }
 	    
