@@ -90,7 +90,11 @@
     </target>
     
     <target name="build.addin" depends="build.lib">
-		<nant buildfile="${dir.build}/${name.addin}.build.xml" target="build" />
+        <nant buildfile="${dir.build}/${name.addin}.build.xml" target="build">
+            <properties>
+                <property name="nant.settings.currentframework" value="net-1.1"/>
+            </properties>    
+        </nant>
     </target>
     
     <target name="build.test" depends="setup">
