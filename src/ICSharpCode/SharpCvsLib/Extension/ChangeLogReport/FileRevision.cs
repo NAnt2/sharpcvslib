@@ -68,7 +68,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
     	    xmlWriter.WriteEndElement();
     	    		
     	    if (previousRevision != null && previousRevision.Length != 0) {
-    		    xmlWriter.WriteStartElement("previousrevision");
+    		    xmlWriter.WriteStartElement("prevrevision");
     		    xmlWriter.WriteString(previousRevision);
     		    xmlWriter.WriteEndElement();
     	    }
