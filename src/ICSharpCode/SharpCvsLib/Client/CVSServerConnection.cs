@@ -133,9 +133,9 @@ namespace ICSharpCode.SharpCvsLib.Client {
 		{
 		    System.Console.WriteLine (message);
 		    LOGGER.Info (message);
-//			if (MessageEvent != null) {
-//				MessageEvent(message);
-//			}
+			if (MessageEvent != null) {
+				MessageEvent(message);
+			}
 		}
 		
         /// <summary>

@@ -32,6 +32,7 @@
 using System;
 
 using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.Messages;
 
 namespace ICSharpCode.SharpCvsLib.Responses { 
 	

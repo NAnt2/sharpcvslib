@@ -29,7 +29,11 @@
 // exception statement from your version.
 #endregion
 
+using System;
+
 using ICSharpCode.SharpCvsLib.Client;
+
+using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Responses { 
 	
@@ -38,6 +42,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// </summary>
 	public class ErrorResponse : IResponse
 	{
+	    private readonly ILog LOGGER = 
+	        LogManager.GetLogger (typeof (ErrorResponse));
         /// <summary>
         /// Process an error response.
         /// </summary>
@@ -45,8 +51,12 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// <param name="services"></param>
 	    public void Process(CvsStream cvsStream, IResponseServices services)
 	    {
-	    	string error = cvsStream.ReadLine();
-	    	services.SendMessage("error " + error);
+	    	string message = cvsStream.ReadLine();
+	        // TODO: Figure out if I should spit this out to the client.
+	    	//services.SendMessage("cvs server: Error " + error);
+            String msg = "cvs server: M " + message;
+	        LOGGER.Debug (msg);
+	        
 	    }
 	    
         /// <summary>

@@ -80,15 +80,40 @@ namespace ICSharpCode.SharpCvsLib.Messages {
         /// </summary>
         public String Message {
             get {
-                StringBuilder sb = new StringBuilder ();
-                sb.Append (ACTION);
-                sb.Append (" ");
-                sb.Append (this.Module);
-                sb.Append (this.Repository);
-                sb.Append (this.Filename);
-                
-                return sb.ToString ();
+                String [] strings = {ACTION,
+                                     this.Module,
+                                     this.Repository, 
+                                     this.Filename};
+                return this.Combine (strings);
             }
+        }
+        
+        /// <summary>
+        ///     Similar to Path.Combine however only uses a forward slash.
+        /// 
+        ///     Combine two strings, adding a <code>/</code> if there is not
+        ///         one at the end of the first string.
+        /// </summary>
+        /// <param name="strings">The array of strings to combine.</param>
+        private String Combine (String[] strings) {
+            StringBuilder sb = new StringBuilder ();
+            foreach (String theString in strings) {
+                sb.Append (theString);
+                
+                if (theString.Equals (ACTION)) {
+                    sb.Append (" ");
+                }
+                else if (strings[strings.Length -1].Equals (theString) &&
+                         theString.EndsWith ("/")) {
+                    sb.Remove (sb.Length - 1, 1);
+                 }
+                else if (!strings[strings.Length -1].Equals (theString)) {
+                    if (!theString.EndsWith ("/")) {
+                        sb.Append ("/");
+                    }
+                }
+            }
+            return sb.ToString ();
         }
 
     }

@@ -126,5 +126,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 	        return this.FileContents.GetHashCode ();
 	    }
 	    
+		/// <summary>
+		///     This is not a file that can contain multiple entries.
+		/// </summary>
+		public bool IsMultiEntry { get {return false;}}
+	    
 	}
 }

@@ -225,6 +225,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             
             try {
                 ICollection cvsFiles = this.Fetch (cvsPath, newCvsEntry.Filename);
+                
+                if (cvsFiles.Count >= 1 || !newCvsEntry.IsMultiEntry) {
+                    LOGGER.Debug ("The file already has an entry and cannot be changed.");
+                    return;
+                }
                 foreach (ICvsFile currentCvsEntry in cvsFiles) {
                     if (currentCvsEntry.Equals (newCvsEntry)) {
                         newCvsEntries.Add (newCvsEntry);

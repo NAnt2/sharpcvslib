@@ -29,7 +29,11 @@
 // exception statement from your version.
 #endregion
 
+using System;
+
 using ICSharpCode.SharpCvsLib.Client;
+
+using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Responses { 
 	
@@ -38,6 +42,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// </summary>
 	public class MessageTaggedResponse : IResponse
 	{
+	    private readonly ILog LOGGER =
+	        LogManager.GetLogger (typeof (MessageTaggedResponse));
         /// <summary>
         /// Process the message tagged response.
         /// </summary>
@@ -46,7 +52,11 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	    public void Process(CvsStream cvsStream, IResponseServices services)
 	    {
 	    	string message = cvsStream.ReadLine();
-	    	services.SendMessage("MT " + message);
+	        // TODO: Figure out how this is output normally (if at all)
+	        //    by cvs clients.
+	    	//services.SendMessage("MT " + message);
+            String msg = "cvs server: MT " + message;
+	        LOGGER.Debug (msg);
 	    }
 	    
         /// <summary>

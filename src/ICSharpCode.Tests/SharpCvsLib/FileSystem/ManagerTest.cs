@@ -37,6 +37,8 @@ using System.IO;
 
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Exceptions;
+using ICSharpCode.SharpCvsLib.Client;
+using ICSharpCode.SharpCvsLib.Commands;
 
 using log4net;
 using NUnit.Framework;
@@ -93,6 +95,32 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
         
         /// <summary>
+        ///     The cvs root entry was appearing twice (and more) times in the
+        ///         cvs Root file.
+        /// </summary>
+        [Test]
+        public void AddRootTwiceTest () {
+            String path = TestConstants.LOCAL_PATH;
+            this.AddCvsFileTest (path, this.ROOT_ENTRY, Root.FILE_NAME);
+            this.AddCvsFileTest (path, this.ROOT_ENTRY, Root.FILE_NAME);
+            
+            this.verifyEntryCount (path, Root.FILE_NAME, 1);
+        }
+
+        /// <summary>
+        ///     You should not be able to add a different root once you have
+        ///         added a root.
+        /// </summary> 
+        [Test]       
+        public void AddDiffRootTest () {
+            String path = TestConstants.LOCAL_PATH;
+            this.AddCvsFileTest (path, this.ROOT_ENTRY, Root.FILE_NAME);
+            this.AddCvsFileTest (path, this.ROOT_ENTRY + "/changed", Root.FILE_NAME);
+            
+            this.verifyEntryCount (path, Root.FILE_NAME, 1);            
+        }
+        
+        /// <summary>
         ///     Test that a repository file can be created successfully.
         /// </summary>
         [Test]
@@ -119,11 +147,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             
             Assertion.Assert ("File does not exist=[" + file + "]", 
                               File.Exists (file));
-            String shouldNotExist = Path.Combine (cvsPath, manager.CVS);
-            System.Console.WriteLine (shouldNotExist);
+            String cvsUnderCvs = Path.Combine (cvsPath, manager.CVS);
+            System.Console.WriteLine (cvsUnderCvs);
             Assertion.Assert ("File should not exist=[" + 
-                                  shouldNotExist + "]",
-                              !Directory.Exists (shouldNotExist));
+                                  cvsUnderCvs + "]",
+                              !Directory.Exists (cvsUnderCvs));
 
         }
         
@@ -148,7 +176,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		    
 		    this.WriteTestEntries (path);
 		    		    
-		    this.verifyEntryCount (path, 
+		    this.verifyEntryCount (path,
+		                           Entry.FILE_NAME,
 		                           this.cvsEntries.Length);
 		    
 		    string newEntry = 
@@ -157,6 +186,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		    manager.Add (new Entry (path, newEntry));
 		    
 		    this.verifyEntryCount (path,
+		                           Entry.FILE_NAME,
 		                           this.cvsEntries.Length + 1);
 		    
 		}
@@ -206,10 +236,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		/// </summary>
 		/// <param name="path">The path to check for the entries in.</param>
 		/// <param name="entriesExpected">The number of entries expected.</param>
-		private void verifyEntryCount (String path, int entriesExpected) {
+		private void verifyEntryCount (String path,
+		                               String cvsFilename,
+		                               int entriesExpected) {
 		    Manager manager = new Manager ();
 		    ICvsFile[] currentEntries =
-		        manager.Fetch (path, Entry.FILE_NAME);
+		        manager.Fetch (path, cvsFilename);
 		    
 		    int entriesFound = currentEntries.Length;
 		    Assertion.Assert ("Should have found " + entriesExpected + 
@@ -307,6 +339,88 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		    
 		    Assertion.Assert ("Working folders count should be greater than 1.",
 		                      working.FoldersToUpdate.Length > 1);
+		}
+		
+		/// <summary>
+		///     Find all the working folders after a checkout.  Determine if all
+		///         of the files have been found or if the find recursive missed some.
+		/// </summary>
+		[Test]
+		public void FindAllWorkingFoldersAfterCheckout () {
+		    Manager manager = new Manager ();
+		    
+		    String DEEP_REPOS_ENTRY = "Logger/src/com/sporadicism";
+		    
+		    String TARGET_ENTRIES_PATH = 
+		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE) + 
+		        @"\src\com\sporadicism\util\logger";
+		    
+		    Entry[] TARGET_ENTRIES = {
+		                        new Entry (TARGET_ENTRIES_PATH, 
+		                                   "/EventLogger.cs/1.1/Wed Jan 08 06:26:41 2003//"),
+                                new Entry (TARGET_ENTRIES_PATH,
+                                           "/Log.cs/1.1/Wed Jan 08 06:26:41 2003//"),
+                                new Entry (TARGET_ENTRIES_PATH,
+                                           "/LogFactory.cs/1.1/Wed Jan 08 06:26:41 2003//"),
+                                new Entry (TARGET_ENTRIES_PATH,
+                                           "/LogName.cs/1.1/Wed Jan 08 06:26:41 2003//")
+		    };
+		    int TARGET_ENTRIES_COUNT = 4;
+		    
+		    this.Checkout ();
+		    
+		    String updateDir = Path.Combine (TestConstants.LOCAL_PATH, 
+		                                     TestConstants.MODULE);
+		    Folder[] folders = 
+		        manager.FetchFilesToUpdate (updateDir);
+		    
+		    bool found = false;
+		    int entriesFound = 0;
+		    foreach (Folder folder in folders) {
+	            if (DEEP_REPOS_ENTRY.Equals (folder.Repos.FileContents)) {
+	                found = true;
+	            }
+		        foreach (Entry entry in folder.Entries) {
+		            if (this.IsInEntries (entry, TARGET_ENTRIES)) {
+		                entriesFound++;
+		            }
+                    System.Console.WriteLine ("entry=[" + entry + "]");		        
+		        }
+		    }
+		    
+		    Assertion.Assert ("Did not find file=[" + DEEP_REPOS_ENTRY + "]",
+		                      found);
+		    Assertion.AssertEquals ("Did not find entries count=[" + TARGET_ENTRIES_COUNT + "]",
+		                      TARGET_ENTRIES_COUNT, entriesFound);
+		    
+		}
+		
+		private bool IsInEntries (Entry entry, Entry[] entries) {
+		    foreach (Entry currentEntry in entries) {
+		        if (currentEntry.Equals (entry)) {
+		            return true;
+		        }
+		    }
+		    return false;
+		}
+		
+		private void Checkout () {
+            CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
+            WorkingDirectory working = 
+                new WorkingDirectory (root, 
+                                        TestConstants.LOCAL_PATH, 
+                                        TestConstants.MODULE);
+
+            CVSServerConnection connection = new CVSServerConnection ();
+            Assertion.AssertNotNull ("Should have a connection object.", connection);
+		    
+            ICommand command = new CheckoutModuleCommand (working);
+            Assertion.AssertNotNull ("Should have a command object.", command);
+		    
+            connection.Connect (working, TestConstants.PASSWORD_VALID);
+
+            command.Execute (connection);
+            connection.Close ();
 		}
 		
 		/// <summary>

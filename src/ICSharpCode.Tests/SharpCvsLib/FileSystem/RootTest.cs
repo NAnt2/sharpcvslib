@@ -74,5 +74,25 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Assertion.Assert (repos.FileContents.Equals (this.ROOT_ENTRY));
         }
         
+        [Test]
+        public void EqualsTest () {
+            String cvsPath = Path.Combine (TestConstants.LOCAL_PATH, 
+                                           TestConstants.MODULE);
+            Root RootSame1 = new Root (cvsPath,
+                                       ":pserver:charbour@linux.sporadicism.com:/home/cvs/src");
+            Root RootSame2 = new Root (cvsPath,
+                                       ":pserver:charbour@linux.sporadicism.com:/home/cvs/src");
+            Root RootDiff1 = new Root (cvsPath,
+                                       ":pserver:charbour@linux.sporadicism.com:/sharpcvslib");
+            
+            Assertion.Assert (RootSame1.Equals (RootSame2));
+            Assertion.Assert (RootSame2.Equals (RootSame1));
+            
+            Assertion.Assert (!RootDiff1.Equals (RootSame1));
+            Assertion.Assert (!RootDiff1.Equals (RootSame2));
+            Assertion.Assert (!RootSame1.Equals (RootDiff1));
+            Assertion.Assert (!RootSame2.Equals (RootDiff1));
+        }
+        
     }
 }

@@ -116,9 +116,12 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		    }
 		    
 		    Assertion.Assert ("Build file should have a cvs entry.", found == 1);
-		    Assertion.Assert ("Should not be a module directory under root folder.",
-		                      !Directory.Exists (Path.Combine (TestConstants.LOCAL_PATH, 
-		                                                       TestConstants.MODULE)));
+		    
+		    // Had some problems with an extra module directory appearing under
+		    //    the main working folder.
+		    String doubleModuleDir = Path.Combine (rootDir, TestConstants.MODULE);
+		    Assertion.Assert ("Should not be a module directory under root folder=[" + doubleModuleDir + "]",
+		                      !Directory.Exists (doubleModuleDir));
 		}
 
         /// <summary>
@@ -153,7 +156,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		/// </summary>
 		[TearDown]
 		public void TearDown () {
-		    Directory.Delete (TestConstants.LOCAL_PATH, true);
+		    //Directory.Delete (TestConstants.LOCAL_PATH, true);
 		}
 
 

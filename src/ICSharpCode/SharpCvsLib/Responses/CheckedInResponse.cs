@@ -59,7 +59,9 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             Entry  entry = new Entry(fileName, entryLine);
             
             // TODO: Determine if this is needed or not.
-            services.SetEntry(fileName, entry);
+            //services.SetEntry(fileName, entry);
+	        Manager manager = new Manager ();
+	        manager.Add (entry);
 	    }
 	    
         /// <summary>

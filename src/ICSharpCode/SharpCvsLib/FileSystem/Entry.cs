@@ -389,5 +389,18 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		public override int GetHashCode () {
 		    return this.Name.GetHashCode ();
 		}
+		
+		/// <summary>
+		///     Return a human readable string that represents the entry object.
+		/// </summary>
+		/// <returns>A human readable string that represents the entry object.</returns>
+		public override String ToString () {
+		    return this.FileContents;
+		}
+		
+		/// <summary>
+		///     This is a file that can contain multiple entries.
+		/// </summary>
+		public bool IsMultiEntry { get {return true;}}
 	}
 }

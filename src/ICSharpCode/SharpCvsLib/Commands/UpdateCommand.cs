@@ -116,120 +116,101 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 		                workingdirectory.Folders.Count + "]";
 		        LOGGER.Debug (msg);
 		    }
+		    
 		    Folder[] _foldersToUpdate = 
 		        (Folder[])workingdirectory.FoldersToUpdate.Clone ();
 			foreach (Folder folder in _foldersToUpdate) {
+			    this.SetDirectory (connection, folder);
 			    foreach (Entry entry  in folder.Entries) {
     				if (!entry.IsDirectory) {
-    					DateTime old = entry.TimeStamp;
-    					entry.TimeStamp = entry.TimeStamp;
-    				    
-    				    if (LOGGER.IsDebugEnabled) {
-    				        String msg = "Working with cvs entry.  " +
-    				            "entry=[" + entry + "]";
-    				        LOGGER.Debug (entry);
-    				    }
-    					
-    					if (LOGGER.IsDebugEnabled) {
-    					    String msg = "Constructing the path to file.  " +
-    					        ";  workingdirectory.CvsRoot.CvsRepository=[" + 
-    					            workingdirectory.CvsRoot.CvsRepository + "]" +
-    					        ";  workingdirectory.WorkingDirectoryName=[" +
-    					            workingdirectory.WorkingDirectoryName + "]";
-    					    LOGGER.Debug (msg);
-    					}
-    					String path = workingdirectory.CvsRoot.CvsRepository + 
-    					                   "/" +
-    					                   folder.Repos.FileContents;
+//    					String path = workingdirectory.CvsRoot.CvsRepository + 
+//    					                   "/" +
+//    					                   folder.Repos.FileContents;
 
     					//string path = workingdirectory.CvsRoot.CvsRepository +  
     					//			"/" + workingdirectory.WorkingDirectoryName;/* + 
-    					//			folder.Key.ToString();*/
+    					//			folder.Key.ToString();
     					
-    					if (LOGGER.IsDebugEnabled) {
-    					    String msg = "Before submit directory request.  " +
-    					        "path=[" + path + "]";
-    					    LOGGER.Debug (msg);
-    					}
+//    					if (LOGGER.IsDebugEnabled) {
+//    					    String msg = "Before submit directory request.  " +
+//    					        "path=[" + path + "]";
+//    					    LOGGER.Debug (msg);
+//    					}
     					
-    					try {
-        					connection.SubmitRequest(new DirectoryRequest(".", path));
-    					}
-    					catch (Exception e) {
-    					    String msg = "Exception while submitting directory request.  " +
-    					        "path=[" + path + "]";
-                            LOGGER.Error (e);
-    					}
+//    					try {
+//        					connection.SubmitRequest(new DirectoryRequest(".", path));
+//    					}
+//    					catch (Exception e) {
+//    					    String msg = "Exception while submitting directory request.  " +
+//    					        "path=[" + path + "]";
+//                            LOGGER.Error (e);
+//    					}
     					
-    					path = workingdirectory.CvsRoot.CvsRepository + 
-    							folder.Repos.FileContents;
-    					
-    					if (LOGGER.IsDebugEnabled) {
-    					    String msg = "before we get the filename.  " +
-    					        "; localDirectory=[" + workingdirectory.LocalDirectory + "]" +
-    					        "; DirectorySeperatorChar=[" + Path.DirectorySeparatorChar + "]" +
-    					        "; DirectoryName=[" + path.Substring (workingdirectory.CvsRoot.CvsRepository.Length) + "]" +
-    					        "; DirectoryDeperatorChar=[" + Path.DirectorySeparatorChar + "]" +
-    					        "; Entry name=[" + entry.Name + "]";
-    					    LOGGER.Debug (msg);
-    					}
-    					
-    				    string fileName =
-    				        this.getFileNameAndPath (
-    				                                 Path.GetDirectoryName (workingdirectory.LocalDirectory),
-    				                                 path.Substring (workingdirectory.CvsRoot.CvsRepository.Length),
-    				                                 entry.Name);
+//    					path = workingdirectory.CvsRoot.CvsRepository + 
+//    							folder.Repos.FileContents;
+    					    					
+//    				    string fileName =
+//    				        this.getFileNameAndPath (
+//    				                                 Path.GetDirectoryName (workingdirectory.LocalDirectory),
+//    				                                 path.Substring (workingdirectory.CvsRoot.CvsRepository.Length),
+//    				                                 entry.Name);
     		
-    		            if (LOGGER.IsDebugEnabled){
-    					    LOGGER.Debug("local name ? : "  + fileName);
-    		            }
-    					
-    					bool fileExists;
-    					try {
-    					    fileExists = File.Exists (fileName);
-    					}
-    					catch (Exception e) {
-    					    LOGGER.Error (e);
-    					    fileExists = false;
-    					}
-    					if (!fileExists) {
-    					    if (LOGGER.IsDebugEnabled) {
-    					        String msg = "File does not exist or has been lost.  " +
-    					            "fileName=[" + fileName + "]" +
-    					            "entry=[" + entry + "]";
-    					        LOGGER.Debug (msg);
-    					    }
-    					    connection.SubmitRequest (new EntryRequest (entry));
-    					} else if (File.GetLastAccessTime(fileName) != entry.TimeStamp) {
-    					    if (LOGGER.IsDebugEnabled) {
-    					        String msg = "Last access time for the file is not equal to the entry timestamp.  This has been modified." +
-    					            "fileName=[" + fileName + "]" +
-    					            "entry=[" + entry + "]";
-    					        LOGGER.Debug (msg);
-    					    }
-    						connection.SubmitRequest(new ModifiedRequest(entry.Name));
-    						
-    						if (entry.IsBinaryFile) {
-    							connection.UncompressedFileHandler.SendBinaryFile(connection.OutputStream, fileName);
-    						} else {
-    							connection.UncompressedFileHandler.SendTextFile(connection.OutputStream, fileName);
-    						}
-    					} else {
-    					    if (LOGGER.IsDebugEnabled) {
-    					        String msg = "At the last else condition.  " +
-    					            "fileName=[" + fileName + "]" +
-    					            "entry=[" + entry + "]";
-    					        LOGGER.Debug (entry);
-    					    }
-    						connection.SubmitRequest(new EntryRequest(entry));
-    						connection.SubmitRequest(new UnchangedRequest(entry.Name));
-    					}
-    					
-    					entry.TimeStamp = old;
+    				    //this.FetchFile (connection, entry);
+
     				}
+                    connection.SubmitRequest(new UpdateRequest());
 			    }
-                connection.SubmitRequest(new UpdateRequest());
-			}			
+			}
+
+		}
+		
+		private void SetDirectory (CVSServerConnection connection, 
+		                           Folder folder) {
+            String absoluteDir = connection.Repository.CvsRoot.CvsRepository + "/" +
+                                 folder.Repos.FileContents;
+    		try {
+    			connection.SubmitRequest(new DirectoryRequest(".",
+    			                                              absoluteDir));
+    		}
+    		catch (Exception e) {
+    		    String msg = "Exception while submitting directory request.  " +
+    		        "path=[" + folder.Repos.FileContents + "]";
+                LOGGER.Error (e);
+    		}
+		}
+		
+		private void FetchFile (CVSServerConnection connection,
+		                        Entry entry) {
+			bool fileExists;
+			DateTime old = entry.TimeStamp;
+			entry.TimeStamp = entry.TimeStamp;
+			try {
+			    fileExists = File.Exists (entry.Filename);
+			}
+			catch (Exception e) {
+			    LOGGER.Error (e);
+			    fileExists = false;
+			}
+			
+			if (!fileExists) {
+			    connection.SubmitRequest (new EntryRequest (entry));
+			} else if (File.GetLastAccessTime(entry.Filename) != 
+			           entry.TimeStamp.ToUniversalTime ()) {
+				connection.SubmitRequest(new ModifiedRequest(entry.Name));
+				
+				if (entry.IsBinaryFile) {
+					connection.UncompressedFileHandler.SendBinaryFile(connection.OutputStream, 
+					                                                  entry.Filename);
+				} else {
+					connection.UncompressedFileHandler.SendTextFile(connection.OutputStream, 
+					                                                entry.Filename);
+				}
+			} else {
+				connection.SubmitRequest(new EntryRequest(entry));
+				connection.SubmitRequest(new UnchangedRequest(entry.Name));
+			}
+			
+			entry.TimeStamp = old;
 		}
 		
 		/// <summary>Returns the local filename and path.

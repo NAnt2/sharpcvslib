@@ -73,5 +73,32 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             this.path = path;
             this.fileContents = fileContents;
         }
+        
+		/// <summary>
+		///     Determine if the two objects are equal.
+		/// </summary>
+		public override bool Equals (object obj) {
+		    if (obj is Root) {
+		        Root that = (Root)obj;
+		        if (that.GetHashCode ().Equals (this.GetHashCode ())) {
+		            return true;
+		        }
+		    }
+		    return false;
+		}
+		
+		/// <summary>
+		///     Override the hashcode.  This is a combination of the entry
+		///         name and the path to the entry file.
+		/// </summary>
+		public override int GetHashCode () {
+		    return this.FileContents.GetHashCode ();
+		}
+		
+		/// <summary>
+		///     This is not a file that can contain multiple entries.
+		/// </summary>
+		public bool IsMultiEntry { get {return false;}}
+
     }
 }

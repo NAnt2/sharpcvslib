@@ -67,7 +67,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
         /// </summary>
 		public override string RequestString {
 			get {
-				return "Entry " + entry.ToString() + "\n";
+				return "Entry " + entry.FileContents + "\n";
 			}
 		}
 		
