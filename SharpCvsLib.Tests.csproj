@@ -490,6 +490,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\ICSharpCode\SharpCvsLib\Requests\RTagRequest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src\ICSharpCode\SharpCvsLib\Requests\StatusRequest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -664,6 +669,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\ICSharpCode.Console\SharpCvsLib\Console\Commands\UpdateCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src\ICSharpCode.Console\SharpCvsLib\Console\Parser\Command.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -754,6 +764,11 @@
                 />
                 <File
                     RelPath = "src\ICSharpCode.Tests\SharpCvsLib\Console\Commands\LoginCommandTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "src\ICSharpCode.Tests\SharpCvsLib\Console\Commands\UpdateCommandTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
