@@ -25,6 +25,8 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using System;
+
 namespace ICSharpCode.SharpCvsLib.Requests { 
 	
 	/// <summary>
@@ -35,6 +37,17 @@ namespace ICSharpCode.SharpCvsLib.Requests {
 	public class ArgumentRequest : AbstractRequest
 	{
     	private string arg;
+        
+        /// <summary>The options that are available as
+        /// arguments to the cvs server.</summary>
+        public class Options {
+            /// <summary>The cvs command used to specify a specific revision
+            ///     is requested.</summary>
+            public const String REVISION = "-r";
+            /// <summary>Cvs command to specify that the name of a cvs
+            /// module is comming.</summary>
+            public const String MODULE_NAME = "-N";
+        }
     
         /// <summary>
         /// An argument to use with the cvs command.

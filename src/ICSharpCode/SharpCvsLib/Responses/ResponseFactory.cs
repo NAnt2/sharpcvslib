@@ -73,6 +73,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 					return new ClearStaticDirectoryResponse();
 				case "Valid-requests":
 					return new ValidRequestsResponse();
+			    case "Set-sticky":
+			        return new SetStickyResponse ();
 				default:
 					return null;
 			}

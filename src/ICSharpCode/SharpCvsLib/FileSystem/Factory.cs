@@ -60,7 +60,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             /// <summary>
             ///     The entries file type.
             /// </summary>
-            Entries
+            Entries,
+            /// <summary>Used to specify specific repository revisions or
+            /// sticky tags.</summary>
+            Tag
         }
         /// <summary>
         ///     Constructor.
@@ -87,6 +90,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 case (FileType.Root):
                     entry = new Root (path, line);
                     break;
+                case (FileType.Tag):
+                    entry = new Tag (path, line);
+                    break;
                 default:
                     String msg = "Unable to create object.";
                     throw new Exception (msg);
@@ -109,6 +115,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                     return Repository.FILE_NAME;
                 case (FileType.Root):
                     return Root.FILE_NAME;
+                case (FileType.Tag):
+                    return Tag.FILE_NAME;
                 default:
                     String msg = "Unable to create object.";
                     throw new Exception (msg);
