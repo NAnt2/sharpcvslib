@@ -33,6 +33,8 @@ using System;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Client;
+
 namespace ICSharpCode.SharpCvsLib.Responses { 
 	
     /// <summary>

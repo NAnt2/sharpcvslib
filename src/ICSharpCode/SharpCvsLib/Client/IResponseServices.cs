@@ -37,7 +37,7 @@ using ICSharpCode.SharpCvsLib.FileHandler;
 using ICSharpCode.SharpCvsLib.FileSystem;
 
 
-namespace ICSharpCode.SharpCvsLib.Responses { 
+namespace ICSharpCode.SharpCvsLib.Client { 
 	
     /// <summary>
     /// Response services interface.

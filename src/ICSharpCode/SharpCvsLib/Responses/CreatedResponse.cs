@@ -36,6 +36,7 @@ using System;
 using System.IO;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
+using ICSharpCode.SharpCvsLib.Client;
 
 using log4net;
 
@@ -138,8 +139,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 	        
 	        manager.Add (e);
 	        
-	        String cvsMsg = "cvs server: Updating " + e.FileContents;	        
-	        manager.SendCvsMessage (cvsMsg);
+	        String cvsMsg = "U" +  e.FileContents;	        
+	        manager.SendCvsMessage (module, relativePath, filename);
 	    }
 	    
         /// <summary>

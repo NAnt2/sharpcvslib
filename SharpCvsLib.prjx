@@ -7,7 +7,7 @@
     <File name=".\src\build.bat" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\src\COPYING.txt" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name=".\src\README.txt" subtype="Code" buildaction="Exclude" dependson="" data="" />
-    <File name=".\src\ICSharpCode\SharpCvsLib\Responses\IResponseServices.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode\SharpCvsLib\Client\IResponseServices.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode\SharpCvsLib\Responses\IResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode\SharpCvsLib\Responses\MessageResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode\SharpCvsLib\Responses\MessageTaggedResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -93,6 +93,9 @@
     <File name=".\src\ICSharpCode\SharpCvsLib\FileSystem\PathTranslator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode\SharpCvsLib\Exceptions\EntryNotFoundException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\src\ICSharpCode\SharpCvsLib\Misc\TraceUtil.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode\SharpCvsLib\MessageHandler" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode\SharpCvsLib\MessageHandler\IMessageHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name=".\src\ICSharpCode\SharpCvsLib\MessageHandler\EmptyC#file.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto=".\lib\log4net.dll" />

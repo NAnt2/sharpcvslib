@@ -29,6 +29,8 @@
 // exception statement from your version.
 #endregion
 
+using ICSharpCode.SharpCvsLib.Client;
+
 namespace ICSharpCode.SharpCvsLib.Responses { 
 	
     /// <summary>
