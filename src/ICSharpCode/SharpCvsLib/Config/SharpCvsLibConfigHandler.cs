@@ -63,7 +63,7 @@ namespace ICSharpCode.SharpCvsLib.Config {
             String typename = (String) nav.Evaluate("string(@type)");
             Type type = Type.GetType(typename);
             object theObject = this.GetConfigObject (type, 
-                section.SelectSingleNode ("//" + SharpCvsLibConfig.SUB_SECTION));
+            section.SelectSingleNode ("//" + SharpCvsLibConfig.SUB_SECTION));
 
             return theObject;
         }
