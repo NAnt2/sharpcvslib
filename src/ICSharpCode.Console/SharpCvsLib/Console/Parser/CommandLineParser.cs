@@ -53,6 +53,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private string cvsroot;
         private string command;
         private string options;
+        private string repository;
 
         /// <summary>
         /// Value of the cvsroot to use as a string.  This will be passed
@@ -79,6 +80,15 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         public String Options {
             get {return this.options;}
         }
+
+        /// <summary>
+        /// Value of the repository to use as a string.  This will be passed
+        ///     into the CheckoutCommand object which will know which files to get.
+        /// </summary>
+        public String Repository 
+        {
+            get {return this.repository;}
+        }
         
         /// <summary>Create a new instance of the command line parser and 
         ///     initialize the arguments object.</summary>
@@ -90,19 +100,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             // TODO: Remove this hack when add method to set options.
             this.options = String.Empty;
         }
-
-		/// <summary>Create a new instance of the command line parser and 
-		///     initialize the arguments object.</summary>
-		/// <param name="args">A collection of strings that represent the command
-		///     line arguments sent into the program.</param>
-		public CommandLineParser () 
-		{
-			//this.arguments = args; 
-            
-			// TODO: Remove this hack when add method to set options.
-			//this.options = String.Empty;
-		}
-       
+      
         /// <summary>Parse the command line options.</summary>
         public void Execute () {
             if (arguments.Length < 1) {
@@ -114,24 +112,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "checkout":
                     case "co": 
                         this.command = arguments[i++];
-                        // if cvsroot is not set abort checkout
                         // get rest of arguments which is options on the checkout command.
                         // pass argument coOptions an array of strings.
-                        string repositoryname = arguments[i];
-                        CheckoutCommand coCommand = 
-                            new CheckoutCommand(cvsroot, repositoryname);
+                        this.repository = arguments[i++];
                         break;
                     case "login":
                         // login to server
+                        this.command = arguments[i++];
                         break;
                     case "passwd":
-                        // add to .cvspass file 
-                        // scramble password
-                        // write to file
-                        this.command = arguments[++i];
+                        this.command = arguments[i++];
                         break;
                     case "update":
-                        this.command = arguments[++i];
+                        this.command = arguments[i++];
                         break;
                     case "--help":
                         System.Console.WriteLine (Usage.General);
