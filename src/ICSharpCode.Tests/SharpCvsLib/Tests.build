@@ -1,8 +1,8 @@
 <!--
     Build test classes for library and other apps.
 -->
-<project name="ICSharpCode.SharpCvsLib" default="debug">
-	<target name="build-net-1.0">
+<project name="ICSharpCode.SharpCvsLib" default="build-net-1.0">
+    <target name="build-net-1.0">
         <csc    target="library" 
                 warnaserror="${compile.warnaserror}" 
                 output="${dir.build}/${name.top-level}.${name.project}.${name.tests}.dll" 
@@ -27,8 +27,11 @@
 <!--                <includes name="${dir.build}/${lib.name}.dll" />-->
             </references>
         </csc>
-	</target>
-	<target name="build-mono-1.0-linux">
+    </target>
+    <target name="build-net-1.1">
+        <call target="build-net-1.0" />
+    </target>
+    <target name="build-mono-1.0-linux">
         <csc    target="library" 
                 warnaserror="${compile.warnaserror}" 
                 output="${dir.build}/${name.top-level}.${name.project}.${name.tests}.dll" 
@@ -52,18 +55,23 @@
 <!--                <includes name="${dir.build}/${lib.name}.dll" />-->
             </references>
         </csc>
-	</target>
+    </target>
 
     <!-- Run all of the unit tests for the entire project -->
-    <target name="run-tests-net-1.0-linux">
-		<nunit2>
-		        <test assemblyname="${dir.build}/${name.top-level}.${name.project}.${name.tests}.dll"/>
-		</nunit2>
-    </target>
     <target name="run-tests-mono-1.0-linux">
-            <nunit2>
+        <call target="run-tests-all-platforms" />
+    </target>
+    <target name="run-tests-net-1.0">
+        <call target="run-tests-all-platforms" />
+    </target>
+    <target name="run-tests-net-1.1">
+        <call target="run-tests-all-platforms" />
+    </target>
+    
+    <target name="run-tests-all-platforms">
+        <nunit2>
                 <test assemblyname="${dir.build}/${name.top-level}.${name.project}.${name.tests}.dll"/>
-            </nunit2>
+        </nunit2>
     </target>
 
 </project>
