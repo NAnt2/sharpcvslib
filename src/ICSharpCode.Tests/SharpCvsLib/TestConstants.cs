@@ -62,10 +62,11 @@ namespace ICSharpCode.SharpCvsLib {
         /// <summary>
         ///     The file that will be checked after update/ checkout.
         /// </summary>
-        public const String TARGET_FILE = "nant.build";
+        public const String TARGET_FILE = "NAnt.build";
         /// <summary>
         ///     The directory that will be searched for after an update/ checkout.
         /// </summary>
         public const String TARGET_DIRECTORY = "bin";
+        
     }
 }

@@ -348,61 +348,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 		    Assertion.Assert ("Working folders count should be greater than 1.",
 		                      working.FoldersToUpdate.Length > 1);
 		}
-		
-		/// <summary>
-		///     Find all the working folders after a checkout.  Determine if all
-		///         of the files have been found or if the find recursive missed some.
-		/// </summary>
-		[Test]
-		public void FindAllWorkingFoldersAfterCheckout () {
-		    Manager manager = new Manager ();
-		    
-		    String DEEP_REPOS_ENTRY = "Logger/src/com/sporadicism";
-		    
-		    String TARGET_ENTRIES_PATH = 
-		        Path.Combine (TestConstants.LOCAL_PATH, TestConstants.MODULE) + 
-		        @"\src\com\sporadicism\util\logger";
-		    
-		    Entry[] TARGET_ENTRIES = {
-		                        new Entry (TARGET_ENTRIES_PATH, 
-		                                   "/EventLogger.cs/1.1/Wed Jan 08 06:26:41 2003//"),
-                                new Entry (TARGET_ENTRIES_PATH,
-                                           "/Log.cs/1.1/Wed Jan 08 06:26:41 2003//"),
-                                new Entry (TARGET_ENTRIES_PATH,
-                                           "/LogFactory.cs/1.1/Wed Jan 08 06:26:41 2003//"),
-                                new Entry (TARGET_ENTRIES_PATH,
-                                           "/LogName.cs/1.1/Wed Jan 08 06:26:41 2003//")
-		    };
-		    int TARGET_ENTRIES_COUNT = 4;
-		    
-		    this.Checkout ();
-		    
-		    String updateDir = Path.Combine (TestConstants.LOCAL_PATH, 
-		                                     TestConstants.MODULE);
-		    Folder[] folders = 
-		        manager.FetchFilesToUpdate (updateDir);
-		    
-		    bool found = false;
-		    int entriesFound = 0;
-		    foreach (Folder folder in folders) {
-	            if (DEEP_REPOS_ENTRY.Equals (folder.Repos.FileContents)) {
-	                found = true;
-	            }
-		        foreach (Entry entry in folder.Entries) {
-		            if (this.IsInEntries (entry, TARGET_ENTRIES)) {
-		                entriesFound++;
-		            }
-                    System.Console.WriteLine ("entry=[" + entry + "]");		        
-		        }
-		    }
-		    
-		    Assertion.Assert ("Did not find file=[" + DEEP_REPOS_ENTRY + "]",
-		                      found);
-		    Assertion.AssertEquals ("Did not find entries count=[" + TARGET_ENTRIES_COUNT + "]",
-		                      TARGET_ENTRIES_COUNT, entriesFound);
-		    
-		}
-		
+				
 		private bool IsInEntries (Entry entry, Entry[] entries) {
 		    foreach (Entry currentEntry in entries) {
 		        if (currentEntry.Equals (entry)) {

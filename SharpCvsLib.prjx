@@ -100,6 +100,7 @@
     <File name=".\src\ICSharpCode\SharpCvsLib\Config\SharpCvsLibConfig.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name=".\conf\ICSharpCode.SharpCvsLib.Tests.dll.config" subtype="Code" buildaction="Nothing" dependson="" data="" />
     <File name=".\conf\ICSharpCode.SharpCvsLib.dll.config" subtype="Code" buildaction="Nothing" dependson="" data="" />
+    <File name=".\lib\ext\nunit.framework.dll" subtype="Code" buildaction="Nothing" dependson="" data="" />
   </Contents>
   <References>
     <Reference type="Assembly" refto=".\lib\ICSharpCode.SharpZipLib.dll" />

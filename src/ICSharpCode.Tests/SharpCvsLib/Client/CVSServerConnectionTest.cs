@@ -60,6 +60,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// </summary>
         [Test]
         public void MakeConnection_Good () {
+            System.Threading.Thread.Sleep (500);
             CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
             WorkingDirectory working = 
                 new WorkingDirectory (root, 
@@ -78,6 +79,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// </summary>
         [Test]
         public void MakeConnection_Bad () {
+            System.Threading.Thread.Sleep (500);
             CvsRoot root = new CvsRoot (TestConstants.CVSROOT);
             WorkingDirectory working = 
                 new WorkingDirectory (root, 

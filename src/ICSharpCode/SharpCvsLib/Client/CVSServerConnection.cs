@@ -362,11 +362,10 @@ namespace ICSharpCode.SharpCvsLib.Client {
 					                                     repository.CvsRoot.User, 
 					                                     password));
 					inputstream.Flush();
-			        
+
+                    string retStr;			        
 			        // sleep for awhile for slow servers
-			        for (int sleeping=0; sleeping < this.AuthSleep; sleeping++);
-			        
-			        string retStr;
+			        System.Threading.Thread.Sleep (this.AuthSleep);
 			        
 			        try {
     					retStr = inputstream.ReadLine();
@@ -376,7 +375,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
 			                "It is possible that the remote server was down.";
 			            LOGGER.Error (msg, e);
 			            throw new AuthenticationException (msg);
-			        }
+			        }			        
 			        
 					switch (retStr) {
 						case PSERVER_AUTH_SUCCESS:
