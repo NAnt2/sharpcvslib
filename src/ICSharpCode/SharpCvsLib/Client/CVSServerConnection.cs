@@ -94,21 +94,28 @@ namespace ICSharpCode.SharpCvsLib.Client {
 	    ///     Initialize the cvs server connection.
 	    /// </summary>
 	    public CVSServerConnection () {
-	        SharpCvsLibConfig config = 
-                (SharpCvsLibConfig)ConfigurationSettings.GetConfig 
-                (SharpCvsLibConfigHandler.APP_CONFIG_SECTION);
-	        
-	        if (null == config || 0 == config.Timeout) {
+	        try {
+    	        SharpCvsLibConfig config = 
+                    (SharpCvsLibConfig)ConfigurationSettings.GetConfig 
+                    (SharpCvsLibConfigHandler.APP_CONFIG_SECTION);
+    	        
+    	        if (null == config || 0 == config.Timeout) {
+    	            this.timeout = DEFAULT_TIMEOUT;
+    	        }
+    	        
+    	        if (null == config || 0 == config.AuthSleep) {
+    	            this.authSleep = DEFAULT_AUTH_SLEEP;
+    	        }
+    
+                if (config.Verbose) {
+                    // TODO: Fix up the verbose property so logging can be shut off.
+                }
+	        } catch (Exception e) {
+	            LOGGER.Error (e);
 	            this.timeout = DEFAULT_TIMEOUT;
-	        }
-	        
-	        if (null == config || 0 == config.AuthSleep) {
 	            this.authSleep = DEFAULT_AUTH_SLEEP;
+	            
 	        }
-
-            if (config.Verbose) {
-                
-            }
 	        
 	    }
 		

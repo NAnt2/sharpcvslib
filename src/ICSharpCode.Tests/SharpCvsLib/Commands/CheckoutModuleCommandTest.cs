@@ -247,7 +247,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 
             String tagFile = 
                 Path.Combine (Path.Combine (TestConstants.MODULE, manager.CVS), Tag.FILE_NAME);
-            Assertion.Assert ("Should not have a cvs directory in the current execution path.  ",
+            Assertion.Assert ("Should not have a cvs directory and tag file in the current execution path.  ",
                               !Directory.Exists (tagFile)); 
         }
                 
