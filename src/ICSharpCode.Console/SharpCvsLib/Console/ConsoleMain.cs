@@ -37,7 +37,7 @@
 #endregion
 
 using System;
-
+using ICSharpCode.SharpCvsLib.Console.Commands;
 using ICSharpCode.SharpCvsLib.Console.Parser;
 
 namespace ICSharpCode.SharpCvsLib.Console {
@@ -59,7 +59,30 @@ namespace ICSharpCode.SharpCvsLib.Console {
             CommandLineParser parser = new CommandLineParser (args);
             
             parser.Execute ();
-        
+
+            switch (parser.Command){
+                case "checkout":
+                case "co": 
+                    CheckoutCommand coCommand = 
+                        new CheckoutCommand(parser.Cvsroot, parser.Repository);
+                    coCommand.Execute();
+                    break;
+                case "login":
+                    // login to server
+                    LoginCommand login = new LoginCommand(parser.Cvsroot);
+                    login.Execute();
+                    break;
+                case "passwd":
+                    // add to .cvspass file 
+                    // scramble password
+                    // write to file
+                    break;
+                case "update":
+                    break;
+                default:
+                    System.Console.WriteLine ("Not a valid comand.");
+                    break;
+            }
         }
     }
 
