@@ -133,12 +133,26 @@ namespace ICSharpCode.SharpCvsLib.Console {
             }
         }
 
+        private static DirectoryInfo _appDir;
+        public static DirectoryInfo AppDir {
+            get { 
+                if (null == _appDir) {
+                    string appDir =
+                        System.IO.Path.GetDirectoryName(
+                        System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
+                    appDir = appDir.Replace(@"file:\", "");
+                    _appDir = new DirectoryInfo(appDir);
+                } 
+                return _appDir;
+            }
+        }
+
         /// <summary>Constructor.
         ///     TODO: Fill in more of a usage/ explanation.</summary>
         public ConsoleMain () {
             try {
                 LOGGER = log4net.LogManager.GetLogger(typeof(ConsoleMain));
-            } finally {
+            } catch {
                 // do nothing
             }
         }
@@ -256,11 +270,16 @@ namespace ICSharpCode.SharpCvsLib.Console {
         }
 
         public static void ExitProgram (string msg, Exception exception) {
-#if (DEBUG)
-            ExitProgram(string.Format("{0}\n{1}", msg, exception.ToString()));
-#else
+            try {
+                using (StreamWriter fileWriter = new StreamWriter(System.IO.Path.Combine(AppDir.FullName, "Error.log"), true)) {
+                    fileWriter.WriteLine(string.Format("[{0}] - {1}\n{2}", 
+                        DateTime.Now, msg, exception.ToString()));
+                }
+            } catch (Exception) {
+                // make sure there isn't an exception when exiting the program
+            }
+
             ExitProgram(string.Format("{0}", msg));
-#endif
         }
 
         /// <summary>
@@ -270,9 +289,6 @@ namespace ICSharpCode.SharpCvsLib.Console {
         public static void ExitProgram (string msg) {
             ConsoleWriter writer = new ConsoleWriter();
             writer.WriteLine(msg);
-#if (DEBUG)
-            System.Console.ReadLine();
-#endif
             Environment.Exit(-1);
         }
 

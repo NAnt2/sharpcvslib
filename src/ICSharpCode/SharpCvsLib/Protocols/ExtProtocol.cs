@@ -60,7 +60,7 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
         private readonly ILog LOGGER =
             LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        private Process p = null;
+        private static Process _process = null;
 
         /// <summary>
         /// Create a new instance of the ext (ssh) protocol.
@@ -79,44 +79,64 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
         /// Disconnect from the cvs server.
         /// </summary>
         public override void Disconnect() {
-            if (p != null && !p.HasExited) {
-                p.Kill();
-                p.WaitForExit();
-                p = null;
+            if (_process != null && !_process.HasExited) {
+                _process.Kill();
+                _process.WaitForExit();
+                _process = null;
             }
         }
 
 
         private void HandleExtAuthentication () {
-            ProcessStartInfo startInfo =
-                this.GetProcessInfo(this.Config.Shell, VERSION_ONE);
-
-            try {
-                p = new Process();
-
-                p.StartInfo = startInfo;
-                p.Exited += new EventHandler(this.ExitShellEvent);
-
-                LOGGER.Info(string.Format("{0} {1}",
-                    p.StartInfo.FileName, p.StartInfo.Arguments));
-
-                p.Start();
-            } catch (Exception) {
-                try {
-                    p.StartInfo = this.GetProcessInfo(this.Config.Shell, VERSION_TWO);
-                    p.Start();
-                } catch (Exception e) {
-                    throw new ICSharpCode.SharpCvsLib.Exceptions.ExecuteShellException(
-                        string.Format("{0} {1}",
-                        this.Config.Shell, p.StartInfo.Arguments), e);
-                }
+            if (null == _process) {
+                _process = StartProcess();
             }
-            BufferedStream errstream = new BufferedStream(p.StandardError.BaseStream);
-            StreamWriter streamWriter  = p.StandardInput;
-            StreamReader streamReader = p.StandardOutput;
+
+            BufferedStream errstream = new BufferedStream(_process.StandardError.BaseStream);
+            StreamWriter streamWriter  = _process.StandardInput;
+            StreamReader streamReader = _process.StandardOutput;
 
             SetInputStream(new CvsStream (streamReader.BaseStream));
             SetOutputStream(new CvsStream (streamWriter.BaseStream));
+        }
+
+        private Process StartProcess() {
+            ProcessStartInfo startInfo =
+                this.GetProcessInfo(this.Config.Shell, VERSION_ONE);
+
+            Process process = new Process();
+            try {
+                process.StartInfo = startInfo;
+                process.StartInfo.RedirectStandardError  = true;
+                process.StartInfo.RedirectStandardInput  = true;
+                process.StartInfo.RedirectStandardOutput = true;
+                process.StartInfo.UseShellExecute        = false;
+
+                process.Exited += new EventHandler(this.ExitShellEvent);
+
+                LOGGER.Info(string.Format("{0} {1}",
+                    process.StartInfo.FileName, process.StartInfo.Arguments));
+
+                process.Start();
+            } catch (Exception) {
+                try {
+                    process.StartInfo = this.GetProcessInfo(this.Config.Shell, VERSION_TWO);
+                    process.StartInfo.RedirectStandardError  = true;
+                    process.StartInfo.RedirectStandardInput  = true;
+                    process.StartInfo.RedirectStandardOutput = true;
+                    process.StartInfo.UseShellExecute        = false;
+
+                    process.Start();
+                } catch (Exception e) {
+                    throw new ICSharpCode.SharpCvsLib.Exceptions.ExecuteShellException(
+                        string.Format("{0} {1}",
+                        this.Config.Shell, _process.StartInfo.Arguments), e);
+                }
+            }
+
+            System.Threading.Thread.Sleep(100);
+
+            return process;
         }
 
         private ProcessStartInfo GetProcessInfo (string program, string version) {
@@ -135,11 +155,6 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
                     throw new ArgumentException(string.Format("Unknown ssh program specified ( {0} )",
                         this.Config.Shell));
             }
-            startInfo.RedirectStandardError  = true;
-            startInfo.RedirectStandardInput  = true;
-            startInfo.RedirectStandardOutput = true;
-            startInfo.UseShellExecute        = false;
-
             return startInfo;
         }
 
@@ -178,7 +193,7 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
                 LOGGER.Debug("Process EXITED");
             }
 
-            if (p.ExitCode != 0) {
+            if (_process.ExitCode != 0) {
                 throw new AuthenticationException();
             }
         }

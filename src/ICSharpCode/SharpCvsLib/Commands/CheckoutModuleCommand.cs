@@ -147,7 +147,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                                     "/" + this.Module));
 
             connection.SubmitRequest(new CheckoutRequest());
-            Manager manager = new Manager (connection.Repository.WorkingPath);
         }
     }
 }
