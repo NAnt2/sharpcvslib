@@ -160,15 +160,24 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 return;
             }
 
-            CVSServerConnection serverConn = new CVSServerConnection(CurrentWorkingDirectory);
+            CVSServerConnection serverConn = 
+                new CVSServerConnection(CurrentWorkingDirectory);
             try {
                 serverConn.Connect(CurrentWorkingDirectory, password);
             } catch (ICSharpCode.SharpCvsLib.Exceptions.AuthenticationException) {
-                this.password = 
-                    PServerProtocol.PromptForPassword(this.CvsRoot.ToString());
-                serverConn.Connect(CurrentWorkingDirectory, password);
-                Manager manager = new Manager(this.workingDirectory.LocalDirectory);
-                manager.UpdatePassFile(this.password, this.CvsRoot);
+                try {
+                    this.password = 
+                        PServerProtocol.PromptForPassword(this.CvsRoot.ToString());
+                    if (this.password == null) {
+                        this.password = string.Empty;
+                    }
+                    Manager manager = new Manager(this.workingDirectory.LocalDirectory);
+                    manager.UpdatePassFile(this.password, this.CvsRoot);
+
+                    serverConn.Connect(CurrentWorkingDirectory, password);
+                } catch (ICSharpCode.SharpCvsLib.Exceptions.AuthenticationException e) {
+                    ConsoleMain.ExitProgram(e.Message);
+                }
             }
         }
 

@@ -269,7 +269,9 @@ namespace ICSharpCode.SharpCvsLib.Console {
         public static void ExitProgram (string msg) {
             ConsoleWriter writer = new ConsoleWriter();
             writer.WriteLine(msg);
+#if (DEBUG)
             System.Console.ReadLine();
+#endif
             Environment.Exit(-1);
         }
 

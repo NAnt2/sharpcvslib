@@ -1184,9 +1184,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             ArrayList newPassFileContents = new ArrayList();
 
+            bool newRoot = true;
             foreach (string line in passFileContents) {
                 string newLine = string.Empty;
                 if (line.IndexOf(cvsRoot.ToString()) > -1) {
+                    newRoot = false;
                     string[] passLineSplit = line.Split(' ');
                     for (int i = 0; i < passLineSplit.Length; i++) {
                         if (passLineSplit[i] == passLineSplit[passLineSplit.Length - 1]) {
@@ -1202,6 +1204,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 }
                 newLine = newLine.Trim();
                 newPassFileContents.Add(newLine);
+            }
+
+            if (newRoot) {
+                newPassFileContents.Add(string.Format("{0} {1}", cvsRoot.ToString(),
+                                PasswordScrambler.Scramble(thePassword)));
+
             }
             
             this.WritePassFile(newPassFileContents);
