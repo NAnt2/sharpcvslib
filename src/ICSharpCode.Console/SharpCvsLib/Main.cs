@@ -34,26 +34,38 @@
 #endregion
 
 using System;
-
-using ICSharpCode.SharpCvsLib.Console;
+using System.Collections;
+using System.IO;
+using System.Reflection;
 
 namespace ICSharpCode.SharpCvsLib {
 
-/// <summary>
-/// Provides the main entry point into the console application.  Calls the
-///     ConsoleMain delegate in order to limit/ break the connection to the
-///     command line as much as possible.
-/// </summary>
-public class MainClass {
-
     /// <summary>
-    ///  Static Main method.
+    /// Provides the main entry point into the console application.  Calls the
+    ///     ConsoleMain delegate in order to limit/ break the connection to the
+    ///     command line as much as possible.
     /// </summary>
-    public static void Main(String[] args) {
-        ConsoleMain application = new ConsoleMain ();
-        application.Execute (args);
+    public class MainClass {
+        /// <summary>
+        ///  Static Main method.
+        /// </summary>
+        public static void Main(String[] args) {
+            Assembly sharpziplib = AssemblyHelper.LoadAssembly(AssemblyHelper.SHARPZIPLIB);
+            Assembly sharpcvslib = AssemblyHelper.LoadAssembly(AssemblyHelper.SHARPCVSLIB);
+            Assembly sharpcvslibConsole = AssemblyHelper.LoadAssembly(AssemblyHelper.SHARPCVSLIB_CONSOLE);
+            
+            Assembly log4net = AssemblyHelper.LoadLog4Net(sharpcvslibConsole);
+            //Assembly log4net = AssemblyHelper.LoadAssembly(AssemblyHelper.LOG4NET);
+
+            Type type = sharpcvslibConsole.GetType("ICSharpCode.SharpCvsLib.Console.ConsoleMain");
+            object console = Activator.CreateInstance(type);
+
+            if (null == args) {
+                args = new string[1];
+            }
+            console.GetType().GetProperty("Args").SetValue(console, args, null);
+            MethodInfo execute = console.GetType().GetMethod("Execute", new Type[0]);
+            execute.Invoke(console, null);
+        }
     }
-
-}
-
 }

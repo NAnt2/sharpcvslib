@@ -37,7 +37,9 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Text;
+using System.Xml;
 
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Commands;
@@ -48,16 +50,91 @@ using ICSharpCode.SharpCvsLib.Console.Commands;
 using ICSharpCode.SharpCvsLib.Console.Parser;
 
 using log4net;
+using log4net.Config;
 
 namespace ICSharpCode.SharpCvsLib.Console {
 
     /// <summary>The main driver/ entry point into the program.</summary>
+    [Serializable]
     public class ConsoleMain {
-        private ILog LOGGER = LogManager.GetLogger(typeof(ConsoleMain));
+        private ILog LOGGER;
+
+        private string[] _args;
+
+        private const string DEFAULT_CONFIG = 
+            @"
+<?xml version='1.0' encoding='utf-8' ?> 
+<configuration>
+    <configSections>
+        <section name='log4net' type='log4net.Config.Log4NetConfigurationSectionHandler,log4net'/>
+    </configSections>       
+    <log4net debug='false'>
+        <appender name='ConsoleAppender' type='log4net.Appender.ConsoleAppender'>
+            <layout type='log4net.Layout.PatternLayout'>
+                <param name='ConversionPattern' value='[%c{2}:%m  - [%x] &lt;%X{auth}&gt;]%n' />
+            </layout>
+        </appender>
+        <appender name='RollingLogFileAppender' type='log4net.Appender.RollingFileAppender'>
+            <param name='File' value='cvs.log' />
+            <param name='AppendToFile' value='true' />
+            <param name='MaxSizeRollBackups' value='10' />
+            <param name='MaximumFileSize' value='1000000' />
+            <param name='RollingStyle' value='Size' />
+            <param name='StaticLogFileName' value='true' />
+            <layout type='log4net.Layout.PatternLayout'>
+                <param name='Header' value='[Header]\r\n' />
+                <param name='Footer' value='[Footer]\r\n' />
+                <param name='ConversionPattern' value='%d [%t] %-5p %c [%x] - %m%n' />
+            </layout>
+        </appender>
+        <root>
+            <level value='INFO' />
+            <!--<appender-ref ref='RollingLogFileAppender' />-->
+            <appender-ref ref='ConsoleAppender' />
+        </root>
+    </log4net>
+</configuration>
+";
+
+        /// <summary>
+        /// Command line arguments.
+        /// </summary>
+        public string[] Args {
+            get {return this._args;}
+            set {this._args = value;}
+        }
 
         /// <summary>Constructor.
         ///     TODO: Fill in more of a usage/ explanation.</summary>
         public ConsoleMain () {
+            try {
+                LOGGER = LogManager.GetLogger(typeof(ConsoleMain));
+            } catch (Exception) {
+                try {
+                    DOMConfigurator.Configure(WriteDefaultConfig());
+                } catch (Exception) {
+                    BasicConfigurator.Configure();
+                }
+            }
+        }
+
+        private MemoryStream WriteDefaultConfig () {
+            MemoryStream stream = new MemoryStream();
+            try {
+                stream.Write(Encoding.UTF8.GetBytes(DEFAULT_CONFIG), 0, DEFAULT_CONFIG.Length);
+            }catch (Exception e) {
+                System.Console.WriteLine(e);
+            }
+            return stream;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="args"></param>
+        public void Execute(string[] args) {
+            this.Args = args;
+            this.Execute();
         }
 
         /// <summary>
@@ -65,27 +142,28 @@ namespace ICSharpCode.SharpCvsLib.Console {
         ///
         /// TODO: Write a better description :-)
         /// </summary>
-        public void Execute (String[] args) {
+        public void Execute () {
+            string[] args = this._args;
             CommandLineParser parser = new CommandLineParser (args);
 
-            if (LOGGER.IsDebugEnabled) {
-                StringBuilder msg = new StringBuilder();
-                msg.Append(Environment.NewLine).Append("Using arguments:");
-                foreach (String arg in args) {
-                    msg.Append(Environment.NewLine).Append("\t arg1=[").Append(arg).Append("]");
-                }
-                LOGGER.Debug(msg);
-            }
+//            if (LOGGER.IsDebugEnabled) {
+//                StringBuilder msg = new StringBuilder();
+//                msg.Append(Environment.NewLine).Append("Using arguments:");
+//                foreach (String arg in args) {
+//                    msg.Append(Environment.NewLine).Append("\t arg1=[").Append(arg).Append("]");
+//                }
+//                LOGGER.Debug(msg);
+//            }
             ICommand command = null;
             try {
                 command = parser.Execute ();
-            } catch (CommandLineParseException e) {
-                LOGGER.Debug (e);
+            } catch (CommandLineParseException) {
+//                LOGGER.Debug (e);
                 System.Console.WriteLine(Usage.General);
                 return;
             }
 
-            LOGGER.Debug("command type: " + command.GetType());
+//            LOGGER.Debug("command type: " + command.GetType());
 
             if (null != command) {
                 // might need to move this up to the library, make working
@@ -109,8 +187,8 @@ namespace ICSharpCode.SharpCvsLib.Console {
                         // try connecting with empty password for anonymous users
                         serverConn.Connect(workingDirectory, password);
                     }
-                    catch (AuthenticationException eDefault){
-                        LOGGER.Info("Authentication failed using empty password, trying .cvspass file.", eDefault);
+                    catch (AuthenticationException){
+//                        LOGGER.Info("Authentication failed using empty password, trying .cvspass file.", eDefault);
                         try{
                             //string scrambledpassword;
                             // check to connect with password from .cvspass file
@@ -120,18 +198,18 @@ namespace ICSharpCode.SharpCvsLib.Console {
                         }
                         catch (AuthenticationException eCvsPass){
                             try {
-                                LOGGER.Info("Authentication failed using .cvspass file, prompting for password.", eCvsPass);
+//                                LOGGER.Info("Authentication failed using .cvspass file, prompting for password.", eCvsPass);
                                 // prompt user for password by using login command?
                                 LoginCommand login = new LoginCommand(workingDirectory.CvsRoot);
                                 serverConn.Connect(workingDirectory, login.Password);
                                 throw eCvsPass;
-                            } catch (AuthenticationException e) {
+                            } catch (AuthenticationException) {
                                 StringBuilder msg = new StringBuilder();
                                 msg.Append("Fatal error, aborting.");
                                 msg.Append("cvs [login aborted]: ")
                                     .Append(workingDirectory.CvsRoot.User)
                                     .Append(": unknown user or bad password.");
-                                LOGGER.Error(msg, e);
+//                                LOGGER.Error(msg, e);
                                 System.Console.WriteLine(msg.ToString());
                                 Environment.Exit(-1);
                             }
