@@ -104,18 +104,6 @@
                     BuildAction = "Compile"
                 />
                 <File
-                    RelPath = "ICSharpCode\CVS\Entries"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "ICSharpCode\CVS\Repository"
-                    BuildAction = "None"
-                />
-                <File
-                    RelPath = "ICSharpCode\CVS\Root"
-                    BuildAction = "None"
-                />
-                <File
                     RelPath = "ICSharpCode\SharpCvsLib\SharpCvsLib.build"
                     BuildAction = "None"
                 />
