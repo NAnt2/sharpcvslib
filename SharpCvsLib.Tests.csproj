@@ -793,6 +793,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "src\ICSharpCode.Tests\SharpCvsLib\Console\Commands\RemoveCommandTest.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "src\ICSharpCode.Tests\SharpCvsLib\Console\Commands\UpdateCommandTest.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
