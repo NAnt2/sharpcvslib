@@ -89,7 +89,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// The name of the file, without any path information.
         /// </summary>
         public String Filename {
-            get {return baseDir.Name;}
+            get {return currentDir.Name;}
         }
 
         /// <summary>
@@ -99,6 +99,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         public String LocalPath {
             get {return baseDir.FullName;}
+        }
+
+        public DirectoryInfo BaseDir {
+            get {return baseDir;}
         }
 
         /// <summary>
