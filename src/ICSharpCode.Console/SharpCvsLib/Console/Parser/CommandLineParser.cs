@@ -41,6 +41,7 @@ using System.Text;
 
 using ICSharpCode.SharpCvsLib.Commands;
 using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.FileSystem;
 
 using ICSharpCode.SharpCvsLib.Console.Commands;
 
@@ -168,12 +169,20 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 }
                 startIndex = 1;
             } else {
-                String tempRoot = Environment.GetEnvironmentVariable (ENV_CVS_ROOT);
                 try {
-                    this.cvsRoot = new CvsRoot(tempRoot);
-                } catch (CvsRootParseException e) {
-                    LOGGER.Error(e);
-                    return null;
+                    // Get the cvsroot from the Root file in the CVS directory
+                    Manager manager = new Manager(Environment.CurrentDirectory);
+                    Root root = manager.FetchRoot(Environment.CurrentDirectory);
+                    this.cvsRoot = new CvsRoot(root.FileContents);
+                } catch {
+                    // Should be using CVSROOT as last option
+                    String tempRoot = Environment.GetEnvironmentVariable (ENV_CVS_ROOT);
+                    try {
+                        this.cvsRoot = new CvsRoot(tempRoot);
+                    } catch (CvsRootParseException e) {
+                        LOGGER.Error(e);
+                        return null;
+                    }
                 }
             }
 
@@ -216,8 +225,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             this.repository = String.Empty;
                         }
                         try {
-                            CommitCommand addCommand = 
-                                new CommitCommand(this.CvsRoot, repository, options);
+                            ICSharpCode.SharpCvsLib.Console.Commands.AddCommand addCommand = 
+                                new ICSharpCode.SharpCvsLib.Console.Commands.AddCommand(this.CvsRoot, repository, options);
                             command = addCommand.CreateCommand ();
                             this.currentWorkingDirectory = 
                                 addCommand.CurrentWorkingDirectory;
