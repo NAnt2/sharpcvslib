@@ -432,8 +432,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             this.repository = String.Empty;
                         }
                         try {
-                            ICSharpCode.SharpCvsLib.Console.Commands.RTagCommand rtagCommand = 
-                                new ICSharpCode.SharpCvsLib.Console.Commands.RTagCommand(this.CvsRoot, repository, options);
+                            RTagCommandParser rtagCommand = 
+                                new RTagCommandParser(this.CvsRoot, repository, options);
                             command = rtagCommand.CreateCommand ();
                             this.currentWorkingDirectory = 
                                 rtagCommand.CurrentWorkingDirectory;

@@ -29,8 +29,11 @@
 // exception statement from your version.
 //
 //    <author>Steve Kenzell</author>
+//    <author>Clayton Harbour</author>
 #endregion
+
 using System;
+using System.Collections;
 using System.Globalization;
 using System.Text;
 using ICSharpCode.SharpCvsLib.Misc;
@@ -45,43 +48,84 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
     /// <summary>
     /// Remove file(s) in the cvs repository.
     /// </summary>
-    public class RTagCommand {
-        private WorkingDirectory currentWorkingDirectory;
+    public class RTagCommandParser : AbstractCommandParser {
         private CvsRoot cvsRoot;
         private string repository;
         private string localDirectory;
         private string revision;
         private DateTime date;
         private string unparsedOptions;
-        private readonly ILog LOGGER = 
-            LogManager.GetLogger (typeof(RTagCommand));
 
         /// <summary>
-        /// The current working directory.
+        /// Default constructor.
         /// </summary>
-        public WorkingDirectory CurrentWorkingDirectory {
-            get {return this.currentWorkingDirectory;}
+        public RTagCommandParser () {
+
         }
+
         /// <summary>
         /// RTags a cvs repository.
         /// </summary>
         /// <param name="cvsroot">User information</param>
         /// <param name="repository">Repository where to tag the files</param>
         /// <param name="rtOptions">Options</param>
-        public RTagCommand(string cvsroot, string repository, string rtOptions) : 
+        public RTagCommandParser(string cvsroot, string repository, string rtOptions) : 
             this(new CvsRoot(cvsroot), repository, rtOptions) {
         }
 
         /// <summary>
-        ///    RTags in the cvs repository
+        /// RTags in the cvs repository
         /// </summary>
         /// <param name="cvsroot">User Information</param>
         /// <param name="repository">Repository that contains the files to be tagged</param>
         /// <param name="rtOptions">Options</param>
-        public RTagCommand(CvsRoot cvsroot, string repository, string rtOptions) {
+        public RTagCommandParser(CvsRoot cvsroot, string repository, string rtOptions) {
             this.cvsRoot = cvsroot;
             this.repository = repository;
             this.unparsedOptions = rtOptions;
+        }
+
+        /// <summary>
+        /// Create a new instance of the <see cref="UpdateCommandParser"/>.
+        /// </summary>
+        /// <returns></returns>
+        public static ICommandParser GetInstance() {
+            return GetInstance(typeof(RTagCommandParser));
+        }
+
+        /// <summary>
+        /// Name of the command being parsed.
+        /// </summary>
+        public override string CommandName {
+            get {return "rtag";}
+        }
+
+        /// <summary>
+        /// Description of the command.
+        /// </summary>
+        public override string CommandDescription {
+            get {return "Add a symbolic tag to a module";}
+        }
+
+        /// <summary>
+        /// Nicknames for the add command.
+        /// </summary>
+        public override ICollection Nicks {
+            get {
+                if (nicks.Count == 0) {
+                    nicks.Add("rt");
+                    nicks.Add("rfreeze");
+                }
+
+                return nicks;
+            }
+        }
+
+        /// <summary>
+        /// The add command is implemented in the library and commandline parser.
+        /// </summary>
+        public override bool Implemented {
+            get {return true;}
         }
 
         /// <summary>
@@ -92,18 +136,18 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
         /// <exception cref="Exception">TODO: Make a more specific exception</exception>
         /// <exception cref="NotImplementedException">If the command argument
         ///     is not implemented currently.  TODO: Implement the argument.</exception>
-        public ICommand CreateCommand () {
+        public override ICommand CreateCommand () {
             ICSharpCode.SharpCvsLib.Commands.RTagCommand rtagCommand;
             try {
                 this.ParseOptions(this.unparsedOptions);
                 if (localDirectory == null) {
                     localDirectory = Environment.CurrentDirectory;
                 }
-                currentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
+                CurrentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
                     localDirectory, repository);
                 // Create new RTagCommand object
                 rtagCommand = new ICSharpCode.SharpCvsLib.Commands.RTagCommand(
-                                 this.currentWorkingDirectory );
+                                 this.CurrentWorkingDirectory );
             }
             catch (Exception e) {
                 LOGGER.Error (e);
@@ -224,6 +268,30 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                         "implemented.";
                     throw new NotImplementedException (msg);
                 }
+            }
+        }
+
+        /// <summary>
+        /// Output the command usage and arguements.
+        /// </summary>
+        public override string Usage {
+            get {
+                string usage = 
+@"Usage: cvs rtag [-abdFflnR] [-r rev|-D date] tag modules...
+        -a      Clear tag from removed files that would not otherwise be tagged.
+        -b      Make the tag a ""branch"" tag, allowing concurrent development.
+        -d      Delete the given tag.
+        -F      Move tag if it already exists.
+        -B      Allow move/delete of branch tag (not recommended).
+        -f      Force a head revision match if tag/date not found.
+        -l      Local directory only, not recursive.
+        -n      No execution of 'tag program'.
+        -R      Process directories recursively.
+        -r rev  Existing revision/tag.
+        -D      Existing date.
+(Specify the --help global option for a list of other help options)";
+
+                return usage;
             }
         }
     }
