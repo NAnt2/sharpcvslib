@@ -184,6 +184,49 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     LOGGER.Debug(msg);
                 }
                 switch (arguments[i]) {
+                    case "add":
+                    case "ad":
+                    case "new":
+                        // no single options for the Add command
+                        this.command = arguments[i];
+                        i++;
+                        // get rest of arguments which is options on the commit command.
+                        while (arguments[i].IndexOf("-", 0, 1) >= 0) {
+                            LOGGER.Debug("Parsing arguments.  Argument[" + i + "]=[" + arguments[i]);
+                            // Get options with second parameters?
+                            if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
+                                for ( int cnt=1; cnt < arguments[i].Length; cnt++ ) {
+                                    this.options = this.options + "-" + arguments[i][cnt] + " "; // No
+                                }
+                            }
+                            else {
+                                this.options = this.options + arguments[i++];       // Yes
+                                this.options = this.options + arguments[i] + " ";
+                            }
+                            i++;
+                        }
+                        if (arguments.Length > i) {
+                            // Safely grab the module, if not specified then
+                            //  pass null into the repository...the cvs command
+                            //  line for cvsnt/ cvs seems to bomb out when
+                            //  it sends to the server
+                            this.repository = arguments[i];
+                        } 
+                        else {
+                            this.repository = String.Empty;
+                        }
+                        try {
+                            CommitCommand addCommand = 
+                                new CommitCommand(this.CvsRoot, repository, options);
+                            command = addCommand.CreateCommand ();
+                            this.currentWorkingDirectory = 
+                                addCommand.CurrentWorkingDirectory;
+                        } 
+                        catch (Exception e) {
+                            LOGGER.Error(e);
+                            throw new CommandLineParseException("Unable to create add command.", e);
+                        }
+                        break;
                     case "commit":
                     case "ci":
                     case "com":
@@ -266,6 +309,18 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         } catch (Exception e) {
                             LOGGER.Error(e);
                             throw new CommandLineParseException("Unable to create checkout command.", e);
+                        }
+                        break;
+                    case "init":
+                        this.command = arguments[i];
+                        try {
+                            ICSharpCode.SharpCvsLib.Console.Commands.InitCommand initCommand =
+                                new ICSharpCode.SharpCvsLib.Console.Commands.InitCommand(this.CvsRoot);
+                            command = initCommand.CreateCommand ();
+                            this.currentWorkingDirectory = initCommand.CurrentWorkingDirectory;
+                        } catch (Exception e) {
+                            LOGGER.Error(e);
+                            throw new CommandLineParseException("Unable to create init command.", e);
                         }
                         break;
                     case "login":
