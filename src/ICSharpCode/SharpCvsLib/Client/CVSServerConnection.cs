@@ -52,6 +52,7 @@ using ICSharpCode.SharpCvsLib.Messages;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Streams;
 using ICSharpCode.SharpCvsLib.Logs;
+using ICSharpCode.SharpCvsLib.Protocols;
 
 using log4net;
 
@@ -67,8 +68,6 @@ namespace ICSharpCode.SharpCvsLib.Client {
             LogManager.GetLogger (typeof (CVSServerConnection));
 
         private string nextFileDate;
-
-        private TcpClient tcpclient = null;
 
         private CvsStream inputStream;
         private CvsStream outputStream;
@@ -88,12 +87,22 @@ namespace ICSharpCode.SharpCvsLib.Client {
 
         private SharpCvsLibConfig config;
 
-        private Process p = null;
+        private IProtocol protocol;
 
         /// <summary>
         /// Time when the authentication was sent to the remote server.
         /// </summary>
         protected DateTime StartTime;
+
+        /// <summary>
+        /// Fired when an attempt is made to connect to the repository.
+        /// </summary>
+        public event ProcessEventHandler StartProcessEvent;
+        /// <summary>
+        /// Fired when all processing is done and the connection is closed.
+        /// </summary>
+        public event ProcessEventHandler StopProcessEvent;
+
         /// <summary>
         /// Time when the connection was closed.
         /// </summary>
@@ -141,13 +150,6 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// </summary>
         public IFileHandler UncompressedFileHandler {
             get {return uncompressedFileHandler;}
-        }
-
-        /// <summary>
-        ///     Set the server timeout value.
-        /// </summary>
-        public int Timeout {
-            get {return this.config.Timeout;}
         }
 
         /// <summary>
@@ -214,29 +216,6 @@ namespace ICSharpCode.SharpCvsLib.Client {
         public event MessageEventHandler ResponseMessageEvent;
 
         /// <summary>
-        /// Occurs when a file is being updated from the repository.
-        /// </summary>
-        public event MessageEventHandler UpdatedResponseMessageEvent;
-        /// <summary>
-        /// Occurs when a <see cref="Responses.SetStaticDirectoryResponse"/> event is sent
-        /// from the server.
-        /// </summary>
-        public event MessageEventHandler SetStaticDirectoryResponseMessageEvent;
-        /// <summary>
-        /// Occurs when a <see cref="ICSharpCode.SharpCvsLib.Responses.ErrorResponse"/> is sent
-        /// from the cvs server.
-        /// </summary>
-        public event MessageEventHandler ErrorResponseMessageEvent;
-        /// <summary>
-        /// Send a generic response message event.  Used for all responses that are not needed for now, 
-        /// however if used often enough the response will be broken out into it's own specific response 
-        /// event.
-        /// </summary>
-        public event MessageEventHandler UnspecifiedResponseMessageEvent;
-
-
-
-        /// <summary>
         /// This message event is fired when there is an error message returned
         ///     from the server.
         /// </summary>
@@ -248,6 +227,18 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// <param name="message"></param>
         public void SendMessage(string message) {
             MessageEvent.SendMessage(message);
+        }
+
+        private ResponseMessageEvents responseMessageEvents;
+        /// <summary>
+        /// Property to encapsulate all response message events.
+        /// </summary>
+        public ResponseMessageEvents ResponseMessageEvents {
+            get {
+                if (null == this.responseMessageEvents) {
+                    this.responseMessageEvents = new ResponseMessageEvents();
+                }
+                return this.responseMessageEvents;}
         }
 
         /// <summary>
@@ -274,40 +265,6 @@ namespace ICSharpCode.SharpCvsLib.Client {
             sb.Append (filename);
 
             this.SendMessage (sb.ToString ());
-        }
-
-        /// <summary>
-        /// Send notification that the directory has changed,
-        /// <see cref="SetStaticDirectoryResponseMessageEvent"/>.
-        /// </summary>
-        /// <param name="message"></param>
-        public void SendSetStaticDirectoryResponseMessage(string message) {
-            this.SetStaticDirectoryResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
-        }
-
-        /// <summary>
-        /// Send a message event to the specific event handler signalling that a <see cref="IResponse"/>
-        /// has been recieved from the cvs server.
-        /// </summary>
-        /// <param name="message">Message to send to clients.</param>
-        /// <param name="responseType">The <see cref="IResponse"/> type that is sending
-        /// the message.</param>
-        public void SendResponseMessage (string message, Type responseType) {
-            if (responseType.IsSubclassOf(typeof(IResponse))) {
-                throw new ArgumentException(String.Format("Response message must be sent from type of {0}; was sent from {1}.",
-                    (typeof(IResponse)).FullName, responseType.FullName));
-            }
-
-            if (responseType == typeof(UpdatedResponse)) {
-                this.UpdatedResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
-            } else if (responseType == typeof(SetStaticDirectoryResponse)) {
-                this.SetStaticDirectoryResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
-            } else if (responseType == typeof(ErrorResponse)) {
-                this.ErrorResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.ERROR_PREFIX));
-            }
-            else {
-                this.UnspecifiedResponseMessageEvent(this, new MessageEventArgs(message, MessageEventArgs.SERVER_PREFIX));
-            }
         }
 
         /// <summary>
@@ -410,17 +367,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// <param name="password"></param>
         public void Connect(WorkingDirectory repository, string password) {
             this.repository = repository;
+            this.StartProcessEvent(this, new ProcessEventArgs());
             Authentication(password);
-        }
-
-        private void ExitShellEvent(object sender, EventArgs e) {
-            if (LOGGER.IsDebugEnabled) {
-                LOGGER.Debug("Process EXITED");
-            }
-
-            if (p.ExitCode != 0) {
-                throw new AuthenticationException();
-            }
         }
 
         /// <summary>
@@ -432,20 +380,25 @@ namespace ICSharpCode.SharpCvsLib.Client {
             LOGGER.Warn(String.Format("Trying to authenticate with cvsroot ( {0} ) and password ( {1} ).",
                 repository.CvsRoot.ToString(), password));
             switch (repository.CvsRoot.Protocol) {
-                case "ext": {
-                    HandleExtAuthentication ();
+                case "ext": 
+                    this.protocol = new ExtProtocol ();
                     break;
-                }
-                case "pserver": {
-                    HandlePserverAuthentication (password);
+                case "pserver": 
+                    this.protocol = new PServerProtocol();
                     break;
-                }
-                default: {
+                default: 
                     StringBuilder notSupportedMsg = new StringBuilder ();
                     notSupportedMsg.Append("Unknown protocol=[").Append(repository.CvsRoot.Protocol).Append("]");
                     throw new UnsupportedProtocolException (notSupportedMsg.ToString());
-                }
             }
+
+            this.protocol.Repository = this.Repository;
+            this.protocol.Password = password;
+
+            protocol.Connect();
+            this.inputStream = protocol.InputStream;
+            this.outputStream = protocol.OutputStream;
+
 
             // TODO: Move these into an abstract request class
             SubmitRequest(new ValidResponsesRequest());
@@ -455,127 +408,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
             SubmitRequest(new RootRequest(repository.CvsRoot.CvsRepository));
 
             SubmitRequest(new GlobalOptionRequest(GlobalOptionRequest.Options.QUIET));
-            //SubmitRequest(new CaseRequest());
-
         }
     
-        private void HandleExtAuthentication () {
-            StringBuilder processArgs = new StringBuilder ();
-            processArgs.Append ("-l ").Append (repository.CvsRoot.User);
-            processArgs.Append (" -q ");  // quiet
-            processArgs.Append (" ").Append (repository.CvsRoot.Host);
-            processArgs.Append (" \"cvs server\"");
-
-            try {
-
-                ProcessStartInfo startInfo =
-                    new ProcessStartInfo(this.config.Shell, processArgs.ToString ());
-                if (LOGGER.IsDebugEnabled) {
-                    StringBuilder msg = new StringBuilder ();
-                    msg.Append("Process=[").Append(this.config.Shell).Append("]");
-                    msg.Append("Process Arguments=[").Append(processArgs).Append("]");
-                    LOGGER.Debug(msg);
-                }
-                startInfo.RedirectStandardError  = true;
-                startInfo.RedirectStandardInput  = true;
-                startInfo.RedirectStandardOutput = true;
-                startInfo.UseShellExecute        = false;
-
-                p = new Process();
-
-                p.StartInfo = startInfo;
-                p.Exited += new EventHandler(ExitShellEvent);
-                p.Start();
-            } catch (Exception e) {
-                if (LOGGER.IsDebugEnabled) {
-                    LOGGER.Debug(e);
-                }
-                throw new ExecuteShellException(this.config.Shell + processArgs.ToString ());
-            }
-            BufferedStream errstream = new BufferedStream(p.StandardError.BaseStream);
-            //inputstream  = new CvsStream(new BufferedStream(p.StandardOutput.BaseStream));
-            //outputstream = new CvsStream(new BufferedStream(p.StandardInput.BaseStream));
-            StreamWriter streamWriter  = p.StandardInput;
-            StreamReader streamReader = p.StandardOutput;
-
-            //streamWriter.AutoFlush = true;
-            //streamReader.ReadToEnd ();
-            //streamWriter.WriteLine(password);
-
-            inputStream = new CvsStream (streamReader.BaseStream);
-            outputStream = new CvsStream (streamWriter.BaseStream);
-        }
-
-        private String SendPserverAuthentication (String password) {
-            tcpclient = new TcpClient ();
-            tcpclient.SendTimeout = this.Timeout;
-
-            if (LOGGER.IsDebugEnabled) {
-                StringBuilder msg = new StringBuilder();
-                msg.Append("Before submitting pserver connect request.  ");
-                msg.Append("repository.CvsRoot.CvsRepository=[").Append(repository.CvsRoot.CvsRepository).Append("]");
-                msg.Append("repository.CvsRoot.User=[").Append(repository.CvsRoot.User).Append("]");
-                msg.Append("has password=[").Append(null != password).Append("]");
-                msg.Append("port=[").Append(repository.CvsRoot.Port).Append("]");
-                LOGGER.Debug (msg);
-            }
-
-            tcpclient.Connect(repository.CvsRoot.Host, repository.CvsRoot.Port);
-            inputStream  = outputStream = new CvsStream(tcpclient.GetStream());
-
-            int MAX_RETRY = 1;
-            for (int i=0; i < MAX_RETRY; i++) {
-                try {
-                    SubmitRequest(new PServerAuthRequest(repository.CvsRoot.CvsRepository,
-                        repository.CvsRoot.User,
-                        password));
-                    break;
-                } catch (Exception e) {
-                    LOGGER.Error (e);
-                }
-            }
-
-            inputStream.Flush();
-
-            string retStr;
-            try {
-                retStr = inputStream.ReadLine();
-            } catch (IOException e) {
-                String msg = "Failed to read line from server.  " +
-                    "It is possible that the remote server was down.";
-                LOGGER.Error (msg, e);
-                throw new AuthenticationException (msg);
-            }
-
-            return retStr;
-        }
-
-        ///<summary>Either accept the pserver authentication response from the server or if the user
-        /// is invalid then throw an authentication exception.</summary>
-        ///<param name="password">The password to send.</param>
-        ///<exception cref="AuthenticationException">If the user is not valid.</exception>
-        private void HandlePserverAuthentication(String password) {
-            String retStr = this.SendPserverAuthentication(password);
-        if (retStr.Equals(PSERVER_AUTH_SUCCESS)) {
-                    SendMessage("Connection established");
-        } else if (retStr.Equals(PSERVER_AUTH_FAIL)) {
-                    try {
-                        tcpclient.Close();
-                    } finally {
-                        throw new AuthenticationException();
-                    }
-        } else {
-                    StringBuilder msg = new StringBuilder ();
-                    msg.Append("Unknown Server response : >").Append(retStr).Append("<");
-                    SendMessage(msg.ToString());
-                    try {
-                        tcpclient.Close();
-                    } finally {
-                        throw new AuthenticationException(msg.ToString());
-                    }
-                }   
-        }
-
         /// <summary>
         /// The repository information.
         /// </summary>
@@ -603,17 +437,8 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// Close the cvs server connection.
         /// </summary>
         public void Close() {
-            if (repository != null && repository.CvsRoot != null) {
-                switch (repository.CvsRoot.Protocol) {
-                case "ext":
-                    if (p != null && !p.HasExited) {
-                        p.Kill();
-                        p.WaitForExit();
-                        p = null;
-                    }
-                    break;
-                }
-            }
+            this.protocol.Disconnect();
+            this.StopProcessEvent(this, new ProcessEventArgs());
             this.EndTime = DateTime.Now;
 
             TimeSpan elapsedTime = this.EndTime.Subtract(this.StartTime);

@@ -53,6 +53,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             String msg = "cvs server: E " + message;
             LOGGER.Debug (msg);
 
+            Services.ResponseMessageEvents.SendResponseMessage(msg, this.GetType());
+
         }
 
         /// <summary>

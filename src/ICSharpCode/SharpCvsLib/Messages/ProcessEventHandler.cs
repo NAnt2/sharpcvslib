@@ -1,6 +1,5 @@
 #region "Copyright"
-// ErrorResponse.cs
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2004 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -27,39 +26,17 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    <author>Clayton Harbour</author>
+//
 #endregion
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Client;
-using ICSharpCode.SharpCvsLib.Streams;
-
-using log4net;
-
-namespace ICSharpCode.SharpCvsLib.Responses {
-    /// <summary>
-    /// Handle an error response from the cvs server.
-    /// </summary>
-    public class ErrorResponse : AbstractResponse {
-        private readonly ILog LOGGER =
-            LogManager.GetLogger (typeof (ErrorResponse));
-        /// <summary>
-        /// Process an error response.
-        /// </summary>
-        public override void Process() {
-            string message = this.ReadLine();
-            String msg = "cvs server: M " + message;
-            Services.SendErrorMessage(msg);
-            LOGGER.Debug (msg);
-
-            Services.ResponseMessageEvents.SendResponseMessage(msg, this.GetType());
-        }
-
-        /// <summary>
-        /// Return true if this response cancels the transaction
-        /// </summary>
-        public override bool IsTerminating {
-            get {return true;}
-        }
-    }
+namespace ICSharpCode.SharpCvsLib.Messages {
+	/// <summary>
+	/// Default process handler for sharpcvslib.  This is used to measure information about the 
+	/// executing process, and will eventually be used to measure method starts, etc.
+	/// </summary>
+	public delegate void ProcessEventHandler (object sender, ProcessEventArgs e);
 }

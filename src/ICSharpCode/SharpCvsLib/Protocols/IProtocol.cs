@@ -1,6 +1,5 @@
 #region "Copyright"
-// IResponseServices.cs
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2004 Clayton Harbour
 //
 // This program is free software; you can redistribute it and/or
 // modify it under the terms of the GNU General Public License
@@ -28,70 +27,60 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
-//    Author:     Mike Krueger,
-//                Clayton Harbour  {claytonharbour@sporadicism.com}
+//  <author>Clayton Harbour</author>
+//
 #endregion
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Misc;
-using ICSharpCode.SharpCvsLib.FileHandler;
-using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Messages;
-using ICSharpCode.SharpCvsLib.Responses;
+using ICSharpCode.SharpCvsLib.Misc;
+using ICSharpCode.SharpCvsLib.Streams;
 
-
-namespace ICSharpCode.SharpCvsLib.Client {
-    /// <summary>
-    /// Response services interface.
-    /// </summary>
-    public interface IResponseServices {
-        /// <summary>
-        /// Occurs when a message is sent to the cvs server.
-        /// </summary>
-        event MessageEventHandler RequestMessageEvent;
-        /// <summary>
-        /// Occurs when a message is received from the cvs server.
-        /// </summary>
-        event MessageEventHandler ResponseMessageEvent;
+namespace ICSharpCode.SharpCvsLib.Protocols
+{
+	/// <summary>
+	/// Handle connect and authentication for the pserver protocol.
+	/// </summary>
+	public interface IProtocol {
 
         /// <summary>
-        /// Property to encapsulate all message events that are raised from a cvs server
-        /// response.
+        /// Message sent when client has successfully connected to the cvs server.
         /// </summary>
-        ResponseMessageEvents ResponseMessageEvents {get;}
+        event MessageEventHandler ConnectedMessageEvent;
+        /// <summary>
+        /// Message sent when client has successfully disconnected from the cvs server.
+        /// </summary>
+        event MessageEventHandler DisconnectedMessageEvent;
+        /// <summary>
+        /// Optional password field.
+        /// </summary>
+        string Password {get;set;}
 
         /// <summary>
-        /// Send message
+        /// Repository information used to get cvs server connection.
         /// </summary>
-        /// <param name="msg"></param>
-        void   SendMessage(string msg);
+        WorkingDirectory Repository {get;set;}
 
         /// <summary>
-        /// Send an error message.
+        /// Input stream that allows sending messages to the cvs server.
         /// </summary>
-        /// <param name="msg"></param>
-        void SendErrorMessage(string msg);
+        CvsStream InputStream {get;}
+        /// <summary>
+        /// Output stream that accepts messages from the cvs server.
+        /// </summary>
+        CvsStream OutputStream {get;}
 
         /// <summary>
-        /// The repository object, contains information about
-        ///     cvsroot, working directory, etc.
+        /// Connect to the remote cvs server.
         /// </summary>
-        WorkingDirectory Repository {get;}
+        /// <exception cref="ICSharpCode.SharpCvsLib.Exceptions.AuthenticationException">If the client does not have the
+        /// have the proper credentials to access the repository.</exception>
+        void Connect();
 
         /// <summary>
-        /// The next file date.
+        /// Disconnect and perform any resource clean-up necessary.
         /// </summary>
-        string NextFileDate {get;set;}
-
-        /// <summary>
-        /// The next file.
-        /// </summary>
-        string NextFile {get;set;}
-
-        /// <summary>
-        /// Handler for uncompressed files.
-        /// </summary>
-        IFileHandler UncompressedFileHandler {get;}
-    }
+        void Disconnect();
+	}
 }

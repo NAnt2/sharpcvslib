@@ -57,6 +57,9 @@ namespace ICSharpCode.SharpCvsLib.Console
 
         private bool usePrefix = DEFAULT_USE_PREFIX;
 
+        private DateTime startTime;
+        private DateTime stopTime;
+
         /// <summary>
         /// <code>true</code> if a prefix should be appended to the message; <code>false</code> otherwise.
         /// </summary>
@@ -120,6 +123,29 @@ namespace ICSharpCode.SharpCvsLib.Console
         public void WriteError(object sender, MessageEventArgs e) {
             System.Console.WriteLine( "\a" );
             this.WriteLine(e.Message, e.Prefix);
+        }
+
+        /// <summary>
+        /// Event that occurs at the start of a process.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void StartProcess(object sender, ProcessEventArgs e) {
+            this.startTime = e.Date;
+        }
+
+        /// <summary>
+        /// Event that occurs at the end of a process.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        public void StopProcess(object sender, ProcessEventArgs e) {
+            this.stopTime = e.Date;
+            TimeSpan elapsedTime = this.stopTime.Subtract(this.startTime);
+            this.WriteLine(String.Format("Processing time: {0}:{1}:{2}:{3}.",
+                elapsedTime.Hours, elapsedTime.Minutes, elapsedTime.Seconds,
+                elapsedTime.Milliseconds));
+
         }
 	}
 }

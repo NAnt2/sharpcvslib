@@ -421,6 +421,16 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Messages\ProcessEventArgs.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Messages\ProcessEventHandler.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Messages\UpdateMessage.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
@@ -477,6 +487,26 @@
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Options\UnsupportedOptionException.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Protocols\AbstractProtocol.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Protocols\ExtProtocol.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Protocols\IProtocol.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Protocols\PServerProtocol.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />
@@ -767,6 +797,11 @@
                 />
                 <File
                     RelPath = "ICSharpCode\SharpCvsLib\Responses\ResponseFactory.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Responses\ResponseMessageEvents.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
                 />

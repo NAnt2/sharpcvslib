@@ -206,13 +206,22 @@ namespace ICSharpCode.SharpCvsLib.Console {
                 CVSServerConnection serverConn = new CVSServerConnection(workingDirectory);
 
                 if (parser.Verbose) {
-                    serverConn.RequestMessageEvent += new MessageEventHandler(Writer.WriteLine);
-                    serverConn.ResponseMessageEvent += new MessageEventHandler(Writer.WriteLine);
+                    serverConn.RequestMessageEvent += 
+                        new MessageEventHandler(Writer.WriteLine);
+                    serverConn.ResponseMessageEvent += 
+                        new MessageEventHandler(Writer.WriteLine);
                 }
 
-                serverConn.UpdatedResponseMessageEvent += new MessageEventHandler(Writer.WriteLine);
-                serverConn.SetStaticDirectoryResponseMessageEvent += new MessageEventHandler(Writer.WriteLine);
-                serverConn.ErrorResponseMessageEvent += new MessageEventHandler(Writer.WriteError);
+                serverConn.StartProcessEvent += 
+                    new ProcessEventHandler(Writer.StartProcess);
+                serverConn.StopProcessEvent += 
+                    new ProcessEventHandler(Writer.StopProcess);
+                serverConn.ResponseMessageEvents.UpdatedResponseMessageEvent += 
+                    new MessageEventHandler(Writer.WriteLine);
+                serverConn.ResponseMessageEvents.SetStaticDirectoryResponseMessageEvent += 
+                    new MessageEventHandler(Writer.WriteLine);
+                serverConn.ResponseMessageEvents.ErrorResponseMessageEvent += 
+                    new MessageEventHandler(Writer.WriteError);
 
                 if (null == serverConn) {
                     Writer.WriteLine("Unable to connect to server.");

@@ -82,7 +82,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                 }
             }
 
-            Services.SendResponseMessage(String.Format("Updating {0}/{1}",
+            Services.ResponseMessageEvents.SendResponseMessage(String.Format("Updating {0}/{1}",
                 Services.Repository.ModuleName, repositoryPath), this.GetType());
             // TODO : make something useful with this request
         }
