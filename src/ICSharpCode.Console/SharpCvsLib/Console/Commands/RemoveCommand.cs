@@ -33,6 +33,7 @@
 using System;
 using System.Globalization;
 using System.Text;
+using System.IO;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Commands;
@@ -95,9 +96,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             this.ParseOptions(this.unparsedOptions);
             try {
                 String currentDirectory = Environment.CurrentDirectory;
+                Entry removeEntry;
                 // Open the Repository file in the CVS directory
                 Manager manager = new Manager(currentDirectory);
                 Repository repository = manager.FetchRepository(currentDirectory); 
+                removeEntry = manager.FetchEntry(currentDirectory, fileNames );
                 // If this fails error out and state the user
                 //    is not in a CVS repository directory tree.
                 currentWorkingDirectory = new WorkingDirectory( this.cvsRoot,
@@ -105,7 +108,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
                 // Create new RemoveCommand object
                 removeCommand = new ICSharpCode.SharpCvsLib.Commands.RemoveCommand(
                                  this.currentWorkingDirectory, currentDirectory, 
-                                 new ICSharpCode.SharpCvsLib.FileSystem.Entry( currentDirectory, fileNames));
+                                 new ICSharpCode.SharpCvsLib.FileSystem.Entry( currentDirectory, removeEntry.FileContents));
             }
             catch (Exception e) {
                 LOGGER.Error (e);
