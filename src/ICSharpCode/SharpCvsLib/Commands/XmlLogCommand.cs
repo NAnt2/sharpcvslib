@@ -154,7 +154,12 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                     this.XmlFilename, this.StartDate, this.EndDate));
             }
 
-            DirectoryInfo dirInfo = new DirectoryInfo(Path.GetDirectoryName(this.XmlFilename));
+            if (!Path.IsPathRooted(this.XmlFilename)) {
+                this.XmlFilename = Path.Combine(System.Environment.CurrentDirectory, this.XmlFilename);
+            }
+
+            DirectoryInfo dirInfo = 
+                new DirectoryInfo(Path.GetDirectoryName(this.XmlFilename));
             if (!dirInfo.Exists) {
                 dirInfo.Create();
             }
