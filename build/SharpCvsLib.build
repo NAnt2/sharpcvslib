@@ -61,9 +61,9 @@
     <!-- Targets -->
     <target name="src.update" description="Updates the source from cvs.">
        <!-- To run locally you must have your public key uploaded to sf.net -->
-       <cvs-update  module="sharcvslib" 
+       <cvs-update  module="sharpcvslib" 
                     cvsroot=":ext:${name.developer}@cvs.sourceforge.net:/cvsroot/sharpcvslib"
-                    destination="${dir.base}"
+                    destination="${dir.base}/.."
                     password="" />
     </target>
     
