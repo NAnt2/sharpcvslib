@@ -335,19 +335,10 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// </summary>
         /// <param name="request"></param>
         public void SubmitRequest(IRequest request) {
-            if (LOGGER.IsDebugEnabled) {
-                StringBuilder msg = new StringBuilder ();
-                msg.Append ("\nSubmit Request");
-                msg.Append ("\n\trequest=[").Append (request).Append ("]");
-                LOGGER.Debug (msg);
-            }
-
             if (null != request && null != request.RequestString) {
-                try {
+                if (null != this.RequestMessageEvent) {
                     this.RequestMessageEvent(this, new MessageEventArgs(request,
                         request.GetType().Name));
-                } catch (NullReferenceException) {
-                    LOGGER.Debug("No one is listening to request message event.");
                 }
             }
 
@@ -369,10 +360,16 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// <param name="isBinary"><code>true</code> if the file is binary; 
         ///     otherwise <code>false</code>.</param>
         public void SendFile(string fullPath, bool isBinary) {
-            if (isBinary) {
-                UncompressedFileHandler.SendBinaryFile(OutputStream, fullPath);
-            } else {
-                UncompressedFileHandler.SendTextFile(OutputStream, fullPath);
+            try {
+                if (isBinary) {
+                    UncompressedFileHandler.SendBinaryFile(OutputStream, fullPath);
+                } else {
+                    UncompressedFileHandler.SendTextFile(OutputStream, fullPath);
+                }
+            } catch (IOException) {
+                // try to connect again and retry the send
+                this.Connect(this.repository, this.protocol.Password);
+                this.SendFile(fullPath, isBinary);
             }
         }
 

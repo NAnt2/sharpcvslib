@@ -366,13 +366,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         i++;
                         // get rest of arguments which is options on the checkout command.
                         while (arguments.Length > i && arguments[i].Trim().IndexOf("-") == 0){
-                            if (LOGGER.IsDebugEnabled) {
-                                StringBuilder debugMsg = new StringBuilder ();
-                                debugMsg.Append(Environment.NewLine).Append("Parsing arguments.");
-                                debugMsg.Append(Environment.NewLine).Append("Argument[").Append(i).Append("]")
-                                    .Append("=[").Append(arguments[i]).Append("]");
-                                LOGGER.Debug(debugMsg);
-                            }
                             // Get options with second parameters?
                             if (arguments[i].Trim().IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0){
                                 for ( int cnt=1; cnt < arguments[i].Length; cnt++ ){
@@ -399,6 +392,19 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         command = checkoutCommand.CreateCommand ();
                         this.currentWorkingDirectory = 
                             checkoutCommand.CurrentWorkingDirectory;
+                        break;
+                    case "import":
+                    case "imp":
+                    case "im":
+                        i++;
+                        string [] tempArgs = new string[arguments.Length - i];
+                        Array.Copy(arguments, i, tempArgs, 0, arguments.Length - i);
+                        ImportCommandParser importCommand = 
+                            new ImportCommandParser(this.CvsRoot, tempArgs);
+                        command = importCommand.CreateCommand();
+                        this.currentWorkingDirectory =
+                            importCommand.CurrentWorkingDirectory;
+                        i = arguments.Length;
                         break;
                     case "init":
                         this.commandTxt = arguments[i];

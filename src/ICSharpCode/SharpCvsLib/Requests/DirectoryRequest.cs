@@ -45,13 +45,16 @@ namespace ICSharpCode.SharpCvsLib.Requests {
 /// local-directory.
 /// </summary>
 /// <example>
+/// <p>
 /// Here is an example of where a client gets repository and local-directory.
 /// Suppose that there is a module defined by moddir 1dir
-///
+/// </p>
+/// <p>
 /// That is, one can check out moddir and it will take 1dir in the repository
 /// and check it out to moddir in the working directory. Then an initial
 /// check out could proceed like this:
-///
+/// </p>
+/// <code>
 /// C: Root /home/kingdon/zwork/cvsroot
 /// . . .
 /// C: Argument moddir
@@ -62,19 +65,22 @@ namespace ICSharpCode.SharpCvsLib.Requests {
 /// S: /home/kingdon/zwork/cvsroot/1dir/
 /// . . .
 /// S: ok
-///
+/// </code>
+/// <p>
 /// In this example the response shown is Clear-sticky, but it could be
 /// another response instead. Note that it returns two pathnames. The
 /// first one, `moddir/', indicates the working directory to check out
 /// into. The second one, ending in `1dir/', indicates the directory to
 /// pass back to the server in a subsequent Directory request. For example,
 /// a subsequent update request might look like:
-///
+/// </p>
+/// <code>
 /// C: Directory moddir
 /// C: /home/kingdon/zwork/cvsroot/1dir
 /// . . .
 /// C: update
-///
+/// </code>
+/// <p>
 /// For a given local-directory, the repository will be the same
 /// for each of the responses, so one can use the repository from
 /// whichever response is most convenient. Typically a client will
@@ -90,6 +96,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
 /// Each Directory request specifies a brand-new local-directory and
 /// repository; that is, local-directory and repository are never relative
 /// to paths specified in any previous Directory request.
+/// </p>
 /// </example>
 public class DirectoryRequest : AbstractRequest
 {
@@ -102,18 +109,15 @@ public class DirectoryRequest : AbstractRequest
     /// </summary>
     /// <param name="localdir"></param>
     /// <param name="repository"></param>
-    public DirectoryRequest(string localdir, string repository)
-    {
+    public DirectoryRequest(string localdir, string repository) {
+        if (null == localdir || string.Empty == localdir) {
+            throw new ArgumentException("Unable to process a null directory, use '.'");
+        }
+        if (null == repository || string.Empty == repository) {
+            throw new ArgumentException("Unable to process a null repository, use repository path (i.e. [/cvsroot/sharpcvslib])");
+        }
         this.localdir   = localdir;
         this.repository = repository;
-
-        if (LOGGER.IsDebugEnabled) {
-            StringBuilder msg = new StringBuilder ();
-            msg.Append ("\nDirectory Request:");
-            msg.Append ("\n\tlocaldir=[").Append (localdir).Append ("]");
-            msg.Append ("\n\trepository=[").Append (repository).Append ("]");
-            LOGGER.Debug (msg);
-        }
     }
 
     /// <summary>

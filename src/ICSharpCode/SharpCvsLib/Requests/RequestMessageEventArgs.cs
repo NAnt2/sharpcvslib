@@ -28,11 +28,11 @@
 using System;
 
 namespace ICSharpCode.SharpCvsLib.Requests {
-/// <summary>
-///     Holds the event arguments from a cvs server message event.
-/// </summary>
-public sealed class RequestMessageEventArgs : EventArgs {
+    /// <summary>
+    ///     Holds the event arguments from a cvs server message event.
+    /// </summary>
+    public sealed class RequestMessageEventArgs : EventArgs {
 
-}
+    }
 
 }

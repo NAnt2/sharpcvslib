@@ -156,6 +156,52 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         /// <summary>
+        /// Fetch all files in the cvs folder.
+        /// </summary>
+        /// <param name="directory"></param>
+        /// <returns></returns>
+        public Folders FetchFilesToAdd (string directory) {
+            DirectoryInfo dirInfo = new DirectoryInfo(directory);
+            ArrayList directories = new ArrayList();
+
+            if (!dirInfo.Exists) {
+                throw new ArgumentException(string.Format("Directory {0} does not exist.",
+                    dirInfo.FullName));
+            }
+
+            directories = this.FetchDirectoriesRecursive(dirInfo);
+            Folders folders = new Folders();
+
+            foreach (DirectoryInfo dir in directories) {
+                Folder folder = new Folder();
+                foreach (FileInfo file in dir.GetFiles()) {
+                    Entry entry = Entry.CreateEntry(file);
+                    folder.Entries.Add(entry.FullPath, entry);
+                }
+                folders.Add(dir.FullName, folder);
+            }
+            return folders;
+        }
+
+        /// <summary>
+        /// Fetch files in the directory specified recursively.
+        /// </summary>
+        /// <param name="dir"></param>
+        /// <returns></returns>
+        private ArrayList FetchDirectoriesRecursive (DirectoryInfo dir) {
+            ArrayList directories = new ArrayList();
+            this.FetchDirectories(dir, directories);
+            return directories;
+        }
+
+        private void FetchDirectories (DirectoryInfo dir, ArrayList directories) {
+            directories.Add(dir);
+            foreach(DirectoryInfo dirInfo in dir.GetDirectories()) {
+                this.FetchDirectories(dirInfo, directories);
+            }
+        }
+
+        /// <summary>
         ///     Fetch the cvs file information to update.
         /// </summary>
         /// <param name="directory">The directory to fetch the files information
@@ -1178,8 +1224,18 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             return this.AddCvsPassToPath(new DirectoryInfo(dir));
         }
 
-        public void UpdatePassFile (string thePassword, CvsRoot cvsRoot, FileInfo cvsPassfile) {
-            ArrayList passFileContents = this.ReadPassFile(this.CvsPassFile);
+        /// <summary>
+        /// Update the given passfile with the root and password.  If the
+        /// .cvspass file does not exist it will be created.
+        /// </summary>
+        /// <param name="thePassword"></param>
+        /// <param name="cvsRoot"></param>
+        /// <param name="cvsPassFile"></param>
+        public void UpdatePassFile (string thePassword, CvsRoot cvsRoot, FileInfo cvsPassFile) {
+            if (!cvsPassFile.Exists) {
+                this.Touch(cvsPassFile);
+            }
+            ArrayList passFileContents = this.ReadPassFile(cvsPassFile);
 
             ArrayList newPassFileContents = new ArrayList();
 
@@ -1210,8 +1266,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                     PasswordScrambler.Scramble(thePassword)));
 
             }
-            
-            this.WritePassFile(newPassFileContents);
+            this.WritePassFile(cvsPassFile, newPassFileContents);
         }
 
         public void UpdatePassFile (string thePassword, CvsRoot cvsRoot) {
@@ -1219,13 +1274,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             this.UpdatePassFile(thePassword, cvsRoot, passwordFile);
         }
     
-        private void WritePassFile(ICollection passFile) {
-            using (StreamWriter writer = new StreamWriter(this.CvsPassFile.FullName, 
+        private void WritePassFile(FileInfo cvsPassFile, ICollection passFile) {
+            using (StreamWriter writer = new StreamWriter(cvsPassFile.FullName, 
                        false, EncodingUtil.DEFAULT_ENCODING)) {
                 foreach (string line in passFile) {
                     writer.WriteLine(line);
                 }
-                writer.Close();
             }
         }
 

@@ -133,7 +133,7 @@
         <nant buildfile="${dir.build}/${name.console}.build.xml" target="build"/>
     </target>
     
-    <target name="build.test" depends="setup, build.lib, build.console">
+    <target name="build.test" depends="setup">
         <nant buildfile="${dir.build}/${name.tests}.build.xml" target="build"/>
     </target>
     

@@ -34,6 +34,7 @@
 #endregion
 
 using System;
+using System.IO;
 using System.Collections;
 
 using ICSharpCode.SharpCvsLib.FileSystem;
@@ -45,11 +46,16 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///     cvs server.
     /// </summary>
     public class Folder {
+        DirectoryInfo path;
         private Entries entries;
         private Repository repository;
         private Root root;
         private Tag tag;
 
+        public DirectoryInfo Path {
+            get {return this.path;}
+            set {this.path = value;}
+        }
         /// <summary>
         /// Create a new instance of the folders object.  Initialize the entries 
         ///     collection.

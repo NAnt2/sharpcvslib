@@ -121,7 +121,7 @@ namespace ICSharpCode.SharpCvsLib.Console
         /// <param name="sender"></param>
         /// <param name="e"></param>
         public void WriteError(object sender, MessageEventArgs e) {
-            System.Console.WriteLine( "\a" );
+            //System.Console.WriteLine( "\a" );
             this.WriteLine(e.Message, e.Prefix);
         }
 

@@ -598,5 +598,26 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             this.CleanTempDirectory();
         }
+
+        /// <summary>
+        /// If the .cvspass file does exist create it and add the new password.
+        /// </summary>
+        [Test]
+        public void AddToCvsPass () {
+            Manager manager = new Manager(Path.GetTempPath());
+            CvsRoot root = this.settings.GetCvsRoot();
+            FileInfo cvsPassFile = new FileInfo(Path.Combine(Path.GetTempPath(), ".cvspass"));
+
+            Assertion.Assert(!cvsPassFile.Exists);
+            manager.UpdatePassFile("password", root, cvsPassFile);
+            Assertion.Assert(string.Format("File does not exist {0}", 
+                cvsPassFile.FullName), File.Exists(cvsPassFile.FullName));
+            using (StreamReader stream = new StreamReader(cvsPassFile.FullName)) {
+                string line = stream.ReadToEnd();
+                Assertion.AssertNotNull(line);
+            }
+
+            cvsPassFile.Delete();
+        }
     }
 }

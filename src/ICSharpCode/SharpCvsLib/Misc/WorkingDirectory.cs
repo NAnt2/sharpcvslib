@@ -260,12 +260,12 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         ///     about the connection and path on the cvs server.</param>
         /// <param name="localdirectory">The local base directory to check the
         ///     module out in.</param>
-        /// <param name="repositoryname">The name of the repository.  This is
+        /// <param name="moduleName">The name of the module.  This is
         ///     appended to the base localdirectory to check the sources out into.</param>
         public WorkingDirectory(    CvsRoot cvsroot,
                                     string localdirectory,
-                                    string repositoryname) {
-            this.repositoryname = repositoryname;
+                                    string moduleName) {
+            this.repositoryname = moduleName;
             this.cvsroot        = cvsroot;
             this.localDir = new DirectoryInfo(localdirectory);
             this.manager = new Manager(this.WorkingPath);

@@ -67,6 +67,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         /// <param name="path">The path to the folder on the filesystem.</param>
         /// <param name="folder">The folder object to add to the collection.</param>
         public void Add(String path, Folder folder) {
+            if (null == folder.Path) {
+                folder.Path = new DirectoryInfo(path);
+            }
             Dictionary.Add(path, folder);
         }
 

@@ -32,6 +32,7 @@
 #endregion
 
 using System;
+using System.Text;
 
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Responses;
@@ -50,7 +51,7 @@ namespace ICSharpCode.SharpCvsLib.Messages {
         /// prefix specified.</summary>
         public const string DEFAULT_PREFIX = EMPTY_PREFIX;
         /// <summary>Prefix that is appended to client requests.</summary>
-        public const string CLIENT_PREFIX = "sharpcvslib";
+        public const string CLIENT_PREFIX = "client";
         /// <summary>Prefix that is appended to server responses.</summary>
         public const string SERVER_PREFIX = "cvs server";
         /// <summary>Prefix that is appended to error responses.</summary>
@@ -102,19 +103,20 @@ namespace ICSharpCode.SharpCvsLib.Messages {
         /// </summary>
         /// <param name="request">An <see cref="ICSharpCode.SharpCvsLib.Requests.IRequest"/> 
         /// object used to construct the message argument.</param>
-        public MessageEventArgs(IRequest request) : 
-            this(request.RequestString, MessageEventArgs.CLIENT_PREFIX) {
-        }
-
-        /// <summary>
-        /// Create a new message event arguments.
-        /// </summary>
-        /// <param name="request">An <see cref="ICSharpCode.SharpCvsLib.Requests.IRequest"/> 
-        /// object used to construct the message argument.</param>
         /// <param name="message">An additional message to append to the message event.</param>
-        public MessageEventArgs(IRequest request, string message) : 
-            this(String.Format("{0} - ( {1} )", request.RequestString, message), 
-            MessageEventArgs.CLIENT_PREFIX) {
+        public MessageEventArgs(IRequest request, string message) {
+            string [] requestMessage = request.RequestString.Split('\n');
+            StringBuilder msg = new StringBuilder();
+            for (int i = 0; i < requestMessage.Length; i++) {
+                if (!(message == "\n")) {
+                    if (i > 0) {
+                        msg.Append("\n    --> ");
+                    }
+                    msg.Append(string.Format("[{0}]", requestMessage[i]));                    
+                }
+            }
+            this.message = msg.ToString();
+            this.prefix = MessageEventArgs.CLIENT_PREFIX;
         }
 
         /// <summary>
