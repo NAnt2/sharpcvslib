@@ -162,6 +162,16 @@ namespace ICSharpCode.SharpCvsLib.Console {
         /// TODO: Write a better description :-)
         /// </summary>
         public void Execute () {
+            try {
+                this.DoExecute();
+            } catch (Exception e) {
+                LOGGER.Error(e);
+                System.Console.WriteLine("Something very bad has happened.");
+                System.Environment.Exit(-1);
+            }
+        }
+
+        private void DoExecute() {
             string[] args = this._args;
             CommandLineParser parser = new CommandLineParser (args);
 
@@ -211,6 +221,7 @@ namespace ICSharpCode.SharpCvsLib.Console {
 //                                LOGGER.Info("Authentication failed using .cvspass file, prompting for password.", eCvsPass);
                                 // prompt user for password by using login command?
                                 LoginCommand login = new LoginCommand(workingDirectory.CvsRoot);
+                                login.Password = login.GetPassword();
                                 serverConn.Connect(workingDirectory, login.Password);
                                 throw eCvsPass;
                             } catch (AuthenticationException) {

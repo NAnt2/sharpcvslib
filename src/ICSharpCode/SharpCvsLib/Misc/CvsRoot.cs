@@ -45,8 +45,16 @@ namespace ICSharpCode.SharpCvsLib.Misc {
     /// Class to encapsulate the properties of the cvsroot for the
     ///     repository you are communicating with.
     /// </summary>
-    public class CvsRoot
-    {
+    public class CvsRoot {
+        /// <summary>
+        /// Regular expression for matching a cvsroot.
+        /// </summary>
+        public const string CVSROOT_REGEX = 
+            @":(ext|pserver|ssh|local|sspi)
+:([\w*]*[[@]*[\w*]*[\.\w*]*]*)
+[:]*([\d*]*)
+:([A-Za-z:/|/]+[\w*/]*)";
+
         private readonly ILog LOGGER = LogManager.GetLogger(typeof(CvsRoot));
         /// <summary>
         /// Identify the protocols that are currently supported.
@@ -85,12 +93,10 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         public string Protocol {
             get {return protocol;}
             set {
+                System.Console.WriteLine(String.Format("Protocol: {0}", value)); 
                 AssertNotEmpty(value, "Protocol");
-                if (value.IndexOf(":") < 0) {
-                    throw new CvsRootParseException(
-                        String.Format("Protocol must contain a :."));
-                }
-                protocol = StripColan(value);}
+                protocol = value;
+            }
         }
 
         /// <summary>
@@ -98,7 +104,9 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </summary>
         public string User {
             get {return user;}
-            set {user = StripColan(value);}
+            set {
+                System.Console.WriteLine(String.Format("User: {0}", value)); 
+                user = value;}
         }
 
         /// <summary>
@@ -107,8 +115,9 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         public string Host {
             get {return host;}
             set {
+                System.Console.WriteLine(String.Format("Host: {0}", value)); 
                 AssertNotEmpty(value, "Host");
-                host = StripColan(value);}
+                host = value;}
         }
 
         private string UserHost {
@@ -127,21 +136,15 @@ namespace ICSharpCode.SharpCvsLib.Misc {
             }
         }
 
-        private string StripColan(string value) {
-            if (value.IndexOf(":") > -1) {
-                value = value.Substring(1, value.Length - 1);
-            }
-            return value;
-        }
-
         /// <summary>
         /// Module to use in command.
         /// </summary>
         public string CvsRepository {
             get {return cvsrepository;}
             set {
+                System.Console.WriteLine(String.Format("Repository: {0}", value)); 
                 AssertNotEmpty(value, "Repository");
-                cvsrepository = StripColan(value);}
+                cvsrepository = value;}
         }
 
         /// <summary>
@@ -149,14 +152,16 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </summary>
         public int Port {
             get {return port;}
-            set {this.port = value;}
+            set {
+                System.Console.WriteLine(String.Format("Port: {0}", value)); 
+                this.port = value;}
         }
 
         private string PortString {
             set {
                 if (value != null || value != String.Empty) {
                     try {
-                        this.Port = Convert.ToInt32(StripColan(value));
+                        this.Port = Convert.ToInt32(value);
                     } catch (FormatException) {
                         LOGGER.Debug(String.Format("Invalid number {0}, using {1} port.",
                             value, SharpCvsLibConfig.DEFAULT_PORT));
@@ -216,10 +221,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <exception cref="CvsRootParseException">A parse exception is thrown
         ///     if the cvsroot is not in a format that is recognized.</exception>
         private void Parse (String cvsRoot) {
-            Regex regex = new Regex(@"(:ext|:pserver|:ssh|:local|:sspi)
-    ([:]{1,1}[\w*@]*[\w*]{1}[\.\-\w*]*)
-    ([:]*[\d]*)
-    ([:]{1,1}[A-Za-z:/|:/]+[\w*/])", RegexOptions.IgnorePatternWhitespace);
+            Regex regex = new Regex(CVSROOT_REGEX, RegexOptions.IgnorePatternWhitespace | RegexOptions.Singleline);
 
             Match matches = regex.Match(cvsRoot);
 
@@ -264,9 +266,40 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// Convert CvsRoot object to a human readable format.
         /// </summary>
         /// <returns></returns>
-        public override string ToString()
-        {
+        public override string ToString() {
             return ':' + protocol + ':' + user + '@' + host + ':' + cvsrepository;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public override int GetHashCode() {
+            return this.ToString().GetHashCode();
+        }
+
+
+        /// <summary>
+        /// <code>true</code> if the two cvs roots are equal, otherwise <code>false</code>.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public override bool Equals(object obj) {
+            if (null == obj) {
+                return false;
+            }
+
+            if (!obj.GetType().Equals(this.GetType())) {
+                return false;
+            }
+
+            CvsRoot root1 = (CvsRoot)obj;
+            CvsRoot root2 = this;
+
+            System.Console.WriteLine(String.Format("root1: {0}; root2: {1}; are equal {2}",
+                root1, root2, root1.ToString().Equals(root2.ToString())));
+            return root1.ToString().Equals(root2.ToString());
+        }
+
     }
 }

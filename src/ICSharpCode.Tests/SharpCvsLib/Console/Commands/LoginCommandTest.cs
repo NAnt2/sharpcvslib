@@ -78,5 +78,20 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
 
             consoleMain.Execute(commandLineArgs);
         }
+
+        /// <summary>
+        /// Find the cvs password for the given root.  Assumes that the password actually exists
+        /// in the .cvspass file.
+        /// </summary>
+        [Test]
+        public void FindPasswordInCvsPassTest () {
+            Directory.CreateDirectory( settings.Config.LocalPath);
+            Environment.CurrentDirectory = settings.Config.LocalPath;
+
+            LoginCommand loginCommand = new LoginCommand(new CvsRoot(":pserver:claytonharbour@linux:/home/cvs/src"));
+            Assertion.AssertNotNull(loginCommand.GetPassword());
+
+            LOGGER.Debug(loginCommand.GetPassword());
+        }
     }
 }
