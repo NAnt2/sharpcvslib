@@ -76,11 +76,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             string flags     = this.ReadLine();
             string sizeStr   = this.ReadLine();
 
-            PathTranslator orgPath   =
-                new PathTranslator (Services.Repository,
-                                    reposPath);
-            string localPathAndFilename = orgPath.LocalPathAndFilename;
-            string directory = orgPath.LocalPath;
+            DirectoryInfo localDir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, localPath));
 
             bool compress = sizeStr[0] == 'z';
 
@@ -90,17 +86,16 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 
             int size  = Int32.Parse(sizeStr);
 
-            if (!Directory.Exists(orgPath.LocalPath)) {
-                Directory.CreateDirectory(orgPath.LocalPath);
-
+            if (!localDir.Exists) {
+                localDir.Create();
             }
 
+            Entry e = new Entry(new FileInfo(Path.Combine(localDir.FullName, "CVS\\Entries")), entry);
+            string localPathAndFilename = e.FullPath;
             if (Services.NextFile != null && Services.NextFile.Length > 0) {
                 localPathAndFilename = Services.NextFile;
                 Services.NextFile = null;
             }
-
-            Entry e = new Entry(orgPath.CurrentDir.FullName, entry);
 
             if (e.IsBinaryFile) {
                 Services.UncompressedFileHandler.ReceiveBinaryFile(Stream,
@@ -115,15 +110,16 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             e.Date = Services.NextFileDate;
             Services.NextFileDate = null;
 
-            manager.AddEntry(e);
+            Entries.Save(e);
             manager.SetFileTimeStamp (e.FullPath, e.TimeStamp, e.IsUtcTimeStamp);
 
             UpdateMessage message = new UpdateMessage ();
             message.Module = Services.Repository.WorkingDirectoryName;
-            message.Repository =  orgPath.RelativePath;
+            message.Repository =  localPath;
             message.Filename = e.Name;
             Services.SendMessage (message.Message);
             Services.ResponseMessageEvents.SendResponseMessage(message.Message, this.GetType());
+
         }
 
         /// <summary>

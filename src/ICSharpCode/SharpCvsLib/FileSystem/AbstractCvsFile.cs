@@ -34,6 +34,7 @@ using System.IO;
 
 using log4net;
 
+using ICSharpCode.SharpCvsLib.Assertions;
 using ICSharpCode.SharpCvsLib.Attributes;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
@@ -44,7 +45,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
 	public abstract class AbstractCvsFile : ICvsFile, IComparable {
         private readonly ILog LOGGER = LogManager.GetLogger(typeof (AbstractCvsFile));
-        private String _fullPath;
         private String fileContents;
         private String localCvsFullPath;
         private FileSystemInfo _managedPath;
@@ -161,6 +161,9 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     to be written to the cvs management file, or is written in the
         ///     cvs management file.</param>
 		public AbstractCvsFile(FileInfo cvsFile, String fileContents) {
+            // make sure the directory contains a CVS path
+            Assert.EndsWith(cvsFile.Directory.FullName, "CVS");
+
             this.fileContents = fileContents;
             this._cvsFile = cvsFile;
             // the managed path for a CVS\Repository would be the directory above 
@@ -193,19 +196,26 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <param name="line"></param>
         public abstract void Parse(String line);
 
-        /// <summary>
-        /// Derive the cvs filename and path for the storage file.
-        /// </summary>
-        /// <returns>The cvs filename and path.</returns>
-        protected abstract String DeriveCvsFullPath();
-
-        public int CompareTo(object obj) {
+        public virtual int CompareTo(object obj) {
             if (obj.GetType() != this.GetType()) {
                 throw new ArgumentException(string.Format("Object is not type {0}", 
                     this.GetType().Name), "obj");
             }
             AbstractCvsFile abstractCvsFile = (AbstractCvsFile)obj;
             return abstractCvsFile.FullPath.CompareTo(this.FullPath);
+        }
+
+        public void Save() {
+            Save(this);
+        }
+
+        public static void Save(ICvsFile file) {
+            if (!file.CvsFile.Directory.Exists) {
+                file.CvsFile.Directory.Create();
+            }
+            using (StreamWriter writer = new StreamWriter(file.CvsFile.FullName)) {
+                writer.Write(file.FileContents);
+            }
         }
 	}
 }

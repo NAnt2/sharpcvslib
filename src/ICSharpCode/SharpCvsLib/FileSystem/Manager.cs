@@ -751,20 +751,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 if (correctTimeStampForUtc) {
                     fileTimeStamp = DateParser.GetCorrectedTimeStamp (timeStamp);
                 } else {
-                    fileTimeStamp = timeStamp.AddHours(1);
-                    LOGGER.Debug("fileTimeStamp=[" + fileTimeStamp + "]");
+                    fileTimeStamp = timeStamp;
                 }
 
-                File.SetCreationTime(filenameAndPath, fileTimeStamp);
-                File.SetLastAccessTime(filenameAndPath, fileTimeStamp);
                 File.SetLastWriteTime(filenameAndPath, fileTimeStamp);
-
-                if (LOGGER.IsDebugEnabled) {
-                    StringBuilder msg = new StringBuilder ();
-                    msg.Append ("creation timestamp=[").Append (File.GetCreationTime (filenameAndPath)).Append ("]");
-                    msg.Append ("timeStamp=[").Append (timeStamp).Append ("]");
-                    LOGGER.Debug (msg);
-                }
             }
         }
 

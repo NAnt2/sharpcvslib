@@ -114,6 +114,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 if (!folder.Entries.Contains(file.FullName)) {
                     folder.Entries.Add(file.FullName, entry);
                 }
+
+                this.Folders[file.FullName] = folder;
             }
         }
 	}

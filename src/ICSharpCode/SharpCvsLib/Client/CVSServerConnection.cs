@@ -431,7 +431,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
         }
 
         /// <summary>
-        /// Next file date.
+        /// Next file date.  <see cref="ICSharpCode.SharpCvsLib.Responses.ModTimeResponse"/>
         /// </summary>
         public string NextFileDate {
             get {return nextFileDate;}

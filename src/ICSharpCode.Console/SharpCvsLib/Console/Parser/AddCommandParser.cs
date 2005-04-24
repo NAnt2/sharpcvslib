@@ -144,10 +144,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 if (arg.StartsWith("-")) {
                     switch (arg) {
                         case "-m":
-                            string _message = args[++i];
+                            this._message = args[++i];
                             break;
                         case "-k":
-                            string _kflag = args[++i];
+                            this._kflag = args[++i];
                             break;
                     }
                 }

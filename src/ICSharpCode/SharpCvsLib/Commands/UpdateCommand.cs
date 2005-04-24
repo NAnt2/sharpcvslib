@@ -184,14 +184,16 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         /// <param name="connection"></param>
         public void Execute(ICommandConnection connection) {
-            if (workingDirectory.FoldersToUpdate == null) {
-                LOGGER.Info("Nothing to update on WorkingDirectory.FoldersToUpdate.");
-                return;
-            }
-            Folder[] _foldersToUpdate =
-                (Folder[])workingDirectory.FoldersToUpdate.Clone ();
-            foreach (Folder folder in _foldersToUpdate) {
-                this.SetDirectory (connection, folder);
+            Folders folders = workingDirectory.Folders;
+            if (folders == null || folders.Count == 0) {
+                folders = new Folders();
+                GetAllFiles(new DirectoryInfo(Environment.CurrentDirectory), folders);
+            } 
+
+            foreach (Folder folder in folders.Values) {
+                connection.SubmitRequest(new DirectoryRequest(".", 
+                    this.workingDirectory.CvsRoot.CvsRepository + "/" + 
+                    folder.Repository.FileContents));
 
                 Tag tag = folder.Tag;
                 if (null != tag) {
@@ -232,39 +234,14 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 
         }
 
-
-        private void SetDirectory (ICommandConnection connection,
-                                Folder folder) {
-            String absoluteDir = String.Format("{0}", 
-                connection.Repository.CvsRoot.CvsRepository);
-
-            try {
-                connection.SubmitRequest(new DirectoryRequest(".",
-                                        absoluteDir));
-            }
-            catch (Exception e) {
-                String msg = "Exception while submitting directory request.  " +
-                            "path=[" + folder.Repository.FileContents + "]";
-                LOGGER.Error (e);
-            }
-        }
-
         private void SendFileRequest (ICommandConnection connection,
                                 Entry entry) {
-            bool fileExists;
             DateTime old = entry.TimeStamp;
             entry.TimeStamp = entry.TimeStamp;
-            try {
-                fileExists = File.Exists (entry.FullPath);
-            }
-            catch (Exception e) {
-                LOGGER.Error (e);
-                fileExists = false;
-            }
 
-            if (!fileExists) {
+            if (!File.Exists(entry.FullPath)) {
                 connection.SubmitRequest (new EntryRequest (entry));
-            } else if (File.GetLastAccessTime(entry.FullPath) !=
+            } else if (File.GetLastWriteTime(entry.FullPath) >
                     entry.TimeStamp.ToUniversalTime ()) {
                 connection.SubmitRequest(new ModifiedRequest(entry.Name));
                 connection.SendFile(entry.FullPath, entry.IsBinaryFile);
@@ -313,6 +290,23 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             }
 
             return fileNameAndPath;
+        }
+
+        private void GetAllFiles(DirectoryInfo dir, Folders folders) {
+            foreach (DirectoryInfo subDir in dir.GetDirectories("CVS")) {
+                FileInfo entryFile = new FileInfo(Path.Combine(subDir.FullName, "Entries"));
+                if (entryFile.Exists) {
+                    Entries entries = Entries.Load(subDir);
+                    if (folders.Contains(dir.Parent.FullName)) {
+                        Folder folder = (Folder)folders[subDir.Parent.FullName];
+                        folder.Entries = entries;
+                    } else {
+                        Folder folder = new Folder(subDir.Parent);
+                        folder.Entries = entries;
+                        folders.Add(folder);
+                    }
+                }
+            }
         }
     }
 }

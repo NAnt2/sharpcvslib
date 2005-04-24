@@ -48,7 +48,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// </summary>
     [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
     [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
-    public class Entry : AbstractCvsFile, ICvsFile {
+    public class Entry : AbstractCvsFile, ICvsFile, IComparable {
         private static ILog LOGGER = LogManager.GetLogger (typeof (Entry));
 
         /// <summary>
@@ -215,13 +215,13 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                     str += "/";
 
                     if (date != null &&
-                            date.Length != 0 &&
-                            !this.IsDirectory) {
-                        String dateString;
+                        date.Length != 0 &&
+                        !this.IsDirectory) {
+                        string dateString;
                         dateString =
                             DateParser.GetCvsDateString (this.TimeStamp);
                         str += dateString;
-                    }
+                    } 
 
                     if (conflict != null) {
                         str += "+" + conflict;
@@ -441,20 +441,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         public void SetTimeStamp() {
             if (null == date) {
-                DateTime now = DateTime.Now;
-                now = now.AddHours(-1);
+                DateTime now = DateTime.Now.ToUniversalTime();
                 date = DateParser.GetCvsDateString(now);
                 this.timestamp = now;
-                this.isUtcTimeStamp = false;
             } else {
                 this.timestamp = DateParser.ParseCvsDate (date);
-                this.isUtcTimeStamp = true;
-            }
-            if (LOGGER.IsDebugEnabled) {
-                StringBuilder msg = new StringBuilder ();
-                msg.Append ("timestamp=[").Append (timestamp).Append ("]");
-                msg.Append ("date=[").Append (date).Append ("]");
-                LOGGER.Debug (msg);
             }
         }
 
@@ -574,14 +565,28 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             get {return null == this.Tag;}
         }
 
-        /// <summary>
-        /// Returns the full path to the CVS\Entries folder that this entry is 
-        ///     managed by.
-        /// </summary>
-        /// <returns>The full path to the CVS\Entries folder that this entry
-        ///     is managed by.</returns>
-        protected override String DeriveCvsFullPath () {
-            throw new NotImplementedException("This will eventually return the full path to the repository.");
+        #region IComparable Members
+
+        public int CompareTo(object obj) {
+            if (!(obj is Entry)) {
+                throw new ArgumentException(string.Format("Unable to compare types Entry and {0}", 
+                    obj.GetType().FullName), "obj");
+            }
+
+            Entry entry1 = this;
+            Entry entry2 = (Entry)obj;
+
+            if (entry1.IsDirectory && !entry2.IsDirectory) {
+                return 1;
+            } else if (!entry1.IsDirectory && entry2.IsDirectory) {
+                return -1;
+            } else if (entry1.IsDirectory && entry2.IsDirectory) {
+                return entry1.Name.CompareTo(entry2.name);
+            } else {
+                return entry1.Name.CompareTo(entry2.Name);
+            }
         }
+
+        #endregion
     }
 }

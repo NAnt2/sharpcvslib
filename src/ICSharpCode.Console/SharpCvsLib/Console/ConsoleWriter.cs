@@ -94,7 +94,7 @@ namespace ICSharpCode.SharpCvsLib.Console
         }
 
         /// <summary>
-        /// Write the message with the given prefix in front.
+        /// Write the message with the given prefix.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="prefix"></param>

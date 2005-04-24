@@ -39,6 +39,7 @@ using System.Globalization;
 using log4net;
 
 using ICSharpCode.SharpCvsLib.Attributes;
+using ICSharpCode.SharpCvsLib.Misc;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
@@ -76,6 +77,16 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <param name="fileContents">The contents of the cvs management file.</param>
         public Root (FileInfo cvsFile, String fileContents) : 
             base (cvsFile, fileContents) {
+        }
+
+        public Root(DirectoryInfo cvsDir, string fileContents) : 
+            base(new FileInfo(System.IO.Path.Combine(cvsDir.FullName, "Root")), 
+            fileContents) {
+        }
+
+        public Root(DirectoryInfo cvsDir, CvsRoot cvsRoot) :
+            base(new FileInfo(System.IO.Path.Combine(cvsDir.FullName, "Root")), 
+            cvsRoot.ToString()) {
         }
 
         public Root (string cvsPath, string fileContents) :
@@ -147,16 +158,5 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public override bool IsMultiLined {
             get {return false;}
         }
-
-        /// <summary>
-        /// Returns the full path to the CVS\Root folder on the local filesystem
-        ///     that this object represents.
-        /// </summary>
-        /// <returns>The full path to the CVS\Root file that this object
-        ///     represents.</returns>
-        protected override String DeriveCvsFullPath () {
-            throw new NotImplementedException("This will eventually return the full path to the repository.");
-        }
-
     }
 }

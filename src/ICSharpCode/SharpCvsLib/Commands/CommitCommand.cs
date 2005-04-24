@@ -167,6 +167,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             DateTime old = entry.TimeStamp;
             entry.TimeStamp = entry.TimeStamp;
             connection.SubmitRequest (new EntryRequest (entry));
+            connection.SubmitRequest(new CheckinTimeRequest(entry.FullPath));
             connection.SubmitRequest(new ModifiedRequest(entry.Name));
             connection.SendFile(entry.FullPath, entry.IsBinaryFile);
 

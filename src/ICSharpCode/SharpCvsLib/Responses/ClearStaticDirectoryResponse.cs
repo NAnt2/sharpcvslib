@@ -71,9 +71,14 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             string localPath      = this.ReadLine();
             string reposPath      = this.ReadLine();
 
-            Manager manager = new Manager (Services.Repository.WorkingPath);
-            manager.AddRepository (Services.Repository, localPath, reposPath);
-            manager.AddRoot (Services.Repository, localPath, reposPath);
+            DirectoryInfo localDir = 
+                new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, localPath));
+            DirectoryInfo cvsDir = new DirectoryInfo(Path.Combine(localDir.FullName, "CVS"));
+
+            Repository.Save(new Repository(cvsDir, localPath));
+            Root.Save(new Root(cvsDir, Services.Repository.CvsRoot));
+
+
             PathTranslator pathTranslator = new PathTranslator (Services.Repository, reposPath);
 
             Factory factory = new Factory();
@@ -89,7 +94,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             // the root module directory does not get a cvs Entries line.
             // TODO: There has to be a cleaner way to do this...
             if (Services.Repository.WorkingPath.Length <= entry.Path.Length) {
-                manager.AddEntry(entry);
+                Entries.Save(entry);
             }
 
             Services.ResponseMessageEvents.SendResponseMessage(

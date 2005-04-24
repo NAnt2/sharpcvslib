@@ -1,6 +1,6 @@
 #region "Copyright"
 // ModifiedRequest.cs
-// Copyright (C) 2001 Mike Krueger
+// Copyright (C) 2005 Clayton Harbour
 // comments are taken from CVS Client/Server reference manual which
 // comes with the cvs client (www.cvshome.org)
 //
@@ -25,37 +25,59 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
+using System;
+using System.IO;
+
 using ICSharpCode.SharpCvsLib.Attributes;
+using ICSharpCode.SharpCvsLib.Util;
+
 namespace ICSharpCode.SharpCvsLib.Requests {
+
     /// <summary>
-    /// Response expected: no.
-    /// Additional data: mode, \n, file transmission.
-    /// Send the server a copy of one locally modified file.
-    /// filename is relative to the most recent repository sent with Directory.
-    /// If the user is operating on only some files in a directory, only those
-    /// files need to be included. This can also be sent without Entry, if there
-    /// is no entry for the file.
+    /// <para><b>Checkin-time time \n</br></para>
+    /// <para>For the file specified by the next Modified request, use time as the time of the checkin. 
+    /// The time is in the format specified by RFC822 as modified by RFC1123. The client may specify 
+    /// any timezone it chooses; servers will want to convert that to their own timezone as appropriate. 
+    /// 
+    /// <para>An example of this format is:
+    /// 
+    /// 26 May 1997 13:01:40 -0400
+    /// </para>
+    /// 
+    /// <para>There is no requirement that the client and server clocks be synchronized. The client 
+    /// just sends its recommendation for a timestamp (based on file timestamps or whatever), and the 
+    /// server should just believe it (this means that the time might be in the future, for example). 
+    /// Note that this is not a general-purpose way to tell the server about the timestamp of a file; 
+    /// that would be a separate request (if there are servers which can maintain timestamp and time 
+    /// of checkin separately). This request should affect the import request, and may optionally 
+    /// affect the ci request or other relevant requests if any.
+    /// </para>    
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
     [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class ModifiedRequest : AbstractRequest {
-        private string file;
+    public class CheckinTimeRequest : AbstractRequest {
+        private string _path;
+        private DateTime _checkinTime;
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="file">The name of the file that has been modified.</param>
-        public ModifiedRequest(string file) {
-            this.file = file;
+        public CheckinTimeRequest(string path) {
+            this._path = path;
+            if (File.Exists(this._path)) {
+                this._checkinTime = File.GetLastWriteTime(this._path).ToUniversalTime();
+            } else {
+                this._checkinTime = DateTime.Now.ToUniversalTime();
+            }
         }
 
         /// <summary>
-        /// Send a modified file to the repository.
+        /// Send the checkin time request.
         /// </summary>
         public override string RequestString {
             get {
-                return string.Format("Modified {0}\n{1}",
-                    this.file, "u=rw,g=rw,o=rw\n");
+                return string.Format("Checkin-time {0}\n", 
+                    DateParser.GetCvsDateString(this._checkinTime));
             }
         }
 

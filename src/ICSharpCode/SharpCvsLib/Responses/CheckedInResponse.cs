@@ -30,12 +30,14 @@
 #endregion
 
 using System;
+using System.IO;
 
 using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
+using ICSharpCode.SharpCvsLib.Util;
 
 using log4net;
 
@@ -56,15 +58,10 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             string repositoryPath = this.ReadLine();
             string entryLine      = this.ReadLine();
 
-            PathTranslator orgPath   =
-                new PathTranslator (Services.Repository,
-                repositoryPath);
-
-            string fileName = orgPath.LocalPathInfo.FullName;
-            Entry entry = new Entry(orgPath.CurrentDir.FullName, entryLine);
-            Entries entries = Entries.Load(entry.CvsFile.Directory);
-            entries.Add(entry);
-            entries.Save();
+            DirectoryInfo localDir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, localPath));
+            Entry entry = new Entry(new FileInfo(Path.Combine(localDir.FullName, "CVS\\Entries")), entryLine);
+            entry.Date = DateParser.GetCvsDateString(File.GetLastWriteTime(entry.FullPath).ToUniversalTime());
+            Entries.Save(entry);
         }
 
         /// <summary>

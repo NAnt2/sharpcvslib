@@ -173,5 +173,4 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             return formatter.ToString();
         }
     }
-
 }

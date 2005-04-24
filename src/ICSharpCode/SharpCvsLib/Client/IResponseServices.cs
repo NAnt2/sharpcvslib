@@ -81,7 +81,7 @@ namespace ICSharpCode.SharpCvsLib.Client {
         WorkingDirectory Repository {get;}
 
         /// <summary>
-        /// The next file date.
+        /// The next file date.  <see cref="ICSharpCode.SharpCvsLib.Responses.ModTimeResponse"/>
         /// </summary>
         string NextFileDate {get;set;}
 

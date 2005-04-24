@@ -77,7 +77,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         private bool prune             = false;
         private bool quieter           = false;
         private bool recursive         = false;
-        private string tag             = string.Empty;
+        private string _revision       = string.Empty;
         private bool localTime         = false;
 
         /// <summary>
@@ -137,9 +137,19 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// List files by revision or tag.
         /// </summary>
         /// <value>[-r] sent to the server.</value>
+        [Obsolete("Use Revision")]
         public string Tag {
-            get {return this.tag;}
-            set {this.tag = value;}
+            get {return this._revision;}
+            set {this._revision = value;}
+        }
+
+        /// <summary>
+        /// List files by revision or tag.
+        /// </summary>
+        /// <value>[-r] sent to the server.</value>
+        public string Revision {
+            get { return this._revision; }
+            set { this._revision = value; }
         }
 
         /// <summary>
@@ -301,7 +311,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             if (this.LocalTime) {
                 connection.SubmitRequest(new ArgumentRequest(Option.LOCAL_TIME));
             }
-            if (null != this.Tag && this.Tag.Length != 0) {
+            if (null != this.Revision && this.Revision.Length != 0) {
                 connection.SubmitRequest(new ArgumentRequest(Option.TAG));
             }
             if (this.Prune) {

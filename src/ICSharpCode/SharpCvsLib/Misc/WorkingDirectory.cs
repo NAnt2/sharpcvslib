@@ -67,8 +67,6 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 
         private Folders folders = new Folders();
 
-        private Folder[] foldersToUpdate;
-
         /// <summary>
         ///     Render the object as a human readable string.
         /// </summary>
@@ -166,8 +164,15 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         ///         are sent to the server.
         /// </summary>
         public Folder[] FoldersToUpdate {
-            get {return this.foldersToUpdate;}
-            set {this.foldersToUpdate = value;}
+            get { return (Folder[])new ArrayList(this.Folders.Values).ToArray(typeof(Folder)); }
+            set { 
+                if (null == this.folders) {
+                    this.folders = new Folders();
+                }
+                foreach (Folder folder in value) {
+                    this.folders.Add(folder);
+                }
+            }
         }
 
         /// <summary>

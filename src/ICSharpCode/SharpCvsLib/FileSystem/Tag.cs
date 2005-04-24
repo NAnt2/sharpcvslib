@@ -151,16 +151,5 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public override bool IsMultiLined {
             get {return false;}
         }
-
-        /// <summary>
-        /// Returns the full path to the CVS\Tag file on the local file system
-        ///     that this object represents.
-        /// </summary>
-        /// <returns>The full path to the CVS\Tag file that this object 
-        ///     represents.</returns>
-        protected override String DeriveCvsFullPath () {
-            throw new NotImplementedException("This will eventually return the full path to the repository.");
-        }
-
     }
 }

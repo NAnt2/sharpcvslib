@@ -137,35 +137,40 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         /// <returns></returns>
         public static Entries Load (FileInfo cvsFile) {
             Entries entries = new Entries(cvsFile.Directory);
-            using (StreamReader reader = new StreamReader(cvsFile.FullName)) {
-                string line;
-                while ((line = reader.ReadLine()) != null) {
-                    entries.Add(new Entry(cvsFile, line));
+
+            if (cvsFile.Exists) {
+                using (StreamReader reader = new StreamReader(cvsFile.FullName)) {
+                    string line;
+                    while ((line = reader.ReadLine()) != null) {
+                        if (line.Trim() != string.Empty) {
+                            entries.Add(new Entry(cvsFile, line));
+                        }
+                    }
                 }
-            }
+            } 
             return entries;
+        }
+
+        public void Save() {
+            Save(this);
         }
 
         public static void Save(Entry entry) {
             Entries entries = Entries.Load(entry.CvsFile.Directory);
+            if (entries.Contains(entry.FullPath)) {
+                entries[entry.FullPath] = entry;
+            } else {
+                entries.Add(entry);
+            }
             entries.Save();
         }
 
-        public void Save() {
-            if (null != this.Dictionary && this.Dictionary.Count > 0) {
-                Entries currentEntries = Entries.Load(this._entriesPath);
-                foreach(Entry currentEntry in currentEntries.Values) {
-                    if (!this.Contains(currentEntry.FullPath)) {
-                        this.Add(currentEntry);
-                    }
-                }
-                if (!this.EntriesPath.Directory.Exists) {
-                    this.EntriesPath.Directory.Create();
-                }
-                using (StreamWriter writer = new StreamWriter(this.EntriesPath.FullName)) {
-                    foreach (Entry entryVal in this.Dictionary.Values) {
-                        writer.WriteLine(entryVal.ToString());
-                    }
+        public static void Save(Entries entries) {
+            ArrayList sortedEntries = new ArrayList(entries.Values);
+            sortedEntries.Sort();
+            using (StreamWriter writer = new StreamWriter(entries.EntriesPath.FullName)) {
+                foreach (Entry entryVal in sortedEntries) {
+                    writer.WriteLine(entryVal.ToString());
                 }
             }
         }

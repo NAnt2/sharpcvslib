@@ -41,7 +41,6 @@ using ICSharpCode.SharpCvsLib.Streams;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
-
     /// <summary>
     /// New-entry pathname \n
     ///     Additional data: New Entries line, \n. Like Checked-in, but the file is 
@@ -49,29 +48,18 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// </summary>
     [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
     [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class NewEntryResponse : AbstractResponse {
+    public class NewEntryResponse : AbstractResponse{
         private readonly ILog LOGGER = LogManager.GetLogger(typeof (NewEntryResponse));
         /// <summary>
         /// Process a new entry response.
-        /// 
-        /// TODO: Copied implementation from CheckedInResponse, determine if this
-        ///     is correct or not.
         /// </summary>
         public override void Process() {
-            string localPath      = this.ReadLine();
-            string repositoryPath = this.ReadLine();
-            string entryLine      = this.ReadLine();
+            string localPath = this.ReadLine();
+            string reposPath = this.ReadLine();
+            string entryLine = this.ReadLine();
 
-            PathTranslator orgPath   =
-                new PathTranslator (Services.Repository,
-                repositoryPath);
-
-            string fileName = orgPath.LocalPathAndFilename;
-            Factory factory = new Factory();
-            Entry  entry = (Entry)
-                factory.CreateCvsObject(orgPath.CurrentDir, Entry.FILE_NAME, entryLine);
-            Manager manager = new Manager (Services.Repository.WorkingPath);
-            manager.Add (entry);
+            Entry entry = new Entry(localPath, entryLine);
+            Entries.Save(entry);
         }
 
         /// <summary>

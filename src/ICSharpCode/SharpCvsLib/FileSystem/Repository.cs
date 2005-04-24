@@ -71,6 +71,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public Repository (FileInfo cvsFile, String line) : base (cvsFile, line) {
         }
 
+        public Repository(DirectoryInfo cvsDir, string line) : 
+            base(new FileInfo(System.IO.Path.Combine(cvsDir.FullName, "Repository")), line) {
+        }
+
         /// <summary>
         ///     Create a new repository object taking the path to the
         ///         folder above the CVS directory and the line to enter
@@ -83,7 +87,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <param name="line">The line to enter into the repository file.</param>
         [Obsolete ("Use constructor Repository(FileInfo string)")]
         public Repository (string filePath, string line) : 
-            this (new FileInfo(System.IO.Path.Combine(filePath, "CVS")), line) {
+            this (new FileInfo(System.IO.Path.Combine(filePath, @"CVS\Repository")), line) {
 
         }
 
@@ -139,7 +143,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             fileContents = fileContents.Replace(Environment.NewLine, "");
 
             return new Repository(repositoryFile, fileContents);
-            
         }
 
         /// <summary>
@@ -200,16 +203,5 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public override bool IsMultiLined {
             get {return false;}
         }
-
-        /// <summary>
-        /// Returns the full path to the CVS\Root folder on the local filesystem
-        ///     that this object represents.
-        /// </summary>
-        /// <returns>The full path to the CVS\Root file that this object
-        ///     represents.</returns>
-        protected override String DeriveCvsFullPath () {
-            throw new NotImplementedException("This will eventually return the full path to the repository.");
-        }
-
     }
 }

@@ -282,7 +282,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 }
                 LOGGER.Debug("Before we grab the arguments.");
                 string commandString = arguments[i].Trim();
-                CommandParserFactory factory;
                 ICommandParser parser;
                 switch (commandString) {
                     case "add":

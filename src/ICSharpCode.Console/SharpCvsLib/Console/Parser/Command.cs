@@ -47,7 +47,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private String first;
         private ArrayList nicks;
         private string description;
-        private bool implemented;
 
         /// <summary>
         /// Primary name for the command, the name to be used first.

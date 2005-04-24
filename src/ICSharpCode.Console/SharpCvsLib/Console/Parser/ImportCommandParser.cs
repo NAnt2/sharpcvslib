@@ -50,8 +50,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     /// Initialize the cvs repository.
     /// </summary>
     public class ImportCommandParser : AbstractCommandParser {
-        private string[] unparsedOptions;
-
         private string message;
         private string vendor = "tcvs-vendor";
         private string release = "tcvs-release";
