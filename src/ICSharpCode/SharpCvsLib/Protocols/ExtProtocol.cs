@@ -102,16 +102,11 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
 
         private Process StartProcess() {
             ProcessStartInfo startInfo =
-                this.GetProcessInfo(this.Config.Shell, VERSION_ONE);
+                this.GetProcessInfo(this.Config.Shell, null);
 
             Process process = new Process();
             try {
                 process.StartInfo = startInfo;
-                process.StartInfo.RedirectStandardError  = true;
-                process.StartInfo.RedirectStandardInput  = true;
-                process.StartInfo.RedirectStandardOutput = true;
-                process.StartInfo.UseShellExecute        = false;
-
                 process.Exited += new EventHandler(this.ExitShellEvent);
 
                 LOGGER.Info(string.Format("{0} {1}",
@@ -119,19 +114,7 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
 
                 process.Start();
             } catch (Exception) {
-                try {
-                    process.StartInfo = this.GetProcessInfo(this.Config.Shell, VERSION_TWO);
-                    process.StartInfo.RedirectStandardError  = true;
-                    process.StartInfo.RedirectStandardInput  = true;
-                    process.StartInfo.RedirectStandardOutput = true;
-                    process.StartInfo.UseShellExecute        = false;
-
-                    process.Start();
-                } catch (Exception e) {
-                    throw new ICSharpCode.SharpCvsLib.Exceptions.ExecuteShellException(
-                        string.Format("{0} {1}",
-                        this.Config.Shell, _process.StartInfo.Arguments), e);
-                }
+                throw new Exception("Process failed.");
             }
 
             System.Threading.Thread.Sleep(100);
@@ -141,24 +124,32 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
 
         private ProcessStartInfo GetProcessInfo (string program, string version) {
             string tProgram = Path.GetFileNameWithoutExtension(program);
-            ProcessStartInfo startInfo;
+            ProcessStartInfo startInfo = new ProcessStartInfo();
             switch (tProgram) {
                 case "plink": {
-                    startInfo = this.GetPlinkProcessInfo(tProgram, version);
+                    startInfo.FileName = "plink.exe";
+                    startInfo.Arguments = this.GetPlinkArgs(tProgram, version);
                     break;
                 }
                 case "ssh": {
-                    startInfo = this.GetSshProcessInfo(tProgram, version);
+                    startInfo.FileName = "ssh.exe";
+                    startInfo.Arguments = this.GetSshArgs(tProgram, version);
                     break;
                 }
                 default:
                     throw new ArgumentException(string.Format("Unknown ssh program specified ( {0} )",
                         this.Config.Shell));
             }
+
+            startInfo.RedirectStandardError  = true;
+            startInfo.RedirectStandardInput  = true;
+            startInfo.RedirectStandardOutput = true;
+            startInfo.UseShellExecute        = false;
+
             return startInfo;
         }
 
-        private ProcessStartInfo GetPlinkProcessInfo (string program, string version) {
+        private string GetPlinkArgs(string program, string version) {
             StringBuilder processArgs = new StringBuilder ();
             processArgs.Append (string.Format(" -l \"{0}\"",
                 this.Repository.CvsRoot.User));
@@ -169,23 +160,17 @@ namespace ICSharpCode.SharpCvsLib.Protocols {
             processArgs.Append (" ").Append (this.Repository.CvsRoot.Host);
             processArgs.Append (" cvs server ");
 
-            ProcessStartInfo startInfo =
-                new ProcessStartInfo(program, processArgs.ToString ());
-
-            return startInfo;
+            return processArgs.ToString();
         }
 
-        private ProcessStartInfo GetSshProcessInfo (string program, string version) {
+        private string GetSshArgs(string program, string version) {
             StringBuilder processArgs = new StringBuilder ();
             processArgs.Append (string.Format(" -l \"{0}\"",
                 this.Repository.CvsRoot.User));
             processArgs.Append (" ").Append (this.Repository.CvsRoot.Host);
             processArgs.Append (" cvs server ");
 
-            ProcessStartInfo startInfo =
-                new ProcessStartInfo(program, processArgs.ToString());
-
-            return startInfo;
+            return processArgs.ToString();
         }
 
         private void ExitShellEvent(object sender, EventArgs e) {
