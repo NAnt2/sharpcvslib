@@ -317,10 +317,11 @@ namespace Listen
         }
 
         protected void CheckoutButton_Click(object sender, System.EventArgs e) {
+            if (!Directory.Exists(this.LocalDirectory.Text)) {
+                Directory.CreateDirectory(this.LocalDirectory.Text);
+            }
+
             try {
-                if (!Directory.Exists(this.LocalDirectory.Text)) {
-                    Directory.CreateDirectory(this.LocalDirectory.Text);
-                }
 
                 Thread thread = new Thread(new ThreadStart(Checkout));
                 thread.Start();
@@ -353,6 +354,9 @@ namespace Listen
             CVSServerConnection serverConn = new CVSServerConnection(CurrentWorkingDirectory);
 
             this.RegisterListenEvents(serverConn);
+
+            LoginCommand loginCommand = new LoginCommand(CurrentWorkingDirectory.CvsRoot, CurrentWorkingDirectory);
+            loginCommand.Execute();
 
             serverConn.Connect(CurrentWorkingDirectory, this.Password.Text);
             checkoutCommand.Execute(serverConn);

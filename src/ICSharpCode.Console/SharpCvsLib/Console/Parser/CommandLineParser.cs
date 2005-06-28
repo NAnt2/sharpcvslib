@@ -192,7 +192,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         private void SetPassword(string commandLine) {
             string thePassword;
             if (null != this.arguments && this.arguments.Length > 0) {
-                Regex regex = new Regex(LoginCommand.REGEX_PASSWORD);
+                Regex regex = new Regex(ICSharpCode.SharpCvsLib.Console.Commands.LoginCommand.REGEX_PASSWORD);
                 Match match = regex.Match(commandLine);
                 string pwd = match.Groups[1].Value;
                 thePassword = pwd;
@@ -380,8 +380,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "lgn":
                         // login to server
                         this.commandTxt = arguments[i];
-                        LoginCommand loginCommand = 
-                            new LoginCommand(this.CvsRoot, this.currentWorkingDirectory);
+                        ICSharpCode.SharpCvsLib.Console.Commands.LoginCommand loginCommand = 
+                            new ICSharpCode.SharpCvsLib.Console.Commands.LoginCommand(this.CvsRoot, this.currentWorkingDirectory);
                         loginCommand.Args = arguments;
                         this.currentWorkingDirectory = loginCommand.CurrentWorkingDirectory;
                         command = loginCommand;

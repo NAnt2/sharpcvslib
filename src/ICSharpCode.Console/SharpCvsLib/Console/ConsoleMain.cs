@@ -302,7 +302,8 @@ namespace ICSharpCode.SharpCvsLib.Console {
                 parser.Password.Length != 0) {
                 pwd = parser.Password;
             } else {
-                LoginCommand loginCommand = new LoginCommand(workingDir.CvsRoot);
+                ICSharpCode.SharpCvsLib.Console.Commands.LoginCommand loginCommand = 
+                    new ICSharpCode.SharpCvsLib.Console.Commands.LoginCommand(workingDir.CvsRoot);
                 loginCommand.Execute();
                 pwd = loginCommand.Password;
             }

@@ -186,6 +186,11 @@
                     BuildAction = "Compile"
                 />
                 <File
+                    RelPath = "ICSharpCode\SharpCvsLib\Commands\LoginCommand.cs"
+                    SubType = "Code"
+                    BuildAction = "Compile"
+                />
+                <File
                     RelPath = "ICSharpCode\SharpCvsLib\Commands\RemoveCommand.cs"
                     SubType = "Code"
                     BuildAction = "Compile"
