@@ -6,6 +6,11 @@
     <File name="..\src\build.bat" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name="..\src\COPYING.txt" subtype="Code" buildaction="Exclude" dependson="" data="" />
     <File name="..\src\README.txt" subtype="Code" buildaction="Exclude" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Assertions" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Assertions\Assert.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Attributes" subtype="Directory" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Attributes\AuthorAttribute.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Attributes\ProtocolAttribute.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Client\IResponseServices.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\AbstractResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\IResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -24,10 +29,15 @@
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\SetStaticDirectoryResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\ClearStaticDirectoryResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\ValidRequestsResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Responses\ListResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Commands\CommitCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Commands\ICommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Commands\ILogCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Commands\ImportModuleCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+
+    <File name="..\src\ICSharpCode\SharpCvsLib\Commands\LoginCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+
+    <File name="..\src\ICSharpCode\SharpCvsLib\Commands\RLogCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Commands\InitCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Commands\RetreiveFilelistCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Commands\LogCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -65,6 +75,7 @@
     <File name="..\src\ICSharpCode\SharpCvsLib\Requests\QuestionableRequest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Requests\RemoveRequest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Requests\RootRequest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Requests\RLogRequest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Requests\StatusRequest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Requests\StickyRequest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Requests\TagRequest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -78,8 +89,18 @@
     <File name="..\src\ICSharpCode\SharpCvsLib\Requests\RTagRequest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Requests\AbstractRequest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Streams\CvsStream.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name="..\src\ICSharpCode\SharpCvsLib\Exceptions\ExecuteShellException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Exceptions\AssertionException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Exceptions\AuthenticationException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Exceptions\CvsFileNotFoundException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Exceptions\CvsRootParseException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Exceptions\DuplicateEntryException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Exceptions\EntryNotFoundException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Exceptions\EntryParseException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Exceptions\ExecuteShellException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Exceptions\InvalidPathException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Exceptions\UnsupportedFileTypeException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Exceptions\UnsupportedProtocolException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Exceptions\UnsupportedResponseException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\FileHandler\IFileHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\FileHandler\UncompressedFileHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\FileHandler\CompressedFileHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -95,7 +116,6 @@
     <File name="..\src\ICSharpCode\SharpCvsLib\FileSystem\PathTranslator.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\FileSystem\Entries.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\FileSystem\Folders.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name="..\src\ICSharpCode\SharpCvsLib\Exceptions\EntryNotFoundException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Misc\TraceUtil.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Messages" subtype="Directory" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Messages\IMessage.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -108,6 +128,7 @@
     <File name="..\lib\ext\nunit.framework.dll" subtype="Code" buildaction="Nothing" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\SetStickyResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\FileSystem\Tag.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Requests\CheckinTimeRequest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Requests\RequestMessageEventHandler.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Requests\RequestMessageEventArgs.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Util" subtype="Directory" buildaction="Compile" dependson="" data="" />
@@ -124,16 +145,9 @@
     <File name="..\src\ICSharpCode\SharpCvsLib\Config\Logging" subtype="Directory" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Config\Logging\Debug.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Commands\AddCommand.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name="..\src\ICSharpCode\SharpCvsLib\FileSystem\UnsupportedFileTypeException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name="..\src\ICSharpCode\SharpCvsLib\FileSystem\DuplicateEntryException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name="..\src\ICSharpCode\SharpCvsLib\FileSystem\EntryParseException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name="..\src\ICSharpCode\SharpCvsLib\FileSystem\InvalidPathException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\FileSystem\AbstractCvsFile.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name="..\src\ICSharpCode\SharpCvsLib\FileSystem\CvsFileNotFoundException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Requests\IsModifiedRequest.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\UnsupportedResponseException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name="..\src\ICSharpCode\SharpCvsLib\Misc\CvsRootParseException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
-    <File name="..\src\ICSharpCode\SharpCvsLib\Misc\UnsupportedProtocolException.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\NewEntryResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\MergedResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Responses\RemovedResponse.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -149,6 +163,7 @@
     <File name="..\src\SharpCvsLibAssemblyInfo.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Protocols" subtype="Directory" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Protocols\PServerProtocol.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
+    <File name="..\src\ICSharpCode\SharpCvsLib\Protocols\ProtocolFactory.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Protocols\AbstractProtocol.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Protocols\ExtProtocol.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
     <File name="..\src\ICSharpCode\SharpCvsLib\Protocols\IProtocol.cs" subtype="Code" buildaction="Compile" dependson="" data="" />
@@ -163,18 +178,18 @@
     <Reference type="Assembly" refto="..\lib\ext\log4net.dll" localcopy="True" />
   </References>
   <DeploymentInformation target="" script="" strategy="File" />
-  <Configuration runwithwarnings="False" name="Debug">
+  <Configuration runwithwarnings="True" name="Debug">
     <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="True" win32Icon="" noconfig="False" nostdlib="False" />
     <Execution commandlineparameters="" consolepause="True" />
     <Output directory="..\bin" assembly="ICSharpCode.SharpCvsLib" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
   </Configuration>
   <Configurations active="Debug">
-    <Configuration runwithwarnings="False" name="Debug">
+    <Configuration runwithwarnings="True" name="Debug">
       <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="4" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="True" win32Icon="" noconfig="False" nostdlib="False" />
       <Execution commandlineparameters="" consolepause="True" />
       <Output directory="..\bin" assembly="ICSharpCode.SharpCvsLib" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
     </Configuration>
-    <Configuration runwithwarnings="False" name="Release">
+    <Configuration runwithwarnings="True" name="Release">
       <CodeGeneration runtime="MsNet" compiler="Csc" compilerversion="" warninglevel="2" nowarn="" includedebuginformation="True" optimize="True" unsafecodeallowed="False" generateoverflowchecks="True" mainclass="" target="Library" definesymbols="" generatexmldocumentation="False" win32Icon="" noconfig="False" nostdlib="False" />
       <Execution commandlineparameters="" consolepause="True" />
       <Output directory="..\bin" assembly="ICSharpCode.SharpCvsLib" executeScript="" executeBeforeBuild="" executeAfterBuild="" executeBeforeBuildArguments="" executeAfterBuildArguments="" />
