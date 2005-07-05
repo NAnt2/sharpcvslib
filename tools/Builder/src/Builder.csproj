@@ -17,7 +17,7 @@
                 DelaySign = "false"
                 OutputType = "WinExe"
                 PreBuildEvent = ""
-                PostBuildEvent = "copy $(ProjectDir)App.exe.manifest $(TargetDir)Builder.exe.manifest"
+                PostBuildEvent = 'copy "$(ProjectDir)App.exe.manifest" "$(TargetDir)Builder.exe.manifest"'
                 RootNamespace = "Builder"
                 RunPostBuildEvent = "OnBuildSuccess"
                 StartupObject = ""
