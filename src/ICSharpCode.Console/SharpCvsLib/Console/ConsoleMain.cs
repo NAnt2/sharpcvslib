@@ -191,10 +191,8 @@ namespace ICSharpCode.SharpCvsLib.Console {
             try {
                 this.DoExecute();
             } catch (Exception e) {
-                string msg = 
-                    String.Format("Something very bad has happened ( {0} ).", 
+                ExitError(e, "Fatal Error ( {0} ), rerun using -verbose to get more information.", 
                     e.Message);
-                ExitProgram(msg, e);
             }
         }
 
@@ -206,12 +204,10 @@ namespace ICSharpCode.SharpCvsLib.Console {
             try {
                 command = parser.Execute ();
             } catch (CommandLineParseException e) {
-                Writer.WriteLine(
-                    String.Format("{0}{1}{2}",
-                        Usage.General, Environment.NewLine, e.Message));
+                ExitError(e, "{0}{1}{2}", Usage.General, Environment.NewLine, e.Message);
                 return;
             } catch (Exception e) {
-                ExitProgram(string.Format("Exception parsing command: {0}", e.Message));
+                ExitError(e, "Exception parsing command: {0}", e.Message);
             }
 
             if (null != command) {
@@ -248,20 +244,17 @@ namespace ICSharpCode.SharpCvsLib.Console {
 
                 if (null == serverConn) {
                     string msg = "Unable to connect to server.";
-                    ExitProgram(msg);
+                    ExitError(msg);
                 }
 
                 try{
                     // try connecting with empty password for anonymous users
                     serverConn.Connect(workingDirectory, password);
                 } catch (AuthenticationException e){
-                    string msg = String.Format("Fatal error, aborting.  cvs [login aborted]: {0}: unknown user or bad password.",
+                    ExitError(e, "Fatal error, aborting.  cvs [login aborted]: {0}: unknown user or bad password.",
                         workingDirectory.CvsRoot.User);
-                    ExitProgram(msg, e);
                 } catch (Exception ex) {
-                    string msg = String.Format("Fatal cvs error ( {0} ).",
-                        ex.Message);
-                    ExitProgram(msg, ex);
+                    ExitError(ex, "Fatal cvs error ( {0} ).", ex.Message);
                 }
 
                 // Execute the command on cvs repository.
@@ -270,30 +263,41 @@ namespace ICSharpCode.SharpCvsLib.Console {
             }
         }
 
-        public static void ExitProgram (string msg, Exception exception) {
-            try {
-                if (CommandLineParser.IsVerbose) {
-                    ConsoleWriter.Instance.WriteLine(exception.ToString());
-                }
-                using (StreamWriter fileWriter = new StreamWriter(System.IO.Path.Combine(AppDir.FullName, "Error.log"), true)) {
-                    fileWriter.WriteLine(string.Format("[{0}] - {1}\n{2}", 
-                        DateTime.Now, msg, exception.ToString()));
-                }
-            } catch (Exception) {
-                // make sure there isn't an exception when exiting the program
+        public static void ExitError (Exception exception, string msg) {
+            if (CommandLineParser.IsVerbose) {
+                ConsoleWriter.Instance.WriteLine(exception.ToString());
             }
+            ExitError(msg);
+        }
 
-            ExitProgram(string.Format("{0}", msg));
+        public static void ExitError (Exception exception, string msg, params object[] format) {
+            ExitError(exception, string.Format(msg, format));
         }
 
         /// <summary>
         /// Exit the program and display the given exit message.
         /// </summary>
         /// <param name="msg"></param>
-        public static void ExitProgram (string msg) {
+        public static void Exit (string msg) {
+            ConsoleWriter writer = new ConsoleWriter();
+            writer.WriteLine(msg);
+            Environment.Exit(0);
+        }
+
+        public static void Exit(string msg, params object[] format) {
+            string message = string.Format(msg, format);
+            Exit(message);
+        }
+
+        public static void ExitError(string msg) {
             ConsoleWriter writer = new ConsoleWriter();
             writer.WriteLine(msg);
             Environment.Exit(-1);
+        }
+
+        public static void ExitError(string msg, params object[] format) {
+            string message = string.Format(msg, format);
+            ExitError(message);
         }
 
         private string GetPassword(CommandLineParser parser, WorkingDirectory workingDir) {

@@ -63,16 +63,15 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
         private CvsRoot cvsRoot;
         private string commandTxt;
-        private string options;
+        private string options = string.Empty;
         private string repository;
         private string singleOptions;
         private string files;
+        bool _readOnly;
 
         private static bool _verbose = false;
 
-        private const string REGEX_LOG_LEVEL = @"[-]*log:[\s]*(debug|info|warn|error)";
-        private const string REGEX_VERBOSE = @"[-]*(verbose)";
-
+        private const string REGEX_LOG_LEVEL = @"-log:(?<Level>(debug|info|warn|error))";
         private const String ENV_CVS_ROOT = "CVS_ROOT";
 
         private WorkingDirectory currentWorkingDirectory;
@@ -89,6 +88,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// </summary>
         public static bool IsVerbose {
             get { return _verbose; }
+        }
+
+        public bool ReadOnly {
+            get { return _readOnly; }
+            set { _readOnly = value; }
         }
 
         /// <summary>
@@ -146,41 +150,6 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             }
         }
 
-        /// <summary>
-        /// Set the global logging level if the appropriate commandline switch is passed in.
-        /// </summary>
-        /// <param name="commandline"></param>
-        public void SetLogLevel (string commandline) {
-            Regex regex = new Regex(REGEX_LOG_LEVEL);
-            Match match = regex.Match(commandline);
-            if (match.Groups.Count > 0) {
-                string newLevelString = match.Groups[1].Value;
-
-                if (null != newLevelString && newLevelString.Length != 0) {
-                    log4net.Core.LevelMap map = log4net.LogManager.GetRepository().LevelMap;
-                    log4net.Core.Level newLevel = map[newLevelString];
-                    log4net.LogManager.GetRepository().Threshold = newLevel;
-                }
-            }
-            // hack to remove the logging level parameter so the rest of the parsing goes correctly
-            this.RemoveArg("log:");
-        }
-
-        /// <summary>
-        /// Hack to remove arguments that cannot be processed by the current command line parser
-        /// implementation.
-        /// </summary>
-        /// <param name="argRemove"></param>
-        private void RemoveArg (string argRemove) {
-            ArrayList newArguments = new ArrayList();
-            foreach (string arg in this.arguments) {
-                if (arg.IndexOf(argRemove) < 0) {
-                    newArguments.Add(arg);
-                }
-            }
-            this.arguments = (string[])newArguments.ToArray(typeof(string));
-        }
-
         private string password;
         /// <summary>
         /// The password passed in on the commandline, or null if none.
@@ -189,44 +158,12 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             get {return this.password;}
         }
 
-        private void SetPassword(string commandLine) {
-            string thePassword;
-            if (null != this.arguments && this.arguments.Length > 0) {
-                Regex regex = new Regex(ICSharpCode.SharpCvsLib.Console.Commands.LoginCommand.REGEX_PASSWORD);
-                Match match = regex.Match(commandLine);
-                string pwd = match.Groups[1].Value;
-                thePassword = pwd;
-            } else {
-                thePassword = String.Empty;
-            }
-            this.RemoveArg("pwd:");
-            this.password = thePassword;
-        }
-
-        private void SetVerbose(string commandLine) {
-            Regex regex = new Regex(REGEX_VERBOSE);
-            Match match = regex.Match(commandLine);
-            if (match.Groups.Count > 0 && match.Groups[1].Value == "verbose") {
-                _verbose = true;
-            }
-
-            this.RemoveArg("verbose");
-        }
-
         /// <summary>Create a new instance of the command line parser and
         ///     initialize the arguments object.</summary>
         /// <param name="args">A collection of strings that represent the command
         ///     line arguments sent into the program.</param>
         public CommandLineParser (String[] args) {
             this.arguments = args;
-
-            // TODO: Remove this hack when add method to set options.
-            this.options = String.Empty;
-
-            this.SetLogLevel(this.CommandLine);
-            this.SetPassword(this.CommandLine);
-            this.SetVerbose(this.CommandLine);
-
         }
 
         /// <summary>
@@ -240,47 +177,137 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         ///     parsing the command line arguments (i.e. if invalid arguments
         ///     are entered.</exception>
         public ICommand Execute () {
-            if (LOGGER.IsDebugEnabled) {
-                StringBuilder msg = new StringBuilder ();
-                msg.Append("\n Command line arguments:");
-                foreach (String argument in this.arguments) {
-                    msg.Append("\n\t argument=[").Append(argument).Append("]");
-                }
-                LOGGER.Debug(msg);
-            }
-
-            bool isHelp = this.ParseHelp (this.arguments);
-
-            if (isHelp) {
-                return null;
-            }
-
-            int startIndex = 0;
-            // TODO: Remove = null when all other code paths return a value,
-            //      this was just put in so it would compile.
             ICommand command = null;
-            if (arguments.Length < 1) {
-                System.Console.WriteLine (Usage.General);
-            }
+            for (int i = 0; i < arguments.Length; i++) {
+                string arg = arguments[i];
 
-            if (arguments.Length > 0 && 
-                (arguments[0] == "-d")) {
-                this.cvsRoot = new CvsRoot(this.arguments[1]);
-                startIndex = 2;                
-            } else if (arguments.Length > 0 && 
-                (arguments[0].Length > 2) && 
-                arguments[0].Substring(0, 2) == "-d") {
-                this.cvsRoot = new CvsRoot(this.arguments[0].Substring(2).Trim());
-                startIndex = 1;
-            }
-
-            for (int i = startIndex; i < arguments.Length; i++) {
-                if (LOGGER.IsDebugEnabled) {
-                    StringBuilder msg = new StringBuilder ();
-                    msg.Append("arguments[").Append(i).Append("]=[").Append(arguments[i]).Append("]");
-                    LOGGER.Debug(msg);
+                // stop when we reach the command
+                if (!arg.StartsWith("-")) {
+                    break;
                 }
-                LOGGER.Debug("Before we grab the arguments.");
+
+                if (arg.StartsWith("-d:")) {
+                    string tempRoot = arg.Substring(2, arg.Length - 2);
+                    this.cvsRoot = new CvsRoot(tempRoot);
+                    continue;
+                }
+
+                Match passwordMatch = 
+                    Regex.Match(arg, ICSharpCode.SharpCvsLib.Console.Commands.LoginCommand.REGEX_PASSWORD);
+                if (passwordMatch.Success) {
+                    this.password = passwordMatch.Groups["Password"].Value;
+                }
+
+                Match logMatch = Regex.Match(arg, REGEX_LOG_LEVEL);
+                if (logMatch.Success) {
+                    string newLevelString = logMatch.Groups["Level"].Value;
+
+                    if (null != newLevelString && newLevelString.Length != 0) {
+                        log4net.Core.LevelMap map = log4net.LogManager.GetRepository().LevelMap;
+                        log4net.Core.Level newLevel = map[newLevelString];
+                        log4net.LogManager.GetRepository().Threshold = newLevel;
+                    }
+                }
+
+
+                switch (arg) {
+                    case "-verbose":
+                        _verbose = true;
+                        break;
+                    case "-H":
+                        // show help
+                        break;
+                    case "--help":
+                        if (i+1 < arguments.Length) {
+                            string commandName = arguments[++i];
+                            ICommandParser commandParser =
+                                CommandParserFactory.GetCommandParser(commandName);
+                            System.Console.WriteLine(commandParser.Usage);
+                            return null;
+                        } else {
+                            System.Console.WriteLine(Usage.General);
+                            return null;
+                        }
+                    case "--help-options":
+                        System.Console.WriteLine(Usage.Options);
+                        return null;
+                    case "--help-commands":
+                        System.Console.WriteLine(Usage.Commands);
+                        return null;
+                    case "--help-synonyms":
+                        System.Console.WriteLine(Usage.Synonyms);
+                        return null;
+                    case "-v":
+                    case "--version":
+                        System.Console.WriteLine(Usage.Version);
+                        return null;
+                    case "-Q":
+                        // really quiet
+                        break;
+                    case "-q":
+                        // somewhat quiet
+                        break;
+                    case "-r":
+                        this.ReadOnly = true;
+                        break;
+                    case "-w":
+                        // read-write
+                        break;
+                    case "-n":
+                        throw new NotSupportedException("Unsupported option -n");
+                        break;
+                    case "-t":
+                        throw new NotSupportedException("Unsupported option -t");
+                        break;
+                    case "-T":
+                        throw new NotSupportedException("Unsupported option -T");
+                        break;
+                    case "-e":
+                        throw new NotSupportedException("Unsupported option -e");
+                        break;
+                    case "-d":
+                        this.cvsRoot = new CvsRoot(arguments[++i]);
+                        break;
+                    case "-f":
+                        throw new NotSupportedException("Unsupported option -f");
+                        break;
+                    case "-F":
+                        throw new NotSupportedException("Unsupported option -F");
+                        break;
+                    case "-z":
+                        throw new NotSupportedException("Unsupported option -z");
+                        break;
+                    case "-x":
+                        throw new NotSupportedException("Unsupported option -x");
+                        break;
+                    case "-y":
+                        throw new NotSupportedException("Unsupported option -y");
+                        break;
+                    case "-a":
+                        throw new NotSupportedException("Unsupported option -a");
+                        break;
+                    case "-N":
+                        throw new NotSupportedException("Unsupported option -N");
+                        break;
+                    case "-s":
+                        throw new NotSupportedException("Unsupported option -s");
+                        break;
+                    case "-o":
+                        throw new NotSupportedException("Unsupported option -o");
+                        break;
+                    case "-O":
+                        throw new NotSupportedException("Unsupported option -O");
+                        break;
+                    case "--encrypt":
+                        throw new NotSupportedException("Unsupported option --encryp");
+                        break;
+                    case "--authenticate":
+                        throw new NotSupportedException("Unsupported option --authenticate");
+                        break;
+                }
+            }
+
+            for (int i = 0; i < arguments.Length; i++) {
                 string commandString = arguments[i].Trim();
                 ICommandParser parser;
                 switch (commandString) {
@@ -488,7 +515,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                     case "update":
                         singleOptions = "ACPRbdfmp";
                         this.commandTxt = arguments[i++];
-                            // get rest of arguments which is options on the update command.
+                        // get rest of arguments which is options on the update command.
                         while (arguments.Length > i && arguments[i].IndexOf("-", 0, 1) >= 0) {
                             // Get options with second parameters?
                             if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
@@ -525,77 +552,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             parser.CurrentWorkingDirectory;
 
                         break;
-                    default:
-                        StringBuilder msg = new StringBuilder ();
-                        msg.Append("Unknown command entered.  ");
-                        msg.Append("command=[").Append(arguments[i]).Append("]");
-                        throw new CommandLineParseException(msg.ToString());
-                    }
                 }
+            }
+            if (command == null) {
+                ConsoleMain.ExitError("Use --help-commands to list commands", Usage.General);
+            }
+            this.currentWorkingDirectory.ReadOnly = this.ReadOnly;
             return command;
         }
-
-        /// <summary>
-        /// <p>
-        /// Parse the command line arguments to determine if there are any help
-        ///     requests.  If there are help requests then return true, this can
-        ///     then be used to direct the flow of the application to not evaulate
-        ///     any other commands.
-        /// </p>
-        /// <p>     
-        ///     Also looks at all -- command line arguments, this will be assumed 
-        ///     to have been attempts at help but were malformed.
-        /// </p>
-        /// </summary>
-        /// <param name="args"></param>
-        /// <returns></returns>
-        /// <example>
-        /// <br/>        Parses help commands such as:
-        /// <br/>           cvs --help
-        /// <br/>           cvs --help-options
-        /// <br/>           cvs --help-commands
-        /// <br/>           cvs --help-synonyms
-        /// <br/>           
-        /// </example>
-        private bool ParseHelp (String[] args) {
-            if (args.Length < 1) {
-                System.Console.WriteLine(Usage.General);
-                return true;
-            }
-            for (int i = 0; i < arguments.Length; i++) {
-                switch (arguments[i]) {
-                    case "--help":
-                        if (i+1 < arguments.Length) {
-                            i++;
-                            string command = arguments[i];
-                            ICommandParser commandParser =
-                                CommandParserFactory.GetCommandParser(command);
-                            System.Console.WriteLine(commandParser.Usage);
-                            return true;
-                        } else {
-                            System.Console.WriteLine(Usage.General);
-                        }
-                        return true;
-                    case "--help-options":
-                        System.Console.WriteLine(Usage.Options);
-                        return true;
-                    case "--help-commands":
-                        System.Console.WriteLine(Usage.Commands);
-                        return true;
-                    case "--help-synonyms":
-                        System.Console.WriteLine(Usage.Synonyms);
-			            return true;
-		            case "--version":
-		                System.Console.WriteLine(Usage.Version);
-                        return true;
-                }
-                if (arguments[i].IndexOf("--") > -1) {
-                    System.Console.WriteLine(Usage.General);
-                    return true;
-                }
-            }
-            return false;
-        }
-
     }
 }

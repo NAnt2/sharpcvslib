@@ -64,8 +64,14 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         bool hasDate = false;    // DateTime is a value type so we can't use null to indicate it hasn't been set
         DateTime date = new DateTime();
         String overrideDirectory;
+        bool _readonly = false;
 
         private Folders folders = new Folders();
+
+        public bool ReadOnly {
+            get { return _readonly; }
+            set { _readonly = value; }
+        }
 
         /// <summary>
         ///     Render the object as a human readable string.

@@ -138,7 +138,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                 new DirectoryInfo(Environment.CurrentDirectory);
 
             if (!importDir.Exists) {
-                ConsoleMain.ExitProgram("Import directory does not exist.");
+                ConsoleMain.ExitError("Import directory does not exist.");
             }
 
             importCommand = 

@@ -112,7 +112,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             Path.Combine(this.CurrentDir.FullName, "CVS")));
                         this._repository = repos;
                     } catch (Exception e) {
-                        ConsoleMain.ExitProgram("Not a valid cvs folder.", e);
+                        ConsoleMain.ExitError(e, "Not a valid cvs folder {0}.", this.CurrentDir.FullName);
                     }
                 }
                 return this._repository;
@@ -132,7 +132,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                             Path.Combine(this.CurrentDir.FullName, "CVS")));
                         this.cvsRoot = new CvsRoot(root.FileContents);
                     } catch (Exception e) {
-                        ConsoleMain.ExitProgram("Not a valid cvs folder.", e);
+                        ConsoleMain.ExitError(e, "Not a valid cvs folder {0}.", this.CurrentDir.FullName);
                     }
                 }
                 return this.cvsRoot;

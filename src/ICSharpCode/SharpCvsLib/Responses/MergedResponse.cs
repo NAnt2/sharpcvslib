@@ -84,6 +84,8 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             string localPathAndFilename = orgPath.LocalPathAndFilename;
             string directory = orgPath.LocalPath;
 
+            File.SetAttributes(localPathAndFilename, FileAttributes.Normal);
+
             bool compress = sizeStr[0] == 'z';
 
             if (compress) {
@@ -116,12 +118,17 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                     localPathAndFilename,
                     size);
             }
-
             e.Date = Services.NextFileDate;
+
             Services.NextFileDate = null;
 
             manager.Add(e);
             manager.SetFileTimeStamp (localPathAndFilename, e.TimeStamp, e.IsUtcTimeStamp);
+
+            if (Services.Repository.ReadOnly) {
+                File.SetAttributes(localPathAndFilename, 
+                    File.GetAttributes(localPathAndFilename) | FileAttributes.ReadOnly);
+            }
 
             UpdateMessage message = new UpdateMessage ();
             message.Module = Services.Repository.WorkingDirectoryName;

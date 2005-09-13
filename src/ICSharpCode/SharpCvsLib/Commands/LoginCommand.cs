@@ -56,7 +56,7 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         private  WorkingDirectory workingDirectory;
 
         /// <summary>Regular expression to parse out the password prompt from the commandline</summary>
-        public const string REGEX_PASSWORD = @"[-]*pwd:([^\s]*)";
+        public const string REGEX_PASSWORD = @"-pwd:(?<Password>[^\s]*)";
 
         private const string OPT_PASSWORD = "pwd";
         private string[] args;

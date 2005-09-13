@@ -13,10 +13,11 @@
                 doc="${dir.bin}/${name.console.exe}.xml">
                 >
             <nowarn>
-                <!-- do not report deprecation warnings if not a release build -->
+                <warning number="0162" if="${string::contains(BuildType, 'debug')}"/>
                 <warning number="0618" if="${string::contains(BuildType, 'debug')}" />
-                <!-- do not report missing documentation warnings if not a release build -->
                 <warning number="1591" if="${string::contains(BuildType, 'debug')}"/>
+                <warning number="1572" if="${string::contains(BuildType, 'debug')}"/>
+                <warning number="1573" if="${string::contains(BuildType, 'debug')}"/>
             </nowarn>
                 
             <arg value="${compile.unsafe}" />

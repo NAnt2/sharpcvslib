@@ -88,10 +88,14 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 
             if (!localDir.Exists) {
                 localDir.Create();
-            }
+            } 
 
             Entry e = new Entry(new FileInfo(Path.Combine(localDir.FullName, "CVS\\Entries")), entry);
             string localPathAndFilename = e.FullPath;
+            if (File.Exists(localPathAndFilename)) {
+                File.SetAttributes(localPathAndFilename, FileAttributes.Normal);
+            }
+
             if (Services.NextFile != null && Services.NextFile.Length > 0) {
                 localPathAndFilename = Services.NextFile;
                 Services.NextFile = null;
@@ -108,10 +112,16 @@ namespace ICSharpCode.SharpCvsLib.Responses {
             }
 
             e.Date = Services.NextFileDate;
+
             Services.NextFileDate = null;
 
             Entries.Save(e);
             manager.SetFileTimeStamp (e.FullPath, e.TimeStamp, e.IsUtcTimeStamp);
+
+            if (Services.Repository.ReadOnly) {
+                File.SetAttributes(localPathAndFilename, 
+                    File.GetAttributes(localPathAndFilename) | FileAttributes.ReadOnly);
+            }
 
             UpdateMessage message = new UpdateMessage ();
             message.Module = Services.Repository.WorkingDirectoryName;

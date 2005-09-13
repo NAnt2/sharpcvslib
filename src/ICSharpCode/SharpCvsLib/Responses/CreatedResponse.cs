@@ -107,6 +107,10 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                 Services.NextFile = null;
             }
 
+            if (File.Exists(localPathAndFilename)) {
+                File.SetAttributes(localPathAndFilename, FileAttributes.Normal);
+            }
+
             Factory factory = new Factory();
             Entry e = (Entry)
                 factory.CreateCvsObject(orgPath.CurrentDir, Entry.FILE_NAME, entry);
@@ -120,8 +124,12 @@ namespace ICSharpCode.SharpCvsLib.Responses {
                         localPathAndFilename,
                         size);
             }
-
             e.Date = Services.NextFileDate;
+            if (Services.Repository.ReadOnly) {
+                File.SetAttributes(localPathAndFilename, 
+                    File.GetAttributes(localPathAndFilename) | FileAttributes.ReadOnly);
+            }
+
             Services.NextFileDate = null;
 
             manager.Add(e);
