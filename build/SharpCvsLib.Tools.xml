@@ -3,10 +3,16 @@
     </target>
     
     <target name="InstallNAntExtras">
+        <exec   program="${nant.location}nant.exe"
+                workingdir="${dir.tools}/nant/opt/build"
+                >
+            <arg value="-D:Configuration=${Configuration}"/>
+            <arg value="Build"/>
+        </exec>
         <nant buildfile="${dir.tools}/nant/opt/build/NAntExtras.build"/>
         <mkdir dir="${dir.bin}/working"/>
         <copy todir="${dir.bin}/working">
-            <fileset basedir="${dir.tools}/nant/opt/bin/${ToolConfig}">
+            <fileset basedir="${dir.tools}/nant/opt/bin/${Configuration}">
                 <include name="Sporadicism.NAntExtras.dll"/>
             </fileset>
         </copy>
@@ -14,12 +20,15 @@
     
     <target name="InstallBuilder" depends="InstallNAntExtras">
         <loadtasks assembly="${dir.bin}/working/Sporadicism.NAntExtras.dll" />
-        <nant buildfile="${dir.tools}/Builder/build/Builder.build">
-            <properties>
-                <property name="ToolConfig" value="${ToolConfig}" />
-            </properties>    
-        </nant>
+        <exec   program="${nant.location}nant.exe"
+                workingdir="${dir.tools}/Builder/build"
+                >
+            <arg value="-D:Configuration=${Configuration}"/>
+            <arg value="Build"/>
+        </exec>
+
         <sysinfo/>
+
         <property name="installLink" value="${sys.env.USERPROFILE}\Desktop\Sporadicism Builder.lnk"/>
         <ifnot test="${file::exists(installLink)}">
             <delete file="${installLink}" failonerror="false"/>

@@ -1,9 +1,43 @@
 <project name="Builder" default="Build">
-    <property name="ToolConfig" value="Debug" unless="${property::exists('ToolConfig')}"/>
-    <property name="BaseDir" value=".."/>
+    <property name="ProjectDir" value="${path::get-full-path('../')}"/>
+    <property name="OutputDir"  value="${ProjectDir}/bin"/>
+    <property name="Configuration" value="Debug" unless="${property::exists('Configuration')}"/>
+    <property name="IsDebug" value="${Configuration == string::to-lower(Configuration)}"/>
     
     <target name="Build">
-        <solution configuration="${ToolConfig}" solutionfile="../${project::get-name()}.sln" />
+        <mkdir  dir="${OutputDir}/${Configuration}"/>
+
+
+        <csc    target="winexe" 
+                output="${OutputDir}/${Configuration}/Builder.exe" 
+                debug="${IsDebug}" 
+                win32icon="${ProjectDir}/src/App.ico"
+                >
+            <nowarn>
+                <!-- do not report deprecation warnings if not a release build -->
+                <warning number="0618" if="${IsDebug}" />
+                <!-- do not report missing documentation warnings if not a release build -->
+                <warning number="1591" if="${IsDebug}"/>
+            </nowarn>
+            
+            <sources basedir="${ProjectDir}\src">
+                <include name="**/*.cs"/>
+            </sources>
+
+            <references>
+                <include name="System.dll" />
+                <include name="${nant.location}/NAnt.Core.dll"/>
+                <include name="System.EnterpriseServices.dll" />
+            </references>
+
+            <resources>
+                <include name="${ProjectDir}/src/App.ico"/>
+                <include name="${ProjectDir}/src/MainForm.resx"/>
+            </resources>
+        </csc>
+
+        <copy   file="${ProjectDir}/src/App.exe.manifest" tofile="${OutputDir}/${Configuration}/Builder.exe.manifest"/>
+        <copy   file="${ProjectDir}/src/App.config" tofile="${OutputDir}/${Configuration}/Builder.exe.config"/>
     </target>
     
     <target name="Clean">
