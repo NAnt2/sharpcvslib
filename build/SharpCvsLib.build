@@ -106,7 +106,9 @@
     </target>
     
     <target name="build.examples" depends="setup, build.test" description="Builds all project sources as well as a test binary containing a faster running subset of unit tests..">
-        <nant buildfile="${dir.examples}/examples.build" target="build"/>
+        <ifnot test="${string::contains(framework::get-family(framework::get-target-framework()), 'mono')}">
+            <nant buildfile="${dir.examples}/examples.build" target="build"/>
+        </ifnot>    
     </target>    
 
     <target name="run-tests" depends="build.all">
