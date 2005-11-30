@@ -32,7 +32,7 @@
         <property name="installLink" value="${sys.env.USERPROFILE}\Desktop\Sporadicism Builder.lnk"/>
         <ifnot test="${file::exists(installLink)}">
             <delete file="${installLink}" failonerror="false"/>
-            <echo message="Shortcut created at ${Shortcut::Create(dir.tools + '\Builder\bin\' + ToolConfig + '\Builder.exe', installLink)}"/>
+            <echo message="Shortcut created at ${Shortcut::Create(dir.tools + '\Builder\bin\' + Configuration + '\Builder.exe', installLink)}"/>
         </ifnot>    
     </target>
     
