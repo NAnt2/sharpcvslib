@@ -44,10 +44,6 @@ using ICSharpCode.SharpCvsLib.Tests.Config;
 
 using log4net;
 
-// TODO: Change to internalize helpers (remove)
-[assembly: log4net.Config.XmlConfigurator(
-ConfigFileExtension="config", Watch=true)]
-
 namespace ICSharpCode.SharpCvsLib.Tests {
     /// <summary>
     /// Abstract test is used to perform common setup and teardown routines for
