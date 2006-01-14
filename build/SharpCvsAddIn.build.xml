@@ -34,10 +34,10 @@
             </resources> 
             
             <references>
-                <include name="${framework::get-framework-directory(framework::get-runtime-framework())}/EnvDTE.dll" />
+                <include name="${framework::get-framework-directory(framework::get-runtime-framework())}/envdte.dll" />
                 <include name="${addin.ideasm.path}/vslangproj.dll" />
                 <include name="${addin.ideasm.path}/Extensibility.dll" />
-                <include name="${framework::get-framework-directory(framework::get-runtime-framework())}/Office.dll" />
+                <include name="${framework::get-framework-directory(framework::get-runtime-framework())}/office.dll" />
                 <include name="${dir.lib.ext}/${lib.log4net}" />
                 <include name="${dir.bin}/${name.top-level}.${name.project}.dll" />
                 <include name="System.dll" />
