@@ -1,5 +1,5 @@
 <project name="SharpCvsLibTools">
-    <target name="InstallTools" depends="InstallBuilder, InstallNAntExtras">
+    <target name="InstallTools" depends="InstallNAntExtras">
     </target>
     
     <target name="InstallNAntExtras">
@@ -16,24 +16,6 @@
                 <include name="Sporadicism.NAntExtras.dll"/>
             </fileset>
         </copy>
-    </target>
-    
-    <target name="InstallBuilder" depends="InstallNAntExtras">
-        <loadtasks assembly="${dir.bin}/working/Sporadicism.NAntExtras.dll" />
-        <exec   program="${nant.location}nant.exe"
-                workingdir="${dir.tools}/Builder/build"
-                >
-            <arg value="-D:Configuration=${Configuration}"/>
-            <arg value="Build"/>
-        </exec>
-
-        <sysinfo/>
-
-        <property name="installLink" value="${sys.env.USERPROFILE}\Desktop\Sporadicism Builder.lnk"/>
-        <ifnot test="${file::exists(installLink)}">
-            <delete file="${installLink}" failonerror="false"/>
-            <echo message="Shortcut created at ${Shortcut::Create(dir.tools + '\Builder\bin\' + Configuration + '\Builder.exe', installLink)}"/>
-        </ifnot>    
     </target>
     
     <target name="CleanTools">
