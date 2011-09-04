@@ -5,7 +5,7 @@
 <project name="SharpCvsAddIn" default="build">
     <!-- path for some assemblies, you'll need to change this if you have visual studion installed to a non-standard place -->
     <property name="addin.ideasm.path" value="c:\program files\Microsoft Visual Studio .NET 2003\Common7\IDE\PublicAssemblies" />
-    <target name="build">
+    <target name="build" if="${directory::exists(addin.ideasm.path)}">
         <csc    target="library" 
                 warnaserror="${compile.warnaserror}" 
                 output="${dir.bin}/${name.addin}.dll" 
