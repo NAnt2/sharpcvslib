@@ -182,12 +182,12 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
 
             // Validate that the file we received is as expected
             file = File.OpenRead(fileName);
-            Assert.IsTrue(file.Length == GetTextLen(TEXT_BLOCKS, linefeedChars));
+            Assertion.Assert(file.Length == GetTextLen(TEXT_BLOCKS, linefeedChars));
             for (int n = 0; n < GetTextLen(TEXT_BLOCKS, linefeedChars) ; n++) {
                 byte actual = (byte)file.ReadByte();
                 byte wanted = GenerateTextByte(n, linefeedChars);
                 msg = String.Format("n:{0} actual:{1} wanted:{2}", n, actual, wanted);
-                Assert.AreEqual(wanted, actual, msg);
+                Assertion.AssertEquals(msg, wanted, actual);
             }
             file.Close();
         }
@@ -221,7 +221,7 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
 
             if (isCompressed) {
                 // First char should be a 'z'
-                Assert.AreEqual(cvsStream.ReadByte(), 'z');
+                Assertion.AssertEquals(cvsStream.ReadByte(), 'z');
             }
 
             // Read the first line which should be the line length
@@ -229,14 +229,14 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
             len = Int32.Parse(numStr);
             msg = String.Format("Expected length of {0} but got length {1}",
                                 GetTextLen(TEXT_BLOCKS, linefeedChars), len);
-            Assert.AreEqual(GetTextLen(TEXT_BLOCKS, linefeedChars), len);
+            Assertion.AssertEquals(GetTextLen(TEXT_BLOCKS, linefeedChars), len);
 
             // Check what was written to the memory stream matches the file we generated
             for (int n = 0; n < GetTextLen(TEXT_BLOCKS, linefeedChars); n++) {
                 byte actual = (byte)cvsStream.ReadByte();
                 byte wanted = GenerateTextByte(n, linefeedChars);
                 msg = String.Format("n:{0} actual:{1} wanted:{2}", n, actual, wanted);
-                Assert.AreEqual(wanted, actual, msg);
+                Assertion.AssertEquals(msg, wanted, actual);
             }
         }
 
@@ -369,12 +369,12 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
 
             // Now validate that the file we received is as expected
             file = File.OpenRead(fileName);
-            Assert.IsTrue (file.Length == GetBinaryLen(BINARY_BLOCKS));
+            Assertion.Assert(file.Length == GetBinaryLen(BINARY_BLOCKS));
             for (int n = 0; n < GetBinaryLen(BINARY_BLOCKS) ; n++) {
                 byte actual = (byte)file.ReadByte();
                 byte wanted = GenerateBinaryByte(n);
                 msg = String.Format("n:{0} actual:0x{1:X2} wanted:0x{2:X2}", n, actual, wanted);
-                Assert.AreEqual(wanted, actual, msg);
+                Assertion.AssertEquals(msg, wanted, actual);
             }
             file.Close();
         }
@@ -405,7 +405,7 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
 
             if (isCompressed) {
                 // First char should be a 'z'
-                Assert.AreEqual(cvsStream.ReadByte(), 'z');
+                Assertion.AssertEquals(cvsStream.ReadByte(), 'z');
             }
 
             // Read the first line which should be the line length
@@ -413,14 +413,14 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
             len = Int32.Parse(numStr);
             msg = String.Format("Expected length of {0} but got length {1}",
                                 GetBinaryLen(BINARY_BLOCKS), len);
-            Assert.AreEqual(GetBinaryLen(BINARY_BLOCKS), len);
+            Assertion.AssertEquals(GetBinaryLen(BINARY_BLOCKS), len);
 
             // Check what was written to the memory stream matches the file we generated
             for (int n = 0; n < GetBinaryLen(BINARY_BLOCKS); n++) {
                 byte actual = (byte)cvsStream.ReadByte();
                 byte wanted = GenerateBinaryByte(n);
                 msg = String.Format("n:{0} actual:0x{1:X2} wanted:0x{2:X2}", n, actual, wanted);
-                Assert.AreEqual(wanted, actual, msg);
+                Assertion.AssertEquals(msg, wanted, actual);
             }
         }
 

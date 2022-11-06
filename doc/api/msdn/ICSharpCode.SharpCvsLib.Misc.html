@@ -1,0 +1,35 @@
+﻿<html dir="LTR"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5"><title>ICSharpCode.SharpCvsLib.Misc</title><xml></xml><link rel="stylesheet" type="text/css" href="MSDN.css"></head><body id="bodyID" class="dtBODY"><div id="nsbanner"><div id="bannerrow1"><table class="bannerparthead" cellspacing="0"><tr id="hdr"><td class="runninghead">SharpCvsLib</td><td class="product"></td></tr></table></div><div id="TitleRow"><h1 class="dtH1">ICSharpCode.SharpCvsLib.Misc Namespace</h1></div></div><div id="nstext"><p><b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </p><h3 class="dtH3">Classes</h3><div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr valign="top"><th width="50%">Class</th><th width="50%">Description</th></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Misc.CvsRoot.html">CvsRoot</a></td><td width="50%">
+            Class to encapsulate the properties of the cvsroot for the
+                repository you are communicating with.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Misc.CvsRootParseException.html">CvsRootParseException</a></td><td width="50%">
+            An invalid cvsroot exception is thrown if the client attempts to send in
+                a root that is not understood by the server.  
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Misc.PasswordScrambler.html">PasswordScrambler</a></td><td width="50%">
+            SCRAMBLE and DESCRAMBLE work like this:
+            
+            scramble(STR) returns SCRM, a scrambled copy of STR.  SCRM[0] is a
+            single letter indicating the scrambling method.  As of this
+            writing, the only legal method is 'A', but check the code for more
+            up-to-date information.
+            
+            descramble(SCRM) returns STR.
+            descramble() uses SCRM[0] to determine which method of unscrambling
+            to use.  If it does not recognize the method, it throws an exception.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Misc.TraceUtil.html">TraceUtil</a></td><td width="50%">
+                The trace utility class logs a stack trace to the log4net file
+                    if DEBUG logging is enabled.  This is used as an alternative
+                    to the .net trace mechanism.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Misc.UnsupportedProtocolException.html">UnsupportedProtocolException</a></td><td width="50%">
+            The unsupported protocol exception is thrown when a client attempts to use
+                a protocol that is not understood or not supported currently by the
+                library.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Misc.WorkingDirectory.html">WorkingDirectory</a></td><td width="50%">
+            Encapsulates the information for the local working directory and
+                the cvs server module name.  Also contains the <pre class="code">CvsRoot</pre>
+                object required to connect to the server.  The only thing you
+                have to add for this is the password.
+            </td></tr></table></div><hr><div id="footer"><p><a href="http://sharpcvslib.sourceforge.net/license.html">Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.</a></p><p></p></div></div></body></html>

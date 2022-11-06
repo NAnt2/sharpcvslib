@@ -36,7 +36,6 @@ using System.Configuration;
 using System.Xml;
 using System.Xml.Serialization;
 
-using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Util;
 
 using log4net;
@@ -74,14 +73,6 @@ namespace ICSharpCode.SharpCvsLib.Tests.Config {
         public String Cvsroot {
             get {return this.cvsroot;}
             set {this.cvsroot = value;}
-        }
-
-        /// <summary>
-        /// Get the cvsroot string as a cvsroot object.
-        /// </summary>
-        /// <returns></returns>
-        public CvsRoot GetCvsRoot() {
-            return new CvsRoot(this.cvsroot);
         }
 
         /// <summary>

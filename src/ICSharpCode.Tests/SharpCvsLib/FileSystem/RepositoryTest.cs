@@ -82,12 +82,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                                             this.REPOSITORY_ENTRY1);
 
             String cvsPath = Path.Combine (fullPath, "CVS");
-            Assert.AreEqual (fullPath, repos.ParentDir.FullName);
-            Assert.AreEqual (this.REPOSITORY_ENTRY1, repos.FileContents);
-            Assert.AreEqual (this.REPOSITORY_FILE_NAME, repos.Filename);
-            Assert.AreEqual (Factory.FileType.Repository, repos.Type);
-            Assert.AreEqual (false, repos.IsMultiLined);
-            Assert.AreEqual(MODULE_NAME, repos.ModuleName);
+            Assertion.AssertEquals ("Path not set/returned", fullPath, repos.FullPath);
+            Assertion.AssertEquals ("FileContents not set/returned", this.REPOSITORY_ENTRY1, repos.FileContents);
+            Assertion.AssertEquals ("Filename not correct", this.REPOSITORY_FILE_NAME, repos.Filename);
+            Assertion.AssertEquals ("Type not correct", Factory.FileType.Repository, repos.Type);
+            Assertion.AssertEquals ("IsMultiLined not correct", false, repos.IsMultiLined);
+            Assertion.AssertEquals(MODULE_NAME, repos.ModuleName);
         }
 
         /// <summary>
@@ -102,18 +102,18 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Repository reposSame2 = new Repository (cvsPath, this.REPOSITORY_ENTRY1);
             Repository reposDiff1 = new Repository (cvsPath, this.REPOSITORY_ENTRY2);
 
-            Assert.AreEqual (reposSame1, reposSame1);
-            Assert.AreEqual (reposSame2, reposSame1);
-            Assert.AreEqual (reposSame1, reposSame2);
+            Assertion.Assert (reposSame1.Equals (reposSame1));
+            Assertion.Assert (reposSame1.Equals (reposSame2));
+            Assertion.Assert (reposSame2.Equals (reposSame1));
 
-            Assert.IsTrue (!reposDiff1.Equals (reposSame1));
-            Assert.IsTrue (!reposDiff1.Equals (reposSame2));
-            Assert.IsTrue (!reposSame1.Equals (reposDiff1));
-            Assert.IsTrue (!reposSame2.Equals (reposDiff1));
+            Assertion.Assert (!reposDiff1.Equals (reposSame1));
+            Assertion.Assert (!reposDiff1.Equals (reposSame2));
+            Assertion.Assert (!reposSame1.Equals (reposDiff1));
+            Assertion.Assert (!reposSame2.Equals (reposDiff1));
 
-            Assert.AreEqual(MODULE_NAME, reposSame1.ModuleName);
-            Assert.AreEqual(MODULE_NAME, reposSame2.ModuleName);
-            Assert.AreEqual(MODULE_NAME, reposDiff1.ModuleName);
+            Assertion.AssertEquals(MODULE_NAME, reposSame1.ModuleName);
+            Assertion.AssertEquals(MODULE_NAME, reposSame2.ModuleName);
+            Assertion.AssertEquals(MODULE_NAME, reposDiff1.ModuleName);
         }
 
         /// <summary>
@@ -129,14 +129,18 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             String repositoryEntryWithSlash = this.REPOSITORY_ENTRY1 + "/";
 
-            Assert.IsTrue (repositoryEntryWithSlash.EndsWith ("/"));
+            Assertion.Assert ("We just added a slash, there should be a slash.",
+                            repositoryEntryWithSlash.EndsWith ("/"));
             Repository repos = new Repository (fullPath,
                                             repositoryEntryWithSlash);
 
-            Assert.IsTrue (!repos.FileContents.EndsWith ("/"));
-            Assert.AreEqual ("sharpcvslib/src", repos.FileContents);
+            Assertion.Assert ("Slash should be stripped off.",
+                            !repos.FileContents.EndsWith ("/"));
+            Assertion.Assert ("FileContents should equal module name.  FileContents=[" +
+                            repos.FileContents + "]",
+                            repos.FileContents.Equals ("sharpcvslib/src"));
 
-            Assert.AreEqual(MODULE_NAME, repos.ModuleName);
+            Assertion.AssertEquals(MODULE_NAME, repos.ModuleName);
         }
 
         /// <summary>

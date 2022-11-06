@@ -23,7 +23,6 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-using ICSharpCode.SharpCvsLib.Attributes;
 namespace ICSharpCode.SharpCvsLib.Requests {
     /// <summary>
     /// Response expected: yes. Add a file or directory. This uses any previous Argument, Directory,
@@ -74,9 +73,8 @@ namespace ICSharpCode.SharpCvsLib.Requests {
     /// local-directory may not get an error, but it will get you strange Checked-in responses from the buggy
     /// servers.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2004-2005")]
-    public class AddRequest : AbstractRequest {
+    public class AddRequest : AbstractRequest
+    {
         /// <summary>
         /// The string to send to the cvs server.
         /// </summary>

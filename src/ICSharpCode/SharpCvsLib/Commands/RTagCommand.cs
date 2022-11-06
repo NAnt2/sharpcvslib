@@ -28,13 +28,13 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Requests;
@@ -43,7 +43,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 	/// <summary>
 	/// Recursively tags a given module.
 	/// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003, 2005")]
 	public class RTagCommand : ICommand {
         private WorkingDirectory workingDirectory;
 

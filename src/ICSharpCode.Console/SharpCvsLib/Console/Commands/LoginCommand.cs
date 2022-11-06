@@ -32,48 +32,69 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.IO;
-using System.Text;
-using System.Text.RegularExpressions;
 
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Commands;
 using ICSharpCode.SharpCvsLib.Misc;
-using ICSharpCode.SharpCvsLib.Console;
 using ICSharpCode.SharpCvsLib.Console.Parser;
-using ICSharpCode.SharpCvsLib.FileSystem;
-using ICSharpCode.SharpCvsLib.Protocols;
-
-using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Console.Commands {
 
     /// <summary>
     /// Login to a cvs repository.
     /// </summary>
-    public class LoginCommand : ICSharpCode.SharpCvsLib.Commands.LoginCommand {
+    public class LoginCommand : ICommand {
+        private string password;
+        private string username;
+
+        /// <summary>
+        /// The text value of the password that will be used to login.  This should be
+        ///     translated into one of the public API command objects.
+        /// </summary>
+        public String Password {
+            get {return this.password;}
+        }
+
         /// <summary>
         /// Login to a cvs repository.
         /// </summary>
-        /// <param name="cvsRoot">User information</param>
-        public LoginCommand(string cvsRoot) : base(new CvsRoot(cvsRoot)) {
+        /// <param name="cvsroot">User information</param>
+        public LoginCommand(string cvsroot) : this(new CvsRoot(cvsroot)) {
         }
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="cvsRoot"></param>
-        public LoginCommand (CvsRoot cvsRoot) : base(cvsRoot) {
+        /// <param name="cvsroot"></param>
+        public LoginCommand (CvsRoot cvsroot) {
+            username = cvsroot.User;            
         }
 
         /// <summary>
         /// Login to a cvs repository with workDirectory object
         /// </summary>
-        /// <param name="cvsRoot">The repository root.</param>
         /// <param name="workingDirectory">User information</param>
-        public LoginCommand(CvsRoot cvsRoot, WorkingDirectory workingDirectory) :
-            base (cvsRoot, workingDirectory){
+        public LoginCommand(WorkingDirectory workingDirectory){
+            username = workingDirectory.CvsRoot.User;
+            // Is there a password file?
+            //     yes, get password for this username
+            //     no, prompt user for password to use
+        }
+
+        /// <summary>
+        /// Process the login command with cvs library API calls.
+        /// </summary>
+        public void Execute (ICommandConnection connection){
+            // Is there a password file?
+            //     yes, get password for this username
+            //     no, prompt user for password to use
+            System.Console.Write("CVS password for {0}: ", username);
+            password = System.Console.ReadLine();
+
+            // once we have a password then put it in the .cvspass file.
+            // this file is either in the HOME directory or in the root of the 
+            // current folder.
+            // TODO: Finish implementation of this command.
         }
     }
 }

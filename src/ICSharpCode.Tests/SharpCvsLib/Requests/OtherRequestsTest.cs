@@ -67,8 +67,8 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new AddRequest();
 
             MyAssertStringEquals(request.RequestString, "add");
-            Assert.IsTrue(request.IsResponseExpected);
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(request.IsResponseExpected);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -80,9 +80,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new AnnotateRequest();
 
             MyAssertStringEquals(request.RequestString, "annotate");
-            Assert.IsTrue(request.IsResponseExpected);
+            Assertion.Assert(request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -94,12 +94,12 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new ArgumentRequest("arg-data");
 
             MyAssertStringEquals(request.RequestString, "Argument", "arg-data");
-            Assert.IsTrue(!request.IsResponseExpected);
+            Assertion.Assert(!request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
-            Assert.AreEqual(ArgumentRequest.Options.REVISION, "-r");
-            Assert.AreEqual(ArgumentRequest.Options.MODULE_NAME, "-N");
-            Assert.AreEqual(ArgumentRequest.Options.OVERRIDE_DIRECTORY, "-d");
+            Assertion.Assert(!request.DoesModifyConnection);
+            Assertion.AssertEquals(ArgumentRequest.Options.REVISION, "-r");
+            Assertion.AssertEquals(ArgumentRequest.Options.MODULE_NAME, "-N");
+            Assertion.AssertEquals(ArgumentRequest.Options.OVERRIDE_DIRECTORY, "-d");
         }
 
         /// <summary>
@@ -111,9 +111,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new ArgumentxRequest("arg-data");
 
             MyAssertStringEquals(request.RequestString, "Argumentx", "arg-data");
-            Assert.IsTrue(!request.IsResponseExpected);
+            Assertion.Assert(!request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -125,9 +125,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new CaseRequest();
 
             MyAssertStringEquals(request.RequestString, "Case");
-            Assert.IsTrue(!request.IsResponseExpected);
+            Assertion.Assert(!request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -139,9 +139,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new CheckoutRequest();
 
             MyAssertStringEquals(request.RequestString, "co");
-            Assert.IsTrue(request.IsResponseExpected);
+            Assertion.Assert(request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -153,9 +153,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new CommitRequest();
 
             MyAssertStringEquals(request.RequestString, "ci");
-            Assert.IsTrue(request.IsResponseExpected);
+            Assertion.Assert(request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -167,9 +167,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new DiffRequest();
 
             MyAssertStringEquals(request.RequestString, "diff");
-            Assert.IsTrue(request.IsResponseExpected);
+            Assertion.Assert(request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -181,9 +181,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new DirectoryRequest(".", "/cvsroot/myrepos");
 
             MyAssertStringEquals(request.RequestString, "Directory", ".", "/cvsroot/myrepos");
-            Assert.IsTrue(!request.IsResponseExpected);
+            Assertion.Assert(!request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -197,9 +197,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new EntryRequest(entry);
 
             MyAssertStringEquals(request.RequestString, "Entry", entryLine);
-            Assert.IsTrue(!request.IsResponseExpected);
+            Assertion.Assert(!request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -211,9 +211,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new ExpandModulesRequest();
 
             MyAssertStringEquals(request.RequestString, "expand-modules");
-            Assert.IsTrue(request.IsResponseExpected);
+            Assertion.Assert(request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -225,9 +225,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new ExportRequest();
 
             MyAssertStringEquals(request.RequestString, "export");
-            Assert.IsTrue(request.IsResponseExpected);
+            Assertion.Assert(request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -240,9 +240,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new GlobalOptionRequest("-q");
 
             MyAssertStringEquals(request.RequestString, "Global_option", "-q");
-            Assert.IsTrue(!request.IsResponseExpected);
+            Assertion.Assert(!request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -254,9 +254,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new GzipFileContents(3);
 
             MyAssertStringEquals(request.RequestString, "gzip-file-contents", "3");
-            Assert.IsTrue(!request.IsResponseExpected);
+            Assertion.Assert(!request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -268,9 +268,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new GzipStreamRequest(3);
 
             MyAssertStringEquals(request.RequestString, "Gzip-stream", "3");
-            Assert.IsTrue(!request.IsResponseExpected);
+            Assertion.Assert(!request.IsResponseExpected);
 
-            Assert.IsTrue(request.DoesModifyConnection);    // Connection should be modified
+            Assertion.Assert(request.DoesModifyConnection);    // Connection should be modified
         }
 
         /// <summary>
@@ -282,9 +282,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new ImportRequest();
 
             MyAssertStringEquals(request.RequestString, "import");
-            Assert.IsTrue(request.IsResponseExpected);
+            Assertion.Assert(request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -296,9 +296,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new InitRequest("/sharpcvslib");
 
             MyAssertStringEquals(request.RequestString, "init", "/sharpcvslib");
-            Assert.IsTrue(request.IsResponseExpected);
+            Assertion.Assert(request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -310,9 +310,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
 
             // TODO: ModifiedRequest does not allow you to specify the mode!
             MyAssertStringEquals(request.RequestString, "Is-modified", "test.cs");
-            Assert.IsTrue(!request.IsResponseExpected);
+            Assertion.Assert(!request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -324,9 +324,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new LogRequest();
 
             MyAssertStringEquals(request.RequestString, "log");
-            Assert.IsTrue(request.IsResponseExpected);
+            Assertion.Assert(request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -339,9 +339,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
 
             // TODO: ModifiedRequest does not allow you to specify the mode!
             MyAssertStringEquals(request.RequestString, "Modified", "test.cs", "u=rw,g=rw,o=rw");
-            Assert.IsTrue(!request.IsResponseExpected);
+            Assertion.Assert(!request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         // TODO: PServerAuthRequest to be tested elsewhere
@@ -356,9 +356,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new QuestionableRequest("test.cs");
 
             MyAssertStringEquals(request.RequestString, "Questionable", "test.cs");
-            Assert.IsTrue(!request.IsResponseExpected);
+            Assertion.Assert(!request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -370,9 +370,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new RDiffRequest();
 
             MyAssertStringEquals(request.RequestString, "rdiff");
-            Assert.IsTrue(request.IsResponseExpected);
+            Assertion.Assert(request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -384,9 +384,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new RemoveRequest();
 
             MyAssertStringEquals(request.RequestString, "remove");
-            Assert.IsTrue(request.IsResponseExpected);
+            Assertion.Assert(request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         // TODO: RequestMethodEventArgs to be tested elsewhere
@@ -401,9 +401,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new RootRequest("/cvsroot/sharpcvslib");
 
             MyAssertStringEquals(request.RequestString, "Root", "/cvsroot/sharpcvslib");
-            Assert.IsTrue(!request.IsResponseExpected);
+            Assertion.Assert(!request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -415,9 +415,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new StatusRequest();
 
             MyAssertStringEquals(request.RequestString, "status");
-            Assert.IsTrue(request.IsResponseExpected);
+            Assertion.Assert(request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -429,9 +429,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new StickyRequest("TV1.1");
 
             MyAssertStringEquals(request.RequestString, "Sticky", "TV1.1");
-            Assert.IsTrue(!request.IsResponseExpected);
+            Assertion.Assert(!request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -443,9 +443,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new TagRequest();
 
             MyAssertStringEquals(request.RequestString, "tag");
-            Assert.IsTrue(request.IsResponseExpected);
+            Assertion.Assert(request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -457,9 +457,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new UnchangedRequest("test.cs");
 
             MyAssertStringEquals(request.RequestString, "Unchanged", "test.cs");
-            Assert.IsTrue(!request.IsResponseExpected);
+            Assertion.Assert(!request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -471,9 +471,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new UpdateRequest();
 
             MyAssertStringEquals(request.RequestString, "update");
-            Assert.IsTrue(request.IsResponseExpected);
+            Assertion.Assert(request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         // TODO: UploadFileRequest to be tested elsewhere
@@ -487,9 +487,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new UseUnchangedRequest();
 
             MyAssertStringEquals(request.RequestString, "UseUnchanged");
-            Assert.IsTrue(!request.IsResponseExpected);
+            Assertion.Assert(!request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -501,9 +501,9 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             IRequest request = new ValidRequestsRequest();
 
             MyAssertStringEquals(request.RequestString, "valid-requests");
-            Assert.IsTrue(request.IsResponseExpected);
+            Assertion.Assert(request.IsResponseExpected);
 
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         // Valid-responses tested in ValidResponsesRequestTest
@@ -523,7 +523,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
         {
             string expectedRequest = String.Format("{0}\n", command);
 
-            Assert.AreEqual(requestString, expectedRequest);
+            Assertion.AssertEquals(requestString, expectedRequest);
         }
 
         /// <summary>
@@ -534,7 +534,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
         {
             string expectedRequest = String.Format("{0} {1}\n", command, data);
 
-            Assert.AreEqual(requestString, expectedRequest);
+            Assertion.AssertEquals(requestString, expectedRequest);
         }
 
         /// <summary>
@@ -546,7 +546,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
         {
             string expectedRequest = String.Format("{0} {1}\n{2}\n", command, data, nextLine);
 
-            Assert.AreEqual(requestString, expectedRequest);
+            Assertion.AssertEquals(requestString, expectedRequest);
         }
     }
 }

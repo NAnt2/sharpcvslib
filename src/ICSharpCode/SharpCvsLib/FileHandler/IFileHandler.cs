@@ -31,43 +31,42 @@
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Streams;
 
 namespace ICSharpCode.SharpCvsLib.FileHandler {
+
+/// <summary>
+/// This interface provides reading and writing service for files from and
+/// to the server. Different ways of file sending/receiving are implemented
+/// (currently uncompressed and gzipped)
+/// </summary>
+public interface IFileHandler
+{
     /// <summary>
-    /// This interface provides reading and writing service for files from and
-    /// to the server. Different ways of file sending/receiving are implemented
-    /// (currently uncompressed and gzipped)
+    /// Send a text file to the server.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public interface IFileHandler {
-        /// <summary>
-        /// Send a text file to the server.
-        /// </summary>
-        /// <param name="outStream"></param>
-        /// <param name="fileName"></param>
-        void SendTextFile(CvsStream outStream, string fileName);
-        /// <summary>
-        /// Received a text file from the server.
-        /// </summary>
-        /// <param name="inputStream"></param>
-        /// <param name="fileName"></param>
-        /// <param name="length"></param>
-        void ReceiveTextFile(CvsStream inputStream, string fileName, int length);
-        /// <summary>
-        /// Send a binary file to the server.
-        /// </summary>
-        /// <param name="outStream"></param>
-        /// <param name="fileName"></param>
-        void SendBinaryFile(CvsStream outStream, string fileName);
-        /// <summary>
-        /// Receive a binary file from the server.
-        /// </summary>
-        /// <param name="inputStream"></param>
-        /// <param name="fileName"></param>
-        /// <param name="length"></param>
-        void ReceiveBinaryFile(CvsStream inputStream, string fileName, int length);
-    }
+    /// <param name="outStream"></param>
+    /// <param name="fileName"></param>
+    void SendTextFile(CvsStream outStream, string fileName);
+    /// <summary>
+    /// Received a text file from the server.
+    /// </summary>
+    /// <param name="inputStream"></param>
+    /// <param name="fileName"></param>
+    /// <param name="length"></param>
+    void ReceiveTextFile(CvsStream inputStream, string fileName, int length);
+    /// <summary>
+    /// Send a binary file to the server.
+    /// </summary>
+    /// <param name="outStream"></param>
+    /// <param name="fileName"></param>
+    void SendBinaryFile(CvsStream outStream, string fileName);
+    /// <summary>
+    /// Receive a binary file from the server.
+    /// </summary>
+    /// <param name="inputStream"></param>
+    /// <param name="fileName"></param>
+    /// <param name="length"></param>
+    void ReceiveBinaryFile(CvsStream inputStream, string fileName, int length);
+}
 }

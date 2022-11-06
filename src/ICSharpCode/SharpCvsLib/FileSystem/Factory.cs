@@ -27,6 +27,8 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    <author>Clayton Harbour</author>
+//
 #endregion
 
 using System;
@@ -36,15 +38,11 @@ using System.IO;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-using ICSharpCode.SharpCvsLib.Exceptions;
-
 namespace ICSharpCode.SharpCvsLib.FileSystem {
 
     /// <summary>
     ///     Creates the cvs object necessary based on the filename.
     /// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class Factory {
         private readonly ILog LOGGER = LogManager.GetLogger(typeof(ICSharpCode.SharpCvsLib.FileSystem.Factory));
         /// <summary>
@@ -94,28 +92,16 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     The following will produce an entries file 
         ///         (directory seperator character may be different):
         ///         
-        /// <list type="table">
-        ///     <term>path</term>
-        ///     <description>c:/dev/sharpcvslib</description>
-        ///     <term>fileName</term>
-        ///     <description>Entries</description>
-        ///     <term>line</term>
-        ///     <description>/SharpCvsLib.build/1.1///</description>
-        /// </list>
-        /// 
-        /// With the following information:
-        /// <list type="table">
-        ///     <term>FileContents</term>
-        ///     <description>/SharpCvsLib.build/1.1///</description>
-        ///     <term>FileName</term>
-        ///     <description>Entries</description>
-        ///     <term>FullPath</term>
-        ///     <description>c:/dev/sharpcvslib/SharpCvsLib.build</description>
-        ///     <term>IsMultiLined</term>
-        ///     <description>true</description>
-        ///     <term>Path</term>
-        ///     <description>c:/dev/sharpcvslib/</description>
-        /// </list>
+        ///         path            = c:/dev/sharpcvslib
+        ///         fileName        = Entries
+        ///         line            = /SharpCvsLib.build/1.1///
+        ///         
+        ///     With the following information:
+        ///         FileContents    = /SharpCvsLib.build/1.1///
+        ///         FileName        = Entries
+        ///         FullPath        = c:/dev/sharpcvslib/SharpCvsLib.build
+        ///         IsMultiLined    = true
+        ///         Path            = c:/dev/sharpcvslib/
         ///         
         ///     NOTE:
         ///     <ul>
@@ -126,81 +112,57 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </example>
         public ICvsFile CreateCvsObject (String path, String fileName, String line) {
             FileType fileType = this.GetFileType(fileName);
-            FileInfo cvsFile = new FileInfo(Path.Combine(PathTranslator.AppendCvs(path).FullName, fileName));
-            return this.CreateCvsObject(cvsFile, line);
-        }
-
-        public ICvsFile CreateCvsObject (DirectoryInfo dir, string fileName, string line) {
-            if (!dir.FullName.EndsWith(string.Format("{0}CVS", 
-                Path.DirectorySeparatorChar))) {
-                dir = new DirectoryInfo(Path.Combine(dir.FullName, "CVS"));
-            }
-            FileInfo cvsFile = new FileInfo(Path.Combine(dir.FullName, fileName));
-            return this.CreateCvsObject(cvsFile, line);
+            return this.CreateCvsObject(path, fileType, line);
         }
 
         /// <summary>
-        /// Create a cvs file object given the full path and line of the file.
+        /// Create the cvs file based on the filename.  Returns the
+        ///     cvs file interface.
         /// </summary>
-        /// <param name="file"></param>
-        /// <param name="line"></param>
-        /// <returns></returns>
-        public ICvsFile CreateCvsObject (FileInfo file, string line) {
+        public ICvsFile CreateCvsObject (String path,
+                                        FileType fileType,
+                                        String line) {
             ICvsFile entry;
-
-            if (!System.Enum.IsDefined(typeof(FileType), file.Name)) {
-                throw new UnsupportedFileTypeException(string.Format("Unknown cvs file type: {0}",
-                    file.Name));
-            }
-
-            switch ((FileType)Enum.Parse(typeof(FileType), file.Name, true)) {
+            LOGGER.Debug("path=[" + path + "]");
+            LOGGER.Debug("line=[" + line + "]");
+            switch (fileType) {
                 case (FileType.Entries): {
-                    entry = new Entry(file, line);
+                    if (Entry.IsDirectoryEntry(line)) {
+                        if (path.EndsWith("/") || 
+                            path.EndsWith(Path.DirectorySeparatorChar.ToString())) {
+                            path = path.Substring(0, path.Length - 1);
+                        }
+                        path = Path.GetDirectoryName(path);
+                    }
+                    LOGGER.Debug("path=[" + path + "]");
+                    entry = new Entry(path, line);
                     break;
                 }
                 case (FileType.Repository):{
-                    entry = new Repository (file, line);
+                    LOGGER.Debug("Creating repository file.");
+                    entry = new Repository (path, line);
                     break;
                 }
                 case (FileType.Root):{
-                    entry = new Root (file, line);
+                    LOGGER.Debug("Creating root file.");
+                    entry = new Root (path, line);
                     break;
                 }
                 case (FileType.Tag):{
-                    entry = new Tag (file, line);
+                    LOGGER.Debug("Creating tag file.");
+                    entry = new Tag (path, line);
                     break;
                 }
                 default:{
                     StringBuilder msg = new StringBuilder();
                     msg.Append("Unknown file type specified.");
-                    msg.Append("fileType=[").Append(file.Name).Append("]");
+                    msg.Append("fileType=[").Append(fileType.ToString()).Append("]");
                     throw new UnsupportedFileTypeException (msg.ToString());
                 }
 
             }
             return entry;
-        }
 
-        private string GetCvsFileName (string fullPath) {
-            int cvsIndex = fullPath.LastIndexOf("CVS");
-            if (cvsIndex == -1) {
-                throw new Exception(string.Format("CVS directory does not exist in {0}.",
-                    fullPath));
-            }
-
-            return
-                fullPath.Substring(cvsIndex + 3);
-        }
-
-        private string GetPath(string fullPath) {
-            int cvsIndex = fullPath.LastIndexOf("CVS");
-            if (cvsIndex == -1) {
-                throw new Exception(string.Format("CVS directory does not exist in {0}.",
-                    fullPath));
-            }
-
-            return
-                fullPath.Substring(0, cvsIndex);
         }
 
         /// <summary>

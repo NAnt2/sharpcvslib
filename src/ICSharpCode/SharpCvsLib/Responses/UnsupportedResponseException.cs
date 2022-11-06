@@ -1,5 +1,4 @@
 using System;
-using ICSharpCode.SharpCvsLib.Attributes;
 
 namespace ICSharpCode.SharpCvsLib.Responses
 {
@@ -7,8 +6,6 @@ namespace ICSharpCode.SharpCvsLib.Responses
 	/// The unknown response exception is thrown when the cvs server returns 
 	///     a response that the client does not know how to handle.
 	/// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
-    [Obsolete ("Use ICSharpCode.SharpCvsLib.Exceptions.UnsupportedResponseException")]
 	public class UnsupportedResponseException : Exception{
         /// <summary>
         /// Indicate that an unknown response has been returned from the repository.

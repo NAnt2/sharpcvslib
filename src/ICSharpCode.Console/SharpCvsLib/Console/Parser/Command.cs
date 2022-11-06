@@ -37,7 +37,6 @@
 #endregion
 
 using System;
-using System.Collections;
 
 namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
@@ -45,8 +44,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
     public class Command {
 
         private String first;
-        private ArrayList nicks;
-        private string description;
+        private String nick1;
+        private String nick2;
 
         /// <summary>
         /// Primary name for the command, the name to be used first.
@@ -59,39 +58,14 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// Nickname/ synonym for the command.
         /// </summary>
         public String Nick1 {
-            get {
-                if (null != this.nicks && this.nicks.Count > 0) {
-                    return (string)this.nicks[0];
-                }
-                return String.Empty;
-            }
+            get {return this.nick1;}
         }
 
         /// <summary>
         /// Nickname/ synonym for the command
         /// </summary>
         public String Nick2 {
-            get {
-                if (null != this.nicks && this.nicks.Count > 1) {
-                    return (string)this.nicks[1];
-                }
-                return String.Empty;            
-            }
-        }
-
-        /// <summary>
-        /// Common name for the command.
-        /// </summary>
-        public string CommandName {
-            get {return this.first;}
-        }
-
-        /// <summary>
-        /// Description of the command.
-        /// </summary>
-        public string Description {
-            get {return this.description;}
-            set {this.description = value;}
+            get {return this.nick2;}
         }
 
         /// <summary>Create a new command.</summary>
@@ -100,21 +74,8 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         /// <param name="nick2">Second alternate name for the command.</param>
         public Command (string first, string nick1, string nick2) { 
             this.first = first;
-            this.nicks = new ArrayList();
-            this.nicks.Add(nick1);
-            this.nicks.Add(nick2);
-        }
-
-        /// <summary>
-        /// Create a new instance of the command object.
-        /// </summary>
-        /// <param name="commandName">Name of the command.</param>
-        /// <param name="description">Description of the command.</param>
-        /// <param name="nicks">Nicknames for the command.</param>
-        public Command (string commandName, string description, ICollection nicks) {
-            this.first = commandName;
-            this.description = description;
-            this.nicks = new ArrayList(nicks);
+            this.nick1 = nick1;
+            this.nick2 = nick2;
         }
     }
 }

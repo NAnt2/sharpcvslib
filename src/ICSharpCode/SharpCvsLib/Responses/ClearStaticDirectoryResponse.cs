@@ -27,13 +27,14 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    Author:     Mike Krueger,
+//                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
 using System;
-using System.IO;
 using System.Text;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
@@ -43,75 +44,58 @@ using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
     /// <summary>
-    /// <para>
     /// Handle a clear static directory response.
-    /// <br/>
-    /// <code>
+    ///
     /// from: http://www.loria.fr/~molli/cvs/doc/cvsclient_5.html
     ///    Clear-static-directory pathname \n
-    /// </code>
-    /// </para>
-    /// <para>
+    ///
     /// This instructs the client to un-set the Entries.Static flag,
     /// which it should then send back to the server in a Static-directory
     /// request whenever the directory is operated on. pathname ends in a
     /// slash; its purpose is to specify a directory, not a file within a
     /// directory.
-    /// </para>
+    ///
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class ClearStaticDirectoryResponse : AbstractResponse {
+    public class ClearStaticDirectoryResponse : IResponse {
         private readonly ILog LOGGER =
             LogManager.GetLogger (typeof (ClearStaticDirectoryResponse));
         /// <summary>
         /// Process a clear static directory response.
         /// </summary>
-        public override void Process() {
-            string localPath      = this.ReadLine();
-            string reposPath      = this.ReadLine();
+        /// <param name="cvsStream"></param>
+        /// <param name="services"></param>
+        public void Process(CvsStream cvsStream, IResponseServices services) {
+            string localPath      = cvsStream.ReadLine();
+            string reposPath = cvsStream.ReadLine();
 
-            DirectoryInfo localDir = 
-                new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, localPath));
-            DirectoryInfo cvsDir = new DirectoryInfo(Path.Combine(localDir.FullName, "CVS"));
+            Manager manager = new Manager (services.Repository.WorkingPath);
+            manager.AddRepository (services.Repository, localPath, reposPath);
+            manager.AddRoot (services.Repository, localPath, reposPath);
+            PathTranslator pathTranslator = new PathTranslator (services.Repository, reposPath);
 
-            Repository.Save(new Repository(cvsDir, localPath));
-            Root.Save(new Root(cvsDir, Services.Repository.CvsRoot));
-
-
-            PathTranslator pathTranslator = new PathTranslator (Services.Repository, reposPath);
-
-            Factory factory = new Factory();
-
-            Entry entry;
-            if (localPath.EndsWith("/")) {
-                entry = Entry.CreateEntry(new DirectoryInfo(System.IO.Path.Combine(
-                    pathTranslator.LocalPath, localPath)));
-            } else {
-                entry = Entry.CreateEntry(new FileInfo(System.IO.Path.Combine(
-                    pathTranslator.LocalPath, localPath)));
-            }
+            Entry entry = Entry.CreateEntry(pathTranslator.LocalPathAndFilename);
             // the root module directory does not get a cvs Entries line.
             // TODO: There has to be a cleaner way to do this...
-            if (Services.Repository.WorkingPath.Length <= entry.Path.Length) {
-                Entries.Save(entry);
+            if (services.Repository.WorkingPath.Length <= entry.Path.Length) {
+                manager.AddEntry(entry);
             }
 
-            Services.ResponseMessageEvents.SendResponseMessage(
-                String.Format("Updating {0}", RemoveTrailingSlash(localPath)), this.GetType());
-        }
-
-        private string RemoveTrailingSlash(string localPath) {
-            if (localPath.EndsWith("/")) {
-                return localPath.Substring(0, localPath.Length - 1);
+            if (LOGGER.IsDebugEnabled) {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append ("\n Clear static directory response.  ");
+                msg.Append ("\n\t localPath=[").Append (localPath).Append ("]");
+                msg.Append ("\n\t reposPath=[").Append (reposPath).Append ("]");
+                msg.Append ("\n\t entry=[").Append(entry).Append("]");
+                msg.Append("\n\t entry.FullPath=[").Append(entry.FullPath).Append("]");
+                msg.Append("\n\t entry.Path=[").Append(entry.Path).Append("]");
+                LOGGER.Debug (msg);
             }
-            return localPath;
         }
 
         /// <summary>
         /// Return true if this response cancels the transaction
         /// </summary>
-        public override bool IsTerminating {
+        public bool IsTerminating {
             get {return false;}
         }
     }

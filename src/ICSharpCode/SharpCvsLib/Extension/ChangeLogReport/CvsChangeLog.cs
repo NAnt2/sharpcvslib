@@ -27,6 +27,8 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    <author>Gerald Evans</author>
+//
 #endregion
 
 using System;
@@ -36,11 +38,9 @@ using System.IO;
 using System.Text;
 using System.Xml;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Commands;
 using ICSharpCode.SharpCvsLib.Exceptions;
-using ICSharpCode.SharpCvsLib.Extension.LogReporter;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Messages;
 using ICSharpCode.SharpCvsLib.Misc;
@@ -64,49 +64,73 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
     ///    // and/or cvsChangeLog.EndDate = new DateTime(...);
     ///	    
     ///    cvsChangeLog.Run(xmlFilename, password);
-    ///    // or cvsChangeLog.Run(stdioFile, password)
     ///
     /// </summary>
-    [Author("Gerald Evans", "gne@users.sourceforge.net", "2003")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class CvsChangeLog {
+    class CvsChangeLog
+    {
+    	// data set by ctor
+        private string module;
+        private string localDirectory;
+        
+    	// date information set by caller
+    	private DateTime startDate;
+    	private bool hasStartDate;
+    	private DateTime endDate;
+    	private bool hasEndDate;
+    
         // Name mapping set by caller    
         private StringDictionary nameMap = new StringDictionary();   
-
-        // The LogReportCommand does the real work of getting a LogReport
-        private LogReportCommand logCommand;
+     
+        // Represents what we want next from the messages output by the log command
+        private enum LogState { 
+            WANT_FILE,
+            WANT_REVISION,
+            WANT_DATE,
+            WANT_COMMENT,
+            WANT_PREV_REVISION
+        }
+        private LogState logState = LogState.WANT_FILE;
+    
+        // data currently extracted from the log command output
+        private string date;
+        private string author;
+        private string comment;
+        private string filename;
+        private string revision;
+        private string prevRevision;    
+        
+        // This is where we accumulate information on all the entries from the log command
+        private SortedList entries = new SortedList();
         
         /// <summary>
         /// ctor
         /// </summary>
         public CvsChangeLog(string module, string localDirectory)
         {
-            logCommand = new LogReportCommand(module, localDirectory);
-        }
-
-        /// <summary>
-        /// Create a new instance of the cvs changelog command.
-        /// </summary>
-        /// <param name="workingDirectory"></param>
-        /// <param name="module"></param>
-        public CvsChangeLog(WorkingDirectory workingDirectory, string module) {
-            logCommand = new LogReportCommand(workingDirectory, module);
+            this.module = module;
+            this.localDirectory = localDirectory;
         }
     
         /// <summary>
         /// If set, only report changes on or after this date
         /// </summary>
-        public DateTime StartDate {
-            get {return logCommand.StartDate;}
-        	set {logCommand.StartDate = value;}
+        public DateTime StartDate 
+        {
+        	set { 
+        		startDate = value;
+        		hasStartDate = true;
+        	}
         }
             
         /// <summary>
         /// If set, only report changes on or before this date
         /// </summary>
-        public DateTime EndDate {
-            get {return logCommand.EndDate;}
-        	set {logCommand.EndDate = value;}
+        public DateTime EndDate 
+        {
+        	set { 
+        		endDate = value;
+        		hasEndDate = true;
+        	}
         }
         
         /// <summary>
@@ -114,9 +138,12 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
         /// </summary>
         public void SetLastNDays(int days)
         {
-            logCommand.SetLastNDays(days);
+        	//endDate = DateTime.Now;
+        	startDate = DateTime.Now.AddDays(- days);
+        	hasStartDate = true;
+        	//hasEndDate = true;
         }
-
+        
         /// <summary>
         /// Adds a single mapping between a user name as used within cvs and
         /// a full users name.
@@ -132,90 +159,55 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
         /// </summary>
         public void Run(string xmlFilename, string password)
         {
-//            try
-//            {
-                XmlTextWriter textWriter = new XmlTextWriter(xmlFilename, new UTF8Encoding());
-                Run(textWriter, password);
-//            } catch (Exception e) {
-//                System.Console.WriteLine("XML create/write error: {0}", e.Message);
-//                throw e;
-//            }
-        }
-
-        /// <summary>
-        /// Produce the report.
-        /// </summary>
-        /// <param name="xmlFilename"></param>
-        /// <param name="connection"></param>
-        public void Run(string xmlFilename, ICommandConnection connection) {
-            XmlTextWriter textWriter = new XmlTextWriter(xmlFilename, new UTF8Encoding());
-            Run(textWriter, connection);
-        }
+            // read Root and Repository from local directory
+            Manager manager = new Manager(localDirectory);
+            Repository repository = (Repository)manager.FetchSingle (localDirectory,
+                                Factory.FileType.Repository);
+            Root root = (Root)manager.FetchSingle (localDirectory,
+                                Factory.FileType.Root);
         
-        /// <summary>
-        /// Produce the report
-        /// </summary>
-        public void Run(XmlTextWriter textWriter, string password)
-        {
-            // send the log command to the cvs server and get the LogReport
-            LogReport logReport = logCommand.Run(password);
+            CvsRoot cvsRoot = new CvsRoot(root.FileContents);
             
-            // now format the LogReport into a change log
-            FormatReport(textWriter, logReport);
-        }
+            WorkingDirectory workingDirectory = new WorkingDirectory(cvsRoot,
+                                                                     localDirectory,
+                                                                     module);
+        
+            // Recursively add all cvs folders/files under the localDirectory
+            workingDirectory.FoldersToUpdate = FetchFiles(localDirectory);
+            
+            LogCommand command = new LogCommand(workingDirectory, repository.FileContents, null);
     
-        /// <summary>
-        /// Produce the report
-        /// </summary>
-        public void Run(XmlTextWriter textWriter, ICommandConnection connection)
-        {
-            // send the log command to the cvs server and get the LogReport
-            LogReport logReport = logCommand.Run(connection);
+            // add any date restrictions        
+            if (hasStartDate && hasEndDate) {
+            	command.AddInclusiveDateRange(startDate, endDate);
+            } else if (hasStartDate) {
+            	command.AddInclusiveDateStart(startDate);
+            } else if (hasEndDate) {
+            	command.AddInclusiveDateEnd(endDate);
+            }
             
-            // now format the LogReport into a change log
-            FormatReport(textWriter, logReport);
-        }
-   
-        /// <summary>
-        /// Format the LogReport into a change log
-        /// which will be written to textWriter
-        /// </summary>
-        private void FormatReport(XmlTextWriter textWriter, LogReport logReport)
-        {
-            LogRevision logRevision;
-
-            // This is where we accumulate information on all the entries from the log command
-            SortedList entries = new SortedList();
-            LogEntry entry;
-            string prevRevision;
+            // Get a connection
+            CVSServerConnection connection = new CVSServerConnection();
+     
+            // Initialse state machine
+            ResetState();
             
-            // now collect together revisions that were checked-in together
-	        foreach (LogFile logFile in logReport)
-    	    {
-//    	        foreach (LogRevision logRevision in logFile)
-    	        // traverse revisions in reverse order so we look at oldest first
-    	        // which simplifies the remembering the previous revision
-    	        prevRevision = "";
-                for (int idx = logFile.Count - 1; idx >= 0; idx--)
-    	        {
-    	            logRevision = logFile[idx];
-                    entry = new LogEntry(logRevision.Timestamp, logRevision.Author, logRevision.Comment);
-                    // determine if this entry already exists
-                    if (entries.ContainsKey(entry.Key)) {
-                        // need to update an existing entry
-                        entry = (LogEntry)entries[entry.Key];
-                    } else {
-                        // add new entry
-                        entries.Add(entry.Key, entry);
-                    }
-                    // finally add details about the file/revision
-                    entry.AddFileRevision(logFile.WorkingFnm, logRevision.Revision, prevRevision);
-    	            prevRevision = logRevision.Revision;
-    	        }
-    	    }
-               
-            // now finally produce the XML report
-//            try {
+            try {
+                connection.MessageEvent.MessageEvent += new EncodedMessage.MessageHandler(OnMessage);
+                connection.Connect(workingDirectory, password);
+                command.Execute(connection);
+            } catch (AuthenticationException e) {
+                System.Console.WriteLine("Authentication error: {0}", e.Message);
+            } catch (Exception e) {
+                System.Console.WriteLine("Connection error: {0}", e.Message);
+            }
+            
+            // clean up
+            connection.Close();
+             
+            // now output the XML
+            try {
+                XmlTextWriter textWriter = new XmlTextWriter(xmlFilename, new UTF8Encoding());
                 textWriter.Formatting = Formatting.Indented;
                 textWriter.WriteStartDocument();
                 textWriter.WriteStartElement("changelog");
@@ -230,10 +222,177 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
                 textWriter.WriteEndElement();    // changelog
                 textWriter.WriteEndDocument();
                 textWriter.Close();
-//            } catch (Exception e) {
-//                System.Console.WriteLine("XML write error: {0}", e.Message);
-//                throw e;
-//            }
+            } catch (Exception e) {
+                System.Console.WriteLine("XML create/write error: {0}", e.Message);
+            }
+        }
+        
+        /// <summary>
+        /// Returns a list of all the folders (and the files in each of those folders)
+        /// that we need to get the change log for.
+        /// </summary>
+        private Folder[] FetchFiles(string localDirectory)
+        {
+            ArrayList folders = new ArrayList ();
+            FetchFilesRecursive(folders, localDirectory);
+            return (Folder[])folders.ToArray (typeof (Folder));
+        }
+         
+        private void FetchFilesRecursive(ArrayList folders, string localDirectory)
+        {
+            Folder folder = new Folder ();
+            Manager manager = new Manager(localDirectory);
+            
+            folder.Repository = (Repository)manager.FetchSingle (localDirectory,
+                                Factory.FileType.Repository);
+            ArrayList colEntries = new ArrayList (manager.Fetch (localDirectory,
+                                            Factory.FileType.Entries));
+            foreach (Entry entry in colEntries) {
+                if (!entry.IsDirectory) {
+    //Console.WriteLine("Found file {0}", entry.FullPath);
+                    folder.Entries.Add (entry.FullPath, entry);
+                }
+            }
+            folders.Add (folder);
+            
+            foreach (Entry entry in colEntries) {
+                if (entry.IsDirectory) {
+                    string childDir = Path.Combine(localDirectory, entry.Name);
+    //Console.WriteLine("Found directory {0}", childDir);
+                    FetchFilesRecursive(folders, childDir);
+                }
+            }
+        }
+       
+    //    /// <summary>
+    //    /// </summary>
+    //    public void OnResponse(string message)
+    //    {
+    //        Console.Write(message);
+    //    }
+        
+        /// <summary>
+        /// This is called for each Message response we receive from the cvs server.
+        /// </summary>
+        public void OnMessage(string message)
+        {
+            const string filePrefix = "Working file: ";
+            const string datePrefix = "date: ";
+            const string revisionPrefix = "revision ";
+            const string fileEndPrefix = "==========";
+            const string revisionEndPrefix = "----------";
+     
+            //System.Console.WriteLine(message);
+    
+            // only process the lines starting with "M "        
+            if (message.StartsWith("M ")) {
+                // Strip of the leading "M "
+                message = message.Substring(2);
+            
+                switch (logState) {
+                case LogState.WANT_FILE:
+                    // file line is of form 'Working file: <filename>'
+                    if (message.StartsWith(filePrefix)) {
+                        filename = message.Substring(filePrefix.Length);
+                        logState = LogState.WANT_REVISION;
+                    }
+                    break;
+                                
+                case LogState.WANT_REVISION:
+                    // revision line is of form 'revision: <revision>'
+                    if (message.StartsWith(fileEndPrefix)) {
+                        // End of file - looks like there were no revisions for thie file
+                        // start loking for the next file
+                        ResetState();
+                    } else if (message.StartsWith(revisionPrefix)) {
+                        revision = message.Substring(revisionPrefix.Length);
+                        logState = LogState.WANT_DATE;
+                    }
+                    break;
+        
+                case LogState.WANT_DATE:
+                    // date line is of form 'date: yyyy/mm/dd hh:mm:ss; author: <author>;  <other stuff>
+                    if (message.StartsWith(datePrefix)) {
+                        ExtractDateAndAuthor(message);
+                        logState = LogState.WANT_COMMENT;
+                    }
+                    break;
+                    
+                case LogState.WANT_COMMENT:
+                    if (message.StartsWith(fileEndPrefix)) {
+                        AddNewEntry();
+                        ResetState();    // logState = WANT_FILE
+                    } else if (message.StartsWith(revisionEndPrefix)) {
+                        logState = LogState.WANT_PREV_REVISION;
+                    } else {
+                        // append comment line to the comment
+                        if (comment.Length > 0) {
+                            comment += Environment.NewLine;
+                        }
+                        comment += message;
+                    }
+                    break;
+                    
+                case LogState.WANT_PREV_REVISION:
+                    // revision line is of form 'revision: <revision>'
+                    if (message.StartsWith(revisionPrefix)) {
+                        prevRevision = message.Substring(revisionPrefix.Length);
+                        AddNewEntry();
+                        revision = prevRevision;
+                        prevRevision = "";
+                        date = "";
+                        author = "";
+                        comment = "";
+                        logState = LogState.WANT_DATE;
+                    }
+                    break;
+                }
+            }
+        }
+        
+        // TODO: make this function more resiliant to minor changes in the input
+        private void ExtractDateAndAuthor(string message)
+        {
+            // date line is of form 'date: yyyy/mm/dd hh:mm:ss; author: <author>;  <other stuff>
+            const string datePrefix = "date: ";       
+            const string dateFormat = "yyyy/mm/dd hh:mm:ss";  
+            const string authorPrefix = ";  author: ";  
+            int authorIndex = datePrefix.Length + dateFormat.Length + authorPrefix.Length;
+            
+            date = message.Substring(datePrefix.Length, dateFormat.Length);
+            author = message.Substring(authorIndex, message.IndexOf(';', authorIndex) - authorIndex);
+        }
+        
+        private void ResetState()
+        {
+            logState = LogState.WANT_FILE;
+            date = "";
+            author = "";
+            comment = "";
+            filename = "";
+            revision = "";
+            prevRevision = "";
+        }
+        
+        // Add the current values of file, revision, date & comment 
+        private void AddNewEntry()
+        {
+            // first do any necessary tidying up
+    
+                         
+            // TODO: there is some duplication of effort in the following code
+            
+            LogEntry entry = new LogEntry(date, author, comment);
+            // determine if this entry already exists
+            if (entries.ContainsKey(entry.Key)) {
+                // need to update an existing entry
+                entry = (LogEntry)entries[entry.Key];
+            } else {
+                // add new entry
+                entries.Add(entry.Key, entry);
+            }
+            // finally add details about the file/revision
+            entry.AddFileRevision(filename, revision, prevRevision);
         }
     }
 }

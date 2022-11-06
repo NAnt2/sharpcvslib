@@ -29,7 +29,6 @@
 // exception statement from your version.
 #endregion
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
@@ -38,22 +37,22 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     ///     ok \n
     ///         The command completed successfully.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class OkResponse : AbstractResponse {
+    public class OkResponse : IResponse {
         /// <summary>
         /// Process an ok response from the server.
         /// 
         ///     TODO: Do something useful with this response.
         /// </summary>
-        public override void Process() {
+        /// <param name="cvsStream"></param>
+        /// <param name="services"></param>
+        public void Process(CvsStream cvsStream, IResponseServices services) {
             // TODO: Do something useful with this stream.
         }
 
         /// <summary>
         /// Indicator stating whether the response is terminating or not.
         /// </summary>
-        public override bool IsTerminating {
+        public bool IsTerminating {
             get {return true;}
         }
     }

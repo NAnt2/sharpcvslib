@@ -62,33 +62,30 @@ public class SharpCvsLibConfigHandlerTest {
     /// </summary>
     [Test]
     public void LoadAppConfigTest () {
-        try {
-            SharpCvsLibConfigHandler configHandler =
-                new SharpCvsLibConfigHandler ();
-            ConfigXmlDocument xmlDoc =
-                new ConfigXmlDocument ();
+        SharpCvsLibConfigHandler configHandler =
+            new SharpCvsLibConfigHandler ();
+        ConfigXmlDocument xmlDoc =
+            new ConfigXmlDocument ();
 
-            xmlDoc.Load (CONFIG_FILE);
+        xmlDoc.Load (CONFIG_FILE);
 
-            SharpCvsLibConfig config = null;
-            config =
-                (SharpCvsLibConfig)configHandler.Create
-                (xmlDoc.SelectSingleNode ("configuration"),
-                null,
-                xmlDoc.SelectSingleNode ("//" +
-                SharpCvsLibConfigHandler.APP_CONFIG_SECTION));
-            this.CheckValues (config);
-        } catch (Exception) {
-            Assert.Fail();
-        }
+        SharpCvsLibConfig config = null;
+        config =
+            (SharpCvsLibConfig)configHandler.Create
+            (xmlDoc.SelectSingleNode ("configuration"),
+             null,
+             xmlDoc.SelectSingleNode ("//" +
+                                      SharpCvsLibConfigHandler.APP_CONFIG_SECTION));
+        this.CheckValues (config);
     }
 
     private void CheckValues (SharpCvsLibConfig config) {
-        Assert.AreEqual (TIMEOUT,
-                                1000, "timeout value");
-        Assert.AreEqual (AUTH_SLEEP,
-                                1000,
-            "authorization sleep value");
+        Assertion.AssertEquals ("timeout value",
+                                TIMEOUT,
+                                1000);
+        Assertion.AssertEquals ("authorization sleep value",
+                                AUTH_SLEEP,
+                                1000);
     }
 
     /// <summary>
@@ -99,15 +96,11 @@ public class SharpCvsLibConfigHandlerTest {
     /// </summary>
     [Test]
     public void GetConfigTestFile () {
-        try {
-            SharpCvsLibConfig config =
-                (SharpCvsLibConfig)ConfigurationSettings.GetConfig
-                (SharpCvsLibConfigHandler.APP_CONFIG_SECTION);
+        SharpCvsLibConfig config =
+            (SharpCvsLibConfig)ConfigurationSettings.GetConfig
+            (SharpCvsLibConfigHandler.APP_CONFIG_SECTION);
 
-            this.CheckValues (config);
-        } catch {
-            Assert.Fail();
-        }
+        this.CheckValues (config);
     }
 
 }

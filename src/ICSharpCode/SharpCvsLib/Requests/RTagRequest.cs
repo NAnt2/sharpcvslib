@@ -33,8 +33,6 @@
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-
 namespace ICSharpCode.SharpCvsLib.Requests {
 	/// <summary>
     /// Response expected: yes. Actually do a cvs command. This uses any previous 
@@ -42,7 +40,6 @@ namespace ICSharpCode.SharpCvsLib.Requests {
     /// Directory, Entry, or Modified requests for this command; they are not used. 
     /// Arguments to these commands are module names, as described for co.
 	/// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
 	public class RTagRequest : AbstractRequest {
 
         /// <summary>

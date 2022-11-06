@@ -27,6 +27,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    Author:     Clayton Harbour
 #endregion
 
 using System;
@@ -36,13 +37,11 @@ using System.Globalization;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 namespace ICSharpCode.SharpCvsLib.Exceptions {
     /// <summary>
     ///     This exception is thrown if there is no entry matching the specifed
     ///         criteria.
     /// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class EntryNotFoundException : Exception {
 
         /// <summary>

@@ -1,0 +1,59 @@
+﻿<html dir="LTR"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5"><title>ICSharpCode.SharpCvsLib.Commands</title><xml></xml><link rel="stylesheet" type="text/css" href="MSDN.css"></head><body id="bodyID" class="dtBODY"><div id="nsbanner"><div id="bannerrow1"><table class="bannerparthead" cellspacing="0"><tr id="hdr"><td class="runninghead">SharpCvsLib</td><td class="product"></td></tr></table></div><div id="TitleRow"><h1 class="dtH1">ICSharpCode.SharpCvsLib.Commands Namespace</h1></div></div><div id="nstext"><p><b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </p><h3 class="dtH3">Classes</h3><div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr valign="top"><th width="50%">Class</th><th width="50%">Description</th></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Commands.AddCommand.html">AddCommand</a></td><td width="50%">
+            
+            copied from: http://developer.apple.com/darwin/tools/cvs/cederquist/cvs_60.html
+            
+            Command: cvs add [-k kflag] [-m message] files 
+            
+            Schedule files to be added to the repository. The files or directories 
+            specified with add must already exist in the current directory. To add a 
+            whole new directory hierarchy to the source repository (for example, files 
+            received from a third-party vendor), use the import command instead. 
+            
+            The added files are not placed in the source repository until you use commit 
+            to make the change permanent. Doing an add on a file that was removed with 
+            the remove command will undo the effect of the remove, unless a commit 
+            command intervened. 
+            
+            The `-k' option specifies the default way that this file will be checked out; 
+            for more information see section 12.4 Substitution modes.
+            
+               The `-m' option specifies a description for the file. This description appears in the history log (if it is enabled, see section C.10 The history file). It will also be saved in the version history inside the repository when the file is committed. The log command displays this description. The description can be changed using `admin -t'. See section A.6 admin--Administration. If you omit the `-m description' flag, an empty string will be used. You will not be prompted for a description. 
+            
+               For example, the following commands add the file `backend.c' to the repository:
+            
+               $ cvs add backend.c
+               $ cvs commit -m "Early version. Not yet compilable." backend.c
+            
+               When you add a file it is added only on the branch which you are working on (see section 5 Branching and merging). You can later merge the additions to another branch if you want (see section 5.9 Merging can add or remove files). 
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Commands.CheckoutModuleCommand.html">CheckoutModuleCommand</a></td><td width="50%">
+            Checkout module command
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Commands.CommitCommand2.html">CommitCommand2</a></td><td width="50%">
+            Commit command
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Commands.DiffCommand.html">DiffCommand</a></td><td width="50%">
+            Diff command
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Commands.ImportModuleCommand.html">ImportModuleCommand</a></td><td width="50%">
+            Import a module into the cvs repository
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Commands.InitCommand.html">InitCommand</a></td><td width="50%">
+            Command to initialize a new cvs repository.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Commands.LogCommand.html">LogCommand</a></td><td width="50%">
+            Log command.
+                TODO: Figure out what this is for.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Commands.RemoveCommand.html">RemoveCommand</a></td><td width="50%">
+            Command to remove an item from the cvs repository.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Commands.RetreiveFilelistCommand.html">RetreiveFilelistCommand</a></td><td width="50%">
+            Retrieve a list of files from the repository.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Commands.RTagCommand.html">RTagCommand</a></td><td width="50%">
+            Recursively tags a given module.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Commands.StatusCommand.html">StatusCommand</a></td><td width="50%">
+            Status command.
+                TODO: Figure out what this is used for.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Commands.UpdateCommand2.html">UpdateCommand2</a></td><td width="50%">
+            Command to refresh the working folder with the current sources
+                from the repository.
+            </td></tr></table></div><h3 class="dtH3">Interfaces</h3><div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr valign="top"><th width="50%">Interface</th><th width="50%">Description</th></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Commands.ICommand.html">ICommand</a></td><td width="50%">
+            Interface to be implemented by cvs commands.
+            </td></tr></table></div><hr><div id="footer"><p><a href="http://sharpcvslib.sourceforge.net/license.html">Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.</a></p><p></p></div></div></body></html>

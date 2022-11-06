@@ -1,0 +1,85 @@
+﻿<html dir="LTR"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5"><title>Manager Methods</title><xml></xml><link rel="stylesheet" type="text/css" href="MSDN.css"></head><body id="bodyID" class="dtBODY"><div id="nsbanner"><div id="bannerrow1"><table class="bannerparthead" cellspacing="0"><tr id="hdr"><td class="runninghead">SharpCvsLib</td><td class="product"></td></tr></table></div><div id="TitleRow"><h1 class="dtH1">Manager Methods</h1></div></div><div id="nstext"><p>The methods of the <b>Manager</b> class are listed below. For a complete list of <b>Manager</b> class members, see the <a href="ICSharpCode.SharpCvsLib.FileSystem.ManagerMembers.html">Manager Members</a> topic.</p><h4 class="dtH4">Public Instance Methods</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.Add_overloads.html">Add</a></td><td width="50%">Overloaded. 
+                Add an entry to the filesystem.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.AddDirectories.html">AddDirectories</a></td><td width="50%">
+                Recurse through the directory entries and add a cvs file
+                    entry for each directory found in the physical path.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.AddEntry_overloads.html">AddEntry</a></td><td width="50%">Overloaded. 
+            Add the entry to the <pre class="code">CVS\Entries</pre> file, if the file does
+                not exist then create a new file.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.AddRepository_overloads.html">AddRepository</a></td><td width="50%">Overloaded. 
+            Add a repository file if it does not already exist.  If the repository
+                file already exists then it is NOT overwritten.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.AddRoot_overloads.html">AddRoot</a></td><td width="50%">Overloaded. 
+            Add a root file if it does not already exist.  If the root
+                file already exists then it is NOT overwritten.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.AddTag_overloads.html">AddTag</a></td><td width="50%">Overloaded. 
+                Create the root file in the local cvs directory.  This file holds
+                    the details about the cvs root used in this sandbox.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.CreateDirectoryEntry_overloads.html">CreateDirectoryEntry</a></td><td width="50%">Overloaded. 
+                Create a directory entry based on the local directory path.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassEqualsTopic.htm">Equals</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.Fetch.html">Fetch</a></td><td width="50%">
+                Fetch all of the entry objects for the specified cvs filename
+                    in the specified path.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.FetchEntries.html">FetchEntries</a></td><td width="50%">
+            Fetch the entries from the cvs file located in the subdirectory of
+                the path given.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.FetchEntry_overloads.html">FetchEntry</a></td><td width="50%">Overloaded. 
+                Load the cvs entry from the file.  Each cvs entry contains all
+                    of the information that is needed to update the individual
+                    file from the cvs repository.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.FetchFilesToUpdate.html">FetchFilesToUpdate</a></td><td width="50%">
+                Fetch the cvs file information to update.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.FetchRepository.html">FetchRepository</a></td><td width="50%">
+            Fetch the repository information from the cvs folder in the given directory.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.FetchRoot.html">FetchRoot</a></td><td width="50%">
+            Fetch the root information from the cvs folder in the given directory.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.FetchSingle_overloads.html">FetchSingle</a></td><td width="50%">Overloaded. 
+                Fetch a single entry.  If more than one entry is found then an
+                    exception is thrown.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.FetchTag.html">FetchTag</a></td><td width="50%">
+                Populate the tag file (if any) found in the given directory.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.Find.html">Find</a></td><td width="50%">
+                Find an entry given the name of the entry and a starting
+                    search path.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.GetFolders_overloads.html">GetFolders</a></td><td width="50%">Overloaded. 
+            Gets one folder, or a collection of folder depending on whether the 
+                path passed in is a directory (recursive get) or a single file.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassGetHashCodeTopic.htm">GetHashCode</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassGetTypeTopic.htm">GetType</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.LoadEntries.html">LoadEntries</a></td><td width="50%">
+                Load the entry files in the given directory.
+            
+            NOTE: This should be recursive (and will be) just lazy tonight.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.Remove.html">Remove</a></td><td width="50%">
+            Remove the contents from the cvs control file.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.SetFileTimeStamp.html">SetFileTimeStamp</a></td><td width="50%">
+                Sets the timestamp on the file specified.  Sets the create
+                    timestamp, access timestamp and the last write timestamp.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassToStringTopic.htm">ToString</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr></table></div><h4 class="dtH4">Protected Instance Methods</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="protmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassFinalizeTopic.htm">Finalize</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr>
+<tr VALIGN="top"><td width="50%"><img src="protmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassMemberwiseCloneTopic.htm">MemberwiseClone</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr></table></div><h4 class="dtH4">See Also</h4><p><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.html">Manager Class</a> | <a href="ICSharpCode.SharpCvsLib.FileSystem.html">ICSharpCode.SharpCvsLib.FileSystem Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="Manager class, methods"></object><hr><div id="footer"><p><a href="http://sharpcvslib.sourceforge.net/license.html">Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.</a></p><p>Generated from assembly ICSharpCode.SharpCvsLib [0.35.3721.507]</p></div></div></body></html>

@@ -30,116 +30,109 @@ using System.Text;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-
 namespace ICSharpCode.SharpCvsLib.Requests {
 
+/// <summary>
+/// Additional data: repository \n. Response expected: no.
+/// Tell the server what directory to use. The repository should be a directory
+/// name from a previous server response. Note that this both gives a default
+/// for Entry and Modified and also for ci and the other commands; normal usage
+/// is to send Directory for each directory in which there will be an Entry or
+/// Modified, and then a final Directory for the original directory, then the
+/// command. The local-directory is relative to the top level at which the
+/// command is occurring (i.e. the last Directory which is sent before the
+/// command); to indicate that top level, `.' should be sent for
+/// local-directory.
+/// </summary>
+/// <example>
+/// Here is an example of where a client gets repository and local-directory.
+/// Suppose that there is a module defined by moddir 1dir
+///
+/// That is, one can check out moddir and it will take 1dir in the repository
+/// and check it out to moddir in the working directory. Then an initial
+/// check out could proceed like this:
+///
+/// C: Root /home/kingdon/zwork/cvsroot
+/// . . .
+/// C: Argument moddir
+/// C: Directory .
+/// C: /home/kingdon/zwork/cvsroot
+/// C: co
+/// S: Clear-sticky moddir/
+/// S: /home/kingdon/zwork/cvsroot/1dir/
+/// . . .
+/// S: ok
+///
+/// In this example the response shown is Clear-sticky, but it could be
+/// another response instead. Note that it returns two pathnames. The
+/// first one, `moddir/', indicates the working directory to check out
+/// into. The second one, ending in `1dir/', indicates the directory to
+/// pass back to the server in a subsequent Directory request. For example,
+/// a subsequent update request might look like:
+///
+/// C: Directory moddir
+/// C: /home/kingdon/zwork/cvsroot/1dir
+/// . . .
+/// C: update
+///
+/// For a given local-directory, the repository will be the same
+/// for each of the responses, so one can use the repository from
+/// whichever response is most convenient. Typically a client will
+/// store the repository along with the sources for each local-directory,
+/// use that same setting whenever operating on that local-directory,
+/// and not update the setting as long as the local-directory exists.
+/// A client is free to rename a local-directory at any time (for example,
+/// in response to an explicit user request). While it is true that the
+/// server supplies a local-directory to the client, as noted above, this
+/// is only the default place to put the directory. Of course, the various
+///  Directory requests for a single command (for example, update or ci
+/// request) should name a particular directory with the same local-directory.
+/// Each Directory request specifies a brand-new local-directory and
+/// repository; that is, local-directory and repository are never relative
+/// to paths specified in any previous Directory request.
+/// </example>
+public class DirectoryRequest : AbstractRequest
+{
+    private ILog LOGGER = LogManager.GetLogger (typeof (DirectoryRequest));
+    private string localdir;
+    private string repository;
+
     /// <summary>
-    /// Additional data: repository \n. Response expected: no.
-    /// Tell the server what directory to use. The repository should be a directory
-    /// name from a previous server response. Note that this both gives a default
-    /// for Entry and Modified and also for ci and the other commands; normal usage
-    /// is to send Directory for each directory in which there will be an Entry or
-    /// Modified, and then a final Directory for the original directory, then the
-    /// command. The local-directory is relative to the top level at which the
-    /// command is occurring (i.e. the last Directory which is sent before the
-    /// command); to indicate that top level, `.' should be sent for
-    /// local-directory.
+    /// Constructor.
     /// </summary>
-    /// <example>
-    /// <p>
-    /// Here is an example of where a client gets repository and local-directory.
-    /// Suppose that there is a module defined by moddir 1dir
-    /// </p>
-    /// <p>
-    /// That is, one can check out moddir and it will take 1dir in the repository
-    /// and check it out to moddir in the working directory. Then an initial
-    /// check out could proceed like this:
-    /// </p>
-    /// <code>
-    /// C: Root /home/kingdon/zwork/cvsroot
-    /// . . .
-    /// C: Argument moddir
-    /// C: Directory .
-    /// C: /home/kingdon/zwork/cvsroot
-    /// C: co
-    /// S: Clear-sticky moddir/
-    /// S: /home/kingdon/zwork/cvsroot/1dir/
-    /// . . .
-    /// S: ok
-    /// </code>
-    /// <p>
-    /// In this example the response shown is Clear-sticky, but it could be
-    /// another response instead. Note that it returns two pathnames. The
-    /// first one, `moddir/', indicates the working directory to check out
-    /// into. The second one, ending in `1dir/', indicates the directory to
-    /// pass back to the server in a subsequent Directory request. For example,
-    /// a subsequent update request might look like:
-    /// </p>
-    /// <code>
-    /// C: Directory moddir
-    /// C: /home/kingdon/zwork/cvsroot/1dir
-    /// . . .
-    /// C: update
-    /// </code>
-    /// <p>
-    /// For a given local-directory, the repository will be the same
-    /// for each of the responses, so one can use the repository from
-    /// whichever response is most convenient. Typically a client will
-    /// store the repository along with the sources for each local-directory,
-    /// use that same setting whenever operating on that local-directory,
-    /// and not update the setting as long as the local-directory exists.
-    /// A client is free to rename a local-directory at any time (for example,
-    /// in response to an explicit user request). While it is true that the
-    /// server supplies a local-directory to the client, as noted above, this
-    /// is only the default place to put the directory. Of course, the various
-    ///  Directory requests for a single command (for example, update or ci
-    /// request) should name a particular directory with the same local-directory.
-    /// Each Directory request specifies a brand-new local-directory and
-    /// repository; that is, local-directory and repository are never relative
-    /// to paths specified in any previous Directory request.
-    /// </p>
-    /// </example>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class DirectoryRequest : AbstractRequest {
-        private ILog LOGGER = LogManager.GetLogger (typeof (DirectoryRequest));
-        private string localdir;
-        private string repository;
+    /// <param name="localdir"></param>
+    /// <param name="repository"></param>
+    public DirectoryRequest(string localdir, string repository)
+    {
+        this.localdir   = localdir;
+        this.repository = repository;
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="localdir"></param>
-        /// <param name="repository"></param>
-        public DirectoryRequest(string localdir, string repository) {
-            if (null == localdir || string.Empty == localdir) {
-                throw new ArgumentException("Unable to process a null directory, use '.'");
-            }
-            if (null == repository || string.Empty == repository) {
-                throw new ArgumentException("Unable to process a null repository, use repository path (i.e. [/cvsroot/sharpcvslib])");
-            }
-            this.localdir   = localdir;
-            this.repository = repository;
-        }
-
-        /// <summary>
-        /// Specifies the local and repository directories to
-        ///     use for a request.
-        /// </summary>
-        public override string RequestString {
-            get {
-                return "Directory " + localdir + "\n" + repository + "\n";
-            }
-        }
-
-        /// <summary>
-        /// <code>false</code>, a response is not expected.
-        /// </summary>
-        public override bool IsResponseExpected {
-            get {
-                return false;
-            }
+        if (LOGGER.IsDebugEnabled) {
+            StringBuilder msg = new StringBuilder ();
+            msg.Append ("\nDirectory Request:");
+            msg.Append ("\n\tlocaldir=[").Append (localdir).Append ("]");
+            msg.Append ("\n\trepository=[").Append (repository).Append ("]");
+            LOGGER.Debug (msg);
         }
     }
+
+    /// <summary>
+    /// Specifies the local and repository directories to
+    ///     use for a request.
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "Directory " + localdir + "\n" + repository + "\n";
+        }
+    }
+
+    /// <summary>
+    /// <code>false</code>, a response is not expected.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return false;
+        }
+    }
+}
 }

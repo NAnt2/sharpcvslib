@@ -37,9 +37,7 @@
 #endregion
 
 using System;
-using System.IO;
 using System.Text;
-using System.Xml;
 
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Commands;
@@ -48,138 +46,18 @@ using ICSharpCode.SharpCvsLib.Misc;
 
 using ICSharpCode.SharpCvsLib.Console.Commands;
 using ICSharpCode.SharpCvsLib.Console.Parser;
-using ICSharpCode.SharpCvsLib.Messages;
 
 using log4net;
-using log4net.Config;
 
-[assembly: log4net.Config.XmlConfigurator(Watch=true)]
 namespace ICSharpCode.SharpCvsLib.Console {
 
     /// <summary>The main driver/ entry point into the program.</summary>
-    [Serializable()]
     public class ConsoleMain {
-        [NonSerialized()]
-        private ILog LOGGER;
-
-        private string[] _args;
-
-        private const string DEFAULT_CONFIG = 
-            @"<?xml version='1.0' encoding='utf-8'?>
-<configuration>
-    <configSections>
-        <section name='log4net' type='log4net.Config.Log4NetConfigurationSectionHandler,log4net'/>
-    </configSections>       
-    <log4net debug='false'>
-        <appender name='ConsoleAppender' type='log4net.Appender.ConsoleAppender'>
-            <layout type='log4net.Layout.PatternLayout'>
-                <param name='ConversionPattern' value='[%c{2}:%m  - [%x] &lt;%X{auth}&gt;]%n' />
-            </layout>
-        </appender>
-        <appender name='RollingLogFileAppender' type='log4net.Appender.RollingFileAppender'>
-            <param name='File' value='cvs.log' />
-            <param name='AppendToFile' value='true' />
-            <param name='MaxSizeRollBackups' value='10' />
-            <param name='MaximumFileSize' value='1000000' />
-            <param name='RollingStyle' value='Size' />
-            <param name='StaticLogFileName' value='true' />
-            <layout type='log4net.Layout.PatternLayout'>
-                <param name='Header' value='[Header]\r\n' />
-                <param name='Footer' value='[Footer]\r\n' />
-                <param name='ConversionPattern' value='%d [%t] %-5p %c [%x] - %m%n' />
-            </layout>
-        </appender>
-        <root>
-            <level value='INFO' />
-            <!--<appender-ref ref='RollingLogFileAppender' />-->
-            <appender-ref ref='ConsoleAppender' />
-        </root>
-    </log4net>
-</configuration>
-";
-
-        private static string DefaultConfig {
-            get {return DEFAULT_CONFIG.Replace("'", "\"");}
-        }
-
-        /// <summary>
-        /// Command line arguments.
-        /// </summary>
-        public string[] Args {
-            get {return this._args;}
-            set {this._args = value;}
-        } 
-
-        /// <summary>
-        /// Initialize the logger class.
-        /// </summary>
-        public static void InitLog4net () {
-            try {
-                FileInfo configFile = new FileInfo(
-                    Path.Combine(Path.GetTempPath(), "ICSharpCode.Console" + ".dll.config"));
-                if (!configFile.Exists) {
-                    StreamWriter writer = null;
-                    try {
-                        writer = configFile.CreateText();
-                        writer.Write(DefaultConfig);
-                    } finally {
-                        if (null != writer) {
-                            writer.Close();
-                        }
-                    }
-                }
-                log4net.Config.XmlConfigurator.Configure(configFile);
-            } catch (Exception) {
-                BasicConfigurator.Configure();
-            }
-        }
-
-        private static DirectoryInfo _appDir;
-        public static DirectoryInfo AppDir {
-            get { 
-                if (null == _appDir) {
-                    string appDir =
-                        System.IO.Path.GetDirectoryName(
-                        System.Reflection.Assembly.GetExecutingAssembly().CodeBase);
-                    appDir = appDir.Replace(@"file:\", "");
-                    _appDir = new DirectoryInfo(appDir);
-                } 
-                return _appDir;
-            }
-        }
+        private ILog LOGGER = LogManager.GetLogger(typeof(ConsoleMain));
 
         /// <summary>Constructor.
         ///     TODO: Fill in more of a usage/ explanation.</summary>
         public ConsoleMain () {
-            try {
-                LOGGER = log4net.LogManager.GetLogger(typeof(ConsoleMain));
-            } catch {
-                // do nothing
-            }
-        }
-
-        private static MemoryStream WriteDefaultConfig () {
-            byte[] data = new byte[DefaultConfig.Length];
-            MemoryStream stream = new MemoryStream(data, 0, DefaultConfig.Length);;
-            return stream;
-        }
-
-        private ConsoleWriter writer;
-        private ConsoleWriter Writer {
-            get {
-                if (null == this.writer) {
-                    writer = new ConsoleWriter();
-                }
-                return this.writer;}
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="args"></param>
-        public void Execute(string[] args) {
-            this.Args = args;
-            this.Execute();
         }
 
         /// <summary>
@@ -187,27 +65,24 @@ namespace ICSharpCode.SharpCvsLib.Console {
         ///
         /// TODO: Write a better description :-)
         /// </summary>
-        public void Execute () {
-            try {
-                this.DoExecute();
-            } catch (Exception e) {
-                ExitError(e, "Fatal Error ( {0} ), rerun using -verbose to get more information.", 
-                    e.Message);
-            }
-        }
-
-        private void DoExecute() {
-            string[] args = this._args;
+        public void Execute (String[] args) {
             CommandLineParser parser = new CommandLineParser (args);
 
+            if (LOGGER.IsDebugEnabled) {
+                StringBuilder msg = new StringBuilder();
+                msg.Append(Environment.NewLine).Append("Using arguments:");
+                foreach (String arg in args) {
+                    msg.Append(Environment.NewLine).Append("\t arg1=[").Append(arg).Append("]");
+                }
+                LOGGER.Debug(msg);
+            }
             ICommand command = null;
             try {
                 command = parser.Execute ();
             } catch (CommandLineParseException e) {
-                ExitError(e, "{0}{1}{2}", Usage.General, Environment.NewLine, e.Message);
+                LOGGER.Debug (e);
+                System.Console.WriteLine(Usage.General);
                 return;
-            } catch (Exception e) {
-                ExitError(e, "Exception parsing command: {0}", e.Message);
             }
 
             if (null != command) {
@@ -215,108 +90,46 @@ namespace ICSharpCode.SharpCvsLib.Console {
                 //  directory a public property??  Not sure.
                 WorkingDirectory workingDirectory = parser.CurrentWorkingDirectory;
 
-                string password = this.GetPassword(parser, workingDirectory);
+                string password = "";
 
                 // Create CVSServerConnection object that has the ICommandConnection
-                CVSServerConnection serverConn = new CVSServerConnection(workingDirectory);
-
-                if (CommandLineParser.IsVerbose) {
-                    serverConn.RequestMessageEvent += 
-                        new MessageEventHandler(Writer.WriteLine);
-                    serverConn.ResponseMessageEvent += 
-                        new MessageEventHandler(Writer.WriteLine);
-                }
-
-                serverConn.StartProcessEvent += 
-                    new ProcessEventHandler(Writer.StartProcess);
-                serverConn.StopProcessEvent += 
-                    new ProcessEventHandler(Writer.StopProcess);
-                serverConn.ResponseMessageEvents.UpdatedResponseMessageEvent += 
-                    new MessageEventHandler(Writer.WriteLine);
-                serverConn.ResponseMessageEvents.ClearStaticDirectoryResponseMessageEvent += 
-                    new MessageEventHandler(Writer.WriteLine);
-                serverConn.ResponseMessageEvents.SetStaticDirectoryResponseMessageEvent += 
-                    new MessageEventHandler(Writer.WriteLine);
-                serverConn.ResponseMessageEvents.ErrorResponseMessageEvent += 
-                    new MessageEventHandler(Writer.WriteError);
-                serverConn.ResponseMessageEvents.ListResponseMessageEvent +=
-                    new MessageEventHandler(Writer.WriteLine);
-
-                if (null == serverConn) {
-                    string msg = "Unable to connect to server.";
-                    ExitError(msg);
-                }
-
+                CVSServerConnection serverConn = new CVSServerConnection();
                 try{
                     // try connecting with empty password for anonymous users
                     serverConn.Connect(workingDirectory, password);
-                } catch (AuthenticationException e){
-                    ExitError(e, "Fatal error, aborting.  cvs [login aborted]: {0}: unknown user or bad password.",
-                        workingDirectory.CvsRoot.User);
-                } catch (Exception ex) {
-                    ExitError(ex, "Fatal cvs error ( {0} ).", ex.Message);
                 }
-
+                catch (AuthenticationException eDefault){
+                    LOGGER.Info("Authentication failed using empty password, trying .cvspass file.", eDefault);
+                    try{
+                        //string scrambledpassword;
+                        // check to connect with password from .cvspass file
+                        // check for .cvspass file and get password
+                        //password = PasswordScrambler.Descramble(scrambledpassword);
+                        serverConn.Connect(workingDirectory, password);
+                    }
+                    catch (AuthenticationException eCvsPass){
+                        try {
+                            LOGGER.Info("Authentication failed using .cvspass file, prompting for password.", eCvsPass);
+                            // prompt user for password by using login command?
+                            LoginCommand login = new LoginCommand(workingDirectory.CvsRoot);
+                            serverConn.Connect(workingDirectory, login.Password);
+                            throw eCvsPass;
+                        } catch (AuthenticationException e) {
+                            StringBuilder msg = new StringBuilder();
+                            msg.Append("Fatal error, aborting.");
+                            msg.Append("cvs [login aborted]: ")
+                                .Append(workingDirectory.CvsRoot.User)
+                                .Append(": unknown user or bad password.");
+                            LOGGER.Error(msg, e);
+                            System.Console.WriteLine(msg.ToString());
+                            Environment.Exit(-1);
+                        }
+                    }
+                }
                 // Execute the command on cvs repository.
                 command.Execute(serverConn);
                 serverConn.Close();
             }
-        }
-
-        public static void ExitError (Exception exception, string msg) {
-            if (CommandLineParser.IsVerbose) {
-                ConsoleWriter.Instance.WriteLine(exception.ToString());
-            }
-            ExitError(msg);
-        }
-
-        public static void ExitError (Exception exception, string msg, params object[] format) {
-            ExitError(exception, string.Format(msg, format));
-        }
-
-        /// <summary>
-        /// Exit the program and display the given exit message.
-        /// </summary>
-        /// <param name="msg"></param>
-        public static void Exit (string msg) {
-            ConsoleWriter writer = new ConsoleWriter();
-            writer.WriteLine(msg);
-            Environment.Exit(0);
-        }
-
-        public static void Exit(string msg, params object[] format) {
-            string message = string.Format(msg, format);
-            Exit(message);
-        }
-
-        public static void ExitError(string msg) {
-            ConsoleWriter writer = new ConsoleWriter();
-            writer.WriteLine(msg);
-            Environment.Exit(-1);
-        }
-
-        public static void ExitError(string msg, params object[] format) {
-            string message = string.Format(msg, format);
-            ExitError(message);
-        }
-
-        private string GetPassword(CommandLineParser parser, WorkingDirectory workingDir) {
-            string pwd = null;
-            if (null != parser && null != parser.Password &&
-                parser.Password.Length != 0) {
-                pwd = parser.Password;
-            } else {
-                ICSharpCode.SharpCvsLib.Console.Commands.LoginCommand loginCommand = 
-                    new ICSharpCode.SharpCvsLib.Console.Commands.LoginCommand(workingDir.CvsRoot);
-                loginCommand.Execute();
-                pwd = loginCommand.Password;
-            }
-
-            if (null == pwd) {
-                pwd = String.Empty;
-            }
-
-            return pwd;
         }
     }
 }

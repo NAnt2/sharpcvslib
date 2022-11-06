@@ -74,7 +74,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             String [] commandLineArgs = commandLine.Split(' ');
             // Create a consoleMain to test the InitCommand
             ConsoleMain consoleMain = new ConsoleMain();
-            Assert.IsNotNull (consoleMain);
+            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
             consoleMain.Execute(commandLineArgs);
         }
     }

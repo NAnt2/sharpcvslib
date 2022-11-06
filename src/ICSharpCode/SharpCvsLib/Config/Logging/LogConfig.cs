@@ -27,19 +27,18 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    <author>Clayton Harbour</author>
+//
 #endregion
 
 using System;
 using System.Xml;
 using System.Xml.Serialization;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-
 namespace ICSharpCode.SharpCvsLib.Config.Logging {
     /// <summary>
     /// Logging configuration settings.
     /// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class LogConfig {
         private Debug debugLog;
 

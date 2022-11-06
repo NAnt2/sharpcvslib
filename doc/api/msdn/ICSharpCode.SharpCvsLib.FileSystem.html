@@ -1,0 +1,89 @@
+﻿<html dir="LTR"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5"><title>ICSharpCode.SharpCvsLib.FileSystem</title><xml></xml><link rel="stylesheet" type="text/css" href="MSDN.css"></head><body id="bodyID" class="dtBODY"><div id="nsbanner"><div id="bannerrow1"><table class="bannerparthead" cellspacing="0"><tr id="hdr"><td class="runninghead">SharpCvsLib</td><td class="product"></td></tr></table></div><div id="TitleRow"><h1 class="dtH1">ICSharpCode.SharpCvsLib.FileSystem Namespace</h1></div></div><div id="nstext"><p><b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </p><h3 class="dtH3">Classes</h3><div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr valign="top"><th width="50%">Class</th><th width="50%">Description</th></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.AbstractCvsFile.html">AbstractCvsFile</a></td><td width="50%">
+            The abstract cvs file implements common methods and provides a common 
+                implementation for all CVS management files.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.CvsFileNotFoundException.html">CvsFileNotFoundException</a></td><td width="50%">
+            This in an exception that is thrown if the given CVS\??? management file
+                cannot be found inthe given path.  The full path to the file being
+                searched for should be provided.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.DuplicateEntryException.html">DuplicateEntryException</a></td><td width="50%">
+                This exception is thrown if there is no entry matching the specifed
+                    criteria.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entries.html">Entries</a></td><td width="50%">
+            The entries collection holds a collection of objects that represent cvs
+                entries.  The key to the collection is the path to the file that the
+                cvs entry represents on the file system.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.html">Entry</a></td><td width="50%">
+            Rcs entry.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.EntryParseException.html">EntryParseException</a></td><td width="50%">
+            An invalid cvsroot exception is thrown if the client attempts to send in
+                a root that is not understood by the server.  
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.Factory.html">Factory</a></td><td width="50%">
+                Creates the cvs object necessary based on the filename.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.Folder.html">Folder</a></td><td width="50%">
+            Represents a list of entries in the repository or
+                in simple terms a folder or directory on the
+                cvs server.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.Folders.html">Folders</a></td><td width="50%">
+            Populates a folder or collection of folders given one file, a directory,
+                a collection of files or a collection of directories.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.InvalidPathException.html">InvalidPathException</a></td><td width="50%">
+            This exception is thrown if there is an attempt to write to a path that is
+                outside of the working path.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.html">Manager</a></td><td width="50%">
+                Manages the addition and creation of cvs files such as
+                    - Entries
+                    - Repository
+                    - Root
+                    - Tag
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.PathTranslator.html">PathTranslator</a></td><td width="50%">
+                Used to parse out the important parts of the orgainization path
+                    response from the cvs server.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.Probe.html">Probe</a></td><td width="50%">
+            Takes a single file or a collection of files and creates a new
+                list of files based on the following rules:
+                    1) If a single file is specified then a check is performed to
+                        determine if the file exists.
+                            a) If the file does not exist then the NonExistingFiles
+                                collection is populated.
+                            b) If the file doe exist then the ExistingFile collection
+                                is populated.
+                    2) If a collection of files is specified, WITHOUT a directory
+                        then a non-recursive search is performed.  The ExistingFiles and
+                        NonExistingFiles collections are populated.
+                    3) If a collection of files is specified that contains a directory,
+                        or a directory is specified then a recursive search is performed
+                        to populate the ExistingFiles and NonExistingFiles collection.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.Repository.html">Repository</a></td><td width="50%">
+            Information about the repository file.  This file is used to identify
+                the relative path (from the cvsroot) of the file in the cvs
+                repository.  Combined with the entry from the cvs entries file
+                this provides the relative path to the file on the cvs server.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.Root.html">Root</a></td><td width="50%">
+                Value object for the <pre class="code">Root</pre> cvs file.  The root file
+                    holds the cvsroot string.  The cvsroot is a string value
+                    which has the following information:
+                        <ol><li>protocol</li><li>user@servername.domainname</li><li>server repository directory</li></ol>
+                    seperated by a colan(<pre class="code">:</pre>).
+            
+                eg)     :pserver:anonymous@linux.sporadicism.com:/home/cvs/src/
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.Tag.html">Tag</a></td><td width="50%">
+                Value object for the <pre class="code">Tag</pre> cvs file.  The root file
+                    holds the cvsroot string.  The cvsroot is a string value
+                    which has the following information:
+                        <ol><li>protocol</li><li>user@servername.domainname</li><li>server repository directory</li></ol>
+                    seperated by a colan(<pre class="code">:</pre>).
+            
+                eg)     :pserver:anonymous@linux.sporadicism.com:/home/cvs/src/
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.UnsupportedFileTypeException.html">UnsupportedFileTypeException</a></td><td width="50%">
+            An unsupported file type exception occurs if a file name of file type that
+                is not currently known about or not implemented.
+            </td></tr></table></div><h3 class="dtH3">Interfaces</h3><div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr valign="top"><th width="50%">Interface</th><th width="50%">Description</th></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.ICvsFile.html">ICvsFile</a></td><td width="50%">
+                Interface for all cvs files.  Allows the file system manager to store
+                    files that contain cvs information such as:
+                        <pre class="code">Entries</pre><pre class="code">Repository</pre><pre class="code">Root</pre></td></tr></table></div><h3 class="dtH3">Enumerations</h3><div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr valign="top"><th width="50%">Enumeration</th><th width="50%">Description</th></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.Factory.FileType.html">Factory.FileType</a></td><td width="50%">
+                Type of cvs file.
+            </td></tr></table></div><hr><div id="footer"><p><a href="http://sharpcvslib.sourceforge.net/license.html">Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.</a></p><p></p></div></div></body></html>

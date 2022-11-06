@@ -1,0 +1,27 @@
+﻿<html dir="LTR"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5"><title>LogRequest Class</title><xml></xml><link rel="stylesheet" type="text/css" href="MSDN.css"></head><body id="bodyID" class="dtBODY"><div id="nsbanner"><div id="bannerrow1"><table class="bannerparthead" cellspacing="0"><tr id="hdr"><td class="runninghead">SharpCvsLib</td><td class="product"></td></tr></table></div><div id="TitleRow"><h1 class="dtH1">LogRequest Class</h1></div></div><div id="nstext"><p>
+            Response expected: yes.
+            Actually do a cvs command. This uses any previous Argument, Directory, Entry,
+            or Modified requests, if they have been sent. The last Directory sent specifies
+            the working directory at the time of the operation. No provision is made for any
+            input from the user. This means that ci must use a -m argument if it wants to specify
+            a log message.
+            
+            Usage: cvs server [-lRhtNb] [-r[revisions]] [-d dates] [-s states]
+            [-w[logins]] [files...]
+                    -l      Local directory only, no recursion.
+                    -R      Only print name of RCS file.
+                    -h      Only print header.
+                    -t      Only print header and descriptive text.
+                    -N      Do not list tags.
+                    -b      Only list revisions on the default branch.
+                    -r[revisions]   Specify revision(s)s to list.
+                    -d dates        Specify dates (D1 &gt; D2 for range, D for latest before).
+                    -s states       Only list revisions with specified states.
+                    -w[logins]      Only list revisions checked in by specified logins.
+            (Specify the --help global option for a list of other help options)
+            
+            </p><p>For a list of all members of this type, see <a href="ICSharpCode.SharpCvsLib.Requests.LogRequestMembers.html">LogRequest Members</a>.</p><p><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassTopic.htm">System.Object</a><br>   <a href="ICSharpCode.SharpCvsLib.Requests.AbstractRequest.html">AbstractRequest</a><br>      <b>LogRequest</b></p><div class="syntax"><span class="lang">[Visual Basic]</span><br>Public Class LogRequest<div>Inherits AbstractRequest</div></div><div class="syntax"><span class="lang">[C#]</span><div>public class LogRequest : AbstractRequest</div></div><h4 class="dtH4">Requirements</h4><p><b>Namespace: </b><a href="ICSharpCode.SharpCvsLib.Requests.html">ICSharpCode.SharpCvsLib.Requests</a></p><p><b>Assembly: </b>ICSharpCode.SharpCvsLib (in ICSharpCode.SharpCvsLib.dll)
+					</p><h4 class="dtH4">See Also</h4><p><a href="ICSharpCode.SharpCvsLib.Requests.LogRequestMembers.html">LogRequest Members</a> | <a href="ICSharpCode.SharpCvsLib.Requests.html">ICSharpCode.SharpCvsLib.Requests Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="LogRequest class, about LogRequest class"></object><hr><div id="footer"><p><a href="http://sharpcvslib.sourceforge.net/license.html">Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.</a></p><p>Generated from assembly ICSharpCode.SharpCvsLib [0.35.3721.507]</p></div></div></body></html>

@@ -1,0 +1,65 @@
+﻿<html dir="LTR"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5"><title>AddCommand.Execute Method</title><xml></xml><link rel="stylesheet" type="text/css" href="MSDN.css"></head><body id="bodyID" class="dtBODY"><div id="nsbanner"><div id="bannerrow1"><table class="bannerparthead" cellspacing="0"><tr id="hdr"><td class="runninghead">SharpCvsLib</td><td class="product"></td></tr></table></div><div id="TitleRow"><h1 class="dtH1">AddCommand.Execute Method </h1></div></div><div id="nstext"><p>
+            Execute checkout module command.
+            
+            taken from: http://www.elegosoft.com/cvs/cvsclient.html
+            add \n
+                Response expected: yes. Add a file or directory. This uses any 
+                previous Argument, Directory, Entry, or Modified requests, if they 
+                have been sent. The last Directory sent specifies the working 
+                directory at the time of the operation. To add a directory, send the 
+                directory to be added using Directory and Argument requests.
+            
+            </p><div class="syntax"><span class="lang">[Visual Basic]</span><br>NotOverridable Public Sub Execute( _<br>   ByVal <i>connection</i> As <a href="ICSharpCode.SharpCvsLib.Client.ICommandConnection.html">ICommandConnection</a> _<br>) Implements _<br>   ICommand.Execute</div><div class="syntax"><span class="lang">[C#]</span><br>public <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemVoidClassTopic.htm">void</a> Execute(<br>   <a href="ICSharpCode.SharpCvsLib.Client.ICommandConnection.html">ICommandConnection</a> <i>connection</i><br>);</div><h4 class="dtH4">Parameters</h4><dl><dt><i>connection</i></dt><dd>Server connection</dd></dl><h4 class="dtH4">Implements</h4><p><a href="ICSharpCode.SharpCvsLib.Commands.ICommand.Execute.html">ICommand.Execute</a></p><h4 class="dtH4">Example</h4><p>
+            
+            C: Root /u/cvsroot
+            . . .
+            C: Argument nsdir
+            C: Directory nsdir
+            C: /u/cvsroot/1dir/nsdir
+            C: Directory .
+            C: /u/cvsroot/1dir
+            C: add
+            S: M Directory /u/cvsroot/1dir/nsdir added to the repository
+            S: ok
+            
+            You will notice that the server does not signal to the client in any 
+            particular way that the directory has been successfully added. The client 
+            is supposed to just assume that the directory has been added and update 
+            its records accordingly. Note also that adding a directory is immediate; 
+            it does not wait until a ci request as files do. To add a file, send the 
+            file to be added using a Modified request. For example:
+            
+            C: Argument nfile
+            C: Directory .
+            C: /u/cvsroot/1dir
+            C: Modified nfile
+            C: u=rw,g=r,o=r
+            C: 6
+            C: hello
+            C: add
+            S: E cvs server: scheduling file `nfile' for addition
+            S: Mode u=rw,g=r,o=r
+            S: Checked-in ./
+            S: /u/cvsroot/1dir/nfile
+            S: /nfile/0///
+            S: E cvs server: use 'cvs commit' to add this file permanently
+            S: ok
+            
+            Note that the file has not been added to the repository; the only effect 
+            of a successful add request, for a file, is to supply the client with a 
+            new entries line containing `0' to indicate an added file. In fact, the 
+            client probably could perform this operation without contacting the 
+            server, although using add does cause the server to perform a few more 
+            checks. The client sends a subsequent ci to actually add the file to the 
+            repository. Another quirk of the add request is that with CVS 1.9 and 
+            older, a pathname specified in an Argument request cannot contain `/'. 
+            There is no good reason for this restriction, and in fact more recent 
+            CVS servers don't have it. But the way to interoperate with the older 
+            servers is to ensure that all Directory requests for add (except those 
+            used to add directories, as described above), use `.' for local-directory. 
+            Specifying another string for local-directory may not get an error, but 
+            it will get you strange Checked-in responses from the buggy servers.
+            </p><h4 class="dtH4">See Also</h4><p><a href="ICSharpCode.SharpCvsLib.Commands.AddCommand.html">AddCommand Class</a> | <a href="ICSharpCode.SharpCvsLib.Commands.html">ICSharpCode.SharpCvsLib.Commands Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="Execute method"><param name="Keyword" value="Execute method, AddCommand class"><param name="Keyword" value="AddCommand.Execute method"></object><hr><div id="footer"><p><a href="http://sharpcvslib.sourceforge.net/license.html">Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.</a></p><p>Generated from assembly ICSharpCode.SharpCvsLib [0.35.3721.507]</p></div></div></body></html>

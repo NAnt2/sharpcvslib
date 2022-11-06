@@ -28,12 +28,12 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//        <author>Clayton Harbour</author>
 #endregion
 
 using System;
 using System.Text;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Config;
 
 using log4net;
@@ -43,7 +43,6 @@ namespace ICSharpCode.SharpCvsLib.Util {
     /// Wraps the encoding class so that there is a consistant strategy throughout
     ///     the application.
     /// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class EncodingUtil {
         private static readonly ILog LOGGER = LogManager.GetLogger(typeof(EncodingUtil));
         /// <summary>

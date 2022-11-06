@@ -39,14 +39,11 @@ using ICSharpCode.SharpCvsLib.Streams;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-
 namespace ICSharpCode.SharpCvsLib.FileHandler {
+
     /// <summary>
     /// Implements the uncompressed file handler
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class UncompressedFileHandler : IFileHandler {
         private SharpCvsLibConfig settings = SharpCvsLibConfig.GetInstance();
 
@@ -97,9 +94,6 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
         public virtual void ReceiveTextFile(CvsStream inputStream, 
             string fileName, int length) {
 
-            // normalize the path
-            FileInfo path = new FileInfo(fileName);
-
             byte[] buffer = new byte[length];
 
             inputStream.ReadBlock(buffer, length);
@@ -108,10 +102,7 @@ namespace ICSharpCode.SharpCvsLib.FileHandler {
             // encodings
             using (MemoryStream ms = new MemoryStream(buffer, 0, length)) {
                 StreamReader sr = new StreamReader(ms, Encoding.Default);
-                if (!path.Directory.Exists) {
-                    path.Directory.Create();
-                }
-                StreamWriter sw = new StreamWriter(path.FullName, false, Encoding.Default);
+                StreamWriter sw = new StreamWriter(fileName, false, Encoding.Default);
                 while (sr.Peek() >= 0) {
                     sw.WriteLine(sr.ReadLine());
                 }

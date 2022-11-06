@@ -86,12 +86,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void CreateEntryTest () {
             String path = this.settings.Config.LocalPath;
 
-            ICvsFile cvsFile = 
-                factory.CreateCvsObject (path, Factory.FileType.Entries.ToString(), ENTRY_LINE);
-            Assert.IsTrue (cvsFile is Entry);
-            Assert.AreEqual (path, cvsFile.Path);
-            Assert.AreEqual (Path.Combine(path, ENTRY_NAME_OF_FILE), cvsFile.FullPath);
-            Assert.AreEqual (ENTRY_LINE, cvsFile.FileContents);
+            ICvsFile cvsFile = factory.CreateCvsObject (path, Factory.FileType.Entries, ENTRY_LINE);
+            Assertion.Assert (cvsFile is Entry);
+            Assertion.Assert (cvsFile.Path.Equals (path));
+            Assertion.Assert (cvsFile.FullPath.Equals (Path.Combine(path, ENTRY_NAME_OF_FILE)));
+            Assertion.Assert (cvsFile.FileContents.Equals (ENTRY_LINE));
         }
 
         /// <summary>
@@ -101,10 +100,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void CreateRepositoryTest () {
             String fullPath = this.settings.Config.LocalPath;
 
-            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Repository.FILE_NAME, REPOSITORY_LINE);
-            Assert.IsTrue (cvsFile is Repository);
-            Assert.AreEqual (fullPath, cvsFile.Path);
-            Assert.AreEqual (REPOSITORY_LINE, cvsFile.FileContents);
+            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Repository, REPOSITORY_LINE);
+            Assertion.Assert (cvsFile is Repository);
+            Assertion.AssertEquals (fullPath, cvsFile.FullPath);
+            Assertion.AssertEquals (REPOSITORY_LINE, cvsFile.FileContents);
         }
 
         /// <summary>
@@ -114,11 +113,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void CreateRootTest () {
             String fullPath = this.settings.Config.LocalPath;
 
-            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Root.ToString(), ROOT_LINE);
-            Assert.IsTrue (cvsFile is Root);
-            Assert.AreEqual(Path.Combine(fullPath, "CVS"), cvsFile.ParentDir.FullName);
-            Assert.AreEqual (fullPath, cvsFile.Path);
-            Assert.AreEqual (ROOT_LINE, cvsFile.FileContents);
+            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Root, ROOT_LINE);
+            Assertion.Assert (cvsFile is Root);
+            Assertion.AssertEquals (fullPath, cvsFile.FullPath);
+            Assertion.AssertEquals (ROOT_LINE, cvsFile.FileContents);
         }
 
         /// <summary>
@@ -128,11 +126,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public void CreateTagTest () {
             String fullPath = this.settings.Config.LocalPath;
 
-            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Tag.ToString(), TAG_LINE);
-            Assert.IsTrue (cvsFile is Tag);
-            Assert.AreEqual(Path.Combine(fullPath, "CVS"), cvsFile.ParentDir.FullName);
-            Assert.AreEqual (fullPath, cvsFile.Path);
-            Assert.AreEqual ("N" + TAG_LINE.Substring (1),
+            ICvsFile cvsFile = factory.CreateCvsObject (fullPath, Factory.FileType.Tag, TAG_LINE);
+            Assertion.Assert (cvsFile is Tag);
+            Assertion.AssertEquals (fullPath, cvsFile.FullPath);
+            Assertion.AssertEquals ("N" + TAG_LINE.Substring (1),
                                     cvsFile.FileContents);
         }
 
@@ -141,10 +138,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void CheckFilenamesTest () {
-            Assert.AreEqual (ENTRY_FILE_NAME, factory.GetFilename (Factory.FileType.Entries));
-            Assert.AreEqual (REPOSITORY_FILE_NAME, factory.GetFilename (Factory.FileType.Repository));
-            Assert.AreEqual (ROOT_FILE_NAME, factory.GetFilename (Factory.FileType.Root));
-            Assert.AreEqual (TAG_FILE_NAME, factory.GetFilename (Factory.FileType.Tag));
+            Assertion.Assert (factory.GetFilename (Factory.FileType.Entries).Equals (ENTRY_FILE_NAME));
+            Assertion.Assert (factory.GetFilename (Factory.FileType.Repository).Equals (REPOSITORY_FILE_NAME));
+            Assertion.Assert (factory.GetFilename (Factory.FileType.Root).Equals (ROOT_FILE_NAME));
+            Assertion.Assert (factory.GetFilename (Factory.FileType.Tag).Equals (TAG_FILE_NAME));
         }
 
         /// <summary>
@@ -152,10 +149,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </summary>
         [Test]
         public void CheckFileTypesTest () {
-            Assert.AreEqual (Factory.FileType.Entries, factory.GetFileType(ENTRY_FILE_NAME));
-            Assert.AreEqual (Factory.FileType.Repository, factory.GetFileType(REPOSITORY_FILE_NAME));
-            Assert.AreEqual (Factory.FileType.Root, factory.GetFileType(ROOT_FILE_NAME));
-            Assert.AreEqual (Factory.FileType.Tag, factory.GetFileType(TAG_FILE_NAME));
+            Assertion.AssertEquals (Factory.FileType.Entries, factory.GetFileType(ENTRY_FILE_NAME));
+            Assertion.AssertEquals (Factory.FileType.Repository, factory.GetFileType(REPOSITORY_FILE_NAME));
+            Assertion.AssertEquals (Factory.FileType.Root, factory.GetFileType(ROOT_FILE_NAME));
+            Assertion.AssertEquals (Factory.FileType.Tag, factory.GetFileType(TAG_FILE_NAME));
         }
     }
 }

@@ -27,6 +27,9 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    Author:     Mike Krueger,
+//                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
 using System;
@@ -34,7 +37,6 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.IO;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
@@ -46,62 +48,56 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     /// <summary>
     /// Commit command
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
-    public class CommitCommand2 : ICommand {
+    public class CommitCommand2 : ICommand
+    {
         private readonly ILog LOGGER = LogManager.GetLogger (typeof (CommitCommand2));
         private WorkingDirectory workingdirectory;
         private string  logmessage;
         private string  vendor  = "vendor";
         private string  release = "release";
-        private FileInfo _logFile;
-        private string _branch;
 
         /// <summary>
         /// Log message
         /// </summary>
         public string LogMessage {
-            get { return logmessage; }
-            set { logmessage = value; }
-        }
-
-
-        /// <summary>
-        /// The file to use when populating the log message.
-        /// </summary>
-        public FileInfo LogFile {
-            get { return this._logFile; }
-            set { this._logFile = value; }
+            get {
+                return logmessage;
+            }
+            set {
+                logmessage = value;
+            }
         }
 
         /// <summary>
         /// Vendor string
         /// </summary>
         public string VendorString {
-            get { return vendor; }
-            set { vendor = value; }
+            get {
+                return vendor;
+            }
+            set {
+                vendor = value;
+            }
         }
 
         /// <summary>
         /// Release String
         /// </summary>
         public string ReleaseString {
-            get { return release; }
-            set { release = value; }
+            get {
+                return release;
+            }
+            set {
+                release = value;
+            }
         }
 
-        /// <summary>
-        /// Branch to commit these changes to.
-        /// </summary>
-        public string Branch {
-            get { return this._branch; }
-            set { this._branch = value; }
-        }
         /// <summary>
         /// Commit command two constructor
         /// </summary>
         /// <param name="workingdirectory"></param>
-        public CommitCommand2(WorkingDirectory workingdirectory) {
+        public CommitCommand2(WorkingDirectory workingdirectory)
+        {
             this.workingdirectory = workingdirectory;
         }
 
@@ -110,35 +106,57 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         /// <param name="connection">Cvs server connection</param>
         public void Execute(ICommandConnection connection) {
-            // read log file if present
-            if (null != this.LogFile) {
-                using (StreamReader reader = new StreamReader(this.LogFile.FullName)) {
-                    this.LogMessage += this.LogFile;
-                }
-            }
             connection.SubmitRequest(new ArgumentRequest("-m"));
             connection.SubmitRequest(new ArgumentRequest("LOG MESSAGE"));
-            if (null != this.Branch) {
-                connection.SubmitRequest(new ArgumentRequest("-r"));
-                connection.SubmitRequest(new ArgumentRequest(this.Branch));
-            }
             connection.SubmitRequest(new ArgumentRequest(ArgumentRequest.Options.DASH));
+//            StringCollection files = new StringCollection();
+//            if (LOGGER.IsDebugEnabled) {
+//                LOGGER.Debug("workdir cvs repository : " +
+//                            workingdirectory.CvsRoot.CvsRepository);
+//            }
+//            connection.SubmitRequest(new DirectoryRequest(".", workingdirectory.CvsRoot.CvsRepository));
             foreach (DictionaryEntry folderEntry in workingdirectory.Folders) {
                 Folder folder = (Folder)folderEntry.Value;
                 this.SetDirectory(connection, folder);
+//                connection.SubmitRequest(new DirectoryRequest(".", 
+//                    workingdirectory.CvsRoot.CvsRepository + "/" + 
+//                    folder.Repository.FileContents));
                 foreach (DictionaryEntry entryEntry  in folder.Entries) {
                     Entry entry = (Entry)entryEntry.Value;
+                    LOGGER.Debug("Commit command.  Entry=[" + entry + "]");
+                    LOGGER.Debug("entry.FullPath=[" + entry.FullPath + "]");
                     if (!entry.IsDirectory) {
                         this.SendFileRequest(connection, entry);
+//                        DateTime old = entry.TimeStamp;
+//                        entry.TimeStamp = entry.TimeStamp;
+
+//                        string path = Path.Combine (workingdirectory.CvsRoot.CvsRepository,
+//                                                    folderEntry.Key.ToString());
+
+//                        string fileName = entry.FullPath;
+
+//                        if (File.GetLastAccessTime(fileName) != entry.TimeStamp) {
+//                            connection.SubmitRequest(new EntryRequest(entry));
+//                            connection.SubmitRequest(new ModifiedRequest(entry.Name));
+//                            files.Add(entry.Name);
+//                            connection.SendFile(fileName, entry.IsBinaryFile);
+//                        }
+
+//                        entry.TimeStamp = old;
                     }
                 }
 
                 this.SetDirectory(connection, folder);
+//                connection.SubmitRequest(new DirectoryRequest(".", 
+//                    workingdirectory.CvsRoot.CvsRepository + "/" + 
+//                    folder.Repository.FileContents));
 
                 foreach (DictionaryEntry entryEntry in folder.Entries) {
                     Entry entry = (Entry)entryEntry.Value;
                     if (!entry.IsDirectory) {
-                        connection.SubmitRequest(new ArgumentRequest(entry.Name));
+//                        if (File.GetLastAccessTime(fileName) != entry.TimeStamp) {
+                            connection.SubmitRequest(new ArgumentRequest(entry.Name));
+//                        }
                     }
                 }
             }
@@ -164,12 +182,27 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 
         private void SendFileRequest (ICommandConnection connection,
             Entry entry) {
+//            bool fileExists;
             DateTime old = entry.TimeStamp;
             entry.TimeStamp = entry.TimeStamp;
-            connection.SubmitRequest (new EntryRequest (entry));
-            connection.SubmitRequest(new CheckinTimeRequest(entry.FullPath));
-            connection.SubmitRequest(new ModifiedRequest(entry.Name));
-            connection.SendFile(entry.FullPath, entry.IsBinaryFile);
+//            try {
+//                fileExists = File.Exists (entry.Filename);
+//            }
+//            catch (Exception e) {
+//                LOGGER.Error (e);
+//                fileExists = false;
+//            }
+
+//            if (!fileExists) {
+                connection.SubmitRequest (new EntryRequest (entry));
+//            } else if (File.GetLastAccessTime(entry.Filename) !=
+//                entry.TimeStamp.ToUniversalTime ()) {
+                connection.SubmitRequest(new ModifiedRequest(entry.Name));
+                connection.SendFile(entry.FullPath, entry.IsBinaryFile);
+//            } else {
+//                connection.SubmitRequest(new EntryRequest(entry));
+//                connection.SubmitRequest(new UnchangedRequest(entry.Name));
+//            }
 
             entry.TimeStamp = old;
         }

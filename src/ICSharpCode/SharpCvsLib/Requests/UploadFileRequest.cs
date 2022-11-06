@@ -25,7 +25,6 @@
 
 using System.IO;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Config;
 
 namespace ICSharpCode.SharpCvsLib.Requests {
@@ -33,8 +32,6 @@ namespace ICSharpCode.SharpCvsLib.Requests {
     /// <summary>
     /// Upload a file to the repository.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class UploadFileRequest : AbstractRequest {
         private string filename;
         private SharpCvsLibConfig settings = SharpCvsLibConfig.GetInstance();

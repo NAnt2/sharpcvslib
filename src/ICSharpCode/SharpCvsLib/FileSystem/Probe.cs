@@ -38,8 +38,6 @@ using System.Text;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
     /// Takes a single file or a collection of files and creates a new
@@ -57,7 +55,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///             or a directory is specified then a recursive search is performed
     ///             to populate the ExistingFiles and NonExistingFiles collection.
     /// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class Probe {
 
         private ILog LOGGER = LogManager.GetLogger (typeof (Probe));

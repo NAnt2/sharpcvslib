@@ -1,0 +1,28 @@
+﻿<html dir="LTR"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5"><title>Entry.CreateEntry Method</title><xml></xml><link rel="stylesheet" type="text/css" href="MSDN.css"></head><body id="bodyID" class="dtBODY"><div id="nsbanner"><div id="bannerrow1"><table class="bannerparthead" cellspacing="0"><tr id="hdr"><td class="runninghead">SharpCvsLib</td><td class="product"></td></tr></table></div><div id="TitleRow"><h1 class="dtH1">Entry.CreateEntry Method </h1></div></div><div id="nstext"><p>
+            Creates a new entry given the path to the file on the filesystem.
+                The entry string is fabricated based on the full path of the file
+                that is under or is to be placed under CVS management control.
+            </p><div class="syntax"><span class="lang">[Visual Basic]</span><br>Public Shared Function CreateEntry( _<br>   ByVal <i>fullPath</i> As <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemStringClassTopic.htm">String</a> _<br>) As <a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.html">Entry</a></div><div class="syntax"><span class="lang">[C#]</span><br>public static <a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.html">Entry</a> CreateEntry(<br>   <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemStringClassTopic.htm">string</a> <i>fullPath</i><br>);</div><h4 class="dtH4">Parameters</h4><dl><dt><i>fullPath</i></dt><dd>The path to the file to put under cvs control.</dd></dl><h4 class="dtH4">Return Value</h4><p>A new cvs entry, using the full path to the file for the
+                entry information.</p><h4 class="dtH4">Exceptions</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr valign="top"><th width="50%">Exception Type</th><th width="50%">Condition</th></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.EntryParseException.html">EntryParseException</a></td><td width="50%">If the entry file cannot be
+                parsed.  This can occur if the fullPath contains a CVS management
+                folder.</td></tr></table></div><h4 class="dtH4">Example</h4><p><p>A full path such as:
+                    <pre class="code">C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\sharpcvslib-tests\sharpcvslib-test-repository\someFile.txt</pre>
+                    would create a Entries line like:
+                    <pre class="code">/someText.txt////</pre>
+                    Although the storage of the file is not the responsibility of the Entry class, the
+                    file would be stored in the directory:
+                    <pre class="code">C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\sharpcvslib-tests\sharpcvslib-test-repository\</pre></p><p>A directory entry would be indicated by a 
+                    <pre class="code">C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\sharpcvslib-tests\sharpcvslib-test-repository\src\</pre>
+                    which is flagged by adding a <pre class="code">Path.DirectorySeperatorChar</pre> to the
+                    end of a normal directory, if it does not already exist.  The directory Entry
+                    would be placed in the CVS management folder ABOVE the directory itself and
+                    the resulting Entries line would look like:
+                    <pre class="code">D/src////</pre>
+                    The file would then be placed by the <a href="ICSharpCode.SharpCvsLib.FileSystem.Manager.html">Manager</a> in 
+                    the directory:
+                    <pre class="code">C:\DOCUME~1\ADMINI~1\LOCALS~1\Temp\sharpcvslib-tests\sharpcvslib-test-repository\</pre>
+                    as well.
+                </p></p><h4 class="dtH4">See Also</h4><p><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.html">Entry Class</a> | <a href="ICSharpCode.SharpCvsLib.FileSystem.html">ICSharpCode.SharpCvsLib.FileSystem Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="CreateEntry method"><param name="Keyword" value="CreateEntry method, Entry class"><param name="Keyword" value="Entry.CreateEntry method"></object><hr><div id="footer"><p><a href="http://sharpcvslib.sourceforge.net/license.html">Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.</a></p><p>Generated from assembly ICSharpCode.SharpCvsLib [0.35.3721.507]</p></div></div></body></html>

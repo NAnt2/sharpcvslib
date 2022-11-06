@@ -33,7 +33,6 @@ using System;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
@@ -48,26 +47,26 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     ///         file contains the `-d' option, it will be the directory specified 
     ///         with `-d', not the name of the module).
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class ModuleExpansionResponse : AbstractResponse {
+    public class ModuleExpansionResponse : IResponse {
         private readonly ILog LOGGER =
             LogManager.GetLogger (typeof (ModuleExpansionResponse));
 
         /// <summary>
         /// Process the module expansion response.
         /// </summary>
-        public override void Process() {
-            string which = this.ReadLine();
+        /// <param name="cvsStream"></param>
+        /// <param name="services"></param>
+        public void Process(CvsStream cvsStream, IResponseServices services) {
+            string which = cvsStream.ReadLine();
             if (LOGGER.IsDebugEnabled) {
-                LOGGER.Debug(String.Format("module expansion : ", which));
+                LOGGER.Debug("module expansion : " + which);
             }
         }
 
         /// <summary>
         /// Indicator stating whether the response is terminating or not.
         /// </summary>
-        public override bool IsTerminating {
+        public bool IsTerminating {
             get {return false;}
         }
     }

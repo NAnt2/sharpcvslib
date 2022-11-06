@@ -31,37 +31,35 @@
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
 
 namespace ICSharpCode.SharpCvsLib.Commands {
 
+/// <summary>
+/// Command to initialize a new cvs repository.
+/// </summary>
+public class InitCommand : ICommand
+{
+    CvsRoot cvsroot;
+
     /// <summary>
-    /// Command to initialize a new cvs repository.
+    /// Constructor
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
-    public class InitCommand : ICommand {
-        CvsRoot cvsroot;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="cvsroot"></param>
-        public InitCommand(CvsRoot cvsroot)
-        {
-            this.cvsroot    = cvsroot;
-        }
-
-        /// <summary>
-        /// Do the dirty work.
-        /// </summary>
-        /// <param name="connection"></param>
-        public void Execute(ICommandConnection connection)
-        {
-            connection.SubmitRequest(new InitRequest(cvsroot.CvsRepository));
-        }
+    /// <param name="cvsroot"></param>
+    public InitCommand(CvsRoot cvsroot)
+    {
+        this.cvsroot    = cvsroot;
     }
+
+    /// <summary>
+    /// Do the dirty work.
+    /// </summary>
+    /// <param name="connection"></param>
+    public void Execute(ICommandConnection connection)
+    {
+        connection.SubmitRequest(new InitRequest(cvsroot.CvsRepository));
+    }
+}
 }

@@ -105,9 +105,12 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             File.Delete (checkFile);
             LOGGER.Debug("After deleted checkFile=[" + checkFile + "]");
 
-            Assert.IsTrue (!File.Exists (checkFile));
+            Assertion.Assert ("File should be gone now.  file=[" + checkFile + "]", !File.Exists (checkFile));
+            LOGGER.Debug("Before update all files recursively.");
             this.UpdateAllRecursive (rootDir);
-            Assert.IsTrue (File.Exists (checkFile));
+            LOGGER.Debug("After update all files recursively.");
+            Assertion.Assert ("Should have found the file.  file=[" +
+                            checkFile + "]", File.Exists (checkFile));
 
             String moduleDir = Path.Combine(rootDir, this.settings.Module);
             Entries entries =
@@ -119,15 +122,23 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                 Directory.GetDirectories (rootDir);
             // Minus the cvs directory
             int total = files.Length + directories.Length - 1;
-            Assert.AreEqual (total, entries.Count);
+            Assertion.Assert ("Count of directories and files should be equal to " +
+                            "the entries in the CVS/Entries file.  They are not.  " +
+                            "entriesCount=[" + entries.Count + "]" +
+                            "files=[" + files.Length + "]" +
+                            "directories=[" + directories.Length + "]" +
+                            "total=[" + total + "]",
+                            entries.Count == total);
             LOGGER.Debug("Before checking all file names.");
 
-            Assert.IsTrue(entries.Contains(Path.Combine(moduleDir, this.settings.TargetFile)));
+            Assertion.Assert("Target file=[" + this.settings.TargetFile + "] should have a cvs entry.",
+                entries.Contains(Path.Combine(moduleDir, this.settings.TargetFile)));
 
             // Had some problems with an extra module directory appearing under
             //    the main working folder.
             String doubleModuleDir = Path.Combine (rootDir, this.settings.Config.Module);
-            Assert.IsTrue (!Directory.Exists (doubleModuleDir));
+            Assertion.Assert ("Should not be a module directory under root folder=[" + doubleModuleDir + "]",
+                            !Directory.Exists (doubleModuleDir));
         }
 
         private void UpdateAllRecursive (String rootDir, String overrideDirectory) {
@@ -140,10 +151,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             working.OverrideDirectory = overrideDirectory;
 
             CVSServerConnection connection = new CVSServerConnection ();
-            Assert.IsNotNull (connection);
+            Assertion.AssertNotNull ("Should have a connection object.", connection);
 
             ICommand command = new UpdateCommand2 (working);
-            Assert.IsNotNull (command);
+            Assertion.AssertNotNull ("Should have a command object.", command);
 
             connection.Connect (working, this.settings.Config.ValidPassword);
 
@@ -187,9 +198,10 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             this.Checkout (null, this.settings.Config.OverrideDirectory);
             File.Delete (checkFile);
 
-            Assert.IsTrue (!File.Exists (checkFile));
+            Assertion.Assert ("File should be gone now.  file=[" + checkFile + "]", !File.Exists (checkFile));
             this.UpdateAllRecursive (rootDir, this.settings.Config.OverrideDirectory);
-            Assert.IsTrue (File.Exists (checkFile));
+            Assertion.Assert ("Should have found the file.  file=[" +
+                            checkFile + "]", File.Exists (checkFile));
 
         }
     }

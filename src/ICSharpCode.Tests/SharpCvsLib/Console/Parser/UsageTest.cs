@@ -72,78 +72,78 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         public void MakeUsageTest ()
         {
             // Check the Usage.General string against literal
-            Assert.AreEqual(@"Usage: cvs [cvs-options] command [command-options-and-arguments]
-  where cvs-options are -q, -n, etc.
-    (specify --help-options for a list of options)
-  where command is add, admin, etc.
-    (specify --help-commands for a list of commands
-    or --help-synonyms for a list of command synonyms)
-  where command-options-and-arguments depend on the specific command
-    (specify -H followed by a command name for command-specific help)
-  Specify --help to receive this message
+            Assertion.Equals(Usage.General, @"   Usage: cvs [cvs-options] command [command-options-and-arguments]
+                            where cvs-options are -q, -n, etc.
+                            (specify --help-options for a list of options)
+                            where command is add, admin, etc.
+                            (specify --help-commands for a list of commands
+                            or --help-synonyms for a list of command synonyms)
+                            where command-options-and-arguments depend on the specific command
+                            (specify -H followed by a command name for command-specific help)
+                            Specify --help to receive this message
 
-The Concurrent Versions System (CVS) is a tool for version control.
-For CVS updates and additional information, see
-    the #CvsLib home page at http://sharpcvslib.sourceforge.net/ or
-    the CVS home page at http://www.cvshome.org/ or
-    Pascal Molli's CVS site at http://www.loria.fr/~molli/cvs-index.html
-    the CVSNT home page at http://www.cvsnt.org/
-
-Thanks for using the command line tool.", Usage.General);
+                            The Concurrent Versions System (CVS) is a tool for version control.
+                            For CVS updates and additional information, see
+                            the #CvsLib home page at http://sharpcvslib.sourceforge.net/ or
+                            the CVS home page at http://www.cvshome.org/ or
+                            Pascal Molli's CVS site at http://www.loria.fr/~molli/cvs-index.html
+                            the CVSNT home page at http://www.cvsnt.org/
+                            ");
             // Check the Usage.Commands string against literal
-            Assert.AreEqual(@"CVS commands are:
-        add         Add a new file/directory to the repository
-        admin       Administration front end for rcs
-        annotate    Show last revision where each line was modified
-        chacl       Change the Access Control List for a directory
-        checkout    Checkout sources for editing
-        chown       Change the owner of a directory
-        commit      Check files into the repository
-        diff        Show differences between revisions
-        edit        Get ready to edit a watched file
-        editors     See who is editing a watched file
-        export      Export sources from CVS, similar to checkout
-        history     Show repository access history
-        import      Import sources into CVS, using vendor branches
-        init        Create a CVS repository if it doesn't exist
-        info        Display information about supported protocols
-        log         Print out history information for files"
-        //#ifdef CLIENT_SUPPORT
-        + @"
-        login        Prompt for password for authenticating server
-        logout       Removes entry in .cvspass for remote repository"
-        //#endif /* CLIENT_SUPPORT */
-        + @"
-        ls           List files in the repository
-        lsacl        List the directories Access Control List
-        passwd       Set the user's password (Admin: Administer users)"
-        //#if defined(SERVER_SUPPORT)
-        + @"
-        authserver   Authentication server mode"
-        //#endif
-        + @"
-        rannotate    Show last revision where each line of module was modified
-        rdiff        Create 'patch' format diffs between releases
-        release      Indicate that a Module is no longer in use
-        remove       Remove an entry from the repository
-        cvs_rename       Rename a file in the repository
-        rlog         Print out history information for a module
-        rtag         Add a symbolic tag to a module"
-        //#ifdef SERVER_SUPPORT
-        + @"
-        server       Server mode"
-        //#endif
-        + @"
-        status       Display status information on checked out files
-        tag          Add a symbolic tag to checked out version of files
-        unedit       Undo an edit command
-        update       Bring work tree in sync with repository
-        version      Show current CVS version(s)
-        watch        Set watches
-        watchers     See who is watching a file
-        (Specify the --help option for a list of other help options)", Usage.Commands);
+            Assertion.Equals(Usage.Commands, @"CVS commands are:
+                            add          Add a new file/directory to the repository
+                            admin        Administration front end for rcs
+                            annotate     Show last revision where each line was modified
+                            chacl        Change the Access Control List for a directory
+                            checkout     Checkout sources for editing
+                            chown        Change the owner of a directory
+                            commit       Check files into the repository
+                            diff         Show differences between revisions
+                            edit         Get ready to edit a watched file
+                            editors      See who is editing a watched file
+                            export       Export sources from CVS, similar to checkout
+                            history      Show repository access history
+                            import       Import sources into CVS, using vendor branches
+                            init         Create a CVS repository if it doesn't exist
+                            info         Display information about supported protocols
+                            log          Print out history information for files"
+                            //#ifdef CLIENT_SUPPORT
+                            + @"
+                            login        Prompt for password for authenticating server
+                            logout       Removes entry in .cvspass for remote repository"
+                            //#endif /* CLIENT_SUPPORT */
+                            + @"
+                            ls           List files in the repository
+                            lsacl        List the directories Access Control List
+                            passwd       Set the user's password (Admin: Administer users)"
+                            //#if defined(SERVER_SUPPORT)
+                            + @"
+                            authserver   Authentication server mode"
+                            //#endif
+                            + @"
+                            rannotate    Show last revision where each line of module was modified
+                            rdiff        Create 'patch' format diffs between releases
+                            release      Indicate that a Module is no longer in use
+                            remove       Remove an entry from the repository
+                            cvs_rename       Rename a file in the repository
+                            rlog         Print out history information for a module
+                            rtag         Add a symbolic tag to a module"
+                            //#ifdef SERVER_SUPPORT
+                            + @"
+                            server       Server mode"
+                            //#endif
+                            + @"
+                            status       Display status information on checked out files
+                            tag          Add a symbolic tag to checked out version of files
+                            unedit       Undo an edit command
+                            update       Bring work tree in sync with repository
+                            version      Show current CVS version(s)
+                            watch        Set watches
+                            watchers     See who is watching a file
+                            (Specify the --help option for a list of other help options)
+                            ");
             // Check the Usage.Options string against literal
-            Assert.AreEqual(Usage.Options, @"CVS global options (specified before the command name) are:
+            Assertion.Equals(Usage.Options, @"CVS global options (specified before the command name) are:
                             -D prefix       Adds a prefix to CVSROOT.
                             -H              Displays usage information for command.
                             -Q              Cause CVS to be really quiet.
@@ -174,7 +174,7 @@ Thanks for using the command line tool.", Usage.General);
                             (Specify the --help option for a list of other help options)
                             ");
             // Check the Usage.Synonyms string for not being null
-            Assert.IsNotNull(Usage.Synonyms);
+            Assertion.AssertNotNull(Usage.Synonyms);
         }
     }
 }

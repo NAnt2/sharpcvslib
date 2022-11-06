@@ -28,13 +28,14 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    Author:     Mike Krueger,
+//                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
 using System;
 using System.Collections;
 using System.IO;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
@@ -48,9 +49,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     /// Command to refresh the working folder with the current sources
     ///     from the repository.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
-    public class UpdateCommand2 : ICommand {
+    public class UpdateCommand2 : ICommand
+    {
         private readonly ILog LOGGER =
             LogManager.GetLogger (typeof (UpdateCommand2));
 
@@ -58,12 +58,18 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         private string  logmessage;
         private string  vendor  = "vendor";
         private string  release = "release";
-        private string  revision;
-        bool hasDate = false;    // DateTime is a value type so we can't use null to indicate it hasn't been set
-        DateTime date = new DateTime();
 
-        private bool resetStickyTags;
-
+        private class Arguments {
+            /// <summary>
+            /// Purge any local directories that are empty.  This is a client function
+            ///     and nothing is done on the server.
+            /// </summary>
+            public const String PURGE = "-P";
+            /// <summary>
+            /// Create any new directories that do not exist on the client.
+            /// </summary>
+            public const String CREATE_NEW_DIRECTORIES = "-d";
+        }
         /// <summary>
         /// Log message.
         /// </summary>
@@ -89,89 +95,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         }
 
         /// <summary>
-        /// Update using specified revision/tag (is sticky).
-        /// <br/>
-        /// <warn>Only one of revision or date can be specified, NOT BOTH.</warn>
-        /// </summary>
-        /// <value>This corresponds to the option value 
-        ///     -r sent to the cvs server.</value>
-        public string Revision {
-            get { 
-                // check the working directory revision if there is no value, 
-                //  this is to preserve backwards compatibility.
-                if (null == this.revision) {
-                    this.revision = this.workingDirectory.Revision;
-                }
-                return this.revision; 
-            } 
-            set { 
-                if (this.hasDate) {
-                    throw new ArgumentException("Cannot specify both date and revision");
-                }
-
-                this.revision = value; 
-            }
-        } 
-  
-        /// <summary>
-        /// Set date to update from (is sticky).
-        /// <br/>
-        /// <warn>Only one of revision or date can be specified, NOT BOTH.</warn>
-        /// </summary>
-        /// <value>This corresponds to the option value -D
-        ///     sent to the cvs server.
-        /// </value>
-        public DateTime Date {
-            get {
-                if (!this.hasDate && this.workingDirectory.HasDate) {
-                    this.date = this.workingDirectory.Date;
-                }
-                return this.date;
-            }
-            set {
-                if (this.revision != null) {
-                    throw new ArgumentException("Cannot specify both date and revision");
-                }
-                this.date = value; 
-                hasDate = true;
-            }
-        }
-
-        /// <summary>
-        ///     Returns the data as a string as required by the cvs server.
-        /// </summary>
-        public string GetDateAsString() {
-            string dateAsString = "";
-            string dateFormat = "dd MMM yyyy";
-
-            if (hasDate) {
-                dateAsString = date.ToString(dateFormat);
-            }
-            return dateAsString;
-        }
-
-        /// <summary>
-        /// Indicate whether a date has been specified for this update.
-        /// </summary>
-        /// <value><code>true</code> if a date has been specified, 
-        ///     otherwise <code>false</code>.</value>
-        public bool HasDate {
-            get { return this.hasDate || this.workingDirectory.HasDate; }
-        }
-
-        /// <summary>
-        /// Reset any sticky tags/date/kopts.
-        /// </summary>
-        /// <value><code>true</code> to send the reset sticky tag request to
-        ///     the server.  
-        ///     <br/>
-        ///     [Default = false]</value>
-        public bool ResetStickyTags {
-            get { return this.resetStickyTags; }
-            set { this.resetStickyTags = value; }
-        }
-
-        /// <summary>
         /// Constructor.
         /// </summary>
         /// <param name="workingDirectory"></param>
@@ -184,16 +107,17 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// </summary>
         /// <param name="connection"></param>
         public void Execute(ICommandConnection connection) {
-            Folders folders = workingDirectory.Folders;
-            if (folders == null || folders.Count == 0) {
-                folders = new Folders();
-                GetAllFiles(new DirectoryInfo(Environment.CurrentDirectory), folders);
-            } 
+            if (LOGGER.IsDebugEnabled) {
+                String msg = "In execute, looking for working folders.  " +
+                            "count of working folders=[" +
+                            workingDirectory.Folders.Count + "]";
+                LOGGER.Debug (msg);
+            }
 
-            foreach (Folder folder in folders.Values) {
-                connection.SubmitRequest(new DirectoryRequest(".", 
-                    this.workingDirectory.CvsRoot.CvsRepository + "/" + 
-                    folder.Repository.FileContents));
+            Folder[] _foldersToUpdate =
+                (Folder[])workingDirectory.FoldersToUpdate.Clone ();
+            foreach (Folder folder in _foldersToUpdate) {
+                this.SetDirectory (connection, folder);
 
                 Tag tag = folder.Tag;
                 if (null != tag) {
@@ -204,18 +128,13 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                     connection.SubmitRequest (
                         new ArgumentRequest (workingDirectory.OverrideDirectory));
                 }
-
-                if (this.Revision != null && this.Revision != string.Empty) {
+                if (workingDirectory.HasRevision) {
                     connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.REVISION));
-                    connection.SubmitRequest(new ArgumentRequest(this.Revision));
+                    connection.SubmitRequest(new ArgumentRequest(workingDirectory.Revision));
                 }
                 if (workingDirectory.HasDate) {
                     connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.DATE));
                     connection.SubmitRequest(new ArgumentRequest(workingDirectory.GetDateAsString()));
-                }
-
-                if (this.ResetStickyTags) {
-                    connection.SubmitRequest (new ArgumentRequest(ArgumentRequest.Options.RESET_STICKY_TAGS));
                 }
                 
                 foreach (DictionaryEntry dicEntry  in folder.Entries) {
@@ -234,14 +153,40 @@ namespace ICSharpCode.SharpCvsLib.Commands {
 
         }
 
+
+        private void SetDirectory (ICommandConnection connection,
+                                Folder folder) {
+            String absoluteDir =
+                connection.Repository.CvsRoot.CvsRepository + "/" +
+                folder.Repository.FileContents;
+
+            try {
+                connection.SubmitRequest(new DirectoryRequest(".",
+                                        absoluteDir));
+            }
+            catch (Exception e) {
+                String msg = "Exception while submitting directory request.  " +
+                            "path=[" + folder.Repository.FileContents + "]";
+                LOGGER.Error (e);
+            }
+        }
+
         private void SendFileRequest (ICommandConnection connection,
                                 Entry entry) {
+            bool fileExists;
             DateTime old = entry.TimeStamp;
             entry.TimeStamp = entry.TimeStamp;
+            try {
+                fileExists = File.Exists (entry.FullPath);
+            }
+            catch (Exception e) {
+                LOGGER.Error (e);
+                fileExists = false;
+            }
 
-            if (!File.Exists(entry.FullPath)) {
+            if (!fileExists) {
                 connection.SubmitRequest (new EntryRequest (entry));
-            } else if (File.GetLastWriteTime(entry.FullPath) >
+            } else if (File.GetLastAccessTime(entry.FullPath) !=
                     entry.TimeStamp.ToUniversalTime ()) {
                 connection.SubmitRequest(new ModifiedRequest(entry.Name));
                 connection.SendFile(entry.FullPath, entry.IsBinaryFile);
@@ -290,23 +235,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             }
 
             return fileNameAndPath;
-        }
-
-        private void GetAllFiles(DirectoryInfo dir, Folders folders) {
-            foreach (DirectoryInfo subDir in dir.GetDirectories("CVS")) {
-                FileInfo entryFile = new FileInfo(Path.Combine(subDir.FullName, "Entries"));
-                if (entryFile.Exists) {
-                    Entries entries = Entries.Load(subDir);
-                    if (folders.Contains(dir.Parent.FullName)) {
-                        Folder folder = (Folder)folders[subDir.Parent.FullName];
-                        folder.Entries = entries;
-                    } else {
-                        Folder folder = new Folder(subDir.Parent);
-                        folder.Entries = entries;
-                        folders.Add(folder);
-                    }
-                }
-            }
         }
     }
 }

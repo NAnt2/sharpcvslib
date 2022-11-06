@@ -27,8 +27,6 @@
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-
 namespace ICSharpCode.SharpCvsLib.Requests {
 
     /// <summary>
@@ -36,9 +34,8 @@ namespace ICSharpCode.SharpCvsLib.Requests {
     /// Save argument for use in a subsequent command. Arguments accumulate until
     /// an argument-using command is given, at which point they are forgotten.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class ArgumentRequest : AbstractRequest {
+    public class ArgumentRequest : AbstractRequest
+    {
         private string arg;
 
         /// <summary>The options that are available as
@@ -65,16 +62,14 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             /// TODO: Figure out what the dash request actually does.
             /// </summary>
             public const String DASH = "--";
-
-            /// <summary>Reset any sticky tags/date/kopts.</summary>
-            public const string RESET_STICKY_TAGS = "-A";
         }
 
         /// <summary>
         /// An argument to use with the cvs command.
         /// </summary>
         /// <param name="arg">The argument to send to the server.</param>
-        public ArgumentRequest(string arg) {
+        public ArgumentRequest(string arg)
+        {
             this.arg = arg;
         }
 

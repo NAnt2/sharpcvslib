@@ -28,6 +28,7 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
@@ -36,24 +37,15 @@ using System.IO;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-
-namespace ICSharpCode.SharpCvsLib.FileSystem {
+namespace ICSharpCode.SharpCvsLib.FileSystem
+{
 	/// <summary>
 	/// Populates a folder or collection of folders given one file, a directory,
 	///     a collection of files or a collection of directories.
 	/// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-	public class Folders : DictionaryBase {
+	public class Folders : DictionaryBase
+	{
         private ILog LOGGER = LogManager.GetLogger (typeof (Folders));
-
-        /// <summary>
-        /// Return the collection of values for the dictionary.
-        /// </summary>
-        public ICollection Values {
-            get {return this.Dictionary.Values;}
-        }
-
         /// <summary>
         /// Create an instance of the folder manager.
         /// </summary>
@@ -69,28 +61,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         /// <summary>
-        /// Add the folder to the folders collection.
-        /// <br/>
-        /// </summary>
-        /// <param name="folder">The folder to add to the collection.</param>
-        /// <exception cref="ArgumentException">If the Folder.Path value is null.</exception>
-        public void Add(Folder folder) {
-            if (null == folder.Path) {
-                throw new ArgumentException("Folder.Path cannot be null.");
-            }   
-            Dictionary.Add(folder.Path.FullName, folder);
-        }   
-
-        /// <summary>
         /// Add the given folder to the collection.  The folder key is the path to
         ///     the folder on the filesystem.
         /// </summary>
         /// <param name="path">The path to the folder on the filesystem.</param>
         /// <param name="folder">The folder object to add to the collection.</param>
         public void Add(String path, Folder folder) {
-            if (null == folder.Path) {
-                folder.Path = new DirectoryInfo(path);
-            }
             Dictionary.Add(path, folder);
         }
 
@@ -115,19 +91,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         /// <summary>
-        /// Recursively fill the folder object from the base directory.
-        /// </summary>
-        /// <param name="dir">Directory to start recursing through.</param>
-        public void Fill(DirectoryInfo dir) {
-            if (Folder.IsManaged(dir)) {
-                this.Add(new Folder(dir));
-            }
-            foreach (DirectoryInfo subDir in dir.GetDirectories()) {
-                this.Fill(subDir);
-            }
-        }
-
-        /// <summary>
         /// Return a human readable string that represents the folders contained
         ///     in this dictionary object.
         /// </summary>
@@ -143,5 +106,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             return formatter.ToString();
         }
 
+        /// <summary>
+        /// Return the collection of values for the dictionary.
+        /// </summary>
+        public ICollection Values {
+            get {return this.Dictionary.Values;}
+        }
 	}
 }

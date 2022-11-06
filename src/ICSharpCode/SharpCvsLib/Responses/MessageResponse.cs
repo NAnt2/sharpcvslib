@@ -31,7 +31,6 @@
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
@@ -39,36 +38,39 @@ using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
 
+/// <summary>
+/// Message response.
+/// </summary>
+public class MessageResponse : IResponse
+{
+    bool terminating = false;
+    private readonly ILog LOGGER =
+        LogManager.GetLogger (typeof (MessageResponse));
+
     /// <summary>
-    /// Message response.
+    /// Process the message response.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class MessageResponse : AbstractResponse {
-        private bool terminating;
-        private readonly ILog LOGGER =
-            LogManager.GetLogger (typeof (MessageResponse));
+    /// <param name="cvsStream"></param>
+    /// <param name="services"></param>
+    public void Process(CvsStream cvsStream, IResponseServices services)
+    {
+        string message = cvsStream.ReadToEndOfLine();
+        terminating = message.Trim().ToUpper() == "OK";
+        // Fire message event to the client app
+        services.SendMessage("cvs server: M " + message);
+        String msg = "cvs server: M " + message;
+        LOGGER.Debug (msg);
+    }
 
-        /// <summary>
-        /// Process the message response.
-        /// </summary>
-        public override void Process() {
-            string message = this.ReadLine();
-            terminating = message.Trim().ToUpper() == "OK";
-            // Fire message event to the client app
-            Services.SendMessage("cvs server: M " + message);
-            String msg = message;
-            LOGGER.Debug (msg);
-            Services.ResponseMessageEvents.SendResponseMessage(msg, this.GetType());
-        }
-
-        /// <summary>
-        /// Indicator stating whether the response is terminating or not.
-        /// </summary>
-        public override bool IsTerminating {
-            get {return terminating;}
+    /// <summary>
+    /// Indicator stating whether the response is terminating or not.
+    /// </summary>
+    public bool IsTerminating {
+        get {
+            return terminating;
         }
     }
+}
 }
 
 

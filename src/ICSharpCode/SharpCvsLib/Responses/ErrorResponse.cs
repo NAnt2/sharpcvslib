@@ -31,38 +31,41 @@
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
+
+/// <summary>
+/// Handle an error response from the cvs server.
+/// </summary>
+public class ErrorResponse : IResponse
+{
+    private readonly ILog LOGGER =
+        LogManager.GetLogger (typeof (ErrorResponse));
     /// <summary>
-    /// Handle an error response from the cvs server.
+    /// Process an error response.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class ErrorResponse : AbstractResponse {
-        private readonly ILog LOGGER =
-            LogManager.GetLogger (typeof (ErrorResponse));
-        /// <summary>
-        /// Process an error response.
-        /// </summary>
-        public override void Process() {
-            string message = this.ReadLine();
-            String msg = message;
-            Services.SendErrorMessage(msg);
-            LOGGER.Debug (msg);
+    /// <param name="cvsStream"></param>
+    /// <param name="services"></param>
+    public void Process(CvsStream cvsStream, IResponseServices services)
+    {
+        string message = cvsStream.ReadLine();
+        String msg = "cvs server: M " + message;
+        services.SendErrorMessage(msg);
+        LOGGER.Debug (msg);
 
-            Services.ResponseMessageEvents.SendResponseMessage(msg, this.GetType());
-        }
+    }
 
-        /// <summary>
-        /// Return true if this response cancels the transaction
-        /// </summary>
-        public override bool IsTerminating {
-            get {return true;}
+    /// <summary>
+    /// Return true if this response cancels the transaction
+    /// </summary>
+    public bool IsTerminating {
+        get {
+            return true;
         }
     }
+}
 }

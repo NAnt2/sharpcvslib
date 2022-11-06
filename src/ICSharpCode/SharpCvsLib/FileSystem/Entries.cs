@@ -27,15 +27,13 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
 using System.Collections;
-using System.IO;
 
 using log4net;
-
-using ICSharpCode.SharpCvsLib.Attributes;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem
 {
@@ -44,24 +42,15 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
 	///     entries.  The key to the collection is the path to the file that the
 	///     cvs entry represents on the file system.
 	/// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
 	public class Entries : DictionaryBase {
-        private FileInfo _entriesPath;
-        private ILog LOGGER = LogManager.GetLogger (typeof (Entries));
 
-        public FileInfo EntriesPath {
-            get { return this._entriesPath; }
-            set { this._entriesPath = value; }
-        }
+        private ILog LOGGER = LogManager.GetLogger (typeof (Entries));
 
         /// <summary>
         /// Create a new instance of the entries class.
         /// </summary>
-		public Entries(DirectoryInfo cvsDir) : base() {
-            if (!cvsDir.FullName.ToLower().EndsWith("cvs")) {
-                cvsDir = new DirectoryInfo(Path.Combine(cvsDir.FullName, "CVS"));
-            }
-            this._entriesPath = new FileInfo(Path.Combine(cvsDir.FullName, "Entries"));
+		public Entries() : base() {
+
 		}
 
         /// <summary>
@@ -71,17 +60,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         public Entry this[String fullPath] {
             get { return ((Entry)(Dictionary[fullPath])); }
             set { Dictionary[fullPath] = value; }
-        }
-
-        public void Add(Entry entry) {
-            if (null == entry || null == entry.FullPath) {
-                throw new ArgumentException("Entry must contain a path value.");
-            }
-            if (this.Contains(entry.FullPath)) {
-                this[entry.FullPath] = entry;
-            } else {
-                Dictionary.Add(entry.FullPath, entry);
-            }
         }
 
         /// <summary>
@@ -118,61 +96,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem
         /// </summary>
         public ICollection Values {
             get {return this.Dictionary.Values;}
-        }
-
-        public static Entries Load(DirectoryInfo cvsDir) {
-            if (cvsDir.Name != "CVS") {
-                cvsDir = new DirectoryInfo(
-                    System.IO.Path.Combine(cvsDir.FullName, "CVS"));
-            }
-            return Load(new FileInfo(
-                System.IO.Path.Combine(cvsDir.FullName, Entry.FILE_NAME)));
-        }
-
-        /// <summary>
-        /// Load the given string.
-        /// </summary>
-        /// <param name="cvsFile">Path to the file being managed, this will
-        /// load the corresponding Entry from the Entries file.</param>
-        /// <returns></returns>
-        public static Entries Load (FileInfo cvsFile) {
-            Entries entries = new Entries(cvsFile.Directory);
-
-            if (cvsFile.Exists) {
-                using (StreamReader reader = new StreamReader(cvsFile.FullName)) {
-                    string line;
-                    while ((line = reader.ReadLine()) != null) {
-                        if (line.Trim() != string.Empty) {
-                            entries.Add(new Entry(cvsFile, line));
-                        }
-                    }
-                }
-            } 
-            return entries;
-        }
-
-        public void Save() {
-            Save(this);
-        }
-
-        public static void Save(Entry entry) {
-            Entries entries = Entries.Load(entry.CvsFile.Directory);
-            if (entries.Contains(entry.FullPath)) {
-                entries[entry.FullPath] = entry;
-            } else {
-                entries.Add(entry);
-            }
-            entries.Save();
-        }
-
-        public static void Save(Entries entries) {
-            ArrayList sortedEntries = new ArrayList(entries.Values);
-            sortedEntries.Sort();
-            using (StreamWriter writer = new StreamWriter(entries.EntriesPath.FullName)) {
-                foreach (Entry entryVal in sortedEntries) {
-                    writer.WriteLine(entryVal.ToString());
-                }
-            }
         }
 
         /// <summary>

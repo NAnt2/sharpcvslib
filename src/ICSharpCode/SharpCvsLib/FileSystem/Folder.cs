@@ -28,14 +28,15 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    <author>Mike Krueger</author>
+//    <author>Clayton Harbour</author>
+//
 #endregion
 
 using System;
-using System.IO;
 using System.Collections;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-using ICSharpCode.SharpCvsLib.Exceptions;
+using ICSharpCode.SharpCvsLib.FileSystem;
 
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
@@ -43,47 +44,33 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///     in simple terms a folder or directory on the
     ///     cvs server.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class Folder {
-        DirectoryInfo path;
         private Entries entries;
         private Repository repository;
         private Root root;
         private Tag tag;
 
-        private DirectoryInfo _cvsDir;
-
         /// <summary>
-        /// The local path to the folder being managed.
+        /// Create a new instance of the folders object.  Initialize the entries 
+        ///     collection.
         /// </summary>
-        public DirectoryInfo Path {
-            get {return this.path;}
-            set {
-                this.path = value;
-                this._cvsDir = 
-                    new DirectoryInfo(System.IO.Path.Combine(this.path.FullName, "CVS"));
-            }
+        public Folder () {
+            this.entries = new Entries();
         }
-
         /// <summary>
         ///     The repository object.
         /// </summary>
         [Obsolete ("Use Repository")]
         public Repository Repos {
-            get {return this.Repository;}
-            set {this.Repository = value;}
+            get {return this.repository;}
+            set {this.repository = value;}
         }
 
         /// <summary>
         /// Root file, holds cvsroot information.
         /// </summary>
         public Root Root {
-            get {
-                if (null == this.Root) {
-                    this.root = Root.Load(this.Path);
-                }
-                return this.root;}
+            get {return this.root;}
             set {this.root = value;}
         }
 
@@ -92,11 +79,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     folder on the server.
         /// </summary>
         public Repository Repository {
-            get {
-                if (null == this.repository) {
-                    this.repository = Repository.Load(this.Path);
-                }
-                return this.repository;}
+            get {return this.repository;}
             set {this.repository = value;}
         }
 
@@ -106,16 +89,7 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     revision.
         /// </summary>
         public Tag Tag {
-            get {
-                if (null == this.tag) {
-                    try {
-                        this.tag = Tag.Load(this.Path);
-                    } catch (CvsFileNotFoundException) {
-                        // sometimes there isn't a tag, set to null.
-                        this.tag = null;
-                    }
-                }
-                return this.tag;}
+            get {return this.tag;}
             set {this.tag = value;}
         }
 
@@ -125,38 +99,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         public Entries Entries {
             get {return this.entries;}
             set {this.entries = value;}
-        }
-
-        /// <summary>
-        /// Create a new instance of the folders object.  Initialize the entries 
-        ///     collection.
-        /// </summary>
-        public Folder () : this(new DirectoryInfo(Environment.CurrentDirectory)) {
-
-        }
-
-        /// <summary>
-        /// Create a new folder object passing in the directory that it represents.
-        /// </summary>
-        /// <param name="path"></param>
-        public Folder (DirectoryInfo path) {
-            this.path = path;
-            this.entries = new Entries(this.Path);
-        }
-
-        /// <summary>
-        /// If the folder is not a cvs folder but does contain a cvs sub directory then
-        /// it is a cvs folder.
-        /// </summary>
-        /// <param name="dir">The directory to check.</param>
-        /// <returns><see langword="true"/> if the folder is a cvs management folder, 
-        ///     otherwise <see langword="false"/></returns>
-        public static bool IsManaged(DirectoryInfo dir) {
-            if (!dir.FullName.EndsWith(System.IO.Path.DirectorySeparatorChar + "CVS") &&
-                File.Exists(System.IO.Path.Combine(dir.FullName, "CVS"))) {
-                return true;
-            }
-            return false;
         }
 
         /// <summary>
@@ -173,4 +115,5 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             return formatter.ToString();
         }
     }
+
 }

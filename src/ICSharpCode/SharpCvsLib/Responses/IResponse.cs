@@ -29,42 +29,26 @@
 // exception statement from your version.
 #endregion
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
 
+/// <summary>
+/// Response interface.
+/// </summary>
+public interface IResponse
+{
     /// <summary>
-    /// Response interface.
+    /// processes this response
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public interface IResponse
-    {
-        /// <summary>
-        /// processes this response
-        /// </summary>
-        void Process(CvsStream cvsStream, IResponseServices responseServices);
+    void Process(CvsStream cvsStream, IResponseServices services);
 
-        /// <summary>
-        /// The message received from the server.
-        /// </summary>
-        string ResponseString {get;}
-
-        /// <summary>
-        /// Setter for the response services.
-        /// </summary>
-        IResponseServices ResponseServices {set;}
-
-        /// <summary>
-        /// Setter for the cvs stream.
-        /// </summary>
-        CvsStream CvsStream {set;}
-
-        /// <summary>
-        /// return true if this response cancels the transaction.
-        /// </summary>
-        bool IsTerminating {get;}
+    /// <summary>
+    /// return true if this response cancels the transaction.
+    /// </summary>
+    bool IsTerminating {
+        get;
     }
+}
 }

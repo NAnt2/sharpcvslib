@@ -77,7 +77,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             // Test Creating a consoleMain object to test the UpdateCommand object
             ConsoleMain consoleMain = new ConsoleMain();
             consoleMain.Execute(commandLineArgs);
-            Assert.IsNotNull (consoleMain);
+            Assertion.AssertNotNull ("Should have a consoleMain object.", consoleMain);
         }
         /// <summary>
         ///     Update files based on revision specified in -r option.
@@ -94,7 +94,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a consoleMain object to test the UpdateCommand object
             ConsoleMain consoleMain = new ConsoleMain();
-            Assert.IsNotNull (consoleMain);
+            Assertion.AssertNotNull ("Should have a consoleMain object.", consoleMain);
             consoleMain.Execute(commandLineArgs);
         }
         /// <summary>
@@ -110,9 +110,9 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a ConsoleMain object to test the UpdateCommand object
             ConsoleMain consoleMain = new ConsoleMain();
-            Assert.IsNotNull (consoleMain);
+            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
             consoleMain.Execute(commandLineArgs);
-            Assert.IsTrue(Directory.Exists(Path.Combine(settings.Config.LocalPath, "newlocation")));
+            Assertion.Assert(Directory.Exists(Path.Combine(settings.Config.LocalPath, "newlocation")));
         }
         /// <summary>
         ///     Update files no earlier than the specified Date 
@@ -128,7 +128,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
            
             // Test Creating a ConsoleMain object to test the UpdateCommand object
             ConsoleMain consoleMain = new ConsoleMain();
-            Assert.IsNotNull (consoleMain);
+            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
             consoleMain.Execute( commandLineArgs);
             // Find a file that should exist 
             //Assertion.Assert ("Should have found the update file.  file=[" +

@@ -25,37 +25,34 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-using ICSharpCode.SharpCvsLib.Attributes;
-
 namespace ICSharpCode.SharpCvsLib.Requests {
 
+/// <summary>
+/// Response expected: yes.
+/// Get files from the repository. This uses any previous Argument, Directory, Entry,
+/// or Modified requests, if they have been sent. Arguments to this command are module
+/// names; the client cannot know what directories they correspond to except by (1) just
+/// sending the co request, and then seeing what directory names the server sends back in
+/// its responses, and (2) the expand-modules request.
+/// </summary>
+public class CheckoutRequest : AbstractRequest
+{
     /// <summary>
-    /// Response expected: yes.
-    /// Get files from the repository. This uses any previous Argument, Directory, Entry,
-    /// or Modified requests, if they have been sent. Arguments to this command are module
-    /// names; the client cannot know what directories they correspond to except by (1) just
-    /// sending the co request, and then seeing what directory names the server sends back in
-    /// its responses, and (2) the expand-modules request.
+    /// Send request to checkout files from the server.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class CheckoutRequest : AbstractRequest {
-        /// <summary>
-        /// Send request to checkout files from the server.
-        /// </summary>
-        public override string RequestString {
-            get {
-                return "co\n";
-            }
-        }
-
-        /// <summary>
-        /// <code>true</code>, a response is expected.
-        /// </summary>
-        public override bool IsResponseExpected {
-            get {
-                return true;
-            }
+    public override string RequestString {
+        get {
+            return "co\n";
         }
     }
+
+    /// <summary>
+    /// <code>true</code>, a response is expected.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return true;
+        }
+    }
+}
 }

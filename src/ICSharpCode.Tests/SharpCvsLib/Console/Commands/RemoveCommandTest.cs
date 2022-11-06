@@ -80,10 +80,10 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             String [] commandLineArgs = commandLine.Split(' ');
             // Test Creating a RemoveCommand object
             ConsoleMain consoleMain = new ConsoleMain();
-            Assert.IsNotNull (consoleMain);
+            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
             
             consoleMain.Execute(commandLineArgs);
-            Assert.IsTrue(!File.Exists(Path.Combine(settings.Config.LocalPath, settings.Config.TargetFile)));
+            Assertion.Assert(!File.Exists(Path.Combine(settings.Config.LocalPath, settings.Config.TargetFile)));
         }
     }
 }

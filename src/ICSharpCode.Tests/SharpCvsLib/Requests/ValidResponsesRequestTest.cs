@@ -68,11 +68,11 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             // split the responses in the request into seperate strings
             responses = requestString.Split(null);
 
-            Assert.IsTrue(responses.Length > 1);
-            Assert.AreEqual(responses[0], "Valid-responses");
+            Assertion.Assert(responses.Length > 1);
+            Assertion.AssertEquals(responses[0], "Valid-responses");
 
-            Assert.IsTrue(!request.IsResponseExpected);
-            Assert.IsTrue(!request.DoesModifyConnection);
+            Assertion.Assert(!request.IsResponseExpected);
+            Assertion.Assert(!request.DoesModifyConnection);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             // Check that we really do support each of these responses
             for (int responseNum = 1; responseNum < responses.Length; responseNum++) {
                 IResponse response = ResponseFactory.CreateResponse(responses[responseNum]);
-                Assert.IsNotNull(response, responses[responseNum] + " not really supported");
+                Assertion.AssertNotNull(responses[responseNum] + " not really supported", response);
             }
         }
 
@@ -134,7 +134,7 @@ namespace ICSharpCode.SharpCvsLib.Requests {
             responses = requestString.Split(null);
 
             Assembly cvsLibAssembly = Assembly.GetAssembly(request.GetType());
-            Assert.IsNotNull(cvsLibAssembly);
+            Assertion.AssertNotNull("Can't load sharpcvslib assembly", cvsLibAssembly);
 
             Type[] types = cvsLibAssembly.GetTypes();
             foreach(Type t in types) {
@@ -147,7 +147,8 @@ namespace ICSharpCode.SharpCvsLib.Requests {
                 }
             }
 
-            Assert.AreEqual(responseClasses, responses.Length - 1, "Mismatch betwen response classes and the Valid-responses request");
+            Assertion.AssertEquals("Mismatch betwen response classes and the Valid-responses request",
+                                responseClasses, responses.Length - 1);
         }
     }
 }

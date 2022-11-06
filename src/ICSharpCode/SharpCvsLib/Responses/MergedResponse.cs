@@ -35,7 +35,6 @@ using System;
 using System.IO;
 using System.Text;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
@@ -60,9 +59,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     ///     around forever, thus letting the user clean it up as desired. But another 
     ///     answer, such as until the next commit, might be preferable.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class MergedResponse : AbstractResponse {
+    public class MergedResponse : IResponse {
         private readonly ILog LOGGER = LogManager.GetLogger(typeof (MergedResponse));
         /// <summary>
         /// Process a merged response.
@@ -70,23 +67,32 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// TODO: Implementation copied from the UpdatedResponse, need to verify 
         ///     this is correctly implemented.
         /// </summary>
-        public override void Process() {
-            Manager manager = new Manager (Services.Repository.WorkingPath);
-            string localPath = this.ReadLine();
-            string reposPath = this.ReadLine();
-            string entry     = this.ReadLine();
-            string flags     = this.ReadLine();
-            string sizeStr   = this.ReadLine();
+        /// <param name="cvsStream"></param>
+        /// <param name="services"></param>
+        public void Process(CvsStream cvsStream, IResponseServices services) {
+            Manager manager = new Manager (services.Repository.WorkingPath);
+            string localPath = cvsStream.ReadLine();
+            string reposPath = cvsStream.ReadLine ();
+            string entry     = cvsStream.ReadLine();
+            string flags     = cvsStream.ReadLine();
+            string sizeStr   = cvsStream.ReadLine();
 
             PathTranslator orgPath   =
-                new PathTranslator (Services.Repository,
+                new PathTranslator (services.Repository,
                 reposPath);
             string localPathAndFilename = orgPath.LocalPathAndFilename;
             string directory = orgPath.LocalPath;
 
-            File.SetAttributes(localPathAndFilename, FileAttributes.Normal);
-
             bool compress = sizeStr[0] == 'z';
+
+            if (LOGGER.IsDebugEnabled) {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append ("reposPath=[").Append (reposPath).Append ("]");
+                msg.Append ("entry=[").Append (entry).Append ("]");
+                msg.Append ("flags=[").Append (flags).Append ("]");
+                msg.Append ("sizestr=[").Append (sizeStr).Append ("]");
+                LOGGER.Debug (msg);
+            }
 
             if (compress) {
                 sizeStr = sizeStr.Substring(1);
@@ -99,48 +105,40 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 
             }
 
-            if (Services.NextFile != null && Services.NextFile.Length > 0) {
-                localPathAndFilename = Services.NextFile;
-                Services.NextFile = null;
+            if (services.NextFile != null && services.NextFile.Length > 0) {
+                localPathAndFilename = services.NextFile;
+                services.NextFile = null;
             }
 
-            Factory factory = new Factory();
-
-            Entry e = (Entry)
-                factory.CreateCvsObject(orgPath.CurrentDir, Entry.FILE_NAME, entry);
+            Entry e = new Entry(orgPath.LocalPath, entry);
 
             if (e.IsBinaryFile) {
-                Services.UncompressedFileHandler.ReceiveBinaryFile(Stream,
+                services.UncompressedFileHandler.ReceiveBinaryFile(cvsStream,
                     localPathAndFilename,
                     size);
             } else {
-                Services.UncompressedFileHandler.ReceiveTextFile(Stream,
+                services.UncompressedFileHandler.ReceiveTextFile(cvsStream,
                     localPathAndFilename,
                     size);
             }
-            e.Date = Services.NextFileDate;
 
-            Services.NextFileDate = null;
+            e.Date = services.NextFileDate;
+            services.NextFileDate = null;
 
             manager.Add(e);
             manager.SetFileTimeStamp (localPathAndFilename, e.TimeStamp, e.IsUtcTimeStamp);
 
-            if (Services.Repository.ReadOnly) {
-                File.SetAttributes(localPathAndFilename, 
-                    File.GetAttributes(localPathAndFilename) | FileAttributes.ReadOnly);
-            }
-
             UpdateMessage message = new UpdateMessage ();
-            message.Module = Services.Repository.WorkingDirectoryName;
+            message.Module = services.Repository.WorkingDirectoryName;
             message.Repository =  orgPath.RelativePath;
             message.Filename = e.Name;
-            Services.SendMessage (message.Message);
+            services.SendMessage (message.Message);
         }
 
         /// <summary>
         /// Return true if this response cancels the transaction
         /// </summary>
-        public override bool IsTerminating {
+        public bool IsTerminating {
             get {return false;}
         }
     }

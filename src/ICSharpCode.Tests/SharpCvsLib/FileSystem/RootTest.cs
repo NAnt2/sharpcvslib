@@ -79,12 +79,11 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
                 this.ROOT_ENTRY1);
 
             String cvsPath = Path.Combine (fullPath, "CVS");
-            Assert.AreEqual (fullPath, root.FullPath);
-            Assert.AreEqual (new FileInfo(fullPath).DirectoryName, root.ParentDir.FullName);
-            Assert.AreEqual (this.ROOT_ENTRY1, root.FileContents);
-            Assert.AreEqual (this.ROOT_FILE_NAME, root.Filename);
-            Assert.AreEqual (Factory.FileType.Root, root.Type);
-            Assert.AreEqual (false, root.IsMultiLined);
+            Assertion.AssertEquals ("Full path to the Root file is incorrect.", fullPath, root.FullPath);
+            Assertion.AssertEquals ("FileContents not set/returned", this.ROOT_ENTRY1, root.FileContents);
+            Assertion.AssertEquals ("Filename not correct", this.ROOT_FILE_NAME, root.Filename);
+            Assertion.AssertEquals ("Type not correct", Factory.FileType.Root, root.Type);
+            Assertion.AssertEquals ("IsMultiLined not correct", false, root.IsMultiLined);
         }
 
         /// <summary>
@@ -99,14 +98,14 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             Root RootSame2 = new Root (cvsPath, this.ROOT_ENTRY1);
             Root RootDiff1 = new Root (cvsPath, this.ROOT_ENTRY2);
 
-            Assert.AreEqual (RootSame1, RootSame1);
-            Assert.AreEqual (RootSame2, RootSame1);
-            Assert.AreEqual (RootSame1, RootSame2);
+            Assertion.Assert (RootSame1.Equals (RootSame1));
+            Assertion.Assert (RootSame1.Equals (RootSame2));
+            Assertion.Assert (RootSame2.Equals (RootSame1));
 
-            Assert.IsTrue (!RootDiff1.Equals (RootSame1));
-            Assert.IsTrue (!RootDiff1.Equals (RootSame2));
-            Assert.IsTrue (!RootSame1.Equals (RootDiff1));
-            Assert.IsTrue (!RootSame2.Equals (RootDiff1));
+            Assertion.Assert (!RootDiff1.Equals (RootSame1));
+            Assertion.Assert (!RootDiff1.Equals (RootSame2));
+            Assertion.Assert (!RootSame1.Equals (RootDiff1));
+            Assertion.Assert (!RootSame2.Equals (RootDiff1));
         }
 
         /// <summary>

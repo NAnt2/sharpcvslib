@@ -36,7 +36,6 @@ using System;
 using System.IO;
 using System.Text;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
@@ -59,26 +58,39 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     ///     Update-existing are supported.
     ///
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class UpdatedResponse : AbstractResponse {
+    public class UpdatedResponse : IResponse {
         private readonly ILog LOGGER =
             LogManager.GetLogger (typeof (UpdatedResponse));
 
         /// <summary>
         /// Process the response from the cvs server.
         /// </summary>
-        public override void Process() {
-            Manager manager = new Manager (Services.Repository.WorkingPath);
-            string localPath = this.ReadLine();
-            string reposPath = this.ReadLine();
-            string entry     = this.ReadLine();
-            string flags     = this.ReadLine();
-            string sizeStr   = this.ReadLine();
+        /// <param name="cvsStream"></param>
+        /// <param name="services"></param>
+        public void Process(CvsStream cvsStream, IResponseServices services) {
+            Manager manager = new Manager (services.Repository.WorkingPath);
+            string localPath = cvsStream.ReadLine();
+            string reposPath = cvsStream.ReadLine ();
+            string entry     = cvsStream.ReadLine();
+            string flags     = cvsStream.ReadLine();
+            string sizeStr   = cvsStream.ReadLine();
 
-            DirectoryInfo localDir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, localPath));
+            PathTranslator orgPath   =
+                new PathTranslator (services.Repository,
+                                    reposPath);
+            string localPathAndFilename = orgPath.LocalPathAndFilename;
+            string directory = orgPath.LocalPath;
 
             bool compress = sizeStr[0] == 'z';
+
+            if (LOGGER.IsDebugEnabled) {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append ("reposPath=[").Append (reposPath).Append ("]");
+                msg.Append ("entry=[").Append (entry).Append ("]");
+                msg.Append ("flags=[").Append (flags).Append ("]");
+                msg.Append ("sizestr=[").Append (sizeStr).Append ("]");
+                LOGGER.Debug (msg);
+            }
 
             if (compress) {
                 sizeStr = sizeStr.Substring(1);
@@ -86,57 +98,48 @@ namespace ICSharpCode.SharpCvsLib.Responses {
 
             int size  = Int32.Parse(sizeStr);
 
-            if (!localDir.Exists) {
-                localDir.Create();
-            } 
+            if (!Directory.Exists(orgPath.LocalPath)) {
+                Directory.CreateDirectory(orgPath.LocalPath);
 
-            Entry e = new Entry(new FileInfo(Path.Combine(localDir.FullName, "CVS\\Entries")), entry);
-            string localPathAndFilename = e.FullPath;
-            if (File.Exists(localPathAndFilename)) {
-                File.SetAttributes(localPathAndFilename, FileAttributes.Normal);
             }
 
-            if (Services.NextFile != null && Services.NextFile.Length > 0) {
-                localPathAndFilename = Services.NextFile;
-                Services.NextFile = null;
+            if (services.NextFile != null && services.NextFile.Length > 0) {
+                localPathAndFilename = services.NextFile;
+                services.NextFile = null;
             }
+
+            Entry e = new Entry(orgPath.LocalPath, entry);
 
             if (e.IsBinaryFile) {
-                Services.UncompressedFileHandler.ReceiveBinaryFile(Stream,
+                services.UncompressedFileHandler.ReceiveBinaryFile(cvsStream,
                         localPathAndFilename,
                         size);
             } else {
-                Services.UncompressedFileHandler.ReceiveTextFile(Stream,
+                services.UncompressedFileHandler.ReceiveTextFile(cvsStream,
                         localPathAndFilename,
                         size);
             }
 
-            e.Date = Services.NextFileDate;
+            e.Date = services.NextFileDate;
+            services.NextFileDate = null;
 
-            Services.NextFileDate = null;
-
-            Entries.Save(e);
+            manager.AddEntry(e);
             manager.SetFileTimeStamp (e.FullPath, e.TimeStamp, e.IsUtcTimeStamp);
 
-            if (Services.Repository.ReadOnly) {
-                File.SetAttributes(localPathAndFilename, 
-                    File.GetAttributes(localPathAndFilename) | FileAttributes.ReadOnly);
-            }
-
             UpdateMessage message = new UpdateMessage ();
-            message.Module = Services.Repository.WorkingDirectoryName;
-            message.Repository =  localPath;
+            message.Module = services.Repository.WorkingDirectoryName;
+            message.Repository =  orgPath.RelativePath;
             message.Filename = e.Name;
-            Services.SendMessage (message.Message);
-            Services.ResponseMessageEvents.SendResponseMessage(message.Message, this.GetType());
-
+            services.SendMessage (message.Message);
         }
 
         /// <summary>
         /// Indicator stating whether the response is terminating or not.
         /// </summary>
-        public override bool IsTerminating {
-            get {return false;}
+        public bool IsTerminating {
+            get {
+                return false;
+            }
         }
     }
 }

@@ -37,10 +37,7 @@
 #endregion
 
 using System;
-using System.Collections;
-using System.IO;
 using System.Text;
-using System.Text.RegularExpressions;
 
 using ICSharpCode.SharpCvsLib.Commands;
 using ICSharpCode.SharpCvsLib.Misc;
@@ -63,15 +60,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
 
         private CvsRoot cvsRoot;
         private string commandTxt;
-        private string options = string.Empty;
+        private string options;
         private string repository;
         private string singleOptions;
         private string files;
-        bool _readOnly;
 
-        private static bool _verbose = false;
-
-        private const string REGEX_LOG_LEVEL = @"-log:(?<Level>(debug|info|warn|error))";
         private const String ENV_CVS_ROOT = "CVS_ROOT";
 
         private WorkingDirectory currentWorkingDirectory;
@@ -82,24 +75,11 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             get {return this.currentWorkingDirectory;}
         }
 
-        /// <summary>
-        /// <code>true</code> if the server response and requests should be sent to the appropriate
-        /// logger (usually standard out); otherwise <code>false</code>.
-        /// </summary>
-        public static bool IsVerbose {
-            get { return _verbose; }
-        }
-
-        public bool ReadOnly {
-            get { return _readOnly; }
-            set { _readOnly = value; }
-        }
-
-        /// <summary>
-        /// Value of the cvsroot to use as a string.  This will be passed
-        ///     into the CvsRoot object which will know how to parse it.
-        /// </summary>
-        public CvsRoot CvsRoot {
+            /// <summary>
+            /// Value of the cvsroot to use as a string.  This will be passed
+            ///     into the CvsRoot object which will know how to parse it.
+            /// </summary>
+            public CvsRoot CvsRoot {
             get {return this.cvsRoot;}
         }
 
@@ -136,34 +116,15 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             get {return this.repository;}
         }
 
-        /// <summary>
-        /// Return the commandline string collection as a single string.
-        /// </summary>
-        public string CommandLine {
-            get {
-                StringBuilder msg = new StringBuilder ();
-                foreach (string arg in this.arguments) {
-                    msg.Append(String.Format("{0} ", arg));
-                }
-                return msg.ToString();;
-
-            }
-        }
-
-        private string password;
-        /// <summary>
-        /// The password passed in on the commandline, or null if none.
-        /// </summary>
-        public string Password {
-            get {return this.password;}
-        }
-
         /// <summary>Create a new instance of the command line parser and
         ///     initialize the arguments object.</summary>
         /// <param name="args">A collection of strings that represent the command
         ///     line arguments sent into the program.</param>
         public CommandLineParser (String[] args) {
             this.arguments = args;
+
+            // TODO: Remove this hack when add method to set options.
+            this.options = String.Empty;
         }
 
         /// <summary>
@@ -177,165 +138,147 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         ///     parsing the command line arguments (i.e. if invalid arguments
         ///     are entered.</exception>
         public ICommand Execute () {
+            if (LOGGER.IsDebugEnabled) {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append("\n Command line arguments:");
+                foreach (String argument in this.arguments) {
+                    msg.Append("\n\t argument=[").Append(argument).Append("]");
+                }
+                LOGGER.Debug(msg);
+            }
+
+            bool isHelp = this.ParseHelp (this.arguments);
+
+            if (isHelp) {
+                return null;
+            }
+
+            int startIndex = 0;
+            // TODO: Remove = null when all other code paths return a value,
+            //      this was just put in so it would compile.
             ICommand command = null;
-            for (int i = 0; i < arguments.Length; i++) {
-                string arg = arguments[i];
+            if (arguments.Length < 1) {
+                System.Console.WriteLine (Usage.General);
+            }
 
-                // stop when we reach the command
-                if (!arg.StartsWith("-")) {
-                    break;
+            if (arguments[0].IndexOf ("-d", 0, 2) >= 0) {
+                String tempRoot = arguments[0].Substring (2);
+                this.cvsRoot = new CvsRoot (tempRoot);
+                if (arguments.Length == 1) {
+                    throw new CommandLineParseException("Only specified a cvsroot, need to specify a command.");
                 }
-
-                if (arg.StartsWith("-d:")) {
-                    string tempRoot = arg.Substring(2, arg.Length - 2);
-                    this.cvsRoot = new CvsRoot(tempRoot);
-                    continue;
-                }
-
-                Match passwordMatch = 
-                    Regex.Match(arg, ICSharpCode.SharpCvsLib.Console.Commands.LoginCommand.REGEX_PASSWORD);
-                if (passwordMatch.Success) {
-                    this.password = passwordMatch.Groups["Password"].Value;
-                }
-
-                Match logMatch = Regex.Match(arg, REGEX_LOG_LEVEL);
-                if (logMatch.Success) {
-                    string newLevelString = logMatch.Groups["Level"].Value;
-
-                    if (null != newLevelString && newLevelString.Length != 0) {
-                        log4net.Core.LevelMap map = log4net.LogManager.GetRepository().LevelMap;
-                        log4net.Core.Level newLevel = map[newLevelString];
-                        log4net.LogManager.GetRepository().Threshold = newLevel;
+                startIndex = 1;
+            } else {
+                try {
+                    // Get the cvsroot from the Root file in the CVS directory
+                    Manager manager = new Manager(Environment.CurrentDirectory);
+                    Root root = manager.FetchRoot(Environment.CurrentDirectory);
+                    this.cvsRoot = new CvsRoot(root.FileContents);
+                } catch {
+                    // Should be using CVSROOT as last option
+                    String tempRoot = Environment.GetEnvironmentVariable (ENV_CVS_ROOT);
+                    try {
+                        this.cvsRoot = new CvsRoot(tempRoot);
+                    } catch (CvsRootParseException e) {
+                        LOGGER.Error(e);
+                        return null;
                     }
-                }
-
-
-                switch (arg) {
-                    case "-verbose":
-                        _verbose = true;
-                        break;
-                    case "-H":
-                        // show help
-                        break;
-                    case "--help":
-                        if (i+1 < arguments.Length) {
-                            string commandName = arguments[++i];
-                            ICommandParser commandParser =
-                                CommandParserFactory.GetCommandParser(commandName);
-                            System.Console.WriteLine(commandParser.Usage);
-                            return null;
-                        } else {
-                            System.Console.WriteLine(Usage.General);
-                            return null;
-                        }
-                    case "--help-options":
-                        System.Console.WriteLine(Usage.Options);
-                        return null;
-                    case "--help-commands":
-                        System.Console.WriteLine(Usage.Commands);
-                        return null;
-                    case "--help-synonyms":
-                        System.Console.WriteLine(Usage.Synonyms);
-                        return null;
-                    case "-v":
-                    case "--version":
-                        System.Console.WriteLine(Usage.Version);
-                        return null;
-                    case "-Q":
-                        // really quiet
-                        break;
-                    case "-q":
-                        // somewhat quiet
-                        break;
-                    case "-r":
-                        this.ReadOnly = true;
-                        break;
-                    case "-w":
-                        // read-write
-                        break;
-                    case "-n":
-                        throw new NotSupportedException("Unsupported option -n");
-                        break;
-                    case "-t":
-                        throw new NotSupportedException("Unsupported option -t");
-                        break;
-                    case "-T":
-                        throw new NotSupportedException("Unsupported option -T");
-                        break;
-                    case "-e":
-                        throw new NotSupportedException("Unsupported option -e");
-                        break;
-                    case "-d":
-                        this.cvsRoot = new CvsRoot(arguments[++i]);
-                        break;
-                    case "-f":
-                        throw new NotSupportedException("Unsupported option -f");
-                        break;
-                    case "-F":
-                        throw new NotSupportedException("Unsupported option -F");
-                        break;
-                    case "-z":
-                        throw new NotSupportedException("Unsupported option -z");
-                        break;
-                    case "-x":
-                        throw new NotSupportedException("Unsupported option -x");
-                        break;
-                    case "-y":
-                        throw new NotSupportedException("Unsupported option -y");
-                        break;
-                    case "-a":
-                        throw new NotSupportedException("Unsupported option -a");
-                        break;
-                    case "-N":
-                        throw new NotSupportedException("Unsupported option -N");
-                        break;
-                    case "-s":
-                        throw new NotSupportedException("Unsupported option -s");
-                        break;
-                    case "-o":
-                        throw new NotSupportedException("Unsupported option -o");
-                        break;
-                    case "-O":
-                        throw new NotSupportedException("Unsupported option -O");
-                        break;
-                    case "--encrypt":
-                        throw new NotSupportedException("Unsupported option --encryp");
-                        break;
-                    case "--authenticate":
-                        throw new NotSupportedException("Unsupported option --authenticate");
-                        break;
                 }
             }
 
-            for (int i = 0; i < arguments.Length; i++) {
-                string commandString = arguments[i].Trim();
-                ICommandParser parser;
-                switch (commandString) {
+            for (int i = startIndex; i < arguments.Length; i++) {
+                if (LOGGER.IsDebugEnabled) {
+                    StringBuilder msg = new StringBuilder ();
+                    msg.Append("arguments[").Append(i).Append("]=[").Append(arguments[i]).Append("]");
+                    LOGGER.Debug(msg);
+                }
+                LOGGER.Debug("Before we grab the arguments.");
+                switch (arguments[i].Trim()) {
                     case "add":
                     case "ad":
                     case "new":
+                        // no single options for the Add command
+                        this.commandTxt = arguments[i];
                         i++;
-                        string [] tempAddArgs = new string[arguments.Length - i];
-                        Array.Copy(arguments, i, tempAddArgs, 0, arguments.Length - i);
-                        AddCommandParser addCommand = 
-                            new AddCommandParser(this.CvsRoot, tempAddArgs);
-                        command = addCommand.CreateCommand ();
-                        this.currentWorkingDirectory = 
-                            addCommand.CurrentWorkingDirectory;
-                        i = arguments.Length;
+                        // get rest of arguments which is options on the commit command.
+                        while (arguments.Length > i && arguments[i].IndexOf("-", 0, 1) >= 0) {
+                            LOGGER.Debug("Parsing arguments.  Argument[" + i + "]=[" + arguments[i]);
+                            // Get options with second parameters?
+                            if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
+                                for ( int cnt=1; cnt < arguments[i].Length; cnt++ ) {
+                                    this.options = this.options + "-" + arguments[i][cnt] + " "; // No
+                                }
+                            }
+                            else {
+                                this.options = this.options + arguments[i++];       // Yes
+                                this.options = this.options + arguments[i] + " ";
+                            }
+                            i++;
+                        }
+                        if (arguments.Length > i) {
+                            // Safely grab the module, if not specified then
+                            //  pass null into the repository...the cvs command
+                            //  line for cvsnt/ cvs seems to bomb out when
+                            //  it sends to the server
+                            this.repository = arguments[i];
+                        } 
+                        else {
+                            this.repository = String.Empty;
+                        }
+                        try {
+                            ICSharpCode.SharpCvsLib.Console.Commands.AddCommand addCommand = 
+                                new ICSharpCode.SharpCvsLib.Console.Commands.AddCommand(this.CvsRoot, repository, options);
+                            command = addCommand.CreateCommand ();
+                            this.currentWorkingDirectory = 
+                                addCommand.CurrentWorkingDirectory;
+                        } 
+                        catch (Exception e) {
+                            LOGGER.Error(e);
+                            throw new CommandLineParseException("Unable to create add command.", e);
+                        }
                         break;
                     case "commit":
                     case "ci":
                     case "com":
+                        singleOptions = "DRcfln";
+                        this.commandTxt = arguments[i];
                         i++;
-                        string [] tempCommitArgs = new string[arguments.Length - i];
-                        Array.Copy(arguments, i, tempCommitArgs, 0, arguments.Length - i);
-                        CommitCommandParser commitCommand = 
-                            new CommitCommandParser(this.CvsRoot, tempCommitArgs);
-                        command = commitCommand.CreateCommand ();
-                        this.currentWorkingDirectory = 
-                            commitCommand.CurrentWorkingDirectory;
-                        i = arguments.Length;
+                        // get rest of arguments which is options on the commit command.
+                        while (arguments.Length > i && arguments[i].IndexOf("-", 0, 1) >= 0) {
+                            LOGGER.Debug("Parsing arguments.  Argument[" + i + "]=[" + arguments[i]);
+                            // Get options with second parameters?
+                            if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
+                                for ( int cnt=1; cnt < arguments[i].Length; cnt++ ) {
+                                    this.options = this.options + "-" + arguments[i][cnt] + " "; // No
+                                }
+                            }
+                            else {
+                                this.options = this.options + arguments[i++];       // Yes
+                                this.options = this.options + arguments[i] + " ";
+                            }
+                            i++;
+                        }
+                        if (arguments.Length > i) {
+                            // Safely grab the module, if not specified then
+                            //  pass null into the repository...the cvs command
+                            //  line for cvsnt/ cvs seems to bomb out when
+                            //  it sends to the server
+                            this.repository = arguments[i];
+                        } 
+                        else {
+                            this.repository = String.Empty;
+                        }
+                        try {
+                            CommitCommand commitCommand = 
+                                new CommitCommand(this.CvsRoot, repository, options);
+                            command = commitCommand.CreateCommand ();
+                            this.currentWorkingDirectory = 
+                                commitCommand.CurrentWorkingDirectory;
+                        } 
+                        catch (Exception e) {
+                            LOGGER.Error(e);
+                            throw new CommandLineParseException("Unable to create commit command.", e);
+                        }
                         break;
                     case "checkout":
                     case "co":
@@ -345,6 +288,13 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         i++;
                         // get rest of arguments which is options on the checkout command.
                         while (arguments.Length > i && arguments[i].Trim().IndexOf("-") == 0){
+                            if (LOGGER.IsDebugEnabled) {
+                                StringBuilder debugMsg = new StringBuilder ();
+                                debugMsg.Append(Environment.NewLine).Append("Parsing arguments.");
+                                debugMsg.Append(Environment.NewLine).Append("Argument[").Append(i).Append("]")
+                                    .Append("=[").Append(arguments[i]).Append("]");
+                                LOGGER.Debug(debugMsg);
+                            }
                             // Get options with second parameters?
                             if (arguments[i].Trim().IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0){
                                 for ( int cnt=1; cnt < arguments[i].Length; cnt++ ){
@@ -366,61 +316,43 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         } else {
                             this.repository = String.Empty;
                         }
-                        CheckoutCommandParser checkoutCommand = 
-                            new CheckoutCommandParser(this.CvsRoot, this.Repository, options);
-                        command = checkoutCommand.CreateCommand ();
-                        this.currentWorkingDirectory = 
-                            checkoutCommand.CurrentWorkingDirectory;
-                        break;
-                    case "import":
-                    case "imp":
-                    case "im":
-                        i++;
-                        string [] tempImportArgs = new string[arguments.Length - i];
-                        Array.Copy(arguments, i, tempImportArgs, 0, arguments.Length - i);
-                        ImportCommandParser importCommand = 
-                            new ImportCommandParser(this.CvsRoot, tempImportArgs);
-                        command = importCommand.CreateCommand();
-                        this.currentWorkingDirectory =
-                            importCommand.CurrentWorkingDirectory;
-                        i = arguments.Length;
+                        try {
+                            CheckoutCommand checkoutCommand = 
+                                new CheckoutCommand(this.CvsRoot, repository, options);
+                            command = checkoutCommand.CreateCommand ();
+                            this.currentWorkingDirectory = 
+                                checkoutCommand.CurrentWorkingDirectory;
+                        } catch (Exception e) {
+                            LOGGER.Error(e);
+                            throw new CommandLineParseException("Unable to create checkout command.", e);
+                        }
                         break;
                     case "init":
                         this.commandTxt = arguments[i];
-                        InitCommandParser initCommand = new InitCommandParser(this.CvsRoot);
-                        command = initCommand.CreateCommand ();
-                        this.currentWorkingDirectory = initCommand.CurrentWorkingDirectory;
-                        break;
-                    case "log":
-                    case "lo":
-                        this.commandTxt = arguments[i++];
-                        string[] logArgs = new string[arguments.Length - i];
-                        Array.Copy(arguments, i, logArgs, 0, arguments.Length - i);
-                        LogCommandParser logCommandParser = 
-                            new LogCommandParser(this.CvsRoot, logArgs);
-                        command = logCommandParser.CreateCommand();
-                        this.currentWorkingDirectory = logCommandParser.CurrentWorkingDirectory;
-                        i = arguments.Length;
+                        try {
+                            ICSharpCode.SharpCvsLib.Console.Commands.InitCommand initCommand =
+                                new ICSharpCode.SharpCvsLib.Console.Commands.InitCommand(this.CvsRoot);
+                            command = initCommand.CreateCommand ();
+                            this.currentWorkingDirectory = initCommand.CurrentWorkingDirectory;
+                        } catch (Exception e) {
+                            LOGGER.Error(e);
+                            throw new CommandLineParseException("Unable to create init command.", e);
+                        }
                         break;
                     case "login":
                     case "logon":
                     case "lgn":
                         // login to server
                         this.commandTxt = arguments[i];
-                        ICSharpCode.SharpCvsLib.Console.Commands.LoginCommand loginCommand = 
-                            new ICSharpCode.SharpCvsLib.Console.Commands.LoginCommand(this.CvsRoot, this.currentWorkingDirectory);
-                        loginCommand.Args = arguments;
-                        this.currentWorkingDirectory = loginCommand.CurrentWorkingDirectory;
-                        command = loginCommand;
-                        break;
-                    case "dir":
-                    case "list":
-                    case "ls":
-                        parser = CommandParserFactory.GetCommandParser("ls");
-                        i = arguments.Length;
-                        command = parser.CreateCommand();
-                        this.currentWorkingDirectory = 
-                            parser.CurrentWorkingDirectory;
+                        try {
+                            LoginCommand loginCommand = 
+                                new LoginCommand(this.CvsRoot);
+                            command = loginCommand;
+                        } 
+                        catch (Exception e) {
+                            LOGGER.Error(e);
+                            throw new CommandLineParseException("Unable to create login command.", e);
+                        }
                         break;
                     case "passwd":
                     case "password":
@@ -457,11 +389,17 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         else {
                             this.files = String.Empty;
                         }
-                        RemoveCommandParser removeCommand = 
-                            new RemoveCommandParser(this.CvsRoot, files, options);
-                        command = removeCommand.CreateCommand ();
-                        this.currentWorkingDirectory = 
-                            removeCommand.CurrentWorkingDirectory;
+                        try {
+                            ICSharpCode.SharpCvsLib.Console.Commands.RemoveCommand removeCommand = 
+                                new ICSharpCode.SharpCvsLib.Console.Commands.RemoveCommand(this.CvsRoot, files, options);
+                            command = removeCommand.CreateCommand ();
+                            this.currentWorkingDirectory = 
+                                removeCommand.CurrentWorkingDirectory;
+                        } 
+                        catch (Exception e) {
+                            LOGGER.Error(e);
+                            throw new CommandLineParseException("Unable to create remove command.", e);
+                        }
                         break;
                     case "rt":
                     case "rtag":
@@ -492,30 +430,24 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         else {
                             this.repository = String.Empty;
                         }
-                        RTagCommandParser rtagCommand = 
-                            new RTagCommandParser(this.CvsRoot, repository, options);
-                        command = rtagCommand.CreateCommand ();
-                        this.currentWorkingDirectory = 
-                            rtagCommand.CurrentWorkingDirectory;
-                        break;
-                    case "st":
-                    case "stat":
-                    case "status":
-                        string[] commandArgs = new string[arguments.Length - i];
-                        Array.Copy(arguments, i, commandArgs, 0, arguments.Length - i);
-                        parser = 
-                            CommandParserFactory.GetCommandParser("status");
-                        i = arguments.Length;
-                        command = parser.CreateCommand();
-                        this.currentWorkingDirectory = 
-                            parser.CurrentWorkingDirectory;
+                        try {
+                            ICSharpCode.SharpCvsLib.Console.Commands.RTagCommand rtagCommand = 
+                                new ICSharpCode.SharpCvsLib.Console.Commands.RTagCommand(this.CvsRoot, repository, options);
+                            command = rtagCommand.CreateCommand ();
+                            this.currentWorkingDirectory = 
+                                rtagCommand.CurrentWorkingDirectory;
+                        } 
+                        catch (Exception e) {
+                            LOGGER.Error(e);
+                            throw new CommandLineParseException("Unable to create rtag command.", e);
+                        }
                         break;
                     case "up":
                     case "upd":
                     case "update":
                         singleOptions = "ACPRbdfmp";
                         this.commandTxt = arguments[i++];
-                        // get rest of arguments which is options on the update command.
+                            // get rest of arguments which is options on the update command.
                         while (arguments.Length > i && arguments[i].IndexOf("-", 0, 1) >= 0) {
                             // Get options with second parameters?
                             if (arguments[i].IndexOfAny( singleOptions.ToCharArray(), 1, 1) >= 0) {
@@ -538,27 +470,83 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
                         else {
                             this.repository = String.Empty;
                         }
-                        UpdateCommandParser updateCommand = 
-                            new UpdateCommandParser(this.CvsRoot, repository, options);
-                        command = updateCommand.CreateCommand ();
-                        this.currentWorkingDirectory = 
-                            updateCommand.CurrentWorkingDirectory;
+                        try {
+                            UpdateCommand updateCommand = 
+                                new UpdateCommand(this.CvsRoot, repository, options);
+                            command = updateCommand.CreateCommand ();
+                            this.currentWorkingDirectory = 
+                                updateCommand.CurrentWorkingDirectory;
+                        } 
+                        catch (Exception e) {
+                            LOGGER.Error(e);
+                            throw new CommandLineParseException("Unable to create update command.", e);
+                        }
                         break;
-                    case "xml":
-                        parser  = CommandParserFactory.GetCommandParser("xml");
-                        i = arguments.Length;
-                        command = parser.CreateCommand();
-                        this.currentWorkingDirectory = 
-                            parser.CurrentWorkingDirectory;
+                    default:
+                        StringBuilder msg = new StringBuilder ();
+                        msg.Append("Unknown command entered.  ");
+                        msg.Append("command=[").Append(arguments[i]).Append("]");
+                        throw new CommandLineParseException(msg.ToString());
+                    }
+                }
+            return command;
+        }
 
-                        break;
+        /// <summary>
+        /// Parse the command line arguments to determine if there are any help
+        ///     requests.  If there are help requests then return true, this can
+        ///     then be used to direct the flow of the application to not evaulate
+        ///     any other commands.
+        ///     
+        ///     Also looks at all -- command line arguments, this will be assumed 
+        ///     to have been attempts at help but were malformed.
+        ///     
+        ///     Later this can be used to handle command help options.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        /// <example>
+        ///         Parses help commands such as:
+        ///                 cvs --help
+        ///                 cvs --help-options
+        ///                 cvs --help-commands
+        ///                 cvs --help-synonyms
+        ///                 
+        ///         TODO: FUTURE REVSIONS should also parse something like
+        ///                 cvs --help co
+        ///                 cvs --help commit
+        ///                 cvs --help rtag
+        ///                 ...
+        /// </example>
+        private bool ParseHelp (String[] args) {
+            if (args.Length < 1) {
+                System.Console.WriteLine(Usage.General);
+                return true;
+            }
+            for (int i = 0; i < arguments.Length; i++) {
+                switch (arguments[i]) {
+                    case "--help":
+                        System.Console.WriteLine(Usage.General);
+                        return true;
+                    case "--help-options":
+                        System.Console.WriteLine(Usage.Options);
+                        return true;
+                    case "--help-commands":
+                        System.Console.WriteLine(Usage.Commands);
+                        return true;
+                    case "--help-synonyms":
+                        System.Console.WriteLine(Usage.Synonyms);
+			return true;
+		    case "--version":
+		        System.Console.WriteLine(Usage.Version);
+                        return true;
+                }
+                if (arguments[i].IndexOf("--") > -1) {
+                    System.Console.WriteLine(Usage.General);
+                    return true;
                 }
             }
-            if (command == null) {
-                ConsoleMain.ExitError("Use --help-commands to list commands", Usage.General);
-            }
-            this.currentWorkingDirectory.ReadOnly = this.ReadOnly;
-            return command;
+            return false;
         }
     }
 }

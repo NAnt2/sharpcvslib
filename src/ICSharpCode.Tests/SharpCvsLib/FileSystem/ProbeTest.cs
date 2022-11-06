@@ -62,11 +62,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             probe.Start = searchDir;
 
             probe.Execute();
-            Assert.IsNotNull(probe.Files);
+            Assertion.AssertNotNull(probe.Files);
             foreach (String file in probe.Files) {
                 LOGGER.Debug ("file=[" + file + "]");
             }
-            Assert.IsTrue(probe.Files.Count == 0);
+            Assertion.Assert("File count=[" + probe.Files.Count.ToString() + "]", 
+                probe.Files.Count == 0);
         }
 
         /// <summary>
@@ -80,8 +81,8 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
 
             probe.Execute();
 
-            Assert.IsNotNull(probe.Files);
-            Assert.IsTrue(probe.Files.Count > 0);
+            Assertion.AssertNotNull(probe.Files);
+            Assertion.Assert(probe.Files.Count > 0);
         }
     }
 }

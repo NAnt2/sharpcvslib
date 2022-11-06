@@ -25,46 +25,43 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-using ICSharpCode.SharpCvsLib.Attributes;
 namespace ICSharpCode.SharpCvsLib.Requests {
 
+/// <summary>
+/// Response expected: no.
+/// Tell the server that filename has not been modified in the checked out directory.
+/// The name is relative to the most recent repository sent with Directory.
+/// </summary>
+public class UnchangedRequest : AbstractRequest
+{
+    private string filename;
+
     /// <summary>
-    /// Response expected: no.
-    /// Tell the server that filename has not been modified in the checked out directory.
-    /// The name is relative to the most recent repository sent with Directory.
+    /// Constructor.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class UnchangedRequest : AbstractRequest
+    /// <param name="filename">The name of the file that has not been modified.</param>
+    public UnchangedRequest(string filename)
     {
-        private string filename;
+        this.filename = filename;
+    }
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="filename">The name of the file that has not been modified.</param>
-        public UnchangedRequest(string filename)
-        {
-            this.filename = filename;
-        }
-
-        /// <summary>
-        /// Notify the server that the file has not been modified in the
-        ///     checked out directory.
-        /// </summary>
-        public override string RequestString {
-            get {
-                return "Unchanged " + filename + "\n";
-            }
-        }
-
-        /// <summary>
-        /// Response expected: <code>false</code>.
-        /// </summary>
-        public override bool IsResponseExpected {
-            get {
-                return false;
-            }
+    /// <summary>
+    /// Notify the server that the file has not been modified in the
+    ///     checked out directory.
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "Unchanged " + filename + "\n";
         }
     }
+
+    /// <summary>
+    /// Response expected: <code>false</code>.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return false;
+        }
+    }
+}
 }

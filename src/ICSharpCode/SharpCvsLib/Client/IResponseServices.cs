@@ -28,71 +28,63 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    Author:     Mike Krueger,
+//                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
-using System;
-
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileHandler;
 using ICSharpCode.SharpCvsLib.FileSystem;
-using ICSharpCode.SharpCvsLib.Messages;
-using ICSharpCode.SharpCvsLib.Responses;
 
 
 namespace ICSharpCode.SharpCvsLib.Client {
+
+/// <summary>
+/// Response services interface.
+/// </summary>
+public interface IResponseServices
+{
     /// <summary>
-    /// Response services interface.
+    /// Send message
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
-    public interface IResponseServices {
-        /// <summary>
-        /// Occurs when a message is sent to the cvs server.
-        /// </summary>
-        event MessageEventHandler RequestMessageEvent;
-        /// <summary>
-        /// Occurs when a message is received from the cvs server.
-        /// </summary>
-        event MessageEventHandler ResponseMessageEvent;
+    /// <param name="msg"></param>
+    void   SendMessage(string msg);
 
-        /// <summary>
-        /// Property to encapsulate all message events that are raised from a cvs server
-        /// response.
-        /// </summary>
-        ResponseMessageEvents ResponseMessageEvents {get;}
+    /// <summary>
+    /// Send an error message.
+    /// </summary>
+    /// <param name="msg"></param>
+    void SendErrorMessage(string msg);
 
-        /// <summary>
-        /// Send message
-        /// </summary>
-        /// <param name="msg"></param>
-        void   SendMessage(string msg);
-
-        /// <summary>
-        /// Send an error message.
-        /// </summary>
-        /// <param name="msg"></param>
-        void SendErrorMessage(string msg);
-
-        /// <summary>
-        /// The repository object, contains information about
-        ///     cvsroot, working directory, etc.
-        /// </summary>
-        WorkingDirectory Repository {get;}
-
-        /// <summary>
-        /// The next file date.  <see cref="ICSharpCode.SharpCvsLib.Responses.ModTimeResponse"/>
-        /// </summary>
-        string NextFileDate {get;set;}
-
-        /// <summary>
-        /// The next file.
-        /// </summary>
-        string NextFile {get;set;}
-
-        /// <summary>
-        /// Handler for uncompressed files.
-        /// </summary>
-        IFileHandler UncompressedFileHandler {get;}
+    /// <summary>
+    /// The repository object, contains information about
+    ///     cvsroot, working directory, etc.
+    /// </summary>
+    WorkingDirectory Repository {
+        get;
     }
+
+    /// <summary>
+    /// The next file date.
+    /// </summary>
+    string NextFileDate {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// The next file.
+    /// </summary>
+    string NextFile {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// Handler for uncompressed files.
+    /// </summary>
+    IFileHandler UncompressedFileHandler {
+        get;
+    }
+}
 }

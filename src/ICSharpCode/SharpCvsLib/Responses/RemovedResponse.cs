@@ -32,7 +32,6 @@
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
@@ -45,22 +44,22 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// <summary>
     /// Handle a checked in response.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class RemovedResponse : AbstractResponse {
+    public class RemovedResponse : IResponse {
         private readonly ILog LOGGER = LogManager.GetLogger(typeof (RemovedResponse));
         /// <summary>
         /// Removed pathname \n
         ///     The file has been removed from the repository (this is the case where 
         ///     cvs prints `file foobar.c is no longer pertinent').
         /// </summary>
-        public override void Process() {
-            string localPath      = this.ReadLine();
-            string repositoryPath = this.ReadLine();
-            string entryLine      = this.ReadLine();
+        /// <param name="cvsStream"></param>
+        /// <param name="services"></param>
+        public void Process(CvsStream cvsStream, IResponseServices services) {
+            string localPath      = cvsStream.ReadLine();
+            string repositoryPath = cvsStream.ReadLine();
+            string entryLine      = cvsStream.ReadLine();
 
             PathTranslator orgPath   =
-                new PathTranslator (Services.Repository,
+                new PathTranslator (services.Repository,
                 repositoryPath);
 
             LOGGER.Error("TODO: Implement RemovedResponse; This response is currently does not do anything.");
@@ -69,7 +68,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// <summary>
         /// Return true if this response cancels the transaction
         /// </summary>
-        public override bool IsTerminating {
+        public bool IsTerminating {
             get {return true;}
         }
     }

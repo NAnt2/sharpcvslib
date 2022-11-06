@@ -38,9 +38,6 @@ using System.Globalization;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-using ICSharpCode.SharpCvsLib.Misc;
-
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
     ///     Value object for the <code>Root</code> cvs file.  The root file
@@ -55,7 +52,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///
     ///     eg)     :pserver:anonymous@linux.sporadicism.com:/home/cvs/src/
     /// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class Root : AbstractCvsFile, ICvsFile {
 
         /// <summary>
@@ -66,57 +62,17 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <summary>
         ///     The name of the cvs file that the object represents.
         /// </summary>
-        public override String Filename {
+        public String Filename {
             get {return Root.FILE_NAME;}
         }
 
         /// <summary>
         /// Create a new instance of the cvs object.
         /// </summary>
-        /// <param name="cvsFile">The full path to the object being managed.</param>
+        /// <param name="fullPath">The full path to the object being managed.</param>
         /// <param name="fileContents">The contents of the cvs management file.</param>
-        public Root (FileInfo cvsFile, String fileContents) : 
-            base (cvsFile, fileContents) {
-        }
-
-        public Root(DirectoryInfo cvsDir, string fileContents) : 
-            base(new FileInfo(System.IO.Path.Combine(cvsDir.FullName, "Root")), 
-            fileContents) {
-        }
-
-        public Root(DirectoryInfo cvsDir, CvsRoot cvsRoot) :
-            base(new FileInfo(System.IO.Path.Combine(cvsDir.FullName, "Root")), 
-            cvsRoot.ToString()) {
-        }
-
-        public Root (string cvsPath, string fileContents) :
-            this (new FileInfo(cvsPath), fileContents) {
-
-        }
-
-        public static Root Load (DirectoryInfo cvsDir) {
-            if (cvsDir.Name != "CVS") {
-                cvsDir = new DirectoryInfo(
-                    System.IO.Path.Combine(cvsDir.FullName, "CVS"));
-            }
-
-            return Load (
-                new FileInfo(
-                System.IO.Path.Combine(cvsDir.FullName, Root.FILE_NAME)));
-        }
-
-        /// <summary>
-        /// Load the root file.
-        /// </summary>
-        /// <param name="rootFile"></param>
-        /// <returns></returns>
-        public static Root Load (FileInfo rootFile) {
-            if (rootFile.Name != Root.FILE_NAME) {
-                throw new ArgumentException(string.Format("Not a valid Root file, {0}",
-                    rootFile.FullName));
-            }
-            Manager manager = new Manager(rootFile.DirectoryName);
-            return manager.FetchRoot(rootFile.DirectoryName);
+        public Root (String fullPath, String fileContents) : 
+            base (fullPath, fileContents) {
         }
 
         /// <summary>
@@ -149,14 +105,25 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         /// <summary>The type of file that this is.</summary>
-        public override Factory.FileType Type {get {return Factory.FileType.Root;}}
+        public Factory.FileType Type {get {return Factory.FileType.Root;}}
 
         /// <summary>Indicates whether the file can contain multiple
         /// lines.</summary>
         /// <returns><code>true</code> if the file can contain multiple
         /// lines; <code>false</code> otherwise.</returns>
-        public override bool IsMultiLined {
+        public bool IsMultiLined {
             get {return false;}
         }
+
+        /// <summary>
+        /// Returns the full path to the CVS\Root folder on the local filesystem
+        ///     that this object represents.
+        /// </summary>
+        /// <returns>The full path to the CVS\Root file that this object
+        ///     represents.</returns>
+        protected override String DeriveCvsFullPath () {
+            throw new NotImplementedException("This will eventually return the full path to the repository.");
+        }
+
     }
 }

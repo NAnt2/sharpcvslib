@@ -25,32 +25,29 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-using ICSharpCode.SharpCvsLib.Attributes;
-
 namespace ICSharpCode.SharpCvsLib.Requests {
-    /// <summary>
-    /// Response expected: yes. Ask the server to send back a Valid-requests response.
-    /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class ValidRequestsRequest : AbstractRequest
-    {
-        /// <summary>
-        /// The valid request string
-        /// </summary>
-        public override string RequestString {
-            get {
-                return "valid-requests\n";
-            }
-        }
 
-        /// <summary>
-        /// Indicator specifying if the response is respected.
-        /// </summary>
-        public override bool IsResponseExpected {
-            get {
-                return true;
-            }
+/// <summary>
+/// Response expected: yes. Ask the server to send back a Valid-requests response.
+/// </summary>
+public class ValidRequestsRequest : AbstractRequest
+{
+    /// <summary>
+    /// The valid request string
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "valid-requests\n";
         }
     }
+
+    /// <summary>
+    /// Indicator specifying if the response is respected.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return true;
+        }
+    }
+}
 }

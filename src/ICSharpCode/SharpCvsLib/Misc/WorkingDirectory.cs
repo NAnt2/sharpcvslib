@@ -39,8 +39,6 @@ using System.IO;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-using ICSharpCode.SharpCvsLib.Exceptions;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Util;
 
@@ -51,27 +49,21 @@ namespace ICSharpCode.SharpCvsLib.Misc {
     ///     object required to connect to the server.  The only thing you
     ///     have to add for this is the password.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class WorkingDirectory {
         private Manager manager;
         private readonly ILog LOGGER =
             LogManager.GetLogger (typeof (WorkingDirectory));
         CvsRoot cvsroot;
-        private DirectoryInfo localDir;
+        private String  localdirectory;
         String  repositoryname;
         String revision;
         bool hasDate = false;    // DateTime is a value type so we can't use null to indicate it hasn't been set
         DateTime date = new DateTime();
         String overrideDirectory;
-        bool _readonly = false;
 
         private Folders folders = new Folders();
 
-        public bool ReadOnly {
-            get { return _readonly; }
-            set { _readonly = value; }
-        }
+        private Folder[] foldersToUpdate;
 
         /// <summary>
         ///     Render the object as a human readable string.
@@ -80,7 +72,8 @@ namespace ICSharpCode.SharpCvsLib.Misc {
             ToStringFormatter formatter =
                 new ToStringFormatter ("WorkingDirectory");
             formatter.AddProperty ("cvsRoot", cvsroot);
-            formatter.AddProperty ("localdirectory", localDir.FullName);
+            formatter.AddProperty ("localdirectory", localdirectory);
+            formatter.AddProperty ("LocalDirectory", LocalDirectory);
             formatter.AddProperty ("repositoryname", repositoryname);
             formatter.AddProperty ("revision", revision);
             formatter.AddProperty ("overrideDirectory", overrideDirectory);
@@ -97,11 +90,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         ///     or Override directory.
         /// </summary>
         public string LocalDirectory {
-            get {return this.localDir.FullName;}
-        }
-
-        public DirectoryInfo LocalDir {
-            get {return this.localDir;}
+            get {return localdirectory;}
         }
 
         /// <summary>
@@ -120,41 +109,39 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         public string WorkingDirectoryName {
             get {
                 if (this.HasOverrideDirectory) {
-                    return this.OverrideDirectory;
-                } else {
-                    return this.repositoryname;
-                }
-            }
-        }
-
-        /// <summary>
-        ///     Specifies the current working path for the sources.  This is
-        ///         a combination of the root/ sandbox directory and the module
-        ///         or override directory.
-        /// </summary>
-        /// <exception cref="InvalidPathException">If the local directory and/ or the 
-        ///     working directory name are null.</exception>
-        public String WorkingPath {
-            get {
-                DirectoryInfo rootDir = this.GetRootDir(this.localDir);
-                string subDir;
-                try {
-                    Repository repos = Repository.Load(this.localDir);
-                    subDir = repos.FileContents;
-                } catch (CvsFileNotFoundException) {
-                    subDir = this.WorkingDirectoryName;
-                }
-                return Path.Combine(rootDir.FullName, subDir);
-            }
-        }
-
-        private DirectoryInfo GetRootDir(DirectoryInfo dir) {
-            if (dir.GetDirectories("CVS").Length > 0) {
-                return GetRootDir(dir.Parent);
+                return this.OverrideDirectory;
             } else {
-                return dir;
+                return this.repositoryname;
             }
         }
+    }
+
+    /// <summary>
+    ///     Specifies the current working path for the sources.  This is
+    ///         a combination of the root/ sandbox directory and the module
+    ///         or override directory.
+    /// </summary>
+    /// <exception cref="InvalidPathException">If the local directory and/ or the 
+    ///     working directory name are null.</exception>
+    public String WorkingPath {
+        get {
+            if (null != this.LocalDirectory &&
+                null != this.WorkingDirectoryName) {
+                String tempWorkingPath = Path.Combine(this.LocalDirectory, this.WorkingDirectoryName);
+                if (!tempWorkingPath.EndsWith(Path.DirectorySeparatorChar.ToString())) {
+                    tempWorkingPath = tempWorkingPath + Path.DirectorySeparatorChar;
+                }
+                return tempWorkingPath;
+            } else {
+                StringBuilder msg = new StringBuilder ();
+                msg.Append ("Unable to determine working path, you must specify ");
+                msg.Append ("a local directory and a module/ override directory.");
+                msg.Append ("\nLocalDirectory=[").Append (this.LocalDirectory).Append ("]");
+                msg.Append ("\nWorkingDirectoryName=[").Append (this.WorkingDirectoryName).Append ("]");
+                throw new InvalidPathException (msg.ToString ());
+            }
+        }
+    }
 
 
         /// <summary>
@@ -170,15 +157,8 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         ///         are sent to the server.
         /// </summary>
         public Folder[] FoldersToUpdate {
-            get { return (Folder[])new ArrayList(this.Folders.Values).ToArray(typeof(Folder)); }
-            set { 
-                if (null == this.folders) {
-                    this.folders = new Folders();
-                }
-                foreach (Folder folder in value) {
-                    this.folders.Add(folder);
-                }
-            }
+            get {return this.foldersToUpdate;}
+            set {this.foldersToUpdate = value;}
         }
 
         /// <summary>
@@ -191,7 +171,6 @@ namespace ICSharpCode.SharpCvsLib.Misc {
 
         /// <summary>Used to specify the revision of the module
         /// requested.  This should correspond to a module tag.</summary>
-        [Obsolete(@"Use the UpdateCommand2.Revision object to specify the checkout/ update revision.")]
         public String Revision {
             get {return this.revision;}
             set {
@@ -213,7 +192,6 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         }
 
         /// <summary>Specifies the most recent revision no later that the given date.</summary>
-        [Obsolete(@"Use the UpdateCommand2.Date to specify the checkout/ update date.")]
         public DateTime Date {
             get {return this.date;}
             set {
@@ -230,8 +208,6 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// </summary>
         /// <returns><code>true</code> if a date has been
         /// specified and <code>false</code> otherwise.</returns>
-        [Obsolete(@"Use the UpdateCommand2.HasDate to check if the date property has been
-            set.")]
         public bool HasDate {
             get {return hasDate;}
         }
@@ -239,7 +215,6 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <summary>
         ///     Returns the data as a string as required by the cvs server.
         /// </summary>
-        [Obsolete(@"Use the UpdateCommand2.GetDateAsString.")]
         public string GetDateAsString() {
             string dateAsString = "";
 	        string dateFormat = "dd MMM yyyy";
@@ -268,7 +243,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         ///     specified; <code>false</code> otherwise.</returns>
         public bool HasOverrideDirectory {
             get {return !(null == this.OverrideDirectory) && 
-                     !(this.OverrideDirectory.Length == 0);}
+                     !(String.Empty == this.OverrideDirectory);}
         }
 
         /// <summary>
@@ -278,14 +253,20 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         ///     about the connection and path on the cvs server.</param>
         /// <param name="localdirectory">The local base directory to check the
         ///     module out in.</param>
-        /// <param name="moduleName">The name of the module.  This is
+        /// <param name="repositoryname">The name of the repository.  This is
         ///     appended to the base localdirectory to check the sources out into.</param>
         public WorkingDirectory(    CvsRoot cvsroot,
                                     string localdirectory,
-                                    string moduleName) {
-            this.repositoryname = moduleName;
+                                    string repositoryname) {
+            this.repositoryname = repositoryname;
             this.cvsroot        = cvsroot;
-            this.localDir = new DirectoryInfo(localdirectory);
+            if (localdirectory.EndsWith (Path.DirectorySeparatorChar.ToString ()) ||
+                    localdirectory.EndsWith ("/")) {
+                this.localdirectory =
+                    localdirectory.Substring (0, localdirectory.Length - 1);
+            } else {
+                this.localdirectory = localdirectory;
+            }
             this.manager = new Manager(this.WorkingPath);
         }
 
@@ -318,7 +299,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <returns></returns>
         public string ToRemotePath(string directory) {
             return directory.Substring(
-                    this.localDir.FullName.Length).Replace(Path.DirectorySeparatorChar, '/');
+                    localdirectory.Length).Replace(Path.DirectorySeparatorChar, '/');
         }
 
         /// <summary>
@@ -332,7 +313,7 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         /// <returns></returns>
         [Obsolete ("Use the OrgPath to parse the org path string")]
         public string ToLocalPath(string orgPath) {
-            string _localBasePath = this.localDir.FullName;
+            string _localBasePath = this.localdirectory;
 
             string _orgPathWithoutRoot =
                 orgPath.Substring (this.cvsroot.CvsRepository.Length + 1);
@@ -436,9 +417,17 @@ namespace ICSharpCode.SharpCvsLib.Misc {
         //        [Obsolete ("This is moving to the CvsFileManager class")]
         public void ReadAllExistingEntries() {
             Clear();
+            if (LOGGER.IsDebugEnabled) {
+                String msg = "Read all existing entries in the " +
+                            "localdirectory=[" + this.localdirectory + "]";
+                LOGGER.Debug (msg);
+            }
             string wd =
-                Path.Combine (this.localDir.FullName, this.ModuleName);
+                Path.Combine (localdirectory, this.ModuleName);
             AddEntriesIn(wd);
+            //		    if (null == this.Folders || 0 == this.Folders.Count) {
+            //		        AddEntriesIn (Path.Combine (localdirectory, this.ModuleName));
+            //		    }
         }
 
         /// <summary>

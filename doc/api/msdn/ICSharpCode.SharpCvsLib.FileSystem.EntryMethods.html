@@ -1,0 +1,40 @@
+﻿<html dir="LTR"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5"><title>Entry Methods</title><xml></xml><link rel="stylesheet" type="text/css" href="MSDN.css"></head><body id="bodyID" class="dtBODY"><div id="nsbanner"><div id="bannerrow1"><table class="bannerparthead" cellspacing="0"><tr id="hdr"><td class="runninghead">SharpCvsLib</td><td class="product"></td></tr></table></div><div id="TitleRow"><h1 class="dtH1">Entry Methods</h1></div></div><div id="nstext"><p>The methods of the <b>Entry</b> class are listed below. For a complete list of <b>Entry</b> class members, see the <a href="ICSharpCode.SharpCvsLib.FileSystem.EntryMembers.html">Entry Members</a> topic.</p><h4 class="dtH4">Public Static (Shared) Methods</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><img src="static.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.CreateEntry.html">CreateEntry</a></td><td width="50%">
+            Creates a new entry given the path to the file on the filesystem.
+                The entry string is fabricated based on the full path of the file
+                that is under or is to be placed under CVS management control.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><img src="static.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.IsDirectoryEntry.html">IsDirectoryEntry</a></td><td width="50%">
+            Indicate if the file contents string is for a directory entry.  This
+                is identified by an entry line string that contains a "D" 
+                as the first character in the string.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><img src="static.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.ParseFileName.html">ParseFileName</a></td><td width="50%">
+            Parse the name of the file from the cvs file.
+            </td></tr></table></div><h4 class="dtH4">Public Instance Methods</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.Equals.html">Equals</a></td><td width="50%">
+                Determine if the two objects are equal.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.GetHashCode.html">GetHashCode</a></td><td width="50%">
+                Override the hashcode.  This is a combination of the entry
+                    name and the path to the entry file.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassGetTypeTopic.htm">GetType</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.Parse.html">Parse</a></td><td width="50%">
+            Parses the cvs entries file.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.SetTimeStamp.html">SetTimeStamp</a></td><td width="50%">
+            Set the file timestamp.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.ToString.html">ToString</a></td><td width="50%">
+                Return a human readable string that represents the entry object.
+            </td></tr></table></div><h4 class="dtH4">Protected Instance Methods</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="protmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.DeriveCvsFullPath.html">DeriveCvsFullPath</a></td><td width="50%">
+            Returns the full path to the CVS\Entries folder that this entry is 
+                managed by.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="protmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassFinalizeTopic.htm">Finalize</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr>
+<tr VALIGN="top"><td width="50%"><img src="protmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassMemberwiseCloneTopic.htm">MemberwiseClone</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr></table></div><h4 class="dtH4">See Also</h4><p><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.html">Entry Class</a> | <a href="ICSharpCode.SharpCvsLib.FileSystem.html">ICSharpCode.SharpCvsLib.FileSystem Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="Entry class, methods"></object><hr><div id="footer"><p><a href="http://sharpcvslib.sourceforge.net/license.html">Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.</a></p><p>Generated from assembly ICSharpCode.SharpCvsLib [0.35.3721.507]</p></div></div></body></html>

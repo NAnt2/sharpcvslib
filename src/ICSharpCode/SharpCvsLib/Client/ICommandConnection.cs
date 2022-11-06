@@ -28,21 +28,18 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    Author:     Gerald Evans
 #endregion
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Requests;
-using ICSharpCode.SharpCvsLib.Responses;
 
 
 namespace ICSharpCode.SharpCvsLib.Client {
     /// <summary>
     /// Interface into the CVSServerConnection that is needed by the commands.
     /// </summary>
-    [Author("Gerald Evans", "gne@users.sourceforge.net", "2003")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public interface ICommandConnection {
         /// <summary>
         /// Submit a request to the cvs repository.
@@ -61,10 +58,5 @@ namespace ICSharpCode.SharpCvsLib.Client {
         /// <param name="filename"></param>
         /// <param name="isBinary"></param>
         void SendFile(string filename, bool isBinary);
-
-        /// <summary>
-        /// Message event for server responses.
-        /// </summary>
-        ResponseMessageEvents ResponseMessageEvents {get;}
     }
 }

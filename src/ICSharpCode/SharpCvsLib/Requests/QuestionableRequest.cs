@@ -25,48 +25,44 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-using ICSharpCode.SharpCvsLib.Attributes;
 namespace ICSharpCode.SharpCvsLib.Requests {
 
+/// <summary>
+/// Response expected: no. Additional data: no.
+/// Tell the server to check whether filename should be ignored, and if not,
+/// next time the server sends responses, send (in a M response) `?' followed
+/// by the directory and filename. filename must not contain `/'; it needs to
+/// be a file in the directory named by the most recent Directory request.
+/// </summary>
+public class QuestionableRequest : AbstractRequest
+{
+    private string file;
 
     /// <summary>
-    /// Response expected: no. Additional data: no.
-    /// Tell the server to check whether filename should be ignored, and if not,
-    /// next time the server sends responses, send (in a M response) `?' followed
-    /// by the directory and filename. filename must not contain `/'; it needs to
-    /// be a file in the directory named by the most recent Directory request.
+    /// Constructor.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class QuestionableRequest : AbstractRequest
+    /// <param name="file">Filename to inquire about.</param>
+    public QuestionableRequest(string file)
     {
-        private string file;
+        this.file = file;
+    }
 
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="file">Filename to inquire about.</param>
-        public QuestionableRequest(string file)
-        {
-            this.file = file;
-        }
-
-        /// <summary>
-        /// Request if a file should be ignored or not in future requests.
-        /// </summary>
-        public override string RequestString {
-            get {
-                return "Questionable " + file + "\n";
-            }
-        }
-
-        /// <summary>
-        /// <code>false</code>, a response is not expected.
-        /// </summary>
-        public override bool IsResponseExpected {
-            get {
-                return false;
-            }
+    /// <summary>
+    /// Request if a file should be ignored or not in future requests.
+    /// </summary>
+    public override string RequestString {
+        get {
+            return "Questionable " + file + "\n";
         }
     }
+
+    /// <summary>
+    /// <code>false</code>, a response is not expected.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return false;
+        }
+    }
+}
 }

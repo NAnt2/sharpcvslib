@@ -1,0 +1,32 @@
+﻿<html dir="LTR"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5"><title>AddCommand Class</title><xml></xml><link rel="stylesheet" type="text/css" href="MSDN.css"></head><body id="bodyID" class="dtBODY"><div id="nsbanner"><div id="bannerrow1"><table class="bannerparthead" cellspacing="0"><tr id="hdr"><td class="runninghead">SharpCvsLib</td><td class="product"></td></tr></table></div><div id="TitleRow"><h1 class="dtH1">AddCommand Class</h1></div></div><div id="nstext"><p>
+            
+            copied from: http://developer.apple.com/darwin/tools/cvs/cederquist/cvs_60.html
+            
+            Command: cvs add [-k kflag] [-m message] files 
+            
+            Schedule files to be added to the repository. The files or directories 
+            specified with add must already exist in the current directory. To add a 
+            whole new directory hierarchy to the source repository (for example, files 
+            received from a third-party vendor), use the import command instead. 
+            
+            The added files are not placed in the source repository until you use commit 
+            to make the change permanent. Doing an add on a file that was removed with 
+            the remove command will undo the effect of the remove, unless a commit 
+            command intervened. 
+            
+            The `-k' option specifies the default way that this file will be checked out; 
+            for more information see section 12.4 Substitution modes.
+            
+               The `-m' option specifies a description for the file. This description appears in the history log (if it is enabled, see section C.10 The history file). It will also be saved in the version history inside the repository when the file is committed. The log command displays this description. The description can be changed using `admin -t'. See section A.6 admin--Administration. If you omit the `-m description' flag, an empty string will be used. You will not be prompted for a description. 
+            
+               For example, the following commands add the file `backend.c' to the repository:
+            
+               $ cvs add backend.c
+               $ cvs commit -m "Early version. Not yet compilable." backend.c
+            
+               When you add a file it is added only on the branch which you are working on (see section 5 Branching and merging). You can later merge the additions to another branch if you want (see section 5.9 Merging can add or remove files). 
+            </p><p>For a list of all members of this type, see <a href="ICSharpCode.SharpCvsLib.Commands.AddCommandMembers.html">AddCommand Members</a>.</p><p><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassTopic.htm">System.Object</a><br>   <b>AddCommand</b></p><div class="syntax"><span class="lang">[Visual Basic]</span><br>Public Class AddCommand<div>Implements ICommand</div></div><div class="syntax"><span class="lang">[C#]</span><div>public class AddCommand : ICommand</div></div><h4 class="dtH4">Requirements</h4><p><b>Namespace: </b><a href="ICSharpCode.SharpCvsLib.Commands.html">ICSharpCode.SharpCvsLib.Commands</a></p><p><b>Assembly: </b>ICSharpCode.SharpCvsLib (in ICSharpCode.SharpCvsLib.dll)
+					</p><h4 class="dtH4">See Also</h4><p><a href="ICSharpCode.SharpCvsLib.Commands.AddCommandMembers.html">AddCommand Members</a> | <a href="ICSharpCode.SharpCvsLib.Commands.html">ICSharpCode.SharpCvsLib.Commands Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="AddCommand class, about AddCommand class"></object><hr><div id="footer"><p><a href="http://sharpcvslib.sourceforge.net/license.html">Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.</a></p><p>Generated from assembly ICSharpCode.SharpCvsLib [0.35.3721.507]</p></div></div></body></html>

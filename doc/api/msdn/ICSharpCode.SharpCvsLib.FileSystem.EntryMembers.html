@@ -1,0 +1,109 @@
+﻿<html dir="LTR"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5"><title>Entry Members</title><xml></xml><link rel="stylesheet" type="text/css" href="MSDN.css"></head><body id="bodyID" class="dtBODY"><div id="nsbanner"><div id="bannerrow1"><table class="bannerparthead" cellspacing="0"><tr id="hdr"><td class="runninghead">SharpCvsLib</td><td class="product"></td></tr></table></div><div id="TitleRow"><h1 class="dtH1">Entry Members
+					</h1></div></div><div id="nstext"><p><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.html">Entry overview</a></p><h4 class="dtH4">Public Static (Shared) Fields</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubfield.gif"><img src="static.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.FILE_NAME.html">FILE_NAME</a></td><td width="50%">
+                The name of the entries file.
+            </td></tr></table></div><h4 class="dtH4">Public Static (Shared) Methods</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><img src="static.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.CreateEntry.html">CreateEntry</a></td><td width="50%">
+            Creates a new entry given the path to the file on the filesystem.
+                The entry string is fabricated based on the full path of the file
+                that is under or is to be placed under CVS management control.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><img src="static.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.IsDirectoryEntry.html">IsDirectoryEntry</a></td><td width="50%">
+            Indicate if the file contents string is for a directory entry.  This
+                is identified by an entry line string that contains a "D" 
+                as the first character in the string.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><img src="static.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.ParseFileName.html">ParseFileName</a></td><td width="50%">
+            Parse the name of the file from the cvs file.
+            </td></tr></table></div><h4 class="dtH4">Public Instance Constructors</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.EntryConstructor.html">Entry</a></td><td width="50%">Overloaded. Initializes a new instance of the Entry class.</td></tr></table></div><h4 class="dtH4">Public Instance Fields</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubfield.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.NewEntry.html">NewEntry</a></td><td width="50%">
+            Indicator specifying if this is a new entry or not.
+                The default value is <pre class="code">true</pre>.
+            </td></tr></table></div><h4 class="dtH4">Public Instance Properties</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.Conflict.html">Conflict</a></td><td width="50%">
+            String indicating a conflict with the server and
+                client files (if any).
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.Date.html">Date</a></td><td width="50%">
+            Date of the revision.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.FileContents.html">FileContents</a></td><td width="50%">
+            Outputs the formatted cvs entry.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.Filename.html">Filename</a></td><td width="50%">
+                The name of the file to write to.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.AbstractCvsFile.FullPath.html">FullPath</a> (inherited from <b>AbstractCvsFile</b>)</td><td width="50%">
+            The full path to the file or directory that this object is managing.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.HasTag.html">HasTag</a></td><td width="50%"><pre class="code">true</pre> if the cvs entry contains a
+                    <pre class="code">sticky-tag</pre>; otherwise <pre class="code">false</pre>.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.IsBinaryFile.html">IsBinaryFile</a></td><td width="50%"><pre class="code">true</pre> if the options tag specifies the file
+                is binary (i.e. has the option <pre class="code">-kb</pre> specified).
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.IsDirectory.html">IsDirectory</a></td><td width="50%"><pre class="code">true</pre> if the item is a directory, <pre class="code">false</pre>
+                otherwise.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.IsMultiLined.html">IsMultiLined</a></td><td width="50%">Indicates whether the file can contain multiple
+            lines.</td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.IsUtcTimeStamp.html">IsUtcTimeStamp</a></td><td width="50%">
+            Indicates whether the UTC timestamp should be used for files, or if the
+                timestamp from the current timezone should be used.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.AbstractCvsFile.LocalCvsFileFullPath.html">LocalCvsFileFullPath</a> (inherited from <b>AbstractCvsFile</b>)</td><td width="50%">
+            The full path to the local cvs management file.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.Name.html">Name</a></td><td width="50%">
+            The name of the file or directory.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.Options.html">Options</a></td><td width="50%">
+            TODO: figure out what this is for.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.AbstractCvsFile.Path.html">Path</a> (inherited from <b>AbstractCvsFile</b>)</td><td width="50%">
+            Return the path to the file that this cvs object is controlling.  In
+                most cases this is just the full path to the object, however one
+                known exception would be the Entry which would have file information
+                stripped from the full path.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.Revision.html">Revision</a></td><td width="50%">
+            The revision number for the file.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.Tag.html">Tag</a></td><td width="50%">
+            Sticky tag for the file (if any).
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.TagFile.html">TagFile</a></td><td width="50%">
+                Holds information on a tag file if there is a
+                    <pre class="code">sticky-tag</pre> in the cvs directory.  If there
+                    is no tag in the cvs directory then this value is null.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.TimeStamp.html">TimeStamp</a></td><td width="50%">
+            Timestamp for the file.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.Type.html">Type</a></td><td width="50%">The type of file that this is.</td></tr></table></div><h4 class="dtH4">Public Instance Methods</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.Equals.html">Equals</a></td><td width="50%">
+                Determine if the two objects are equal.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.GetHashCode.html">GetHashCode</a></td><td width="50%">
+                Override the hashcode.  This is a combination of the entry
+                    name and the path to the entry file.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassGetTypeTopic.htm">GetType</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.Parse.html">Parse</a></td><td width="50%">
+            Parses the cvs entries file.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.SetTimeStamp.html">SetTimeStamp</a></td><td width="50%">
+            Set the file timestamp.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.ToString.html">ToString</a></td><td width="50%">
+                Return a human readable string that represents the entry object.
+            </td></tr></table></div><h4 class="dtH4">Protected Instance Methods</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="protmethod.gif"><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.DeriveCvsFullPath.html">DeriveCvsFullPath</a></td><td width="50%">
+            Returns the full path to the CVS\Entries folder that this entry is 
+                managed by.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="protmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassFinalizeTopic.htm">Finalize</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr>
+<tr VALIGN="top"><td width="50%"><img src="protmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassMemberwiseCloneTopic.htm">MemberwiseClone</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr></table></div><h4 class="dtH4">See Also</h4><p><a href="ICSharpCode.SharpCvsLib.FileSystem.Entry.html">Entry Class</a> | <a href="ICSharpCode.SharpCvsLib.FileSystem.html">ICSharpCode.SharpCvsLib.FileSystem Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="Entry class"><param name="Keyword" value="ICSharpCode.SharpCvsLib.FileSystem.Entry class"><param name="Keyword" value="Entry class, all members"></object><hr><div id="footer"><p><a href="http://sharpcvslib.sourceforge.net/license.html">Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.</a></p><p>Generated from assembly ICSharpCode.SharpCvsLib [0.35.3721.507]</p></div></div></body></html>

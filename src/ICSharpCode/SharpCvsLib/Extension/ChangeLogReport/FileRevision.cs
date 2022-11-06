@@ -27,19 +27,17 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    <author>Gerald Evans</author>
+//
 #endregion
 	
 using System;
 using System.Xml;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-
 namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
     /// <summary>
     /// Represents the 'file' node that will be added to the XML file
     /// </summary>
-    [Author("Gerald Evans", "gne@users.sourceforge.net", "2003")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class FileRevision : object {
         
         private string filename;
@@ -70,7 +68,7 @@ namespace ICSharpCode.SharpCvsLib.Extension.ChangeLogReport {
     	    xmlWriter.WriteEndElement();
     	    		
     	    if (previousRevision != null && previousRevision.Length != 0) {
-    		    xmlWriter.WriteStartElement("prevrevision");
+    		    xmlWriter.WriteStartElement("previousrevision");
     		    xmlWriter.WriteString(previousRevision);
     		    xmlWriter.WriteEndElement();
     	    }

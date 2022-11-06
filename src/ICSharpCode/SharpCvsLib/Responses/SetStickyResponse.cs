@@ -31,7 +31,6 @@
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Messages;
 using ICSharpCode.SharpCvsLib.FileSystem;
@@ -51,9 +50,7 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     ///    a date, or something else for future expansion. The remainder of
     ///    tagspec contains the actual tag or date.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class SetStickyResponse : AbstractResponse {
+    public class SetStickyResponse : IResponse {
 
         private ILog LOGGER =
             LogManager.GetLogger (typeof (SetStickyResponse));
@@ -61,27 +58,29 @@ namespace ICSharpCode.SharpCvsLib.Responses {
         /// <summary>
         /// Process the response stream.
         /// </summary>
-        public override void Process() {
-            string localPath      = this.ReadLine();
-            string repositoryPath = this.ReadLine();
-            string stickyTag      = this.ReadLine();
+        /// <param name="cvsStream"></param>
+        /// <param name="services"></param>
+        public void Process(CvsStream cvsStream, IResponseServices services) {
+            string localPath      = cvsStream.ReadLine();
+            string repositoryPath = cvsStream.ReadLine();
+            string stickyTag      = cvsStream.ReadLine();
 
             PathTranslator orgPath   =
-                new PathTranslator (Services.Repository, repositoryPath);
+                new PathTranslator (services.Repository, repositoryPath);
 
             string localPathAndFilename = orgPath.LocalPathAndFilename;
             string directory = orgPath.LocalPath;
 
             Manager manager = 
-                new Manager (Services.Repository.WorkingPath);
-            manager.AddTag (Services.Repository, localPath, repositoryPath, stickyTag);
+                new Manager (services.Repository.WorkingPath);
+            manager.AddTag (services.Repository, localPath, repositoryPath, stickyTag);
 
         }
 
         /// <summary>
         /// Indicator stating whether the response is terminating or not.
         /// </summary>
-        public override bool IsTerminating {
+        public bool IsTerminating {
             get {return false;}
         }
     }

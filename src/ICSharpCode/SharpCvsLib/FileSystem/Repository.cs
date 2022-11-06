@@ -38,9 +38,6 @@ using System.Globalization;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-using ICSharpCode.SharpCvsLib.Exceptions;
-
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
     /// Information about the repository file.  This file is used to identify
@@ -48,7 +45,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///     repository.  Combined with the entry from the cvs entries file
     ///     this provides the relative path to the file on the cvs server.
     /// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class Repository : AbstractCvsFile, ICvsFile {
         private ILog LOGGER = LogManager.GetLogger (typeof (Repository));
         private String moduleName;
@@ -66,36 +62,16 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     The repository file stores the relative path to the directory
         ///         from the server's perspective.
         /// </summary>
-        /// <param name="cvsFile">The cvs management file.</param>
+        /// <param name="path">The path to the directory above the CVS directory.</param>
         /// <param name="line">The line to enter into the repository file.</param>
-        public Repository (FileInfo cvsFile, String line) : base (cvsFile, line) {
-        }
-
-        public Repository(DirectoryInfo cvsDir, string line) : 
-            base(new FileInfo(System.IO.Path.Combine(cvsDir.FullName, "Repository")), line) {
-        }
-
-        /// <summary>
-        ///     Create a new repository object taking the path to the
-        ///         folder above the CVS directory and the line to enter
-        ///         into the repository file.
-        ///
-        ///     The repository file stores the relative path to the directory
-        ///         from the server's perspective.
-        /// </summary>
-        /// <param name="filePath">The path to the cvs management file.</param>
-        /// <param name="line">The line to enter into the repository file.</param>
-        [Obsolete ("Use constructor Repository(FileInfo string)")]
-        public Repository (string filePath, string line) : 
-            this (new FileInfo(System.IO.Path.Combine(filePath, @"CVS\Repository")), line) {
-
+        public Repository (String path, String line) : base (path, line) {
         }
 
         /// <summary>
         ///     The name of this file should correspond to the name required
         ///         for a cvs repository.
         /// </summary>
-        public override String Filename {
+        public String Filename {
             get {return Repository.FILE_NAME;}
         }
 
@@ -112,37 +88,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// </example>
         public String ModuleName {
             get {return this.moduleName;}
-        }
-
-        public static Repository Load (DirectoryInfo cvsDir) {
-            if (cvsDir.Name != "CVS") {
-                cvsDir = new DirectoryInfo(
-                    System.IO.Path.Combine(cvsDir.FullName, "CVS"));
-            }
-
-            return Load(new FileInfo(System.IO.Path.Combine(
-                cvsDir.FullName, Repository.FILE_NAME)));
-        }
-
-        public static Repository Load (FileInfo repositoryFile) {
-            if (repositoryFile.Name != Repository.FILE_NAME) {
-                throw new ArgumentException(string.Format("Not a Repository file.", repositoryFile));
-            }
-
-            if (!repositoryFile.Exists) {
-                throw new CvsFileNotFoundException(
-                    string.Format("File does not exist {0}.", repositoryFile.FullName));
-            }
-            string fileContents;
-
-            using (StreamReader reader = new StreamReader(repositoryFile.FullName)) {
-                fileContents = reader.ReadToEnd();
-            }
-
-            // strip off line return characters
-            fileContents = fileContents.Replace(Environment.NewLine, "");
-
-            return new Repository(repositoryFile, fileContents);
         }
 
         /// <summary>
@@ -162,11 +107,14 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         ///     </ul>
         /// </example>
         public override void Parse (String line) {
-            int moduleLength = line.Length;
-            if (line.IndexOf("/") > -1) {
-                moduleLength = line.IndexOf("/");
+            if (line.EndsWith ("/")) {
+                 line = line.Substring (0, line.Length - 1);
             }
-            this.moduleName = line.Substring(0, moduleLength);
+            if (line.IndexOf("/") >=0) {
+                this.moduleName = line.Substring(0, line.IndexOf("/"));
+            } else {
+                this.moduleName = line;
+            }
             this.FileContents = line;
         }
 
@@ -194,14 +142,25 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         /// <summary>The type of file that this is.</summary>
-        public override Factory.FileType Type {get {return Factory.FileType.Repository;}}
+        public Factory.FileType Type {get {return Factory.FileType.Repository;}}
 
         /// <summary>Indicates whether the file can contain multiple
         /// lines.</summary>
         /// <returns><code>true</code> if the file can contain multiple
         /// lines; <code>false</code> otherwise.</returns>
-        public override bool IsMultiLined {
+        public bool IsMultiLined {
             get {return false;}
         }
+
+        /// <summary>
+        /// Returns the full path to the CVS\Root folder on the local filesystem
+        ///     that this object represents.
+        /// </summary>
+        /// <returns>The full path to the CVS\Root file that this object
+        ///     represents.</returns>
+        protected override String DeriveCvsFullPath () {
+            throw new NotImplementedException("This will eventually return the full path to the repository.");
+        }
+
     }
 }

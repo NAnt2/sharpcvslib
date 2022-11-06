@@ -39,7 +39,6 @@ using System.Diagnostics;
 using ICSharpCode.SharpCvsLib;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Misc;
-using ICSharpCode.SharpCvsLib.Commands;
 
 using ICSharpCode.SharpCvsLib.Console.Parser;
 
@@ -69,7 +68,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             String[] args = {"--help"};
             // Test Creating a CommandLineParser object
             CommandLineParser newCommandLineParser = new CommandLineParser( args);
-            Assert.IsNotNull (newCommandLineParser);
+            Assertion.AssertNotNull ("Should have a command object.", newCommandLineParser);
             LOGGER.Debug("Before parse execute for MakeCommandParserTest.");
             newCommandLineParser.Execute();
         }
@@ -90,21 +89,35 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
         [Test]
         public void MinusDOptionConnectedToCvsRoot () {
             try {
-                String[] args = {"-d :pserver:anonymous@cvs.sf.net:/cvsroot/sharpcvslib", "login"};
-                CommandLineParser parser = new CommandLineParser (args);
+                String commandLine = "-d:pserver:anonymous:cvs.sf.net:/cvsroot/sharpcvslib login";
+                String[] argsBad = commandLine.Split(' ');
+                CommandLineParser parser = new CommandLineParser (argsBad);
 
+                LOGGER.Debug("Before execute MinusDOptionConnectedToCvsRoot good.");
                 parser.Execute ();
-            } catch (Exception e){
-                Assert.Fail(string.Format("Should not have an exception.  Had: {0}", e.ToString()));
+                Assertion.Fail("Should throw an exception.");
+            } catch (CvsRootParseException e){
+                // expected the exception, log the error for good luck
+                LOGGER.Debug(e);
+            } catch (Exception e) {
+                // this should not happen, log it and rethrow the exception
+                LOGGER.Error (e);
+                throw e;
             }
             try {
-                String[] args = {"-d:pserver:anonymous@cvs.sf.net:/cvsroot/sharpcvslib", "login"};
-                CommandLineParser parser = new CommandLineParser (args);
+                String[] argsBad = {"-d:pserver:anonymous@cvs.sf.net:/cvsroot/sharpcvslib", "login"};
+                CommandLineParser parser = new CommandLineParser (argsBad);
 
+                LOGGER.Debug("Before execute MinusDOptionConnectedToCvsRoot bad.");
                 parser.Execute();
-            } catch (Exception e){
-                Assert.Fail(string.Format("Should not have an exception.  Had: {0}", e.ToString()));
-            } 
+            } catch (CvsRootParseException e){
+                LOGGER.Error(e);
+                Assertion.Fail ("Should not throw an exception, valid parameters.");
+            } catch (Exception e) {
+                // this should not happen, log it and rethrow the exception
+                LOGGER.Error(e);
+                throw e;
+            }
         }
         /// <summary>
         /// Test the options are parsed correctly and added to the Options property.
@@ -116,20 +129,14 @@ namespace ICSharpCode.SharpCvsLib.Console.Parser {
             CommandLineParser parser = new CommandLineParser (args);
             try {
                 LOGGER.Debug("Before execute ParseOptions.");
-                ICommand command = parser.Execute ();
-
-                Assert.IsTrue(command.GetType() == typeof(CheckoutModuleCommand));
-
-                CheckoutModuleCommand co = (CheckoutModuleCommand)command;
-                
-                Assert.AreEqual("v0_3_1", co.Revision);
-                Assert.AreEqual("newlocation", co.OverrideDirectory);
-
+                parser.Execute ();
             } 
             catch (Exception e) {
                 LOGGER.Error(e);
                 throw e;
             }
+            Assertion.Equals("-r v0_3_1 -d newlocation ", parser.Options);
+            Assertion.Equals("sharpcvslib", parser.Repository);
         }
     }
 }

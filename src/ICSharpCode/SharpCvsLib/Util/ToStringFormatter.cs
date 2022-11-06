@@ -28,6 +28,8 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    Author:     Clayton Harbour
+//
 #endregion
 
 using System;
@@ -35,67 +37,63 @@ using System.Text;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-
 namespace ICSharpCode.SharpCvsLib.Util {
+/// <summary>
+///     Utility class for formatting the ToString output of an object.
+/// </summary>
+public class ToStringFormatter {
+
+    StringBuilder formattedString;
+
     /// <summary>
-    ///     Utility class for formatting the ToString output of an object.
+    ///     Create a new instance of the formatter.  Initialize the string
+    ///         format with the name of the object.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
-    public class ToStringFormatter {
-
-        StringBuilder formattedString;
-
-        /// <summary>
-        ///     Create a new instance of the formatter.  Initialize the string
-        ///         format with the name of the object.
-        /// </summary>
-        public ToStringFormatter (String objectName) {
-            this.formattedString = new StringBuilder ();
-            this.formattedString.Append ("{Object=[").Append (objectName).Append ("]");
-        }
-
-        /// <summary>
-        ///     Add a property name and property value to the internal string
-        ///         representation.
-        /// </summary>
-        /// <param name="propertyName">Name of the property to include in
-        ///     the output.</param>
-        /// <param name="propertyValue">The value of the string to include in
-        ///     the output.</param>
-        public void AddProperty (String propertyName, String propertyValue) {
-	    if (null == propertyName) {
-		    propertyName = "";
-	    }
-	    if (null == propertyValue) {
-		    propertyValue = "";
-	    }
-            this.formattedString.Append (Environment.NewLine).Append("\t").Append (propertyName).
-            Append ("=[").Append (propertyValue).Append ("]");
-        }
-
-        /// <summary>
-        ///     Add a property name and value to the internal string representation.
-        /// </summary>
-        /// <param name="propertyName">The name of the property to add.</param>
-        /// <param name="propertyValue">The value of the property.</param>
-        public void AddProperty (String propertyName, object propertyValue) {
-            if (null == propertyValue) {
-                this.AddProperty (propertyName, "null");
-            } else {
-                this.AddProperty (propertyName, propertyValue.ToString ());
-            }
-
-        }
-
-        /// <summary>
-        ///     Output the internal representation of the object as a string.
-        /// </summary>
-        /// <returns>The value of the string.</returns>
-        public override String ToString () {
-            return this.formattedString.Append(Environment.NewLine).Append(Environment.NewLine).ToString ();
-        }
+    public ToStringFormatter (String objectName) {
+        this.formattedString = new StringBuilder ();
+        this.formattedString.Append ("{Object=[").Append (objectName).Append ("]");
     }
+
+    /// <summary>
+    ///     Add a property name and property value to the internal string
+    ///         representation.
+    /// </summary>
+    /// <param name="propertyName">Name of the property to include in
+    ///     the output.</param>
+    /// <param name="propertyValue">The value of the string to include in
+    ///     the output.</param>
+    public void AddProperty (String propertyName, String propertyValue) {
+	if (null == propertyName) {
+		propertyName = "";
+	}
+	if (null == propertyValue) {
+		propertyValue = "";
+	}
+        this.formattedString.Append (Environment.NewLine).Append("\t").Append (propertyName).
+        Append ("=[").Append (propertyValue).Append ("]");
+    }
+
+    /// <summary>
+    ///     Add a property name and value to the internal string representation.
+    /// </summary>
+    /// <param name="propertyName">The name of the property to add.</param>
+    /// <param name="propertyValue">The value of the property.</param>
+    public void AddProperty (String propertyName, object propertyValue) {
+        if (null == propertyValue) {
+            this.AddProperty (propertyName, "null");
+        } else {
+            this.AddProperty (propertyName, propertyValue.ToString ());
+        }
+
+    }
+
+    /// <summary>
+    ///     Output the internal representation of the object as a string.
+    /// </summary>
+    /// <returns>The value of the string.</returns>
+    public override String ToString () {
+        return this.formattedString.Append(Environment.NewLine).Append(Environment.NewLine).ToString ();
+    }
+}
 
 }

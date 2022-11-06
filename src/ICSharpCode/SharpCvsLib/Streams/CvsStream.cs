@@ -33,8 +33,8 @@
 #endregion
 
 using System;
-using System.Collections;
 using System.IO;
+using System.Text;
 using System.Threading;
 
 using ICSharpCode.SharpCvsLib.Config;
@@ -43,15 +43,11 @@ using ICSharpCode.SharpCvsLib.Util;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-
 namespace ICSharpCode.SharpCvsLib.Streams {
 
     /// <summary>
     /// Class for handling streams to the cvs server.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
     public class CvsStream : Stream {
         private static EncodedMessage requestMessage = new EncodedMessage ();
         private static EncodedMessage responseMessage = new EncodedMessage ();
@@ -231,15 +227,15 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         /// </summary>
         /// <returns></returns>
         private string ReadLineBlock() {
-            ArrayList buffer = new ArrayList(1024);
+            StringBuilder builder = new StringBuilder(1024);
             while (true) {
                 int i = ReadByte();
                 if (i == '\n' || i == -1) {
                     break;
                 }
-                buffer.Add((byte)i);
+                builder.Append((char)i);
             }
-            return EncodingUtil.DEFAULT_ENCODING.GetString((byte[])buffer.ToArray(typeof(byte)));
+            return builder.ToString();
         }
 
         /// <summary>
@@ -278,17 +274,16 @@ namespace ICSharpCode.SharpCvsLib.Streams {
         /// </summary>
         /// <returns></returns>
         public string ReadToFirstWS() {
-            ArrayList buffer = new ArrayList(1024);
+            StringBuilder builder = new StringBuilder(1024);
             while (true) {
                 int i = ReadByte();
 
-                buffer.Add((byte)i);
+                builder.Append((char)i);
                 if (i == '\n' || i ==' ' || i == -1) {
                     break;
                 }
             }
-            
-            return EncodingUtil.DEFAULT_ENCODING.GetString((byte[])buffer.ToArray(typeof(byte)));
+            return builder.ToString();
         }
 
         /// <summary>

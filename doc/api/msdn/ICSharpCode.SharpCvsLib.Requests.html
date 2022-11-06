@@ -1,0 +1,340 @@
+﻿<html dir="LTR"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5"><title>ICSharpCode.SharpCvsLib.Requests</title><xml></xml><link rel="stylesheet" type="text/css" href="MSDN.css"></head><body id="bodyID" class="dtBODY"><div id="nsbanner"><div id="bannerrow1"><table class="bannerparthead" cellspacing="0"><tr id="hdr"><td class="runninghead">SharpCvsLib</td><td class="product"></td></tr></table></div><div id="TitleRow"><h1 class="dtH1">ICSharpCode.SharpCvsLib.Requests Namespace</h1></div></div><div id="nstext"><p><b>ICSharpCode.SharpCvsLib.Client</b>  TODO: Enter a namespace description.
+    </p><h3 class="dtH3">Classes</h3><div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr valign="top"><th width="50%">Class</th><th width="50%">Description</th></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.AbstractRequest.html">AbstractRequest</a></td><td width="50%">
+            To be implemented by server requests.  Requests are used
+                by commands to communicate with the cvs server.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.AddRequest.html">AddRequest</a></td><td width="50%">
+            Response expected: yes. Add a file or directory. This uses any previous Argument, Directory,
+            Entry, or Modified requests, if they have been sent. The last Directory sent specifies the
+            working directory at the time of the operation. To add a directory, send the directory to be
+            added using Directory and Argument requests. For example:
+            C: Root /u/cvsroot
+            . . .
+            C: Argument nsdir
+            C: Directory nsdir
+            C: /u/cvsroot/1dir/nsdir
+            C: Directory .
+            C: /u/cvsroot/1dir
+            C: add
+            S: M Directory /u/cvsroot/1dir/nsdir added to the repository
+            S: ok
+            
+            You will notice that the server does not signal to the client in any particular way that the
+            directory has been successfully added. The client is supposed to just assume that the directory
+            has been added and update its records accordingly. Note also that adding a directory is immediate;
+            it does not wait until a ci request as files do. To add a file, send the file to be added using a
+            Modified request. For example:
+            C: Argument nfile
+            C: Directory .
+            C: /u/cvsroot/1dir
+            C: Modified nfile
+            C: u=rw,g=r,o=r
+            C: 6
+            C: hello
+            C: add
+            S: E cvs server: scheduling file `nfile' for addition
+            S: Mode u=rw,g=r,o=r
+            S: Checked-in ./
+            S: /u/cvsroot/1dir/nfile
+            S: /nfile/0///
+            S: E cvs server: use 'cvs commit' to add this file permanently
+            S: ok
+            
+            Note that the file has not been added to the repository; the only effect of a successful add
+            request, for a file, is to supply the client with a new entries line containing `0' to indicate an
+            added file. In fact, the client probably could perform this operation without contacting the server,
+            although using add does cause the server to perform a few more checks. The client sends a subsequent
+            ci to actually add the file to the repository. Another quirk of the add request is that with CVS 1.9
+            and older, a pathname specified in an Argument request cannot contain `/'. There is no good reason
+            for this restriction, and in fact more recent CVS servers don't have it. But the way to interoperate
+            with the older servers is to ensure that all Directory requests for add (except those used to
+            add directories, as described above), use `.' for local-directory. Specifying another string for
+            local-directory may not get an error, but it will get you strange Checked-in responses from the buggy
+            servers.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.AnnotateRequest.html">AnnotateRequest</a></td><td width="50%">
+             Response expected: yes.
+             Actually do a cvs command. This uses any previous Argument, Directory, Entry,
+             or Modified requests, if they have been sent. The last Directory sent specifies
+             the working directory at the time of the operation. No provision is made for any
+             input from the user. This means that ci must use a -m argument if it wants to specify
+             a log message.
+             Usage: cvs server [-lRf] [-r rev|-D date] [files...]
+                    -l      Local directory only, no recursion.
+                    -R      Process directories recursively.
+                    -f      Use head revision if tag/date not found.
+                    -r rev  Annotate file as of specified revision/tag.
+                    -D date Annotate file as of specified date.
+            (Specify the --help global option for a list of other help options)	 * *
+            
+             </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.ArgumentRequest.html">ArgumentRequest</a></td><td width="50%">
+            Response expected: no.
+            Save argument for use in a subsequent command. Arguments accumulate until
+            an argument-using command is given, at which point they are forgotten.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.ArgumentRequest.Options.html">ArgumentRequest.Options</a></td><td width="50%">The options that are available as
+            arguments to the cvs server.</td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.ArgumentxRequest.html">ArgumentxRequest</a></td><td width="50%">
+            Response expected: no. Append \n followed by text to the current argument being saved
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.CaseRequest.html">CaseRequest</a></td><td width="50%">
+            Response expected: no.
+            Tell the server that filenames should be matched in a case-insensitive fashion.
+            Note that this is not the primary mechanism for achieving case-insensitivity;
+            for the most part the client keeps track of the case which the server wants to use
+            and takes care to always use that case regardless of what the user specifies.
+            For example the filenames given in Entry and Modified requests for the same file must
+            match in case regardless of whether the Case request is sent. The latter mechanism is
+            more general (it could also be used for 8.3 filenames, VMS filenames with more than one `.',
+            and any other situation in which there is a predictable mapping between filenames in
+            the working directory and filenames in the protocol), but there are some situations it
+            cannot handle (ignore patterns, or situations where the user specifies a filename and the
+            client does not know about that file).
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.CheckoutRequest.html">CheckoutRequest</a></td><td width="50%">
+            Response expected: yes.
+            Get files from the repository. This uses any previous Argument, Directory, Entry,
+            or Modified requests, if they have been sent. Arguments to this command are module
+            names; the client cannot know what directories they correspond to except by (1) just
+            sending the co request, and then seeing what directory names the server sends back in
+            its responses, and (2) the expand-modules request.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.CommitRequest.html">CommitRequest</a></td><td width="50%">
+            Response expected: yes.
+            Actually do a cvs command. This uses any previous Argument, Directory, Entry,
+            or Modified requests, if they have been sent. The last Directory sent specifies
+            the working directory at the time of the operation. No provision is made for any
+            input from the user. This means that ci must use a -m argument if it wants to specify
+            a log message.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.DiffRequest.html">DiffRequest</a></td><td width="50%">
+            Response expected: yes.
+            Actually do a cvs command. This uses any previous Argument, Directory, Entry,
+            or Modified requests, if they have been sent. The last Directory sent specifies
+            the working directory at the time of the operation. No provision is made for any
+            input from the user. This means that ci must use a -m argument if it wants to specify
+            a log message.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.DirectoryRequest.html">DirectoryRequest</a></td><td width="50%">
+            Additional data: repository \n. Response expected: no.
+            Tell the server what directory to use. The repository should be a directory
+            name from a previous server response. Note that this both gives a default
+            for Entry and Modified and also for ci and the other commands; normal usage
+            is to send Directory for each directory in which there will be an Entry or
+            Modified, and then a final Directory for the original directory, then the
+            command. The local-directory is relative to the top level at which the
+            command is occurring (i.e. the last Directory which is sent before the
+            command); to indicate that top level, `.' should be sent for
+            local-directory.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.EntryRequest.html">EntryRequest</a></td><td width="50%">
+            Response expected: no.
+            Tell the server what version of a file is on the local machine.
+            The name in entry-line is a name relative to the directory most
+            recently specified with Directory.
+            
+            If the user is operating on only some files in a directory,
+            Entry requests for only those files need be included.
+            
+            If an Entry request is sent without Modified, Is-modified,
+            or Unchanged, it means the file is lost (does not exist in the
+            working directory).
+            
+            If both Entry and one of Modified, Is-modified, or Unchanged are sent for the
+            same file, Entry must be sent first. For a given file, one can send Modified,
+            Is-modified, or Unchanged, but not more than one of these three.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.ExpandModulesRequest.html">ExpandModulesRequest</a></td><td width="50%">
+            Response expected: yes.
+            Expand the modules which are specified in the arguments. Returns the data in
+            Module-expansion responses. Note that the server can assume that this is checkout or export,
+            not rtag or rdiff; the latter do not access the working directory and thus have no need to
+            expand modules on the client side. Expand may not be the best word for what this request does.
+            It does not necessarily tell you all the files contained in a module, for example.
+            Basically it is a way of telling you which working directories the server needs to know about
+            in order to handle a checkout of the specified modules. For example, suppose that the server has
+            a module defined by aliasmodule -a 1dir
+            
+            That is, one can check out aliasmodule and it will take 1dir in the repository and check it out
+            to 1dir in the working directory. Now suppose the client already has this module checked out and
+            is planning on using the co request to update it. Without using expand-modules, the client would
+            have two bad choices: it could either send information about all working directories under the
+            current directory, which could be unnecessarily slow, or it could be ignorant of the fact that
+            aliasmodule stands for 1dir, and neglect to send information for 1dir, which would lead to
+            incorrect operation. With expand-modules, the client would first ask for the module to be expanded:
+            C: Root /home/kingdon/zwork/cvsroot
+            . . .
+            C: Argument aliasmodule
+            C: Directory .
+            C: /home/kingdon/zwork/cvsroot
+            C: expand-modules
+            S: Module-expansion 1dir
+            S: ok
+            
+            and then it knows to check the `1dir' directory and send requests such as Entry and Modified for
+            the files in that directory.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.ExportRequest.html">ExportRequest</a></td><td width="50%">
+            Request that the server export the module.
+                TODO: Add cvs documentation for this as well.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.GlobalOptionRequest.html">GlobalOptionRequest</a></td><td width="50%">
+            Response expected: no.
+            Transmit one of the global options `-q', `-Q', `-l', `-t', `-r', or `-n'.
+            option must be one of those strings, no variations (such as combining of options)
+            are allowed. For graceful handling of valid-requests, it is probably better to make
+            new global options separate requests, rather than trying to add them to this request.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.GlobalOptionRequest.Options.html">GlobalOptionRequest.Options</a></td><td width="50%">
+            Options that are available globally.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.GzipFileContents.html">GzipFileContents</a></td><td width="50%">
+            Zip the file contents before sending them to the server.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.GzipStreamRequest.html">GzipStreamRequest</a></td><td width="50%">
+            Response expected: no.
+            Use zlib (RFC 1950/1951) compression to compress all further communication between
+            the client and the server. After this request is sent, all further communication must
+            be compressed. All further data received from the server will also be compressed.
+            The level argument suggests to the server the level of compression that it should apply;
+            it should be an integer between 1 and 9, inclusive, where a higher number indicates more compression.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.ImportRequest.html">ImportRequest</a></td><td width="50%">
+            Request to import a module.
+                TODO: Add nice documentation like the other requests.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.InitRequest.html">InitRequest</a></td><td width="50%">
+            Response expected: no.
+            Creates a directory on the server.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.IsModifiedRequest.html">IsModifiedRequest</a></td><td width="50%">
+            
+            Is-modified filename \n
+                Response expected: no. Additional data: none. Like Modified, but used if 
+                the server only needs to know whether the file is modified, not the 
+                contents. The commands which can take Is-modified instead of Modified 
+                with no known change in behavior are: admin, diff (if and only if two 
+                `-r' or `-D' options are specified), watch-on, watch-off, watch-add, 
+                watch-remove, watchers, editors, log, and annotate. For the status 
+                command, one can send Is-modified but if the client is using imperfect 
+                mechanisms such as timestamps to determine whether to consider a file 
+                modified, then the behavior will be different. That is, if one sends 
+                Modified, then the server will actually compare the contents of the file 
+                sent and the one it derives from to determine whether the file is 
+                genuinely modified. But if one sends Is-modified, then the server takes 
+                the client's word for it. A similar situation exists for tag, if the `-c' 
+                option is specified. Commands for which Modified is necessary are co, ci, 
+                update, and import. Commands which do not need to inform the server about 
+                a working directory, and thus should not be sending either Modified or 
+                Is-modified: rdiff, rtag, history, init, and release. Commands for which 
+                further investigation is warranted are: remove, add, and export. Pending 
+                such investigation, the more conservative course of action is to stick to 
+                Modified.
+                
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.LogRequest.html">LogRequest</a></td><td width="50%">
+            Response expected: yes.
+            Actually do a cvs command. This uses any previous Argument, Directory, Entry,
+            or Modified requests, if they have been sent. The last Directory sent specifies
+            the working directory at the time of the operation. No provision is made for any
+            input from the user. This means that ci must use a -m argument if it wants to specify
+            a log message.
+            
+            Usage: cvs server [-lRhtNb] [-r[revisions]] [-d dates] [-s states]
+            [-w[logins]] [files...]
+                    -l      Local directory only, no recursion.
+                    -R      Only print name of RCS file.
+                    -h      Only print header.
+                    -t      Only print header and descriptive text.
+                    -N      Do not list tags.
+                    -b      Only list revisions on the default branch.
+                    -r[revisions]   Specify revision(s)s to list.
+                    -d dates        Specify dates (D1 &gt; D2 for range, D for latest before).
+                    -s states       Only list revisions with specified states.
+                    -w[logins]      Only list revisions checked in by specified logins.
+            (Specify the --help global option for a list of other help options)
+            
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.ModifiedRequest.html">ModifiedRequest</a></td><td width="50%">
+            Response expected: no.
+            Additional data: mode, \n, file transmission.
+            Send the server a copy of one locally modified file.
+            filename is relative to the most recent repository sent with Directory.
+            If the user is operating on only some files in a directory, only those
+            files need to be included. This can also be sent without Entry, if there
+            is no entry for the file.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.PServerAuthRequest.html">PServerAuthRequest</a></td><td width="50%">
+            this isn't an official request, this is the authorization for the
+            pserver protocol.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.QuestionableRequest.html">QuestionableRequest</a></td><td width="50%">
+            Response expected: no. Additional data: no.
+            Tell the server to check whether filename should be ignored, and if not,
+            next time the server sends responses, send (in a M response) `?' followed
+            by the directory and filename. filename must not contain `/'; it needs to
+            be a file in the directory named by the most recent Directory request.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.RDiffRequest.html">RDiffRequest</a></td><td width="50%">
+            Response expected: yes.
+            Actually do a cvs command. This uses any previous Argument, Directory, Entry,
+            or Modified requests, if they have been sent. The last Directory sent specifies
+            the working directory at the time of the operation. No provision is made for any
+            input from the user. This means that ci must use a -m argument if it wants to specify
+            a log message.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.RemoveRequest.html">RemoveRequest</a></td><td width="50%">
+            Response expected: yes. Remove a file.
+            This uses any previous Argument, Directory, Entry, or Modified requests, if they have been sent.
+            The last Directory sent specifies the working directory at the time of the operation. Note that
+            this request does not actually do anything to the repository; the only effect of a successful
+            remove request is to supply the client with a new entries line containing `-' to indicate a removed
+            file. In fact, the client probably could perform this operation without contacting the server, although
+            using remove may cause the server to perform a few more checks. The client sends a subsequent ci request
+            to actually record the removal in the repository.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.RequestMessageEventArgs.html">RequestMessageEventArgs</a></td><td width="50%">
+                Holds the event arguments from a cvs server message event.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.RootRequest.html">RootRequest</a></td><td width="50%">
+            Response expected: no. Tell the server which CVSROOT to use.
+            Note that pathname is a local directory and not a fully qualified
+            CVSROOT variable. pathname must already exist; if creating a new root,
+            use the init request, not Root. pathname does not include the hostname
+            of the server, how to access the server, etc.; by the time the CVS
+            protocol is in use, connection, authentication, etc., are already taken care of.
+            The Root request must be sent only once, and it must be sent before any requests
+            other than Valid-responses, valid-requests, UseUnchanged, or init.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.RTagRequest.html">RTagRequest</a></td><td width="50%">
+            Response expected: yes. Actually do a cvs command. This uses any previous 
+            Argument requests, if they have been sent. The client should not send 
+            Directory, Entry, or Modified requests for this command; they are not used. 
+            Arguments to these commands are module names, as described for co.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.StatusRequest.html">StatusRequest</a></td><td width="50%">
+            Response expected: yes.
+            Actually do a cvs command. This uses any previous Argument, Directory, Entry,
+            or Modified requests, if they have been sent. The last Directory sent specifies
+            the working directory at the time of the operation. No provision is made for any
+            input from the user. This means that ci must use a -m argument if it wants to specify
+            a log message.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.StickyRequest.html">StickyRequest</a></td><td width="50%">
+            Response expected: no.
+            Tell the server that the directory most recently specified with Directory
+            has a sticky tag or date tagspec. The first character of tagspec is `T' for
+            a tag, or `D' for a date. The remainder of tagspec contains the actual tag or
+            date. The server should remember Static-directory and Sticky requests for a
+            particular directory; the client need not resend them each time it sends a
+            Directory request for a given directory. However, the server is not obliged
+            to remember them beyond the context of a single command.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.TagRequest.html">TagRequest</a></td><td width="50%">
+            Response expected: yes.
+            Actually do a cvs command. This uses any previous Argument, Directory, Entry,
+            or Modified requests, if they have been sent. The last Directory sent specifies
+            the working directory at the time of the operation. No provision is made for any
+            input from the user. This means that ci must use a -m argument if it wants to specify
+            a log message.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.UnchangedRequest.html">UnchangedRequest</a></td><td width="50%">
+            Response expected: no.
+            Tell the server that filename has not been modified in the checked out directory.
+            The name is relative to the most recent repository sent with Directory.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.UpdateRequest.html">UpdateRequest</a></td><td width="50%">
+            Response expected: yes.
+            Actually do a cvs update command. This uses any previous Argument, Directory, Entry,
+            or Modified requests, if they have been sent. The last Directory sent specifies the
+            working directory at the time of the operation. The -I option is not used--files which
+            the client can decide whether to ignore are not mentioned and the client sends the
+            Questionable request for others.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.UploadFileRequest.html">UploadFileRequest</a></td><td width="50%">
+            Upload a file to the repository.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.UseUnchangedRequest.html">UseUnchangedRequest</a></td><td width="50%">
+            Response expected: no.
+            To specify the version of the protocol described in this document,
+            servers must support this request (although it need not do anything)
+            and clients must issue it.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.ValidRequestsRequest.html">ValidRequestsRequest</a></td><td width="50%">
+            Response expected: yes. Ask the server to send back a Valid-requests response.
+            </td></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.ValidResponsesRequest.html">ValidResponsesRequest</a></td><td width="50%">
+            Response expected: no.
+            Tell the server what responses the client will accept. request-list is a space
+            separated list of tokens.
+            </td></tr></table></div><h3 class="dtH3">Interfaces</h3><div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr valign="top"><th width="50%">Interface</th><th width="50%">Description</th></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.IRequest.html">IRequest</a></td><td width="50%">
+            Interface for handling requests to the cvs server.
+            </td></tr></table></div><h3 class="dtH3">Delegates</h3><div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr valign="top"><th width="50%">Delegate</th><th width="50%">Description</th></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Requests.RequestMessageEventHandler.html">RequestMessageEventHandler</a></td><td width="50%">
+                Initialize a new request message event handler delegate.
+            </td></tr></table></div><hr><div id="footer"><p><a href="http://sharpcvslib.sourceforge.net/license.html">Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.</a></p><p></p></div></div></body></html>

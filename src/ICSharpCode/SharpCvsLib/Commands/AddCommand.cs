@@ -16,24 +16,19 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
-// As a special exception, the copyright holders of this library give you
-// permission to link this library with independent modules to produce an
-// executable, regardless of the license terms of these independent
-// modules, and to copy and distribute the resulting executable under
-// terms of your choice, provided that you also meet, for each linked
-// independent module, the terms and conditions of the license of that
-// module.  An independent module is a module which is not derived from
-// or based on this library.  If you modify this library, you may extend
-// this exception to your version of the library, but you are not
-// obligated to do so.  If you do not wish to do so, delete this
-// exception statement from your version.
+// As a special exception, if you link this library with other files to
+// produce an executable, this library does not by itself cause the
+// resulting executable to be covered by the GNU General Public License.
+// This exception does not however invalidate any other reasons why the
+// executable file might be covered by the GNU General Public License.
+//
+//      <author>Clayton Harbour</author>
 #endregion
 
 using System;
 using System.Collections;
 using System.IO;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
@@ -41,7 +36,8 @@ using ICSharpCode.SharpCvsLib.FileSystem;
 
 using log4net;
 
-namespace ICSharpCode.SharpCvsLib.Commands {
+namespace ICSharpCode.SharpCvsLib.Commands
+{
 	/// <summary>
 	/// 
 	/// copied from: http://developer.apple.com/darwin/tools/cvs/cederquist/cvs_60.html
@@ -70,14 +66,11 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     ///
     ///    When you add a file it is added only on the branch which you are working on (see section 5 Branching and merging). You can later merge the additions to another branch if you want (see section 5.9 Merging can add or remove files). 
 	/// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
 	public class AddCommand : ICommand {
         private WorkingDirectory workingDirectory;
 
         private ILog LOGGER = LogManager.GetLogger (typeof (AddCommand));
         private Folders folders;
-        private string _message;
-        private string _kflag;
 
         /// <summary>
         /// Folders that will be added/ updated when the add command is executed.
@@ -87,22 +80,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         public Folders Folders {
             get {return this.folders;}
             set {this.folders = value;}
-        }
-
-        /// <summary>
-        /// Message explaining the purpose of the file.
-        /// </summary>
-        public string Message {
-            get { return this._message; }
-            set { this._message = value; }
-        }
-
-        /// <summary>
-        /// The rcs flag to use when adding the file.
-        /// </summary>
-        public string Kflag {
-            get { return this._kflag; }
-            set { this._kflag = value; }
         }
             
 
@@ -179,13 +156,9 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// <param name="connection">Server connection</param>
         public void Execute(ICommandConnection connection) {
             connection.SubmitRequest(new ArgumentRequest(ArgumentRequest.Options.DASH));
-            if (null != this.Kflag) {
-                connection.SubmitRequest(new ArgumentRequest(this.Kflag));
-            }
-            if (null != this.Message) {
-                connection.SubmitRequest(new ArgumentRequest(this.Message));
-            }
+            int loops = 0;
             foreach (DictionaryEntry folderEntry in this.Folders) {
+                LOGGER.Debug("loops=[" + loops++ + "]");
                 Folder folder = (Folder)folderEntry.Value;
                 this.SetDirectory (connection, folder);
 
@@ -198,8 +171,11 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                     this.SendFileRequest (connection, entry);
 
                     // Add the file to the cvs entries file
-                    Manager manager = new Manager(entry.CvsFile.Directory.FullName);
-                    manager.AddEntry(entry);
+                    Manager manager = new Manager(connection.Repository.WorkingPath);
+                    manager.Add(entry);
+                    if (LOGGER.IsDebugEnabled) {
+                        LOGGER.Debug("AddCommand.  Entry=[" + entry + "]");
+                    }
                 }
 
                 // send each argument request
@@ -207,9 +183,19 @@ namespace ICSharpCode.SharpCvsLib.Commands {
                     Entry entry = (Entry)entryEntry.Value;
                     connection.SubmitRequest(new ArgumentRequest(entry.Name));
 
+                    //String fileName = Path.Combine(entry.Path, entry.Name);
+                    //this.SendFileRequest (connection, entry);
+
                     // Add the file to the cvs entries file
-                    Manager manager = new Manager(entry.CvsFile.Directory.FullName);
-                    manager.AddEntry(entry);
+                    Manager manager = new Manager(connection.Repository.WorkingPath);
+                    manager.Add(entry);
+                    if (LOGGER.IsDebugEnabled) {
+                        LOGGER.Debug("AddCommand.  Entry=[" + entry + "]");
+                        Entries entries = manager.FetchEntries(entry.FullPath);
+                        foreach (DictionaryEntry dicEntry in entries) {
+                            LOGGER.Debug("entry=[" + dicEntry.Value + "]");
+                        }
+                    }
                 }
             }
 
@@ -234,11 +220,27 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         }
 
         private void SendFileRequest (ICommandConnection connection, Entry entry) {
+//            bool fileExists;
             DateTime old = entry.TimeStamp;
             entry.TimeStamp = entry.TimeStamp;
-            connection.SubmitRequest (new EntryRequest (entry));
-            connection.SubmitRequest(new ModifiedRequest(entry.Name));
-            connection.SendFile(entry.FullPath, entry.IsBinaryFile);
+//            try {
+//                fileExists = File.Exists (entry.Filename);
+//            }
+//            catch (Exception e) {
+//                LOGGER.Error (e);
+//                fileExists = false;
+//            }
+
+//            if (!fileExists) {
+                connection.SubmitRequest (new EntryRequest (entry));
+//            } else if (File.GetLastAccessTime(entry.Filename) !=
+//                entry.TimeStamp.ToUniversalTime ()) {
+                connection.SubmitRequest(new ModifiedRequest(entry.Name));
+                connection.SendFile(entry.FullPath, entry.IsBinaryFile);
+//            } else {
+//                connection.SubmitRequest(new EntryRequest(entry));
+//                connection.SubmitRequest(new UnchangedRequest(entry.Name));
+//            }
 
             entry.TimeStamp = old;
         }

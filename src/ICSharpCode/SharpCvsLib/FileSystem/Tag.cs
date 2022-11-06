@@ -38,8 +38,6 @@ using System.Globalization;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-
 namespace ICSharpCode.SharpCvsLib.FileSystem {
     /// <summary>
     ///     Value object for the <code>Tag</code> cvs file.  The root file
@@ -54,7 +52,6 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
     ///
     ///     eg)     :pserver:anonymous@linux.sporadicism.com:/home/cvs/src/
     /// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class Tag : AbstractCvsFile, ICvsFile {
 
         /// <summary>
@@ -65,46 +62,17 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <summary>
         ///     The name of the cvs file that the object represents.
         /// </summary>
-        public override String Filename {
+        public String Filename {
             get {return Tag.FILE_NAME;}
         }
 
         /// <summary>
         /// Create a new instance of the cvs object.
         /// </summary>
-        /// <param name="cvsFile">The full path to the object being managed.</param>
+        /// <param name="fullPath">The full path to the object being managed.</param>
         /// <param name="fileContents">The contents of the cvs management file.</param>
-        public Tag (FileInfo cvsFile, String fileContents) : 
-            base (cvsFile, fileContents) {
-        }
-
-        public Tag (string fullPath, string fileContents) : 
-            this(new FileInfo(System.IO.Path.Combine(fullPath, "CVS")), fileContents) {
-
-        }
-
-        public static Tag Load (DirectoryInfo cvsDir) {
-            if (cvsDir.Name != "CVS") {
-                cvsDir = new DirectoryInfo(
-                    System.IO.Path.Combine(cvsDir.FullName, "CVS"));
-            }
-            return Load (
-                new FileInfo(
-                System.IO.Path.Combine(cvsDir.FullName, Tag.FILE_NAME)));
-        }
-
-        /// <summary>
-        /// Load the root file.
-        /// </summary>
-        /// <param name="tagFile"></param>
-        /// <returns></returns>
-        public static Tag Load (FileInfo tagFile) {
-            if (tagFile.Name != Tag.FILE_NAME) {
-                throw new ArgumentException(string.Format("Not a valid Tag file, {0}",
-                    tagFile.FullName));
-            }
-            Manager manager = new Manager(tagFile.DirectoryName);
-            return manager.FetchTag(tagFile.DirectoryName);
+        public Tag (String fullPath, String fileContents) : 
+            base (fullPath, fileContents) {
         }
 
         /// <summary>
@@ -142,14 +110,25 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         }
 
         /// <summary>The type of file that this is.</summary>
-        public override Factory.FileType Type {get {return Factory.FileType.Tag;}}
+        public Factory.FileType Type {get {return Factory.FileType.Tag;}}
 
         /// <summary>Indicates whether the file can contain multiple
         /// lines.</summary>
         /// <returns><code>true</code> if the file can contain multiple
         /// lines; <code>false</code> otherwise.</returns>
-        public override bool IsMultiLined {
+        public bool IsMultiLined {
             get {return false;}
         }
+
+        /// <summary>
+        /// Returns the full path to the CVS\Tag file on the local file system
+        ///     that this object represents.
+        /// </summary>
+        /// <returns>The full path to the CVS\Tag file that this object 
+        ///     represents.</returns>
+        protected override String DeriveCvsFullPath () {
+            throw new NotImplementedException("This will eventually return the full path to the repository.");
+        }
+
     }
 }

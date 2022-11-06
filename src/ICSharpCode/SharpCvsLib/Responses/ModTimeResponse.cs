@@ -29,7 +29,6 @@
 // exception statement from your version.
 #endregion
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
 
@@ -38,21 +37,21 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// Handles a response from the server containing the modified
     ///     time.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class ModTimeResponse : AbstractResponse {
+    public class ModTimeResponse : IResponse {
         /// <summary>
         /// Process the server response.
         /// </summary>
-        public override void Process() {
-            string date = this.ReadLine();
-            Services.NextFileDate = date;
+        /// <param name="cvsStream"></param>
+        /// <param name="services"></param>
+        public void Process(CvsStream cvsStream, IResponseServices services) {
+            string date = cvsStream.ReadLine();
+            services.NextFileDate = date;
         }
 
         /// <summary>
         /// Response terminates transaction: <code>false</code>.
         /// </summary>
-        public override bool IsTerminating {
+        public bool IsTerminating {
             get {return false;}
         }
     }

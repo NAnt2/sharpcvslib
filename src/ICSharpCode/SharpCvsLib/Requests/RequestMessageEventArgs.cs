@@ -27,16 +27,12 @@
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-
 namespace ICSharpCode.SharpCvsLib.Requests {
-    /// <summary>
-    ///     Holds the event arguments from a cvs server message event.
-    /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public sealed class RequestMessageEventArgs : EventArgs {
+/// <summary>
+///     Holds the event arguments from a cvs server message event.
+/// </summary>
+public sealed class RequestMessageEventArgs : EventArgs {
 
-    }
+}
 
 }

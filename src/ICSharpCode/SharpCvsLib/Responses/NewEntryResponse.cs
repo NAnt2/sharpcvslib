@@ -32,7 +32,6 @@
 
 using System;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
@@ -41,32 +40,46 @@ using ICSharpCode.SharpCvsLib.Streams;
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
+
     /// <summary>
     /// New-entry pathname \n
     ///     Additional data: New Entries line, \n. Like Checked-in, but the file is 
     ///     not up to date.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class NewEntryResponse : AbstractResponse{
+    public class NewEntryResponse : IResponse {
         private readonly ILog LOGGER = LogManager.GetLogger(typeof (NewEntryResponse));
         /// <summary>
         /// Process a new entry response.
+        /// 
+        /// TODO: Copied implementation from CheckedInResponse, determine if this
+        ///     is correct or not.
         /// </summary>
-        public override void Process() {
-            string localPath = this.ReadLine();
-            string reposPath = this.ReadLine();
-            string entryLine = this.ReadLine();
+        /// <param name="cvsStream"></param>
+        /// <param name="services"></param>
+        public void Process(CvsStream cvsStream, IResponseServices services) {
+            string localPath      = cvsStream.ReadLine();
+            string repositoryPath = cvsStream.ReadLine();
+            string entryLine      = cvsStream.ReadLine();
 
-            Entry entry = new Entry(localPath, entryLine);
-            Entries.Save(entry);
+            PathTranslator orgPath   =
+                new PathTranslator (services.Repository,
+                repositoryPath);
+
+            string fileName = orgPath.LocalPathAndFilename;
+            Entry  entry = new Entry(orgPath.LocalPath, entryLine);
+            LOGGER.Debug ("CheckedInResponse adding entry=[" + entry + "]");
+
+            Manager manager = new Manager (services.Repository.WorkingPath);
+            manager.Add (entry);
         }
 
         /// <summary>
         /// Return true if this response cancels the transaction
         /// </summary>
-        public override bool IsTerminating {
-            get {return false;}
+        public bool IsTerminating {
+            get {
+                return false;
+            }
         }
     }
 }

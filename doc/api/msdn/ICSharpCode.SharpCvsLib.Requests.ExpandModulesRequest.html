@@ -1,0 +1,34 @@
+﻿<html dir="LTR"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5"><title>ExpandModulesRequest Class</title><xml></xml><link rel="stylesheet" type="text/css" href="MSDN.css"></head><body id="bodyID" class="dtBODY"><div id="nsbanner"><div id="bannerrow1"><table class="bannerparthead" cellspacing="0"><tr id="hdr"><td class="runninghead">SharpCvsLib</td><td class="product"></td></tr></table></div><div id="TitleRow"><h1 class="dtH1">ExpandModulesRequest Class</h1></div></div><div id="nstext"><p>
+            Response expected: yes.
+            Expand the modules which are specified in the arguments. Returns the data in
+            Module-expansion responses. Note that the server can assume that this is checkout or export,
+            not rtag or rdiff; the latter do not access the working directory and thus have no need to
+            expand modules on the client side. Expand may not be the best word for what this request does.
+            It does not necessarily tell you all the files contained in a module, for example.
+            Basically it is a way of telling you which working directories the server needs to know about
+            in order to handle a checkout of the specified modules. For example, suppose that the server has
+            a module defined by aliasmodule -a 1dir
+            
+            That is, one can check out aliasmodule and it will take 1dir in the repository and check it out
+            to 1dir in the working directory. Now suppose the client already has this module checked out and
+            is planning on using the co request to update it. Without using expand-modules, the client would
+            have two bad choices: it could either send information about all working directories under the
+            current directory, which could be unnecessarily slow, or it could be ignorant of the fact that
+            aliasmodule stands for 1dir, and neglect to send information for 1dir, which would lead to
+            incorrect operation. With expand-modules, the client would first ask for the module to be expanded:
+            C: Root /home/kingdon/zwork/cvsroot
+            . . .
+            C: Argument aliasmodule
+            C: Directory .
+            C: /home/kingdon/zwork/cvsroot
+            C: expand-modules
+            S: Module-expansion 1dir
+            S: ok
+            
+            and then it knows to check the `1dir' directory and send requests such as Entry and Modified for
+            the files in that directory.
+            </p><p>For a list of all members of this type, see <a href="ICSharpCode.SharpCvsLib.Requests.ExpandModulesRequestMembers.html">ExpandModulesRequest Members</a>.</p><p><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassTopic.htm">System.Object</a><br>   <a href="ICSharpCode.SharpCvsLib.Requests.AbstractRequest.html">AbstractRequest</a><br>      <b>ExpandModulesRequest</b></p><div class="syntax"><span class="lang">[Visual Basic]</span><br>Public Class ExpandModulesRequest<div>Inherits AbstractRequest</div></div><div class="syntax"><span class="lang">[C#]</span><div>public class ExpandModulesRequest : AbstractRequest</div></div><h4 class="dtH4">Requirements</h4><p><b>Namespace: </b><a href="ICSharpCode.SharpCvsLib.Requests.html">ICSharpCode.SharpCvsLib.Requests</a></p><p><b>Assembly: </b>ICSharpCode.SharpCvsLib (in ICSharpCode.SharpCvsLib.dll)
+					</p><h4 class="dtH4">See Also</h4><p><a href="ICSharpCode.SharpCvsLib.Requests.ExpandModulesRequestMembers.html">ExpandModulesRequest Members</a> | <a href="ICSharpCode.SharpCvsLib.Requests.html">ICSharpCode.SharpCvsLib.Requests Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="ExpandModulesRequest class, about ExpandModulesRequest class"></object><hr><div id="footer"><p><a href="http://sharpcvslib.sourceforge.net/license.html">Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.</a></p><p>Generated from assembly ICSharpCode.SharpCvsLib [0.35.3721.507]</p></div></div></body></html>

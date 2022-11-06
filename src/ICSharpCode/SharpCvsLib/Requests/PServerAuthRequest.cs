@@ -28,133 +28,137 @@ using System.Collections;
 using System.IO;
 using System.Text;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 
 using log4net;
 
 namespace ICSharpCode.SharpCvsLib.Requests {
 
+/// <summary>
+/// this isn't an official request, this is the authorization for the
+/// pserver protocol.
+/// </summary>
+public class PServerAuthRequest : AbstractRequest
+{
+    private const String VAR_HOME = "HOME";
+    private const String CVSPASS = ".cvspass";
+    private string cvsroot;
+    private string userName;
+    private string password;
+
+    private readonly ILog LOGGER =
+        LogManager.GetLogger (typeof (PServerAuthRequest));
+
     /// <summary>
-    /// this isn't an official request, this is the authorization for the
-    /// pserver protocol.
+    /// The cvs root.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class PServerAuthRequest : AbstractRequest {
-        private const String VAR_HOME = "HOME";
-        private const String CVSPASS = ".cvspass";
-        private string cvsroot;
-        private string userName;
-        private string password;
+    public String CvsRoot {
+        get {return this.cvsroot;}
+    }
 
-        private readonly ILog LOGGER =
-            LogManager.GetLogger (typeof (PServerAuthRequest));
+    /// <summary>
+    /// The name of the user that is logging in.
+    /// </summary>
+    public String UserName {
+        get {return this.userName;}
+    }
 
-        /// <summary>
-        /// The cvs root.
-        /// </summary>
-        public String CvsRoot {
-            get {return this.cvsroot;}
-        }
+    /// <summary>
+    /// Get the password for the user.
+    /// </summary>
+    public String Password {
+        get {
+            if (null == this.password || String.Empty == this.password) {
+                String home = Environment.GetEnvironmentVariable(VAR_HOME);
+                if (null != home) {
+                    String varHomePath = 
+                        Path.Combine(home, CVSPASS);
 
-        /// <summary>
-        /// The name of the user that is logging in.
-        /// </summary>
-        public String UserName {
-            get {return this.userName;}
-        }
+                    try {
+                        StreamReader reader = 
+                            new StreamReader(varHomePath);
+                        ArrayList passwords = new ArrayList ();
+                        String passLine = reader.ReadLine();
+                        while (passLine.Length != 0) {
+                            LOGGER.Debug("passLine=[" + passLine + "]");
+                            String passFileCvsRoot = passLine.Substring(0, passLine.IndexOf(" "));
+                            String passFilePassword = passLine.Substring(passLine.IndexOf(" "), passLine.Length);
 
-        /// <summary>
-        /// Get the password for the user.
-        /// </summary>
-        public String Password {
-            get {
-                if (null == this.password || this.password.Length == 0) {
-                    String home = Environment.GetEnvironmentVariable(VAR_HOME);
-                    if (null != home) {
-                        String varHomePath = 
-                            Path.Combine(home, CVSPASS);
-
-                        try {
-                            StreamReader reader = 
-                                new StreamReader(varHomePath);
-                            ArrayList passwords = new ArrayList ();
-                            String passLine = reader.ReadLine();
-                            while (passLine.Length != 0) {
-                                LOGGER.Debug("passLine=[" + passLine + "]");
-                                String passFileCvsRoot = passLine.Substring(0, passLine.IndexOf(" "));
-                                String passFilePassword = passLine.Substring(passLine.IndexOf(" "), passLine.Length);
-
-                                if (null != passFileCvsRoot && 
-                                    passFileCvsRoot.Length != 0 &&
-                                    this.cvsroot.Equals (passFileCvsRoot)) {
-                                    this.password = passFilePassword;
-                                    break;
-                                }
-                                passLine = reader.ReadLine();
+                            if (null != passFileCvsRoot && 
+                                String.Empty != passFileCvsRoot &&
+                                this.cvsroot.Equals (passFileCvsRoot)) {
+                                this.password = passFilePassword;
+                                break;
                             }
-                        } catch (IOException e) {
-                            LOGGER.Error(e);
+                            passLine = reader.ReadLine();
                         }
-
-                        StringBuilder msg = new StringBuilder ();
-                        msg.Append("Password was null, looking up password from ");
-                        msg.Append(VAR_HOME).Append("=[").Append(varHomePath).Append("]");
-                        msg.Append("Password=[").Append(password).Append("]");
-                        LOGGER.Debug(msg);
+                    } catch (IOException e) {
+                        LOGGER.Error(e);
                     }
+
+                    StringBuilder msg = new StringBuilder ();
+                    msg.Append("Password was null, looking up password from ");
+                    msg.Append(VAR_HOME).Append("=[").Append(varHomePath).Append("]");
+                    msg.Append("Password=[").Append(password).Append("]");
+                    LOGGER.Debug(msg);
                 }
-                LOGGER.Debug("Returning password=[" + this.password + "]");
-                return this.password;
             }
-        }
-
-        /// <summary>
-        /// Creates a new instance of the pserver authentication request with a null 
-        ///     password.
-        /// </summary>
-        /// <param name="cvsroot">A cvsroot line that locates the repository and
-        ///     the server.</param>
-        /// <param name="username">The name of the user that is logging in.</param>
-        public PServerAuthRequest (string cvsroot, string username) : this (cvsroot, username, null) {
-        }
-
-        /// <summary>
-        /// Create a new pserver authentication object.  Populate the cvsroot, username
-        ///     and password variables that will be sent to the server.  When the password
-        ///     is populated it is encrypted with the password scrambler.
-        /// </summary>
-        /// <param name="cvsroot">A cvsroot line that locates the repository and
-        ///     the server.</param>
-        /// <param name="userName">The name of the user that is logging in.</param>
-        /// <param name="password">A password for the user.</param>
-        public PServerAuthRequest(string cvsroot, string userName, string password)
-        {
-            this.cvsroot  = cvsroot;
-            this.userName = userName;
-            this.password = password;
-            this.password = PasswordScrambler.Scramble(this.password);
-        }
-
-        /// <summary>
-        /// Authorization for the pserver protocol.
-        /// </summary>
-        public override string RequestString {
-            get {
-                return "BEGIN AUTH REQUEST\n" +
-                    CvsRoot + "\n" +
-                    UserName + "\n" +
-                    Password + "\n" +
-                    "END AUTH REQUEST\n";
-            }
-        }
-
-        /// <summary>
-        /// <code>false</code>, a response is not expected.
-        /// </summary>
-        public override bool IsResponseExpected {
-            get {return false;}
+            LOGGER.Debug("Returning password=[" + this.password + "]");
+            return this.password;
         }
     }
+
+    /// <summary>
+    /// Creates a new instance of the pserver authentication request with a null 
+    ///     password.
+    /// </summary>
+    /// <param name="cvsroot">A cvsroot line that locates the repository and
+    ///     the server.</param>
+    /// <param name="username">The name of the user that is logging in.</param>
+    public PServerAuthRequest (string cvsroot, string username) : this (cvsroot, username, null) {
+    }
+
+    /// <summary>
+    /// Create a new pserver authentication object.  Populate the cvsroot, username
+    ///     and password variables that will be sent to the server.  When the password
+    ///     is populated it is encrypted with the password scrambler.
+    /// </summary>
+    /// <param name="cvsroot">A cvsroot line that locates the repository and
+    ///     the server.</param>
+    /// <param name="userName">The name of the user that is logging in.</param>
+    /// <param name="password">A password for the user.</param>
+    public PServerAuthRequest(string cvsroot, string userName, string password)
+    {
+        this.cvsroot  = cvsroot;
+        this.userName = userName;
+        this.password = password;
+        this.password = PasswordScrambler.Scramble(this.password);
+    }
+
+    /// <summary>
+    /// Authorization for the pserver protocol.
+    /// </summary>
+    public override string RequestString {
+        get {
+            if (LOGGER.IsDebugEnabled) {
+                String msg = "Password Scrambled=[" +
+                         PasswordScrambler.Scramble (password) +
+                             "]";
+                LOGGER.Debug (msg);
+            }
+            return "BEGIN AUTH REQUEST\n" +
+                   CvsRoot + "\n" +
+                   UserName + "\n" +
+                   Password + "\n" +
+                   "END AUTH REQUEST\n";
+        }
+    }
+
+    /// <summary>
+    /// <code>false</code>, a response is not expected.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {return false;}
+    }
+}
 }

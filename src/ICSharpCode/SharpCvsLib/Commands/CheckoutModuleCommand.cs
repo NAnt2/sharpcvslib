@@ -27,12 +27,14 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    Author:     Mike Krueger,
+//                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
 using System;
 using System.IO;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Requests;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
@@ -45,8 +47,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
     /// <summary>
     /// Checkout module command
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class CheckoutModuleCommand : ICommand {
         private WorkingDirectory workingDirectory;
 
@@ -57,53 +57,6 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         /// <param name="workingDirectory"></param>
         public CheckoutModuleCommand(WorkingDirectory workingDirectory) {
             this.workingDirectory    = workingDirectory;
-
-            this.Revision = this.workingDirectory.Revision;
-            this.OverrideDirectory = this.workingDirectory.OverrideDirectory;
-            if (this.workingDirectory.HasDate) {
-                this.Date = this.workingDirectory.Date;
-            }
-            this.Module = this.workingDirectory.ModuleName;
-        }
-
-        private string _revision;
-        public string Revision {
-            get {return this._revision;}
-            set {this._revision = value;}
-        }
-
-        private string _overrideDirectory;
-        public string OverrideDirectory {
-            get {return this._overrideDirectory;}
-            set {this._overrideDirectory = value;}
-        }
-
-        private bool _hasDate = false;
-        private DateTime _date;
-        public DateTime Date {
-            get {return this._date;}
-            set {
-                this._hasDate = true;
-                this._date = value;
-            }
-        }
-
-        protected string DateAsString {
-            get {
-                string dateAsString = "";
-                string dateFormat = "dd MMM yyyy";
-
-                if (this._hasDate) {
-                    dateAsString = this._date.ToString(dateFormat);
-                }
-                return dateAsString;
-            }
-        }
-
-        private string _module;
-        public string Module {
-            get {return this._module;}
-            set {this._module = value;}
         }
 
         /// <summary>
@@ -113,8 +66,8 @@ namespace ICSharpCode.SharpCvsLib.Commands {
         public void Execute(ICommandConnection connection) {
             workingDirectory.Clear();
 
-            //connection.SubmitRequest(new CaseRequest());
-            connection.SubmitRequest(new ArgumentRequest(this.Module));
+            connection.SubmitRequest(new CaseRequest());
+            connection.SubmitRequest(new ArgumentRequest(workingDirectory.ModuleName));
 
             connection.SubmitRequest(new DirectoryRequest(".",
                                     workingDirectory.CvsRoot.CvsRepository +
@@ -125,28 +78,34 @@ namespace ICSharpCode.SharpCvsLib.Commands {
             connection.SubmitRequest(
                 new ArgumentRequest(ArgumentRequest.Options.MODULE_NAME));
 
-            if (null != this.Revision) {
+            if (workingDirectory.HasRevision) {
                 connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.REVISION));
-                connection.SubmitRequest(new ArgumentRequest(this.Revision));
+                connection.SubmitRequest(new ArgumentRequest(workingDirectory.Revision));
             }
-            if (this._hasDate) {
+            if (workingDirectory.HasDate) {
                 connection.SubmitRequest (new ArgumentRequest (ArgumentRequest.Options.DATE));
-                connection.SubmitRequest(new ArgumentRequest(this.DateAsString));
+                connection.SubmitRequest(new ArgumentRequest(workingDirectory.GetDateAsString()));
             }
-            if (null != this.OverrideDirectory) {
+            if (workingDirectory.HasOverrideDirectory) {
                 connection.SubmitRequest (
                     new ArgumentRequest (ArgumentRequest.Options.OVERRIDE_DIRECTORY));
                 connection.SubmitRequest (
-                    new ArgumentRequest (this.OverrideDirectory));
+                    new ArgumentRequest (workingDirectory.OverrideDirectory));
             }
 
-            connection.SubmitRequest(new ArgumentRequest(this.Module));
+            connection.SubmitRequest(new ArgumentRequest(workingDirectory.ModuleName));
 
             connection.SubmitRequest(new DirectoryRequest(".",
                                     workingDirectory.CvsRoot.CvsRepository +
-                                    "/" + this.Module));
+                                    "/" + workingDirectory.ModuleName));
 
             connection.SubmitRequest(new CheckoutRequest());
+            Manager manager = new Manager (connection.Repository.WorkingPath);
+            if (LOGGER.IsDebugEnabled) {
+                LOGGER.Debug ("looking for directories to add to the " +
+                            "entries file in=[" +
+                            this.workingDirectory.WorkingPath + "]");
+            }
         }
     }
 }

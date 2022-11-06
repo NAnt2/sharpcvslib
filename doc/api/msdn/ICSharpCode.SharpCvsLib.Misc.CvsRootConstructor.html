@@ -1,0 +1,38 @@
+﻿<html dir="LTR"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5"><title>CvsRoot Constructor</title><xml></xml><link rel="stylesheet" type="text/css" href="MSDN.css"></head><body id="bodyID" class="dtBODY"><div id="nsbanner"><div id="bannerrow1"><table class="bannerparthead" cellspacing="0"><tr id="hdr"><td class="runninghead">SharpCvsLib</td><td class="product"></td></tr></table></div><div id="TitleRow"><h1 class="dtH1">CvsRoot Constructor </h1></div></div><div id="nstext"><p>
+            Constructor.  Parses a cvsroot variable passed in as
+                a string into the different properties that make it
+                up.  The cvsroot can consisit of the following components:
+                
+                    1) protocol: such as the pserver, ssh and ext protocols
+                        NOTE: Currently unsupported, but valid cvs protocols include: sspi and ntserver
+                    2) username: the login user for the remote client.  This will be
+                        used to authenticate the user on the remote machine.
+                    3) server:  server that the repository sits on.
+                    4) path:    path to the repository on the server
+                        
+            </p><div class="syntax"><span class="lang">[Visual Basic]</span><br>Public Sub New( _<br>   ByVal <i>cvsRoot</i> As <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemStringClassTopic.htm">String</a> _<br>)</div><div class="syntax"><span class="lang">[C#]</span><br>public CvsRoot(<br>   <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemStringClassTopic.htm">string</a> <i>cvsRoot</i><br>);</div><h4 class="dtH4">Parameters</h4><dl><dt><i>cvsRoot</i></dt><dd><span class="missing">Missing &lt;param&gt; documentation for cvsRoot</span></dd></dl><h4 class="dtH4">Exceptions</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr valign="top"><th width="50%">Exception Type</th><th width="50%">Condition</th></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.Misc.CvsRootParseException.html">CvsRootParseException</a></td><td width="50%">If the cvsroot does not
+                translate to a valid cvsroot.</td></tr></table></div><h4 class="dtH4">Example</h4><p>
+                Cvsroot examples:
+                        1) :pserver:anonymous@cvs.sourceforge.net:/cvsroot/sharpcvslib
+                        
+                            would be parsed as follows:
+                                protocol    = pserver (password server protocol)
+                                user        = anonymous
+                                server      = cvs.sourceforge.net
+                                port        = 2401 (default port)
+                                path        = /cvsroot/sharpcvslib
+                                
+                        2) :pserver:anonymous@cvs.sourceforge.net:80:/cvsroot/sharpcvslib
+                        
+                            would be parsed as follows:
+                                protocol    = pserver (password server protocol)
+                                user        = anonymous
+                                server      = cvs.sourceforge.net
+                                port        = 80
+                                path        = /cvsroot/sharpcvslib
+                        
+                
+            </p><h4 class="dtH4">See Also</h4><p><a href="ICSharpCode.SharpCvsLib.Misc.CvsRoot.html">CvsRoot Class</a> | <a href="ICSharpCode.SharpCvsLib.Misc.html">ICSharpCode.SharpCvsLib.Misc Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="CvsRoot class, constructor"></object><hr><div id="footer"><p><a href="http://sharpcvslib.sourceforge.net/license.html">Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.</a></p><p>Generated from assembly ICSharpCode.SharpCvsLib [0.35.3721.507]</p></div></div></body></html>

@@ -1,0 +1,31 @@
+﻿<html dir="LTR"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5"><title>Factory.CreateCvsObject Method (String, String, String)</title><xml></xml><link rel="stylesheet" type="text/css" href="MSDN.css"></head><body id="bodyID" class="dtBODY"><div id="nsbanner"><div id="bannerrow1"><table class="bannerparthead" cellspacing="0"><tr id="hdr"><td class="runninghead">SharpCvsLib</td><td class="product"></td></tr></table></div><div id="TitleRow"><h1 class="dtH1">Factory.CreateCvsObject Method (String, String, String)</h1></div></div><div id="nstext"><p>
+            Create a cvs management object for the given path.  The path specified
+                should be the folder above the cvs directory.  The name of the file
+                and full path is then derived from the cvs line in the case of an
+                Entries line, or in the case of a single line cvs management file
+                (i.e. Root, Repository, etc.) the object being managed is the
+                entire directory.
+            </p><div class="syntax"><span class="lang">[Visual Basic]</span><br>Overloads Public Function CreateCvsObject( _<br>   ByVal <i>path</i> As <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemStringClassTopic.htm">String</a>, _<br>   ByVal <i>fileName</i> As <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemStringClassTopic.htm">String</a>, _<br>   ByVal <i>line</i> As <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemStringClassTopic.htm">String</a> _<br>) As <a href="ICSharpCode.SharpCvsLib.FileSystem.ICvsFile.html">ICvsFile</a></div><div class="syntax"><span class="lang">[C#]</span><br>public <a href="ICSharpCode.SharpCvsLib.FileSystem.ICvsFile.html">ICvsFile</a> CreateCvsObject(<br>   <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemStringClassTopic.htm">string</a> <i>path</i>,<br>   <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemStringClassTopic.htm">string</a> <i>fileName</i>,<br>   <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemStringClassTopic.htm">string</a> <i>line</i><br>);</div><h4 class="dtH4">Parameters</h4><dl><dt><i>path</i></dt><dd>The path to the folder above the cvs directory.</dd><dt><i>fileName</i></dt><dd>The name of the cvs file that is being modified/
+                created.</dd><dt><i>line</i></dt><dd>The line to add to the file.</dd></dl><h4 class="dtH4">Return Value</h4><p>A new cvs file that contains properties for the different
+                elements in the line.</p><h4 class="dtH4">Exceptions</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr valign="top"><th width="50%">Exception Type</th><th width="50%">Condition</th></tr><tr valign="top"><td width="50%"><a href="ICSharpCode.SharpCvsLib.FileSystem.UnsupportedFileTypeException.html">UnsupportedFileTypeException</a></td><td width="50%">If the cvs filetype specified
+                is unknown.</td></tr></table></div><h4 class="dtH4">Example</h4><p>
+                The following will produce an entries file 
+                    (directory seperator character may be different):
+                    
+                    path            = c:/dev/sharpcvslib
+                    fileName        = Entries
+                    line            = /SharpCvsLib.build/1.1///
+                    
+                With the following information:
+                    FileContents    = /SharpCvsLib.build/1.1///
+                    FileName        = Entries
+                    FullPath        = c:/dev/sharpcvslib/SharpCvsLib.build
+                    IsMultiLined    = true
+                    Path            = c:/dev/sharpcvslib/
+                    
+                NOTE:
+                <ul><li>The path seperator may face the other way</li><li>There will be an ending path seperator after every directory,
+                        as in the path.</li></ul></p><h4 class="dtH4">See Also</h4><p><a href="ICSharpCode.SharpCvsLib.FileSystem.Factory.html">Factory Class</a> | <a href="ICSharpCode.SharpCvsLib.FileSystem.html">ICSharpCode.SharpCvsLib.FileSystem Namespace</a> | <a href="ICSharpCode.SharpCvsLib.FileSystem.Factory.CreateCvsObject_overloads.html">Factory.CreateCvsObject Overload List</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="CreateCvsObject method"><param name="Keyword" value="CreateCvsObject method, Factory class"><param name="Keyword" value="Factory.CreateCvsObject method"></object><hr><div id="footer"><p><a href="http://sharpcvslib.sourceforge.net/license.html">Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.</a></p><p>Generated from assembly ICSharpCode.SharpCvsLib [0.35.3721.507]</p></div></div></body></html>

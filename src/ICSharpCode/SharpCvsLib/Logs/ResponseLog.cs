@@ -34,7 +34,6 @@
 using System;
 using System.Text;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Config;
 
 using log4net;
@@ -51,7 +50,6 @@ namespace ICSharpCode.SharpCvsLib.Logs {
     /// A failure at any level causes the program to attempt to log to another
     ///     level.
     /// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     public class ResponseLog {
         private SharpCvsLibConfig settings;
         private readonly ILog LOGGER = LogManager.GetLogger (typeof (ResponseLog));
@@ -71,7 +69,7 @@ namespace ICSharpCode.SharpCvsLib.Logs {
         /// </summary>
         /// <param name="message">A message to output to the log.</param>
         public void Log (String message) {
-            if (null != message || message.Length != 0) {
+            if (null != message || String.Empty != message) {
                 StringBuilder msg = new StringBuilder ();
                 msg.Append(message);
                 if (this.settings.Log.DebugLog.LogStackTrace) {

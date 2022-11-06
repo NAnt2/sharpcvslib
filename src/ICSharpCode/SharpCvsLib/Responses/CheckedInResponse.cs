@@ -27,17 +27,17 @@
 // this exception to your version of the library, but you are not
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
+//
+//    Author:     Mike Krueger,
+//                Clayton Harbour  {claytonharbour@sporadicism.com}
 #endregion
 
 using System;
-using System.IO;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.Streams;
-using ICSharpCode.SharpCvsLib.Util;
 
 using log4net;
 
@@ -46,29 +46,37 @@ namespace ICSharpCode.SharpCvsLib.Responses {
     /// <summary>
     /// Handle a checked in response.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class CheckedInResponse : AbstractResponse {
+    public class CheckedInResponse : IResponse {
         private readonly ILog LOGGER = LogManager.GetLogger(typeof (CheckedInResponse));
         /// <summary>
         /// Process a checked in response.
         /// </summary>
-        public override void Process() {
-            string localPath      = this.ReadLine();
-            string repositoryPath = this.ReadLine();
-            string entryLine      = this.ReadLine();
+        /// <param name="cvsStream"></param>
+        /// <param name="services"></param>
+        public void Process(CvsStream cvsStream, IResponseServices services) {
+            string localPath      = cvsStream.ReadLine();
+            string repositoryPath = cvsStream.ReadLine();
+            string entryLine      = cvsStream.ReadLine();
 
-            DirectoryInfo localDir = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, localPath));
-            Entry entry = new Entry(new FileInfo(Path.Combine(localDir.FullName, "CVS\\Entries")), entryLine);
-            entry.Date = DateParser.GetCvsDateString(File.GetLastWriteTime(entry.FullPath).ToUniversalTime());
-            Entries.Save(entry);
+            PathTranslator orgPath   =
+                new PathTranslator (services.Repository,
+                repositoryPath);
+
+            string fileName = orgPath.LocalPathAndFilename;
+            Entry  entry = new Entry(orgPath.LocalPath, entryLine);
+            LOGGER.Debug ("CheckedInResponse adding entry=[" + entry + "]");
+
+            Manager manager = new Manager (services.Repository.WorkingPath);
+            manager.Add (entry);
         }
 
         /// <summary>
         /// Return true if this response cancels the transaction
         /// </summary>
-        public override bool IsTerminating {
-            get { return false; }
+        public bool IsTerminating {
+            get {
+                return false;
+            }
         }
     }
 }

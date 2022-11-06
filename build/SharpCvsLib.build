@@ -2,42 +2,53 @@
     Build file for the SharpCvsLib project:
         http://sharpcvslib.sourceforge.net
 -->
-<project name="Sharpcvslib" default="run-tests-sample">
-    <include buildfile="SharpCvsLib.local.xml" if="${file::exists('SharpCvsLib.local.xml')}"/>
+<project name="${name.top-level}-${name.project}" default="run-tests-sample">
     <include buildfile="SharpCvsLib.common.xml" />
     <!-- Targets -->
+    <target name="src.update" description="Updates the source from cvs.">
+       <!-- To run locally you must have your public key uploaded to sf.net -->
+       <property name="cvs.command" value="update -Pd" />
+       <echo message="Updating ${dir.base} using cvs command: ${cvs.command}." />
+       
+       <cvs     module="sharcvslib" 
+                cvsroot=":ext:${name.developer}@cvs.sourceforge.net:/cvsroot/sharpcvslib"
+                destination="${dir.base}"
+                command="${cvs.command}"
+                usesharpcvslib="false" />
+    </target>
+
     <target name="update.version" description="Generate the assembly info file for the project.  Pass in the version number.">
-        <property name="assembly.version" value="${FileUtil::Read(dir.build + '\build.number')}"/>
         <!-- Gets the version number and places it in a property called build.version -->
-        <if test="${string::contains(BuildType, 'Release')}">
-            <echo message="BuildType is ${BuildType}, getting a new version number."/>
-            <version    buildtype="monthday"
-                        path="build.number"
-                        revisiontype="automatic"
+        <ifnot propertyexists="assembly.version">
+            <version    buildtype="monthday" 
+                        path="build.number" 
+                        revisiontype="automatic" 
                         startDate="${assembly.start-date}"
-                        prefix="assembly."/>
+                        prefix="assembly." />
             <property name="assembly.version" value="${assembly.version}" />
             <echo message="Generating assembly info for version ${assembly.version}" />
             <asminfo output="${dir.src}/SharpCvsLibAssemblyInfo.cs" language="CSharp" failonerror="false">
                 <imports>
                     <import name="System" />
                     <import name="System.Reflection" />
+                    <import name="System.EnterpriseServices" />
                     <import name="System.Runtime.InteropServices" />
                 </imports>
                 <attributes>
                     <attribute type="ComVisibleAttribute" value="false" />
-                    <attribute type="CLSCompliantAttribute" value="false" />
+                    <attribute type="CLSCompliantAttribute" value="true" />
                     <attribute type="AssemblyVersionAttribute" value="${assembly.version}" />
                     <attribute type="AssemblyTitleAttribute" value="${assembly.title}" />
                     <attribute type="AssemblyDescriptionAttribute" value="${assembly.description}" />
                     <attribute type="AssemblyCopyrightAttribute" value="${assembly.copyright.text}" />
                     <attribute type="AssemblyCompanyAttribute" value="${assembly.company}" />
+                    <attribute type="ApplicationNameAttribute" value="${name.project}" />
                 </attributes>
                 <references>
-                    <include name="log4net.dll" />
+                    <includes name="System.EnterpriseServices.dll" />
                 </references>
             </asminfo>    
-        </if>  
+        </ifnot>    
     </target>
     
     <target name="setup">
@@ -45,95 +56,65 @@
         <mkdir dir="${dir.bin}/tests" />
         <copy todir="${dir.bin}">
             <fileset basedir="${dir.lib}">
-                <include name="${lib.zip}" />
+                <includes name="${lib.zip}" />
             </fileset>
         </copy>        
         <copy todir="${dir.bin}">
             <fileset basedir="${dir.lib.ext}">
-                <include name="${lib.log4net}" />
-                <include name="${lib.nunit}" />
+                <includes name="${lib.log4net}" />
+                <includes name="${lib.nunit}" />
             </fileset>
         </copy>
         <copy todir="${dir.bin}">
             <fileset basedir="${dir.conf}">
-                <include name="*.config" />
+                <includes name="*.config" />
             </fileset>
         </copy>
         <copy   file="${dir.conf}/${name.top-level}.${name.project}.${name.tests}.dll.config" 
                 tofile="${dir.bin}/${name.top-level}.${name.project}.${name.tests}-sample.dll.config" />
         <copy todir="${dir.bin}">
             <fileset basedir="${dir.doc}">
-                <include name="NamespaceSummary.xml" />
+                <includes name="NamespaceSummary.xml" />
             </fileset>
         </copy>
-
+        
         <call target="update.version" />
         <echo message="Building assembly version ${assembly.version}" />
     </target>
-
-    <target name="build.all" description="Build all sources by calling all targets in project build files.">
+       
+    <target name="build.all" depends="clean" description="Build all sources by calling all targets in project build files.">
         <call target="setup" />
         <call target="build.lib" />
         <call target="build.console" />
-        <call target="build.addin"              unless="${string::contains(nant.settings.currentframework, 'mono')}" />
         <call target="build.test" />
         <call target="build.test-sample" />
-        <call target="build.examples"           unless="${string::contains(nant.settings.currentframework, 'mono')}" />
     </target>
 
     <target name="build.lib" depends="setup">
-        <nant buildfile="${dir.build}/${name.project}.build.xml" target="build"/>
+        <nant buildfile="${dir.src}/${name.top-level}/${name.project}/${name.project}.build" target="build"/>
     </target>
 
     <target name="build.console" depends="setup, build.lib">
-        <nant buildfile="${dir.build}/${name.console}.build.xml" target="build"/>
+        <nant buildfile="${dir.src}/${name.top-level}.${name.console}/${name.project}/${name.console}.build" target="build"/>
     </target>
     
-    <target name="build.addin" depends="build.lib">
-        <nant buildfile="${dir.build}/${name.addin}.build.xml" target="build">
-            <properties>
-                <property name="nant.settings.currentframework" value="net-1.1"/>
-            </properties>    
-        </nant>
-    </target>
-    
-    <target name="build.test" depends="setup">
-        <nant buildfile="${dir.build}/${name.tests}.build.xml" target="build"/>
+    <target name="build.test" depends="setup, build.lib, build.console">
+        <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="build"/>
     </target>
     
     <target name="build.test-sample" depends="setup, build.test" description="Builds all project sources as well as a test binary containing a faster running subset of unit tests..">
-        <nant buildfile="${dir.build}/${name.tests}.build.xml" target="build-sample"/>
+        <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="build-sample"/>
     </target>
-    
-    <target name="build.examples" depends="setup, build.test" description="Builds all project sources as well as a test binary containing a faster running subset of unit tests..">
-        <ifnot test="${string::contains(framework::get-family(framework::get-target-framework()), 'mono')}">
-            <nant buildfile="${dir.examples}/examples.build" target="build"/>
-        </ifnot>    
-    </target>    
 
     <target name="run-tests" depends="build.all">
-        <TryCatch>
-            <Try> 
-                <nant buildfile="${dir.build}/${name.tests}.build.xml" target="run-tests" failonerror="false"/>
-            </Try>
-            <Catch>
-                <echo message="test failed"/>
-            </Catch>
-        </TryCatch>    
+        <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="run-tests"/>
     </target>
     
     <target name="run-tests-sample" depends="build.all">
-        <TryCatch>
-            <Try> 
-                <nant buildfile="${dir.build}/${name.tests}.build.xml" target="run-tests-sample" failonerror="false"/>
-            </Try>
-            <Catch>
-                <echo message="Test failed."/>
-            </Catch>
-        </TryCatch>    
+        <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="run-tests-sample"/>
     </target>
     <target name="tests-to-html">
-        <nant buildfile="${dir.build}/${name.tests}.build.xml" target="tests-to-html"/>
+        <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="tests-to-html"/>
     </target>
 
     <target name="netdoc" failonerror="false">
@@ -154,12 +135,12 @@
         
         <ndoc verbose="true">
             <assemblies basedir="${dir.bin}">
-                <include name="${name.top-level}.${name.lib}.dll" />
-                <include name="${name.console.exe}.exe" />
-                <exclude name="${name.top-level}.${name.lib}.${name.tests}.dll"/>
+                <includes name="${name.top-level}.${name.lib}.dll" />
+                <includes name="${name.console.exe}.exe" />
+                <excludes name="${name.top-level}.${name.lib}.${name.tests}.dll"/>
             </assemblies>
             <summaries basedir="${dir.bin}">
-                <include name="NamespaceSummary.xml"/>
+                <includes name="NamespaceSummary.xml"/>
             </summaries>
             <documenters>
                 <documenter name="MSDN">
@@ -194,84 +175,84 @@
     </target>
     
     <target name="netdoc.include">
-        <copy file="${dir.doc}/www/${license}" todir="${dir.doc.msdn}" />
+        <copy file="${dir.doc}/${license}" todir="${dir.doc.msdn}" />
         <style style="${dir.doc}/NamespaceSummary.xslt" in="${dir.doc}/NamespaceSummary.xml" out="${dir.doc.msdn}/index.html" />
     </target>
     
     <target name="dist.clean" description="Deletes all files in the dist directory.">
-        <delete dir="${dir.dist}" if="${directory::exists(dir.dist)}" />
+        <delete dir="${dir.dist}" failonerror="false" />
     </target>
     
     <target name="dist">
         <call target="setup" />
         <call target="dist.clean" />
-        <call target="build.all" />
-        <call target="run-tests-sample" />
-        
+        <call target="build.all" failonerror="false" />
+        <call target="run-tests-sample" failonerror="false" />
         <mkdir dir="${dir.dist}/bin" />
-        <mkdir dir="${dir.dist}/bin/doc"/>
-        <mkdir dir="${dir.dist}/src" /> 
-        <mkdir dir="${dir.dist}/src/doc"/>
+        <mkdir dir="${dir.dist}/src" />    
         
         <!-- Generate the net doc and send it to the dist folder -->
         <call target="netdoc" />
         <!-- Package the existing html docs and put them in the doc folder too
             this will be used for both the source and binary release -->
-        <copy todir="${dir.dist}/doc" flatten="true">
+        <copy todir="${dir.dist}/doc">
             <fileset basedir="${dir.doc}">
-                <include name="**/*.chm"/>
-                <include name="license.html"/>
+                <includes name="**/*"/>
             </fileset>
         </copy>
         <!-- Copy the binary and config files from the bin directory -->
         <copy todir="${dir.dist}/bin">
             <fileset basedir="${dir.base}">
-                <include name="${dir.bin}/*.dll"/>
-                <include name="${dir.bin}/*.exe"/>
-                <include name="${dir.bin}/*.config"/>
+                <includes name="${dir.bin}/*.dll"/>
+                <includes name="${dir.bin}/*.exe"/>
+                <includes name="${dir.bin}/*.config"/>
             </fileset>
         </copy>
-        
-        <copy todir="${dir.dist}/bin/doc" flatten="true">
-            <fileset basedir="${dir.dist}/doc">
-                <include name="**/*.chm"/>
-                <include name="license.html"/>
+        <copy todir="${dir.dist}/bin">
+            <fileset basedir="${dir.dist}">
+                <includes name="doc**"/>
             </fileset>
         </copy>
         
         <copy todir="${dir.dist}/src">
             <fileset basedir="${dir.base}">
-                <include name="${dir.external-build}**" />
-                <include name="${dir.bin}**" />
-                <include name="${dir.build}**" />
-                <include name="${dir.conf}**" />
-                <include name="${dir.examples}**" />
-                <include name="${dir.lib}**" />
-                <include name="${dir.src}**" />
-                <include name="${dir.tools}/nant**" />
-                <include name="${dir.tools}/Builder**" />
+                <includes name="${dir.external-build}**" />
+                <includes name="${dir.bin}**" />
+                <includes name="${dir.build}**" />
+                <includes name="${dir.conf}**" />
+                <includes name="${dir.lib}**" />
+                <includes name="${dir.src}**" />
+                <includes name="${dir.tools}/nant/win32**" />
+                <includes name="${dir.tools}/nant/linux**" />
                 
-                <exclude name="${dir.doc}**" />
-                <exclude name="**/*.log.*" />
-                <exclude name="**/bin/**" />
-                <exclude name="**/obj/**" />
-                <exclude name="**/*.suo" />
-                <exclude name="**/*.user" />
-
+                <includes name="*.build" />
+                <includes name="*.bat" />                
+                <includes name="*.ndoc" />
+                
+                <includes name="*.csproj" />
+                <includes name="*.sln" />
+                
+                <includes name="*.prjx" />
+                <includes name="*.cmbx" />
+                
+                <includes name="*.project" />
+                
+                <excludes name="${dir.doc}**" />
+                <excludes name="**/*.log.*" />
+                <excludes name="**/*.log" />
+                <excludes name="**/obj**" />
             </fileset>
         </copy>
-
-        <copy todir="${dir.dist}/src/doc" flatten="true">
-            <fileset basedir="${dir.dist}/doc">
-                <include name="**/*.chm"/>
-                <include name="license.html"/>
+        <copy todir="${dir.dist}/src">
+            <fileset basedir="${dir.dist}">
+                <includes name="doc**"/>
             </fileset>
         </copy>
 
         <delete dir="${dir.dist}/doc" />
     </target>
     
-    <target name="build-release.common" depends="clean">
+    <target name="build-release.common">
         <call target="dist" />
         <property name="dir.output" value="${dir.release}/${assembly.version}" />
         <echo message="Building release for version ${assembly.version}." />
@@ -287,13 +268,13 @@
         
         <zip zipfile="${dir.output}/${name.lib}-${assembly.version}-bin.zip">
             <fileset basedir="${dir.dist}">
-                <include name="bin/**/*.*" />
+                <includes name="bin/**/**.*" />
             </fileset>
         </zip>
         
         <zip zipfile="${dir.output}/${name.lib}-${assembly.version}-src.zip">
             <fileset basedir="${dir.dist}">
-                <include name="src/**/*.*" />
+                <includes name="src/**/**.*" />
             </fileset>
         </zip>
 
@@ -314,8 +295,7 @@
     <target name="build-release.nightly" depends="build-release.common" description="Produces the nightly build and uploads to sourceforge.net">
         <property name="args.copy-program" value="${dir.output}/* ${sf.username}:${sf.location.nightly}/" />
         <exec program="${util.copy}" commandline="${args.copy-program}"/>
-
-<!--        
+        
         <property name="args.copy-docs" value="${dir.doc.msdn}/*.html ${sf.username}:${sf.location.nightly}/doc/api" />
         <exec program="${util.copy}" commandline="${args.copy-docs}"/>
 
@@ -324,13 +304,13 @@
         
         <property name="args.copy-docs" value="${dir.doc.msdn}/*.gif ${sf.username}:${sf.location.nightly}/doc/api" />
         <exec program="${util.copy}" commandline="${args.copy-docs}"/>
-      
+        
         <call target="upload-unit-test-results" />
--->          
+        
     </target>
     
     <target name="upload-unit-test-results">
-        <nant buildfile="${dir.build}/${name.tests}.build.xml" target="tests-to-html"/>
+        <nant buildfile="${dir.src}/${name.top-level}.${name.tests}/${name.project}/${name.tests}.build" target="tests-to-html"/>
         <property name="args.copy-docs" value="${dir.bin}/tests/*.html ${sf.username}:${sf.location.nightly}/tests/" />
         <exec program="${util.copy}" commandline="${args.copy-docs}"/>        
     </target>

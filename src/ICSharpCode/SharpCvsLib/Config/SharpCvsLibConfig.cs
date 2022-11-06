@@ -27,6 +27,8 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    <author>Clayton Harbour</author>
+//
 #endregion
 
 using System;
@@ -35,7 +37,6 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Config.Logging;
 
 using log4net;
@@ -44,7 +45,6 @@ namespace ICSharpCode.SharpCvsLib.Config {
     /// <summary>
     ///     Holds the core configuration settings for sharpcvslib.
     /// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
     [XmlRoot ("sharpcvslib-config")]
     public class SharpCvsLibConfig {
         /// <summary>
@@ -58,7 +58,7 @@ namespace ICSharpCode.SharpCvsLib.Config {
 
         private const int DEFAULT_TIMEOUT = 1000;
         private const int DEFAULT_AUTH_SLEEP = 1000;
-        private const string DEFAULT_SHELL = "ssh.exe";
+        private const string DEFAULT_SHELL = "ssh";
         private const string VAR_CVS_RSH = "CVS_RSH";
 
         private static readonly ILog LOGGER = 

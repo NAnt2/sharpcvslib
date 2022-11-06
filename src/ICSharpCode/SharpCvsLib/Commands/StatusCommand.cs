@@ -33,149 +33,49 @@
 #endregion
 
 using System;
-using System.IO;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-using ICSharpCode.SharpCvsLib.Messages;
 using ICSharpCode.SharpCvsLib.Requests;
-using ICSharpCode.SharpCvsLib.Responses;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.Client;
 using ICSharpCode.SharpCvsLib.FileSystem;
 
-using log4net;
-
 namespace ICSharpCode.SharpCvsLib.Commands {
+
+/// <summary>
+/// Status command.
+///     TODO: Figure out what this is used for.
+/// </summary>
+public class StatusCommand : ICommand
+{
+    private WorkingDirectory workingdirectory;
+    private string directory;
+    private Entry entry;
+
     /// <summary>
-    /// The status command is used to determine the local file version and the repsoitory 
-    /// file version for the file or files specified.
+    /// Constructor.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2002")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
-    public class StatusCommand : ICommand {
-        private WorkingDirectory _workingdirectory;
-        private string directory;
-        private Entry entry;
-        private ILog LOGGER = LogManager.GetLogger (typeof (StatusCommand));
-        private Folders _folders;
-
-        private bool _verbose;
-        private bool _localOnly;
-        private bool _recursive;
-        private bool _terse;
-        private bool _cvsNt2Output;
-        private bool _cvs1Output = true;
-
-        /// <summary>
-        /// Verbose format; includes tag information for the file
-        /// </summary>
-        public bool Verbose {
-            get { return this._verbose; }
-            set { this._verbose = value; }
-        }
-
-        /// <summary>
-        /// Process this directory only (not recursive).
-        /// </summary>
-        public bool LocalOnly {
-            get { return this._localOnly; }
-            set { this._localOnly = value; }
-        }
-
-        /// <summary>
-        /// Process directories recursively.
-        /// </summary>
-        public bool Recursive {
-            get { return this._recursive; }
-            set { this._recursive = value; }
-        }
-
-        /// <summary>
-        /// Display a quick summary of each file (send more increased terseness).
-        /// </summary>
-        public bool Terse {
-            get { return this._terse; }
-            set { this._terse = value; }
-        }
-
-        /// <summary>
-        /// cvsnt 2.x compatible output.
-        /// </summary>
-        public bool CvsNt2Output {
-            get { return this._cvsNt2Output; }
-            set { this._cvsNt2Output = value; }
-        }
-
-        /// <summary>
-        /// cvs 1.x compatible output.
-        /// </summary>
-        /// <value>[Default] = true</value>
-        public bool Cvs1Output {
-            get { return this._cvs1Output; }
-            set { this._cvs1Output = value; }
-        }
-
-        /// <summary>
-        /// Folders and entries to act on.
-        /// </summary>
-        public Folders Folders {
-            get {return this._folders;}
-            set {this._folders = value;}
-        }
-
-        /// <summary>
-        /// Create a new instance of the working directory.
-        /// </summary>
-        /// <param name="workingDirectory"></param>
-        public StatusCommand(WorkingDirectory workingDirectory){
-            this._workingdirectory = workingDirectory;
-        }
-
-        /// <summary>
-        /// Constructor.
-        /// </summary>
-        /// <param name="workingdirectory"></param>
-        /// <param name="directory"></param>
-        /// <param name="entry"></param>
-        public StatusCommand(WorkingDirectory workingdirectory, 
-            string directory, Entry entry){
-            this._workingdirectory    = workingdirectory;
-            this.directory = directory;
-            this.entry = entry;
-            if (null == this.Folders) {
-                this._folders = new Folders();
-                Folder folder = new Folder();
-                folder.Entries.Add(entry);
-                this._folders.Add(folder);
-            }
-        }
-
-        /// <summary>
-        /// Execute the status command against the repository.
-        /// </summary>
-        /// <param name="connection"></param>
-        public void Execute(ICommandConnection connection){
-            if (null != this._folders) {
-                connection.SubmitRequest(new ArgumentRequest(ArgumentRequest.Options.DASH));
-
-                foreach (Folder folder in this.Folders.Values) {
-                    connection.SubmitRequest(new DirectoryRequest(".",
-                        this._workingdirectory.CvsRoot.CvsRepository + "/" +
-                        folder.Repository.FileContents));
-                    foreach (Entry entry in folder.Entries.Values) {
-                        connection.SubmitRequest(new EntryRequest(entry));
-                        connection.SubmitRequest(new UnchangedRequest(entry.Name));
-                    }
-                }
-            }
-
-            connection.ResponseMessageEvents.MessageResponseMessageEvent +=
-                new MessageEventHandler(this.WriteEvent);
-            connection.SubmitRequest(new StatusRequest());
-        }
-
-        public void WriteEvent(object sender, MessageEventArgs args) {
-            System.Console.WriteLine(args.Message);
-        }
+    /// <param name="workingdirectory"></param>
+    /// <param name="directory"></param>
+    /// <param name="entry"></param>
+    public StatusCommand(WorkingDirectory workingdirectory, string directory, Entry entry)
+    {
+        this.workingdirectory    = workingdirectory;
+        this.directory = directory;
+        this.entry = entry;
     }
+
+    /// <summary>
+    /// Do the dirty work.
+    /// </summary>
+    /// <param name="connection"></param>
+    public void Execute(ICommandConnection connection)
+    {
+        connection.SubmitRequest(new DirectoryRequest(".",
+                                 workingdirectory.CvsRoot.CvsRepository +
+                                 directory));
+
+        connection.SubmitRequest(new ArgumentRequest(entry.Name));
+        connection.SubmitRequest(new StatusRequest());
+    }
+}
 }

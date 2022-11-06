@@ -1,0 +1,60 @@
+﻿<html dir="LTR"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5"><title>MessageTaggedResponse.Process Method</title><xml></xml><link rel="stylesheet" type="text/css" href="MSDN.css"></head><body id="bodyID" class="dtBODY"><div id="nsbanner"><div id="bannerrow1"><table class="bannerparthead" cellspacing="0"><tr id="hdr"><td class="runninghead">SharpCvsLib</td><td class="product"></td></tr></table></div><div id="TitleRow"><h1 class="dtH1">MessageTaggedResponse.Process Method </h1></div></div><div id="nstext"><p>
+            MT tagname data \n
+                This response provides for tagged text. It is similar to SGML/HTML/XML 
+                in that the data is structured and a naive application can also make 
+                some sense of it without understanding the structure. The syntax is 
+                not SGML-like, however, in order to fit into the CVS protocol better 
+                and (more importantly) to make it easier to parse, especially in a 
+                language like perl or awk. The tagname can have several forms. If it 
+                starts with `a' to `z' or `A' to `Z', then it represents tagged text. 
+                If the implementation recognizes tagname, then it may interpret data 
+                in some particular fashion. If the implementation does not recognize 
+                tagname, then it should simply treat data as text to be sent to the 
+                user (similar to an `M' response). There are two tags which are 
+                general purpose. The `text' tag is similar to an unrecognized tag in 
+                that it provides text which will ordinarily be sent to the user. The 
+                `newline' tag is used without data and indicates that a newline will 
+                ordinarily be sent to the user (there is no provision for embedding 
+                newlines in the data of other tagged text responses). If tagname 
+                starts with `+' it indicates a start tag and if it starts with `-' it 
+                indicates an end tag. The remainder of tagname should be the same for 
+                matching start and end tags, and tags should be nested (for example 
+                one could have tags in the following order +bold +italic text -italic 
+                -bold but not +bold +italic text -bold -italic). A particular start 
+                and end tag may be documented to constrain the tagged text responses 
+                which are valid between them. Note that if data is present there will 
+                always be exactly one space between tagname and data; if there is more 
+                than one space, then the spaces beyond the first are part of data. 
+            </p><div class="syntax"><span class="lang">[Visual Basic]</span><br>NotOverridable Public Sub Process( _<br>   ByVal <i>cvsStream</i> As <a href="ICSharpCode.SharpCvsLib.Streams.CvsStream.html">CvsStream</a>, _<br>   ByVal <i>services</i> As <a href="ICSharpCode.SharpCvsLib.Client.IResponseServices.html">IResponseServices</a> _<br>) Implements _<br>   IResponse.Process</div><div class="syntax"><span class="lang">[C#]</span><br>public <a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemVoidClassTopic.htm">void</a> Process(<br>   <a href="ICSharpCode.SharpCvsLib.Streams.CvsStream.html">CvsStream</a> <i>cvsStream</i>,<br>   <a href="ICSharpCode.SharpCvsLib.Client.IResponseServices.html">IResponseServices</a> <i>services</i><br>);</div><h4 class="dtH4">Parameters</h4><dl><dt><i>cvsStream</i></dt><dd><span class="missing">Missing &lt;param&gt; documentation for cvsStream</span></dd><dt><i>services</i></dt><dd><span class="missing">Missing &lt;param&gt; documentation for services</span></dd></dl><h4 class="dtH4">Implements</h4><p><a href="ICSharpCode.SharpCvsLib.Responses.IResponse.Process.html">IResponse.Process</a></p><h4 class="dtH4">Example</h4><p>
+            Here is an example of some tagged text responses. Note that there is a 
+            trailing space after `Checking in' and `initial revision:' and there are 
+            two trailing spaces after `&gt;--'. Such trailing spaces are, of course, part 
+            of data.
+            
+                MT +checking-in
+                MT text Checking in 
+                MT fname gz.tst
+                MT text ;
+                MT newline
+                MT rcsfile /home/kingdon/zwork/cvsroot/foo/gz.tst,v
+                MT text   &gt;--  MT fname gz.tst
+                MT newline
+                MT text initial revision: 
+                MT init-rev 1.1
+                MT newline
+                MT text done
+                MT newline
+                MT -checking-in
+            
+            If the client does not support the `MT' response, the same responses might 
+                be sent as:
+            
+                M Checking in gz.tst;
+                M /home/kingdon/zwork/cvsroot/foo/gz.tst,v  &gt;--  gz.tst
+                M initial revision: 1.1
+                M done
+                
+            </p><h4 class="dtH4">See Also</h4><p><a href="ICSharpCode.SharpCvsLib.Responses.MessageTaggedResponse.html">MessageTaggedResponse Class</a> | <a href="ICSharpCode.SharpCvsLib.Responses.html">ICSharpCode.SharpCvsLib.Responses Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="Process method"><param name="Keyword" value="Process method, MessageTaggedResponse class"><param name="Keyword" value="MessageTaggedResponse.Process method"></object><hr><div id="footer"><p><a href="http://sharpcvslib.sourceforge.net/license.html">Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.</a></p><p>Generated from assembly ICSharpCode.SharpCvsLib [0.35.3721.507]</p></div></div></body></html>

@@ -1,0 +1,70 @@
+﻿<html dir="LTR"><head><META http-equiv="Content-Type" content="text/html; charset=utf-8"><meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5"><title>RTagCommand Members</title><xml></xml><link rel="stylesheet" type="text/css" href="MSDN.css"></head><body id="bodyID" class="dtBODY"><div id="nsbanner"><div id="bannerrow1"><table class="bannerparthead" cellspacing="0"><tr id="hdr"><td class="runninghead">SharpCvsLib</td><td class="product"></td></tr></table></div><div id="TitleRow"><h1 class="dtH1">RTagCommand Members
+					</h1></div></div><div id="nstext"><p><a href="ICSharpCode.SharpCvsLib.Commands.RTagCommand.html">RTagCommand overview</a></p><h4 class="dtH4">Public Instance Constructors</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0"><tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.Commands.RTagCommandConstructor.html">RTagCommand Constructor</a></td><td width="50%">
+            Perform an rtag against the repository.  The rtag command has a number
+                of request options that may be specified.  These are translated into
+                boolean values where possible to calling classes.  A summary of 
+                available command options is listed below and is listed in the private
+                options classes.
+               
+                    -D date
+                        Tag the most recent revision no later than date. 
+                    -f
+                        Only useful with the `-D date' or `-r tag' flags. 
+                        If no matching revision is found, use the most recent 
+                        revision (instead of ignoring the file). 
+                    -F
+                        Overwrite an existing tag of the same name on a different 
+                        revision. 
+                    -l
+                        Local; run only in current working directory. 
+                    -n
+                        Do not run any tag program that was specified with the `-t' 
+                        flag inside the `modules' file. (see section The modules 
+                        file). 
+                    -R
+                        Tag directories recursively. This is on by default. 
+                    -r tag
+                        Only tag those files that contain tag. This can be used to 
+                        rename a tag: tag only the files identified by the old tag, 
+                        then delete the old tag, leaving the new tag on exactly the 
+                        same files as the old tag. 
+            
+                    In addition to the above common options, these options are 
+                    available:
+            
+                    -a
+                        Use the `-a' option to have rtag look in the `Attic' 
+                        (see section The attic) for removed files that contain the 
+                        specified tag. The tag is removed from these files, which 
+                        makes it convenient to re-use a symbolic tag as development 
+                        continues (and files get removed from the up-coming 
+                        distribution). 
+                    -b
+                        Make the tag a branch tag. See section Branching and merging. 
+                    -d
+                        Delete the tag instead of creating it. In general, tags 
+                        (often the symbolic names of software distributions) should 
+                        not be removed, but the `-d' option is available as a means 
+                        to remove completely obsolete symbolic names if necessary 
+                        (as might be the case for an Alpha release, or if you 
+                        mistagged a module).  
+                        
+            </td></tr></table></div><h4 class="dtH4">Public Instance Properties</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.Commands.RTagCommand.DeleteTag.html">DeleteTag</a></td><td width="50%"><pre class="code">true</pre> if the given tag should be deleted; defaults to 
+                <pre class="code">false</pre>.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubproperty.gif"><a href="ICSharpCode.SharpCvsLib.Commands.RTagCommand.TagName.html">TagName</a></td><td width="50%">
+            The name of the tag.
+            </td></tr></table></div><h4 class="dtH4">Public Instance Methods</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassEqualsTopic.htm">Equals</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ICSharpCode.SharpCvsLib.Commands.RTagCommand.Execute.html">Execute</a></td><td width="50%">
+            Execute checkout module command.
+            </td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassGetHashCodeTopic.htm">GetHashCode</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassGetTypeTopic.htm">GetType</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr>
+<tr VALIGN="top"><td width="50%"><img src="pubmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassToStringTopic.htm">ToString</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr></table></div><h4 class="dtH4">Protected Instance Methods</h4><div class="tablediv"><table class="dtTABLE" cellspacing="0">
+<tr VALIGN="top"><td width="50%"><img src="protmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassFinalizeTopic.htm">Finalize</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr>
+<tr VALIGN="top"><td width="50%"><img src="protmethod.gif"><a href="ms-help://MS.NETFrameworkSDKv1.1/cpref/html/frlrfSystemObjectClassMemberwiseCloneTopic.htm">MemberwiseClone</a> (inherited from <b>Object</b>)</td><td width="50%"></td></tr></table></div><h4 class="dtH4">See Also</h4><p><a href="ICSharpCode.SharpCvsLib.Commands.RTagCommand.html">RTagCommand Class</a> | <a href="ICSharpCode.SharpCvsLib.Commands.html">ICSharpCode.SharpCvsLib.Commands Namespace</a></p><object type="application/x-oleobject" classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e" viewastext="true" style="display: none;"><param name="Keyword" value="RTagCommand class"><param name="Keyword" value="ICSharpCode.SharpCvsLib.Commands.RTagCommand class"><param name="Keyword" value="RTagCommand class, all members"></object><hr><div id="footer"><p><a href="http://sharpcvslib.sourceforge.net/license.html">Mike Krueger 2001-2002, SharpCvsLib Developers 2003-2004
+
+CVS may be copied only under the terms of the GNU General Public License,
+a copy of which can be found with the CVS distribution kit.</a></p><p>Generated from assembly ICSharpCode.SharpCvsLib [0.35.3721.507]</p></div></div></body></html>

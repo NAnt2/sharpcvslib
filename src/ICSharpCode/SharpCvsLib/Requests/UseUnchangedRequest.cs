@@ -25,35 +25,32 @@
 // executable file might be covered by the GNU General Public License.
 #endregion
 
-using ICSharpCode.SharpCvsLib.Attributes;
 namespace ICSharpCode.SharpCvsLib.Requests {
 
+/// <summary>
+/// Response expected: no.
+/// To specify the version of the protocol described in this document,
+/// servers must support this request (although it need not do anything)
+/// and clients must issue it.
+/// </summary>
+public class UseUnchangedRequest : AbstractRequest
+{
     /// <summary>
-    /// Response expected: no.
-    /// To specify the version of the protocol described in this document,
-    /// servers must support this request (although it need not do anything)
-    /// and clients must issue it.
+    /// Specifies the version of the protocol described in this document.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class UseUnchangedRequest : AbstractRequest
-    {
-        /// <summary>
-        /// Specifies the version of the protocol described in this document.
-        /// </summary>
-        public override string RequestString {
-            get {
-                return "UseUnchanged\n";
-            }
-        }
-
-        /// <summary>
-        /// Indicator specifying if the response is respected.
-        /// </summary>
-        public override bool IsResponseExpected {
-            get {
-                return false;
-            }
+    public override string RequestString {
+        get {
+            return "UseUnchanged\n";
         }
     }
+
+    /// <summary>
+    /// Indicator specifying if the response is respected.
+    /// </summary>
+    public override bool IsResponseExpected {
+        get {
+            return false;
+        }
+    }
+}
 }

@@ -27,56 +27,36 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    <author>Clayton Harbour</author>
 #endregion
 
 using System;
-using System.IO;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Assertions;
-using ICSharpCode.SharpCvsLib.Attributes;
-
-namespace ICSharpCode.SharpCvsLib.FileSystem {
+namespace ICSharpCode.SharpCvsLib.FileSystem
+{
 	/// <summary>
 	/// The abstract cvs file implements common methods and provides a common 
 	///     implementation for all CVS management files.
 	/// </summary>
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
-	public abstract class AbstractCvsFile : ICvsFile, IComparable {
+	public abstract class AbstractCvsFile {
         private readonly ILog LOGGER = LogManager.GetLogger(typeof (AbstractCvsFile));
+        private String fullPath;
         private String fileContents;
         private String localCvsFullPath;
-        private FileSystemInfo _managedPath;
-        private bool _isMultiLined = false;
-
-        private FileInfo _cvsFile;
 
         /// <summary>
-        /// Return a key that uniquely identifies this cvs file.
-        /// </summary>
-        public virtual string Key {
-            get {return this.ParentDir.FullName;}
-        }
-
-        public virtual bool IsMultiLined { 
-            get { return this._isMultiLined; }
-            set { this._isMultiLined = value; } 
-        }
-
-        public abstract Factory.FileType Type {get;}
-
-        /// <summary>
-        /// Return the path to the file that this cvs object is managing.  In
+        /// Return the path to the file that this cvs object is controlling.  In
         ///     most cases this is just the full path to the object, however one
         ///     known exception would be the Entry which would have file information
         ///     stripped from the full path.
         /// </summary>
-        public virtual String Path {
+        public String Path {
             get {
-                String tempPath = this.ParentDir.FullName;
-                if (this.ParentDir.FullName.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString())) {
-                    tempPath = this.ParentDir.FullName.Substring(0, this.ParentDir.FullName.Length - 1);
+                String tempPath = this.fullPath;
+                if (this.fullPath.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString())) {
+                    tempPath = this.fullPath.Substring(0, this.fullPath.Length - 1);
                 }
                 tempPath = System.IO.Path.GetDirectoryName(tempPath);   
                 return this.GetPathWithDirectorySeperatorChar(tempPath);
@@ -104,40 +84,12 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             return path;
         }
 
-        public DirectoryInfo ParentDir {
-            get {return this._cvsFile.Directory;}
-        }
-
         /// <summary>
         /// The full path to the file or directory that this object is managing.
         /// </summary>
-        public virtual String FullPath {
-            get {return this._managedPath.FullName;}
-            set {
-                if (value.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString())) {
-                    this._managedPath = new DirectoryInfo(value);
-                } else {
-                    this._managedPath = new FileInfo(value);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Full path to the <see cref="FileInfo"/> or <see cref="DirectoryInfo"/> object being
-        /// managed by cvs.
-        /// </summary>
-        public FileSystemInfo ManagedPath {
-            get { return this._managedPath; }
-            set { this._managedPath = value; }
-        }
-
-        /// <summary>
-        /// The full path to the management file as a <see cref="FileInfo"/> object.  This would 
-        /// correspond to the CVS\Entries, CVS\Root or the CVS\Repository files.
-        /// </summary>
-        public FileInfo CvsFile {
-            get {return this._cvsFile;} 
-            set {this._cvsFile = value;}
+        public String FullPath {
+            get {return this.fullPath;}
+            set {this.fullPath = value;}
         }
 
         /// <summary>
@@ -149,46 +101,38 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
             set {this.fileContents = value;}
         }
 
-        public abstract string Filename {get;}
-
         /// <summary>
         ///     Create a new object that represents the management file that CVS
         ///         uses to hold information about the repository and local file
         ///         system.
         /// </summary>
-        /// <param name="cvsFile">The file that is being managed by cvs.</param>
+        /// <param name="fullPath">The full path to the file or directory on the
+        ///     filesystem that this object is managing.</param>
         /// <param name="fileContents">A line of comments that represents information
         ///     to be written to the cvs management file, or is written in the
         ///     cvs management file.</param>
-		public AbstractCvsFile(FileInfo cvsFile, String fileContents) {
-            // make sure the directory contains a CVS path
-            Assert.EndsWith(cvsFile.Directory.FullName, "CVS");
-
-            this.fileContents = fileContents;
-            this._cvsFile = cvsFile;
-            // the managed path for a CVS\Repository would be the directory above 
-            // the management folder; so:
-            // project/CVS/Repository         would manage the file
-            // project
-            this.ManagedPath = cvsFile.Directory.Parent;
-            this.Parse(fileContents);
-		}
-
-        protected static string LoadFile(string filePath) {
-            return LoadFile(new FileInfo(filePath));
-        }
-
-        /// <summary>
-        /// Load the file from the current directory.
-        /// </summary>
-        /// <returns>The string contents of the file.</returns>
-        protected static string LoadFile (FileInfo filePath) {
-            string fileContents;
-            using (StreamReader reader = new StreamReader(filePath.FullName)) {
-                fileContents = reader.ReadToEnd();
+		public AbstractCvsFile(String fullPath, String fileContents) {
+            if (PathTranslator.ContainsCVS(fullPath)) {
+                // attempt recovery if this file contains a cvs folder.
+                fullPath = System.IO.Path.GetDirectoryName(fullPath);
+                if (PathTranslator.ContainsCVS(fullPath)) {
+                    throw new Exception("Path information should not contain cvs folder.");
+                }
             }
-            return fileContents;
-        }
+            this.fileContents = fileContents;
+            this.fullPath = fullPath;
+
+            this.Parse(fileContents);
+            //this.DeriveCvsFullPath();
+
+            if (LOGGER.IsDebugEnabled) {
+                LOGGER.Debug("Created new entry=[" + this + "]");
+                if (this.ToString().ToUpper().IndexOf("C:") > 0) {
+                    LOGGER.Debug("Should not have an entry formatted like this, should just contain relative paths.");
+                    LOGGER.Debug("Stack trace=[" + Environment.StackTrace + "]");
+                }
+            }
+		}
 
         /// <summary>
         /// Parse command that must be overridden for subclasses.
@@ -196,26 +140,10 @@ namespace ICSharpCode.SharpCvsLib.FileSystem {
         /// <param name="line"></param>
         public abstract void Parse(String line);
 
-        public virtual int CompareTo(object obj) {
-            if (obj.GetType() != this.GetType()) {
-                throw new ArgumentException(string.Format("Object is not type {0}", 
-                    this.GetType().Name), "obj");
-            }
-            AbstractCvsFile abstractCvsFile = (AbstractCvsFile)obj;
-            return abstractCvsFile.FullPath.CompareTo(this.FullPath);
-        }
-
-        public void Save() {
-            Save(this);
-        }
-
-        public static void Save(ICvsFile file) {
-            if (!file.CvsFile.Directory.Exists) {
-                file.CvsFile.Directory.Create();
-            }
-            using (StreamWriter writer = new StreamWriter(file.CvsFile.FullName)) {
-                writer.Write(file.FileContents);
-            }
-        }
+        /// <summary>
+        /// Derive the cvs filename and path for the storage file.
+        /// </summary>
+        /// <returns>The cvs filename and path.</returns>
+        protected abstract String DeriveCvsFullPath();
 	}
 }

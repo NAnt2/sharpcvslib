@@ -44,6 +44,10 @@ using ICSharpCode.SharpCvsLib.Tests.Config;
 
 using log4net;
 
+// TODO: Change to internalize helpers (remove)
+[assembly: log4net.Config.DOMConfigurator(
+ConfigFileExtension="config", Watch=true)]
+
 namespace ICSharpCode.SharpCvsLib.Tests {
     /// <summary>
     /// Abstract test is used to perform common setup and teardown routines for
@@ -72,7 +76,7 @@ namespace ICSharpCode.SharpCvsLib.Tests {
         ///     that are needed for the tests.
         /// </summary>
         [SetUp]
-        public virtual void SetUp () {
+        public void SetUp () {
             LOGGER.Debug("Test settings: " + this.Settings);
             LOGGER.Debug("Application settings: " + SharpCvsLibConfig.GetInstance());
             this.GetTempPath();
@@ -83,8 +87,8 @@ namespace ICSharpCode.SharpCvsLib.Tests {
         ///     that are needed for the test.
         /// </summary>
         [TearDown]
-        public virtual void TearDown() {
-//            this.CleanTempDirectory();            
+        public void TearDown() {
+            this.CleanTempDirectory();            
         }
 
         /// <summary>
@@ -151,15 +155,15 @@ namespace ICSharpCode.SharpCvsLib.Tests {
             System.Console.WriteLine (this.settings.Config.LocalPath);
 
             CVSServerConnection connection = new CVSServerConnection ();
-            Assert.IsNotNull(connection, "Should have a connection object.");
+            Assertion.AssertNotNull ("Should have a connection object.", connection);
 
             ICommand command = new CheckoutModuleCommand (working);
-            Assert.IsNotNull (command, "Should have a command object.");
+            Assertion.AssertNotNull ("Should have a command object.", command);
 
             try {
                 connection.Connect (working, this.settings.Config.ValidPassword);
             } catch (AuthenticationException) {
-                Assert.IsTrue (true, "Failed to authenticate with server.");
+                Assertion.Assert ("Failed to authenticate with server.", true);
             }
 
             command.Execute (connection);

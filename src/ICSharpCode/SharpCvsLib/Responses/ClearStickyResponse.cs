@@ -36,7 +36,6 @@ using System;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Attributes;
 using ICSharpCode.SharpCvsLib.Misc;
 using ICSharpCode.SharpCvsLib.FileSystem;
 using ICSharpCode.SharpCvsLib.Client;
@@ -44,29 +43,33 @@ using ICSharpCode.SharpCvsLib.Streams;
 
 namespace ICSharpCode.SharpCvsLib.Responses {
 
+/// <summary>
+/// Handle a clear sticky tag response.
+/// </summary>
+public class ClearStickyResponse : IResponse
+{
+    private readonly ILog LOGGER =
+        LogManager.GetLogger (typeof (ClearStickyResponse));
     /// <summary>
-    /// Handle a clear sticky tag response.
+    /// Process a clear sticky tag response.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2005")]
-    public class ClearStickyResponse : AbstractResponse {
-        private readonly ILog LOGGER =
-            LogManager.GetLogger (typeof (ClearStickyResponse));
-        /// <summary>
-        /// Process a clear sticky tag response.
-        /// </summary>
-        public override void Process() {
-            string localPath      = this.ReadLine();
-            string reposPath = this.ReadLine();
+    /// <param name="cvsStream"></param>
+    /// <param name="services"></param>
+    public void Process(CvsStream cvsStream, IResponseServices services)
+    {
+        string localPath      = cvsStream.ReadLine();
+        string reposPath = cvsStream.ReadLine();
 
-            // TODO: Do something useful with this response.
-        }
+        // TODO: Do something useful with this response.
+    }
 
-        /// <summary>
-        /// Return true if this response cancels the transaction
-        /// </summary>
-        public override bool IsTerminating {
-            get {return false;}
+    /// <summary>
+    /// Return true if this response cancels the transaction
+    /// </summary>
+    public bool IsTerminating {
+        get {
+            return false;
         }
     }
+}
 }

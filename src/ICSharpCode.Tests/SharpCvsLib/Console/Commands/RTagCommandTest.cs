@@ -76,7 +76,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             // Test Create the consoleMain to test the console RTagCommand
             ConsoleMain consoleMain = new ConsoleMain();
             consoleMain.Execute(commandLineArgs);
-            Assert.IsNotNull (consoleMain);
+            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
         }
         /// <summary>
         ///     RTag files based on revision specified in -r option.
@@ -93,7 +93,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             // Test Create the consoleMain to test the console RTagCommand
             ConsoleMain consoleMain = new ConsoleMain();
             consoleMain.Execute(commandLineArgs);
-            Assert.IsNotNull (consoleMain);
+            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
         }
         /// <summary>
         ///     RTag files to specified description
@@ -110,7 +110,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             // Test Create the consoleMain to test the console RTagCommand
             ConsoleMain consoleMain = new ConsoleMain();
             consoleMain.Execute(commandLineArgs);
-            Assert.IsNotNull (consoleMain);
+            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
         }
         /// <summary>
         ///     RTag files no earlier than the specified Date 
@@ -128,7 +128,7 @@ namespace ICSharpCode.SharpCvsLib.Console.Commands {
             // Test Create the consoleMain to test the console RTagCommand
             ConsoleMain consoleMain = new ConsoleMain();
             consoleMain.Execute(commandLineArgs);
-            Assert.IsNotNull (consoleMain);
+            Assertion.AssertNotNull ("Should have a command object.", consoleMain);
         }
     }
 }

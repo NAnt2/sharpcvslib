@@ -28,58 +28,56 @@
 // obligated to do so.  If you do not wish to do so, delete this
 // exception statement from your version.
 //
+//    Author:     Clayton Harbour
+//
 #endregion
 
 using System;
 
 using log4net;
 
-using ICSharpCode.SharpCvsLib.Attributes;
-
 namespace ICSharpCode.SharpCvsLib.Misc {
 
+/// <summary>
+///     The trace utility class logs a stack trace to the log4net file
+///         if DEBUG logging is enabled.  This is used as an alternative
+///         to the .net trace mechanism.
+/// </summary>
+public class TraceUtil {
+
+    private static readonly ILog LOGGER =
+        LogManager.GetLogger (typeof (TraceUtil));
+
     /// <summary>
-    ///     The trace utility class logs a stack trace to the log4net file
-    ///         if DEBUG logging is enabled.  This is used as an alternative
-    ///         to the .net trace mechanism.
+    ///     Create a new instance of the trace util.
     /// </summary>
-    [Author("Mike Krueger", "mike@icsharpcode.net", "2001")]
-    [Author("Clayton Harbour", "claytonharbour@sporadicism.com", "2003-2005")]
-    public class TraceUtil {
+    public TraceUtil () {
+    }
 
-        private static readonly ILog LOGGER =
-            LogManager.GetLogger (typeof (TraceUtil));
+    /// <summary>
+    ///     Log a debug message with a stack trace.
+    /// </summary>
+    /// <param name="message">The message to log with the stack
+    ///     trace.</param>
+    public static void Debug (String message) {
+        if (LOGGER.IsDebugEnabled) {
+            System.Diagnostics.StackTrace trace =
+                new System.Diagnostics.StackTrace ();
 
-        /// <summary>
-        ///     Create a new instance of the trace util.
-        /// </summary>
-        public TraceUtil () {
-        }
-
-        /// <summary>
-        ///     Log a debug message with a stack trace.
-        /// </summary>
-        /// <param name="message">The message to log with the stack
-        ///     trace.</param>
-        public static void Debug (String message) {
-            if (LOGGER.IsDebugEnabled) {
-                System.Diagnostics.StackTrace trace =
-                    new System.Diagnostics.StackTrace ();
-
-                String msg = "";
-                if (null != message) {
-                    msg = msg + "message=[" + message + "]";
-                }
-                msg = msg + "stackTrace=[" + trace.ToString () + "]";
-                LOGGER.Debug (msg);
+            String msg = "";
+            if (null != message) {
+                msg = msg + "message=[" + message + "]";
             }
-        }
-
-        /// <summary>
-        ///     Log stack trace.
-        /// </summary>
-        public static void Debug () {
-            TraceUtil.Debug (null);
+            msg = msg + "stackTrace=[" + trace.ToString () + "]";
+            LOGGER.Debug (msg);
         }
     }
+
+    /// <summary>
+    ///     Log stack trace.
+    /// </summary>
+    public static void Debug () {
+        TraceUtil.Debug (null);
+    }
+}
 }
