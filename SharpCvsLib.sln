@@ -1,0 +1,37 @@
+Microsoft Visual Studio Solution File, Format Version 7.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsLib", "src\SharpCvsLib.csproj", "{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsLib.Console", "src\SharpCvsLib.Console.csproj", "{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpCvsLib.Tests", "src\SharpCvsLib.Tests.csproj", "{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "builder.nant", ".externalToolBuilders\builder.nant\builder.nant.vcproj", "{A76B2D4F-C424-410B-A6F1-7831B5E38E7D}"
+EndProject
+Global
+	GlobalSection(SolutionConfiguration) = preSolution
+		ConfigName.0 = Debug
+		ConfigName.1 = Release
+	EndGlobalSection
+	GlobalSection(ProjectDependencies) = postSolution
+	EndGlobalSection
+	GlobalSection(ProjectConfiguration) = postSolution
+		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Debug.ActiveCfg = Debug|.NET
+		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Debug.Build.0 = Debug|.NET
+		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Release.ActiveCfg = Release|.NET
+		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Release.Build.0 = Release|.NET
+		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Debug.ActiveCfg = Debug|.NET
+		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Release.ActiveCfg = Release|.NET
+		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Release.Build.0 = Release|.NET
+		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Debug.ActiveCfg = Debug|.NET
+		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Debug.Build.0 = Debug|.NET
+		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Release.ActiveCfg = Release|.NET
+		{B420A3A2-DB67-4C4A-99DE-5577C4C04B3F}.Release.Build.0 = Release|.NET
+		{A76B2D4F-C424-410B-A6F1-7831B5E38E7D}.Debug.ActiveCfg = Debug|Win32
+		{A76B2D4F-C424-410B-A6F1-7831B5E38E7D}.Release.ActiveCfg = Release|Win32
+		{A76B2D4F-C424-410B-A6F1-7831B5E38E7D}.Release.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+	EndGlobalSection
+	GlobalSection(ExtensibilityAddIns) = postSolution
+	EndGlobalSection
+EndGlobal
